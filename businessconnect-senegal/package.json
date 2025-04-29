@@ -1,0 +1,17 @@
+{
+  "name": "businessconnect-senegal",
+  "version": "1.0.0",
+  "description": "Plateforme de connexion business au Sénégal",
+  "scripts": {
+    "start": "concurrently \"cd server && npm start\" \"cd client && npm start\"",
+    "install-all": "npm install && cd server && npm install && cd ../client && npm install",
+    "build": "cd server && npm run build && cd ../client && npm run build"
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  }
+} 
