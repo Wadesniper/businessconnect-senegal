@@ -1,0 +1,182 @@
+import React, { useState, useEffect } from 'react';
+import { Card, Button, Tag, Space, Input, Select, message } from 'antd';
+import { SearchOutlined, EyeOutlined, SendOutlined } from '@ant-design/icons';
+import { jobService, JobOffer } from '../services/jobService';
+import { authService } from '../services/authService';
+
+const { Search } = Input;
+const { Option } = Select;
+
+const sectors = [
+  'Informatique',
+  'Marketing',
+  'Finance',
+  'Ressources Humaines',
+  'Communication',
+  'Santé',
+  'Éducation'
+];
+
+const contractTypes = [
+  'CDI',
+  'CDD',
+  'Stage',
+  'Alternance',
+  'Freelance'
+];
+
+export const JobList: React.FC = () => {
+  const [jobs, setJobs] = useState<JobOffer[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedSector, setSelectedSector] = useState<string>();
+  const [selectedType, setSelectedType] = useState<string>();
+  const [searchText, setSearchText] = useState('');
+  const [selectedJob, setSelectedJob] = useState<JobOffer | null>(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  useEffect(() => {
+    fetchJobs();
+  }, [selectedSector, selectedType, searchText]);
+
+  const fetchJobs = async () => {
+    setLoading(true);
+    try {
+      const jobs = await jobService.getJobOffers({
+        sector: selectedSector,
+        type: selectedType,
+        search: searchText
+      });
+      setJobs(jobs);
+    } catch (error) {
+      message.error('Erreur lors de la récupération des offres');
+    }
+    setLoading(false);
+  };
+
+  const handleViewDetails = (job: JobOffer) => {
+    setSelectedJob(job);
+    setIsModalVisible(true);
+  };
+
+  const handleApply = async (jobId: string) => {
+    const user = authService.getCurrentUser();
+    if (!user) {
+      message.error('Veuillez vous connecter pour postuler');
+      return;
+    }
+
+    // TODO: Implémenter la logique de téléchargement du CV
+    message.info('Fonctionnalité de candidature à venir');
+  };
+
+  return (
+    <div className="job-list">
+      <div className="filters" style={{ marginBottom: 20 }}>
+        <Space>
+          <Select
+            placeholder="Secteur"
+            style={{ width: 200 }}
+            onChange={setSelectedSector}
+            allowClear
+          >
+            {sectors.map(sector => (
+              <Option key={sector} value={sector}>{sector}</Option>
+            ))}
+          </Select>
+          <Select
+            placeholder="Type de contrat"
+            style={{ width: 200 }}
+            onChange={setSelectedType}
+            allowClear
+          >
+            {contractTypes.map(type => (
+              <Option key={type} value={type}>{type}</Option>
+            ))}
+          </Select>
+          <Search
+            placeholder="Rechercher une offre"
+            onSearch={setSearchText}
+            style={{ width: 300 }}
+          />
+        </Space>
+      </div>
+
+      <div className="jobs-grid">
+        {jobs.map(job => (
+          <Card
+            key={job.id}
+            title={job.title}
+            extra={job.company && <Tag color="blue">{job.company}</Tag>}
+            style={{ marginBottom: 16 }}
+          >
+            <p><strong>Lieu:</strong> {job.location}</p>
+            <p><strong>Type:</strong> <Tag>{job.type}</Tag></p>
+            <p><strong>Secteur:</strong> <Tag color="green">{job.sector}</Tag></p>
+            <p>{job.description.substring(0, 150)}...</p>
+            <div style={{ marginTop: 16 }}>
+              <Space>
+                <Button
+                  type="primary"
+                  icon={<EyeOutlined />}
+                  onClick={() => handleViewDetails(job)}
+                >
+                  Voir détails
+                </Button>
+                <Button
+                  icon={<SendOutlined />}
+                  onClick={() => handleApply(job.id)}
+                >
+                  Postuler
+                </Button>
+              </Space>
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      {/* Modal de détails */}
+      {selectedJob && (
+        <Card
+          title="Détails de l'offre"
+          visible={isModalVisible}
+          onCancel={() => setIsModalVisible(false)}
+          footer={[
+            <Button key="close" onClick={() => setIsModalVisible(false)}>
+              Fermer
+            </Button>,
+            <Button
+              key="apply"
+              type="primary"
+              onClick={() => handleApply(selectedJob.id)}
+            >
+              Postuler
+            </Button>
+          ]}
+        >
+          <h2>{selectedJob.title}</h2>
+          {selectedJob.company && <p><strong>Entreprise:</strong> {selectedJob.company}</p>}
+          <p><strong>Lieu:</strong> {selectedJob.location}</p>
+          <p><strong>Type:</strong> <Tag>{selectedJob.type}</Tag></p>
+          <p><strong>Secteur:</strong> <Tag color="green">{selectedJob.sector}</Tag></p>
+          <div>
+            <h3>Description</h3>
+            <p>{selectedJob.description}</p>
+          </div>
+          <div>
+            <h3>Prérequis</h3>
+            <ul>
+              {selectedJob.requirements.map((req, index) => (
+                <li key={index}>{req}</li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h3>Contact</h3>
+            {selectedJob.contactEmail && <p><strong>Email:</strong> {selectedJob.contactEmail}</p>}
+            {selectedJob.contactPhone && <p><strong>Téléphone:</strong> {selectedJob.contactPhone}</p>}
+          </div>
+        </Card>
+      )}
+    </div>
+  );
+}; 
