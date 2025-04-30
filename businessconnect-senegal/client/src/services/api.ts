@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { discussionsData } from '../data/forumData';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 export const api = axios.create({
   baseURL: API_URL,
@@ -28,28 +28,9 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response) {
-      // Gestion des erreurs HTTP
-      switch (error.response.status) {
-        case 401:
-          // Redirection vers la page de connexion si non authentifié
-          window.location.href = '/login';
-          break;
-        case 403:
-          // Gestion des erreurs d'autorisation
-          console.error('Accès non autorisé');
-          break;
-        case 404:
-          // Gestion des ressources non trouvées
-          console.error('Ressource non trouvée');
-          break;
-        case 500:
-          // Gestion des erreurs serveur
-          console.error('Erreur serveur');
-          break;
-        default:
-          console.error('Erreur inattendue');
-      }
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      window.location.href = '/auth/login';
     }
     return Promise.reject(error);
   }
@@ -119,6 +100,4 @@ api.post('/forum/discussions/:id/replies', (config: any) => {
 api.post('/forum/discussions/:id/like', (config: any) => {
   const id = config.url?.split('/')[3];
   return forumApi.likeDiscussion(id);
-});
-
-export { api }; 
+}); 
