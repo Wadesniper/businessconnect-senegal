@@ -1,0 +1,6 @@
+{
+  "version": 2,
+  "buildCommand": "cd businessconnect-senegal/client && npm install && npm run build",
+  "outputDirectory": "businessconnect-senegal/client/build",
+  "installCommand": "cd businessconnect-senegal/client && npm install"
+} 
