@@ -12,7 +12,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "businessconnect-senegal/client/build/$1"
+      "dest": "/businessconnect-senegal/client/build/$1"
     }
   ],
   "buildCommand": "cd businessconnect-senegal/client && npm install && npm run build",
