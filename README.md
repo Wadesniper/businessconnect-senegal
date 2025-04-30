@@ -17,3 +17,7 @@ Plateforme de mise en relation professionnelle et de services business au Séné
 - Forum de discussion
 - Système de paiement
 - Générateur de CV
+
+## Déploiement
+- Frontend : Vercel
+- Backend : À définir
