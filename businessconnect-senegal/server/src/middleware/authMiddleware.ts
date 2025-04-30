@@ -1,74 +1,33 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { logger } from '../utils/logger';
+import { User, AuthRequest } from '../types/user';
 
-interface DecodedToken {
-  userId: string;
-  role: string;
-  iat: number;
-  exp: number;
-}
-
-interface AuthRequest extends Request {
-  user?: {
-    id: string;
-    role: string;
-  };
-}
-
-const authMiddleware = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const authenticate = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const authHeader = req.headers.authorization;
-    
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({
-        status: 'error',
-        message: 'Authentification requise'
-      });
+    const token = req.headers.authorization?.replace('Bearer ', '');
+
+    if (!token) {
+      return res.status(401).json({ message: 'Authentification requise' });
     }
 
-    const token = authHeader.split(' ')[1];
-    
-    if (!process.env.JWT_SECRET) {
-      logger.error('JWT_SECRET non défini');
-      return res.status(500).json({
-        status: 'error',
-        message: 'Erreur de configuration du serveur'
-      });
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET) as DecodedToken;
-    
-    req.user = {
-      id: decoded.userId,
-      role: decoded.role
-    };
-
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default_secret') as User;
+    req.user = decoded;
     next();
   } catch (error) {
-    if (error instanceof jwt.TokenExpiredError) {
-      return res.status(401).json({
-        status: 'error',
-        message: 'Session expirée, veuillez vous reconnecter'
-      });
-    }
-
     logger.error('Erreur d\'authentification:', error);
-    return res.status(401).json({
-      status: 'error',
-      message: 'Token invalide'
-    });
+    res.status(401).json({ message: 'Token invalide' });
   }
 };
 
-const isAdmin = (req: AuthRequest, res: Response, next: NextFunction) => {
-  if (!req.user || req.user.role !== 'admin') {
-    return res.status(403).json({
-      status: 'error',
-      message: 'Accès non autorisé'
-    });
+export const isAdmin = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    if (req.user?.role !== 'admin') {
+      return res.status(403).json({ message: 'Accès refusé' });
+    }
+    next();
+  } catch (error) {
+    logger.error('Erreur de vérification admin:', error);
+    res.status(500).json({ message: 'Erreur serveur' });
   }
-  next();
-};
-
-export { authMiddleware, isAdmin }; 
+}; 

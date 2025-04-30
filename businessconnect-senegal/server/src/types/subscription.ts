@@ -1,5 +1,5 @@
 export type SubscriptionType = 'etudiant' | 'annonceur' | 'recruteur';
-export type SubscriptionStatus = 'active' | 'pending' | 'expired';
+export type SubscriptionStatus = 'pending' | 'active' | 'inactive' | 'expired';
 
 export interface Subscription {
   id: string;
@@ -16,6 +16,14 @@ export interface Subscription {
 
 export interface PaymentInitiation {
   redirectUrl: string;
+  paymentId: string;
+}
+
+export interface PayTechCallbackData {
+  customField: string;
+  transactionId: string;
+  status: 'completed' | 'failed' | 'pending';
+  amount: number;
   paymentId: string;
 }
 

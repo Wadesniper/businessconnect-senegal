@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { SubscriptionService, SubscriptionType } from '../services/subscriptionService';
-import logger from '../utils/logger';
+import { AuthRequest } from '../middleware/auth';
+import { SubscriptionType, SubscriptionStatus, Subscription } from '../types/subscription';
+import { subscriptionService } from '../services/subscriptionService';
+import { logger } from '../utils/logger';
 import { PayTechConfig } from '../config/paytech';
-
-const subscriptionService = new SubscriptionService();
 
 const SUBSCRIPTION_PRICES = {
   etudiant: 1000,    // 1,000 FCFA / mois
@@ -13,112 +13,93 @@ const SUBSCRIPTION_PRICES = {
 
 const VALID_SUBSCRIPTION_TYPES: SubscriptionType[] = ['etudiant', 'annonceur', 'recruteur'];
 
-export const subscriptionController = {
-  async createSubscription(req: Request, res: Response) {
+export class SubscriptionController {
+  async createSubscription(req: AuthRequest, res: Response) {
     try {
-      const { userId, type } = req.body;
-
-      if (!userId || !type) {
-        return res.status(400).json({ 
-          success: false, 
-          message: 'UserId et type d\'abonnement sont requis' 
-        });
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ error: 'Utilisateur non authentifié' });
       }
 
-      const subscription = await subscriptionService.createSubscription(userId, type as SubscriptionType);
-      logger.info(`Nouvel abonnement créé pour l'utilisateur ${userId}`);
+      const { type } = req.body as { type: SubscriptionType };
       
-      res.status(201).json({
-        success: true,
-        data: subscription
-      });
+      const subscription = await subscriptionService.createSubscription(userId, type);
+      
+      logger.info('Abonnement créé avec succès', { userId, type });
+      return res.status(201).json(subscription);
     } catch (error) {
       logger.error('Erreur lors de la création de l\'abonnement:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Erreur lors de la création de l\'abonnement'
-      });
+      return res.status(500).json({ error: 'Erreur lors de la création de l\'abonnement' });
     }
-  },
+  }
 
-  async getSubscription(req: Request, res: Response) {
+  async updateSubscriptionStatus(req: AuthRequest, res: Response) {
     try {
-      const { userId } = req.params;
+      const { subscriptionId } = req.params;
+      const { status } = req.body as { status: SubscriptionStatus };
 
+      const updatedSubscription = await subscriptionService.updateSubscriptionStatus(subscriptionId, status);
+      
+      logger.info('Statut de l\'abonnement mis à jour', { subscriptionId, status });
+      return res.json(updatedSubscription);
+    } catch (error) {
+      logger.error('Erreur lors de la mise à jour du statut:', error);
+      return res.status(500).json({ error: 'Erreur lors de la mise à jour du statut' });
+    }
+  }
+
+  async getSubscriptionPrice(req: Request, res: Response) {
+    try {
+      const { type } = req.params;
+      if (!type || !['etudiant', 'annonceur', 'recruteur'].includes(type)) {
+        return res.status(400).json({ error: 'Type d\'abonnement invalide' });
+      }
+      
+      const price = await subscriptionService.getPrice(type as SubscriptionType);
+      return res.json({ price });
+    } catch (error) {
+      logger.error('Erreur lors de la récupération du prix:', error);
+      return res.status(500).json({ error: 'Erreur lors de la récupération du prix' });
+    }
+  }
+
+  async getSubscription(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.user?.id;
       if (!userId) {
-        return res.status(400).json({
-          success: false,
-          message: 'UserId est requis'
-        });
+        return res.status(401).json({ error: 'Utilisateur non authentifié' });
       }
 
       const subscription = await subscriptionService.getSubscription(userId);
-      
-      if (!subscription) {
-        return res.status(404).json({
-          success: false,
-          message: 'Abonnement non trouvé'
-        });
-      }
-
-      res.json({
-        success: true,
-        data: subscription
-      });
+      return res.json(subscription);
     } catch (error) {
       logger.error('Erreur lors de la récupération de l\'abonnement:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Erreur lors de la récupération de l\'abonnement'
-      });
+      return res.status(500).json({ error: 'Erreur lors de la récupération de l\'abonnement' });
     }
-  },
+  }
 
-  async updateSubscriptionStatus(req: Request, res: Response) {
+  async getAllSubscriptions(_req: Request, res: Response) {
     try {
-      const { userId } = req.params;
-      const { status } = req.body;
-
-      if (!userId || !status) {
-        return res.status(400).json({
-          success: false,
-          message: 'UserId et status sont requis'
-        });
-      }
-
-      const updatedSubscription = await subscriptionService.updateSubscriptionStatus(
-        userId, 
-        status as 'active' | 'expired' | 'pending'
-      );
-      
-      logger.info(`Statut de l'abonnement mis à jour pour l'utilisateur ${userId}`);
-
-      res.json({
-        success: true,
-        data: updatedSubscription
-      });
+      const subscriptions = await subscriptionService.getAllSubscriptions();
+      return res.json(subscriptions);
     } catch (error) {
-      logger.error('Erreur lors de la mise à jour du statut de l\'abonnement:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Erreur lors de la mise à jour du statut de l\'abonnement'
-      });
+      logger.error('Erreur lors de la récupération des abonnements:', error);
+      return res.status(500).json({ error: 'Erreur lors de la récupération des abonnements' });
     }
-  },
+  }
 
-  async checkSubscriptionStatus(req: Request, res: Response) {
+  async checkSubscriptionStatus(req: AuthRequest, res: Response) {
     try {
-      const { userId } = req.params;
-
+      const userId = req.user?.id;
       if (!userId) {
-        return res.status(400).json({ error: 'ID utilisateur requis' });
+        return res.status(401).json({ error: 'Utilisateur non authentifié' });
       }
 
-      const isValid = await subscriptionService.checkSubscriptionStatus(userId);
-      return res.status(200).json({ isValid });
+      const isActive = await subscriptionService.checkSubscriptionStatus(userId);
+      return res.json({ isActive });
     } catch (error) {
-      logger.error('Erreur lors de la vérification du statut', { error });
-      return res.status(500).json({ error: 'Échec de la vérification du statut' });
+      logger.error('Erreur lors de la vérification du statut:', error);
+      return res.status(500).json({ error: 'Erreur lors de la vérification du statut' });
     }
   },
 
@@ -286,4 +267,6 @@ export const subscriptionController = {
       });
     }
   }
-}; 
+}
+
+export const subscriptionController = new SubscriptionController(); 

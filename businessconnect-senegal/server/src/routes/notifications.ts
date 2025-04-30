@@ -1,56 +1,59 @@
-import express from 'express';
-import { inAppNotificationService } from '../services/inAppNotificationService';
-import { authMiddleware } from '../middleware/authMiddleware';
+import { Router } from 'express';
+import { AuthRequest } from '../middleware/auth';
+import { Response } from 'express';
+import { notificationService } from '../services/notificationService';
 
-const router = express.Router();
+const router = Router();
 
-// Récupérer toutes les notifications de l'utilisateur
-router.get('/', authMiddleware, async (req, res) => {
+// Récupérer toutes les notifications d'un utilisateur
+router.get('/', async (req: AuthRequest, res: Response) => {
   try {
-    const notifications = await inAppNotificationService.getUserNotifications(req.user.id);
+    const notifications = await notificationService.getUserNotifications(req.user!.id);
     res.json(notifications);
   } catch (error) {
-    res.status(500).json({ message: 'Erreur lors de la récupération des notifications' });
+    res.status(500).json({ error: 'Erreur lors de la récupération des notifications' });
   }
 });
 
 // Récupérer les notifications non lues
-router.get('/unread', authMiddleware, async (req, res) => {
+router.get('/unread', async (req: AuthRequest, res: Response) => {
   try {
-    const notifications = await inAppNotificationService.getUnreadNotifications(req.user.id);
+    const notifications = await notificationService.getUnreadNotifications(req.user!.id);
     res.json(notifications);
   } catch (error) {
-    res.status(500).json({ message: 'Erreur lors de la récupération des notifications non lues' });
+    res.status(500).json({ error: 'Erreur lors de la récupération des notifications non lues' });
   }
 });
 
 // Marquer une notification comme lue
-router.put('/:notificationId/read', authMiddleware, async (req, res) => {
+router.put('/:notificationId/read', async (req: AuthRequest, res: Response) => {
   try {
-    await inAppNotificationService.markAsRead(req.user.id, req.params.notificationId);
-    res.json({ message: 'Notification marquée comme lue' });
+    const { notificationId } = req.params;
+    await notificationService.markAsRead(req.user!.id, notificationId);
+    res.json({ success: true });
   } catch (error) {
-    res.status(500).json({ message: 'Erreur lors du marquage de la notification' });
+    res.status(500).json({ error: 'Erreur lors du marquage de la notification' });
   }
 });
 
 // Marquer toutes les notifications comme lues
-router.put('/mark-all-read', authMiddleware, async (req, res) => {
+router.put('/read-all', async (req: AuthRequest, res: Response) => {
   try {
-    await inAppNotificationService.markAllAsRead(req.user.id);
-    res.json({ message: 'Toutes les notifications ont été marquées comme lues' });
+    await notificationService.markAllAsRead(req.user!.id);
+    res.json({ success: true });
   } catch (error) {
-    res.status(500).json({ message: 'Erreur lors du marquage des notifications' });
+    res.status(500).json({ error: 'Erreur lors du marquage des notifications' });
   }
 });
 
 // Supprimer une notification
-router.delete('/:notificationId', authMiddleware, async (req, res) => {
+router.delete('/:notificationId', async (req: AuthRequest, res: Response) => {
   try {
-    await inAppNotificationService.deleteNotification(req.user.id, req.params.notificationId);
-    res.json({ message: 'Notification supprimée' });
+    const { notificationId } = req.params;
+    await notificationService.deleteNotification(req.user!.id, notificationId);
+    res.json({ success: true });
   } catch (error) {
-    res.status(500).json({ message: 'Erreur lors de la suppression de la notification' });
+    res.status(500).json({ error: 'Erreur lors de la suppression de la notification' });
   }
 });
 
