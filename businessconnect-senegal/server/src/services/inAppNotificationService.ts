@@ -1,9 +1,10 @@
 import { logger } from '../utils/logger';
+import { NotificationType } from './notificationService';
 
 export interface Notification {
   id: string;
   userId: string;
-  type: 'subscription_expiration' | 'new_offer' | 'system';
+  type: NotificationType;
   title: string;
   message: string;
   isRead: boolean;

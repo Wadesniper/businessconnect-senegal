@@ -2,8 +2,10 @@ import { Request, Response } from 'express';
 import { PayTechConfig } from '../config/paytech';
 import { NotificationService } from './notificationService';
 import { v4 as uuidv4 } from 'uuid';
-import { Subscription, SubscriptionType, SubscriptionStatus, PaymentInitiation } from '../types/subscription';
+import { Subscription, SubscriptionType, SubscriptionStatus, PaymentInitiation, PayTechCallbackData } from '../types/subscription';
 import { logger } from '../utils/logger';
+import pool from '../config/database';
+import { PayTech } from './paytechService';
 
 interface PayTechResponse {
   paymentId: string;
@@ -15,167 +17,133 @@ interface PayTechResponse {
 export class SubscriptionService {
   private subscriptions: Map<string, Subscription>;
   private notificationService: NotificationService;
+  private payTechService: PayTech;
   
-  constructor() {
-    this.subscriptions = new Map();
-    this.notificationService = new NotificationService();
+  constructor(notificationService: NotificationService, payTechService: PayTech) {
+    this.subscriptions = new Map<string, Subscription>();
+    this.notificationService = notificationService;
+    this.payTechService = payTechService;
   }
 
   // Prix des abonnements en FCFA
   private readonly SUBSCRIPTION_PRICES = {
-    etudiant: 1000,    // 1,000 FCFA / mois
-    annonceur: 5000,   // 5,000 FCFA / mois
-    recruteur: 9000    // 9,000 FCFA / mois
+    etudiant: 5000,    // 5,000 FCFA / mois
+    annonceur: 15000,   // 15,000 FCFA / mois
+    recruteur: 25000    // 25,000 FCFA / mois
   };
 
   private getSubscriptionPrice(type: SubscriptionType): number {
     return this.SUBSCRIPTION_PRICES[type];
   }
 
-  async initiatePayment(userId: string, subscriptionType: SubscriptionType): Promise<PaymentInitiation> {
-    try {
-      // Vérifier si l'utilisateur a déjà un abonnement actif
-      const existingSubscription = await this.getSubscription(userId);
-      if (existingSubscription && existingSubscription.status === 'active') {
-        throw new Error('Utilisateur a déjà un abonnement actif');
-      }
-
-      const amount = this.getSubscriptionPrice(subscriptionType);
-
-      // Configurer le paiement PayTech
-      const paymentData = {
-        amount,
-        description: `Abonnement ${subscriptionType} BusinessConnect Senegal`,
-        customField: JSON.stringify({
-          userId,
-          subscriptionType
-        })
-      };
-
-      // Initialiser le paiement avec PayTech
-      const paymentResponse = await PayTechConfig.initiatePayment(paymentData);
-      
-      logger.info('Paiement initié avec PayTech', { userId, subscriptionType, amount });
-
-      // Créer un abonnement en attente
-      const subscription: Subscription = {
-        id: uuidv4(),
-        userId,
-        type: subscriptionType,
-        status: 'pending',
-        startDate: new Date(),
-        endDate: new Date(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        paymentId: paymentResponse.paymentId
-      };
-
-      this.subscriptions.set(userId, subscription);
-
-      return {
-        redirectUrl: paymentResponse.redirectUrl,
-        paymentId: paymentResponse.paymentId
-      };
-    } catch (error) {
-      logger.error('Erreur lors de l\'initiation du paiement', { userId, error });
-      if (error instanceof Error) {
-        throw error;
-      }
-      throw new Error('Échec de l\'initiation du paiement');
+  public async initiatePayment(userId: string, type: SubscriptionType): Promise<PaymentInitiation> {
+    const existingSubscription = await this.getActiveSubscription(userId);
+    if (existingSubscription) {
+      throw new Error('Utilisateur a déjà un abonnement actif');
     }
-  }
 
-  async handlePaymentCallback(paymentData: any): Promise<Subscription> {
-    try {
-      const { customField, transactionId, status } = paymentData;
-      const { userId, subscriptionType } = JSON.parse(customField);
-
-      const subscription = this.subscriptions.get(userId);
-      if (!subscription) {
-        throw new Error('Abonnement non trouvé');
+    const amount = this.getSubscriptionPrice(type);
+    const paymentData = await this.payTechService.createPaymentIntent({
+      amount,
+      currency: 'XOF',
+      customer: userId,
+      payment_method: 'card',
+      metadata: {
+        subscriptionType: type,
+        userId
       }
+    });
 
-      if (status === 'completed') {
-        subscription.status = 'active';
-        subscription.transactionId = transactionId;
-        
-        // Mettre à jour la date de fin (1 mois à partir de maintenant)
-        const endDate = new Date();
-        endDate.setMonth(endDate.getMonth() + 1);
-        subscription.endDate = endDate;
-
-        this.subscriptions.set(userId, subscription);
-        logger.info('Paiement complété et abonnement activé', { userId, transactionId, subscriptionType });
-      } else {
-        subscription.status = 'expired';
-        this.subscriptions.set(userId, subscription);
-        logger.warn('Paiement échoué', { userId, transactionId, status });
-      }
-
-      return subscription;
-    } catch (error) {
-      logger.error('Erreur lors du traitement du callback de paiement', { error });
-      throw new Error('Échec du traitement du callback de paiement');
-    }
-  }
-
-  async createSubscription(userId: string, type: SubscriptionType): Promise<Subscription> {
-    const now = new Date();
-    const endDate = new Date();
-    endDate.setMonth(endDate.getMonth() + 1); // Abonnement d'un mois
-
-    const subscription: Subscription = {
-      id: uuidv4(),
+    const subscription = await this.createSubscription({
       userId,
       type,
       status: 'pending',
-      startDate: now,
-      endDate,
-      createdAt: now,
-      updatedAt: now
+      paymentId: paymentData.id,
+      startDate: new Date(),
+      endDate: this.calculateEndDate(new Date()),
+    });
+
+    return {
+      redirectUrl: paymentData.next_action?.redirect_url || '',
+      paymentId: paymentData.id
     };
-
-    this.subscriptions.set(userId, subscription);
-    logger.info(`Nouvelle souscription créée pour l'utilisateur ${userId}`);
-    
-    return subscription;
   }
 
-  async getSubscription(userId: string): Promise<Subscription | null> {
-    const subscription = this.subscriptions.get(userId);
-    return subscription || null;
-  }
-
-  async updateSubscriptionStatus(userId: string, status: SubscriptionStatus): Promise<Subscription | null> {
-    const subscription = this.subscriptions.get(userId);
-    
+  public async handlePaymentCallback(paymentData: PayTechCallbackData): Promise<void> {
+    const subscription = await this.getSubscriptionByPaymentId(paymentData.paymentId);
     if (!subscription) {
-      logger.warn(`Tentative de mise à jour d'une souscription inexistante pour l'utilisateur ${userId}`);
-      return null;
+      throw new Error('Souscription non trouvée');
+    }
+
+    if (paymentData.status === 'completed') {
+      await this.updateSubscriptionStatus(subscription.id, 'active');
+      await this.notificationService.sendPaymentSuccessNotification(subscription.userId);
+    } else if (paymentData.status === 'failed') {
+      await this.updateSubscriptionStatus(subscription.id, 'inactive');
+      await this.notificationService.sendPaymentFailureNotification(subscription.userId);
+    }
+  }
+
+  private async sendPaymentSuccessNotification(userId: string): Promise<void> {
+    const title = 'Paiement réussi';
+    const message = 'Votre paiement a été traité avec succès. Votre abonnement est maintenant actif.';
+    await this.notificationService.inAppNotificationService.createNotification(
+      userId,
+      'payment_success',
+      title,
+      message,
+      { action: 'subscription_activated' }
+    );
+  }
+
+  private async sendPaymentFailureNotification(userId: string): Promise<void> {
+    const title = 'Échec du paiement';
+    const message = 'Votre paiement n\'a pas pu être traité. Veuillez réessayer ou contacter le support.';
+    await this.notificationService.inAppNotificationService.createNotification(
+      userId,
+      'payment_failure',
+      title,
+      message,
+      { action: 'retry_payment' }
+    );
+  }
+
+  private async updateSubscriptionStatus(subscriptionId: string, status: SubscriptionStatus): Promise<void> {
+    const subscription = await this.getSubscription(subscriptionId);
+    if (!subscription) {
+      throw new Error('Souscription non trouvée');
     }
 
     subscription.status = status;
     subscription.updatedAt = new Date();
-    this.subscriptions.set(userId, subscription);
+    
+    await this.saveSubscription(subscription);
+    this.subscriptions.set(subscriptionId, subscription);
+  }
 
-    logger.info(`Statut de la souscription mis à jour pour l'utilisateur ${userId}: ${status}`);
-    return subscription;
+  async getSubscription(userId: string): Promise<Subscription | null> {
+    try {
+      const result = await pool.query(
+        'SELECT * FROM subscriptions WHERE user_id = $1 ORDER BY created_at DESC LIMIT 1',
+        [userId]
+      );
+      return result.rows[0] || null;
+    } catch (error) {
+      logger.error('Erreur lors de la récupération de l\'abonnement:', error);
+      throw error;
+    }
   }
 
   async checkSubscriptionStatus(userId: string): Promise<boolean> {
-    const subscription = this.subscriptions.get(userId);
+    const subscription = await this.getSubscription(userId);
     
-    if (!subscription) {
-      return false;
-    }
-
-    if (subscription.status !== 'active') {
+    if (!subscription || subscription.status !== 'active') {
       return false;
     }
 
     const now = new Date();
     if (now > subscription.endDate) {
-      await this.updateSubscriptionStatus(userId, 'expired');
+      await this.updateSubscriptionStatus(subscription.id, 'inactive');
       return false;
     }
 
@@ -183,18 +151,95 @@ export class SubscriptionService {
   }
 
   async getPaymentHistory(userId: string): Promise<Subscription[]> {
-    const subscription = this.subscriptions.get(userId);
-    return subscription ? [subscription] : [];
+    try {
+      const result = await pool.query(
+        'SELECT * FROM subscriptions WHERE user_id = $1 ORDER BY created_at DESC',
+        [userId]
+      );
+      return result.rows;
+    } catch (error) {
+      logger.error('Erreur lors de la récupération de l\'historique des paiements:', error);
+      throw error;
+    }
   }
 
   async getAllSubscriptions(): Promise<Subscription[]> {
     try {
-      return Array.from(this.subscriptions.values());
+      const result = await pool.query('SELECT * FROM subscriptions ORDER BY created_at DESC');
+      return result.rows;
     } catch (error) {
       logger.error('Erreur lors de la récupération des abonnements', { error });
       throw new Error('Échec de la récupération des abonnements');
     }
   }
+
+  public async getActiveSubscription(userId: string): Promise<Subscription | null> {
+    const subscription = await this.getSubscription(userId);
+    if (subscription && subscription.status === 'active') {
+      return subscription;
+    }
+    return null;
+  }
+
+  public async getSubscriptionByPaymentId(paymentId: string): Promise<Subscription | null> {
+    const query = 'SELECT * FROM subscriptions WHERE payment_id = $1';
+    const result = await pool.query(query, [paymentId]);
+    return result.rows[0] || null;
+  }
+
+  private async saveSubscription(subscription: Subscription): Promise<void> {
+    const query = `
+      INSERT INTO subscriptions (id, user_id, type, status, payment_id, start_date, end_date, updated_at)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      ON CONFLICT (id) DO UPDATE
+      SET status = $4, updated_at = $8
+    `;
+    
+    await pool.query(query, [
+      subscription.id,
+      subscription.userId,
+      subscription.type,
+      subscription.status,
+      subscription.paymentId,
+      subscription.startDate,
+      subscription.endDate,
+      subscription.updatedAt
+    ]);
+  }
+
+  private async createSubscription(data: {
+    userId: string;
+    type: SubscriptionType;
+    status: SubscriptionStatus;
+    paymentId: string;
+    startDate: Date;
+    endDate: Date;
+  }): Promise<Subscription> {
+    const subscription: Subscription = {
+      id: uuidv4(),
+      ...data,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    await this.saveSubscription(subscription);
+    this.subscriptions.set(subscription.id, subscription);
+    return subscription;
+  }
+
+  private calculateEndDate(startDate: Date): Date {
+    const endDate = new Date(startDate);
+    endDate.setMonth(endDate.getMonth() + 1);
+    return endDate;
+  }
 }
 
-export const subscriptionService = new SubscriptionService(); 
+// Créer une instance du NotificationService et PayTech
+const notificationService = new NotificationService();
+const payTechService = new PayTech(
+  process.env.PAYTECH_API_KEY || '',
+  process.env.PAYTECH_WEBHOOK_SECRET
+);
+
+// Exporter l'instance du SubscriptionService
+export const subscriptionService = new SubscriptionService(notificationService, payTechService); 

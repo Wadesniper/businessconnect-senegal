@@ -1,6 +1,8 @@
 import { logger } from '../utils/logger';
 import { InAppNotificationService } from './inAppNotificationService';
 
+export type NotificationType = 'subscription_expiration' | 'new_offer' | 'system' | 'payment_success' | 'payment_failure';
+
 export interface NotificationConfig {
   daysBeforeExpiration: number[];  // Par exemple [7, 3, 1] pour notifier 7, 3 et 1 jours avant
 }
@@ -9,7 +11,7 @@ export class NotificationService {
   private config: NotificationConfig = {
     daysBeforeExpiration: [7, 3, 1]  // Configuration par défaut
   };
-  private inAppNotificationService: InAppNotificationService;
+  public inAppNotificationService: InAppNotificationService;
 
   constructor(config?: NotificationConfig) {
     if (config) {
@@ -77,6 +79,40 @@ export class NotificationService {
         userId: subscription.userId,
         error
       });
+    }
+  }
+
+  async sendPaymentSuccessNotification(userId: string): Promise<void> {
+    try {
+      const title = 'Paiement réussi';
+      const message = 'Votre paiement a été traité avec succès. Votre abonnement est maintenant actif.';
+      await this.inAppNotificationService.createNotification(
+        userId,
+        'payment_success',
+        title,
+        message,
+        { action: 'subscription_activated' }
+      );
+      logger.info('Notification de succès de paiement envoyée', { userId });
+    } catch (error) {
+      logger.error('Erreur lors de l\'envoi de la notification de succès de paiement', { userId, error });
+    }
+  }
+
+  async sendPaymentFailureNotification(userId: string): Promise<void> {
+    try {
+      const title = 'Échec du paiement';
+      const message = 'Votre paiement n\'a pas pu être traité. Veuillez réessayer ou contacter le support.';
+      await this.inAppNotificationService.createNotification(
+        userId,
+        'payment_failure',
+        title,
+        message,
+        { action: 'retry_payment' }
+      );
+      logger.info('Notification d\'échec de paiement envoyée', { userId });
+    } catch (error) {
+      logger.error('Erreur lors de l\'envoi de la notification d\'échec de paiement', { userId, error });
     }
   }
 } 
