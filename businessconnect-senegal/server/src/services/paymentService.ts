@@ -1,62 +1,79 @@
-import axios from 'axios';
 import { config } from '../config';
+import { logger } from '../utils/logger';
+import axios from 'axios';
+
+interface PaymentResponse {
+  success: boolean;
+  redirectUrl?: string;
+  error?: string;
+}
 
 export class PaymentService {
   private readonly apiKey: string;
-  private readonly secretKey: string;
-  private readonly baseUrl: string = 'https://paytech.sn/api';
+  private readonly webhookSecret: string;
+  private readonly baseUrl: string;
 
   constructor() {
-    this.apiKey = process.env.PAYTECH_API_KEY || '';
-    this.secretKey = process.env.PAYTECH_SECRET_KEY || '';
+    this.apiKey = config.PAYTECH_API_KEY;
+    this.webhookSecret = config.PAYTECH_WEBHOOK_SECRET;
+    this.baseUrl = config.PAYTECH_BASE_URL;
   }
 
-  async createPayment(data: {
-    amount: number;
-    customerId: string;
-    subscriptionPlan: string;
-  }) {
+  async initializePayment(amount: number, description: string): Promise<PaymentResponse> {
     try {
-      const response = await axios.post(
-        `${this.baseUrl}/payment/request`,
-        {
-          amount: data.amount,
-          item_name: `Abonnement ${data.subscriptionPlan}`,
-          currency: 'XOF',
-          ref_command: `SUB-${Date.now()}-${data.customerId}`,
-          success_url: `${process.env.FRONTEND_URL}/subscription/success`,
-          cancel_url: `${process.env.FRONTEND_URL}/subscription/cancel`,
-          ipn_url: `${process.env.FRONTEND_URL}/api/webhook/payment`,
-        },
-        {
-          headers: {
-            'X-API-KEY': this.apiKey,
-            'X-SECRET-KEY': this.secretKey,
-          },
-        }
-      );
+      const response = await axios.post(`${this.baseUrl}/payment/init`, {
+        amount,
+        description,
+        apiKey: this.apiKey
+      });
 
-      return response.data;
+      if (response.data.success) {
+        return {
+          success: true,
+          redirectUrl: response.data.redirectUrl
+        };
+      }
+
+      return {
+        success: false,
+        error: response.data.message || 'Erreur lors de l\'initialisation du paiement'
+      };
+
     } catch (error) {
-      throw new Error('Erreur lors de la création du paiement');
+      logger.error('Erreur lors de l\'initialisation du paiement:', error);
+      return {
+        success: false,
+        error: 'Erreur lors de l\'initialisation du paiement'
+      };
     }
   }
 
-  async verifyPayment(paymentId: string) {
+  verifyWebhookSignature(signature: string, payload: string): boolean {
     try {
-      const response = await axios.get(
-        `${this.baseUrl}/payment/check/${paymentId}`,
-        {
-          headers: {
-            'X-API-KEY': this.apiKey,
-            'X-SECRET-KEY': this.secretKey,
-          },
-        }
-      );
-
-      return response.data;
+      const hmac = require('crypto')
+        .createHmac('sha256', this.webhookSecret)
+        .update(payload)
+        .digest('hex');
+      
+      return hmac === signature;
     } catch (error) {
-      throw new Error('Erreur lors de la vérification du paiement');
+      logger.error('Erreur lors de la vérification de la signature webhook:', error);
+      return false;
+    }
+  }
+
+  async verifyPayment(paymentId: string): Promise<boolean> {
+    try {
+      const response = await axios.get(`${this.baseUrl}/payment/verify/${paymentId}`, {
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`
+        }
+      });
+
+      return response.data.success === true;
+    } catch (error) {
+      logger.error('Erreur lors de la vérification du paiement:', error);
+      return false;
     }
   }
 } 
