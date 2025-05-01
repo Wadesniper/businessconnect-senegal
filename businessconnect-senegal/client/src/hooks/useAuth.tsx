@@ -8,6 +8,7 @@ interface User {
   hasActiveSubscription: boolean;
   subscriptionType?: 'basic' | 'premium';
   subscriptionEndDate?: Date;
+  role: string;
 }
 
 interface AuthContextType {
@@ -17,6 +18,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   checkSubscription: () => Promise<boolean>;
+  refreshToken: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -26,19 +28,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Vérifier le token et charger les données utilisateur au démarrage
     checkAuth();
   }, []);
 
   const checkAuth = async () => {
     try {
       const token = localStorage.getItem('token');
-      if (!token) {
+      const refreshToken = localStorage.getItem('refreshToken');
+
+      if (!token || !refreshToken) {
         setIsLoading(false);
         return;
       }
 
-      // Appel API pour vérifier le token et obtenir les données utilisateur
       const response = await fetch('/api/auth/me', {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -48,20 +50,50 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (response.ok) {
         const userData = await response.json();
         setUser(userData);
+      } else if (response.status === 401) {
+        await refreshToken();
       } else {
-        localStorage.removeItem('token');
+        throw new Error('Session invalide');
       }
     } catch (error) {
-      console.error('Erreur lors de la vérification de l\'authentification:', error);
-      localStorage.removeItem('token');
+      console.error('Erreur d\'authentification:', error);
+      await logout();
     } finally {
       setIsLoading(false);
     }
   };
 
+  const refreshToken = async () => {
+    try {
+      const refresh = localStorage.getItem('refreshToken');
+      if (!refresh) {
+        throw new Error('Refresh token manquant');
+      }
+
+      const response = await fetch('/api/auth/refresh', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ refreshToken: refresh })
+      });
+
+      if (response.ok) {
+        const { token, refreshToken: newRefreshToken, user: userData } = await response.json();
+        localStorage.setItem('token', token);
+        localStorage.setItem('refreshToken', newRefreshToken);
+        setUser(userData);
+      } else {
+        throw new Error('Impossible de rafraîchir la session');
+      }
+    } catch (error) {
+      await logout();
+      throw error;
+    }
+  };
+
   const login = async (email: string, password: string) => {
     try {
-      // Appel API pour la connexion
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
@@ -71,23 +103,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
 
       if (response.ok) {
-        const { token, user: userData } = await response.json();
+        const { token, refreshToken, user: userData } = await response.json();
         localStorage.setItem('token', token);
+        localStorage.setItem('refreshToken', refreshToken);
         setUser(userData);
         message.success('Connexion réussie !');
       } else {
-        throw new Error('Identifiants invalides');
+        const error = await response.json();
+        throw new Error(error.message || 'Identifiants invalides');
       }
     } catch (error) {
-      message.error('Erreur lors de la connexion');
+      message.error(error instanceof Error ? error.message : 'Erreur lors de la connexion');
       throw error;
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    setUser(null);
-    message.success('Déconnexion réussie');
+  const logout = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (token) {
+        await fetch('/api/auth/logout', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error);
+    } finally {
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      setUser(null);
+      message.success('Déconnexion réussie');
+    }
   };
 
   const checkSubscription = async () => {
@@ -101,10 +150,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
 
       if (response.ok) {
-        const { hasActiveSubscription } = await response.json();
-        setUser(prev => prev ? { ...prev, hasActiveSubscription } : null);
+        const { hasActiveSubscription, subscriptionType, subscriptionEndDate } = await response.json();
+        setUser(prev => prev ? { 
+          ...prev, 
+          hasActiveSubscription,
+          subscriptionType,
+          subscriptionEndDate: subscriptionEndDate ? new Date(subscriptionEndDate) : undefined
+        } : null);
         return hasActiveSubscription;
       }
+      
+      if (response.status === 401) {
+        await refreshToken();
+        return checkSubscription();
+      }
+      
       return false;
     } catch (error) {
       console.error('Erreur lors de la vérification de l\'abonnement:', error);
@@ -118,7 +178,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     isLoading,
     login,
     logout,
-    checkSubscription
+    checkSubscription,
+    refreshToken
   };
 
   return (

@@ -1,145 +1,95 @@
-import { Subscription, SubscriptionType, SubscriptionStatus, ISubscription } from '../models/subscription';
-import { PaymentService } from './paymentService';
-import { NotificationService } from './notificationService';
-import { logger } from '../utils/logger';
+import { PayTech } from '../config/paytech';
+import { Subscription } from '../models/subscription';
+import { User } from '../models/User';
 import { AppError } from '../utils/errors';
+import { logger } from '../utils/logger';
 
-interface PaymentInitiation {
-  redirectUrl: string;
-  paymentId: string;
+export enum SubscriptionStatus {
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
+  PENDING = 'pending',
+  CANCELLED = 'cancelled'
 }
 
 export class SubscriptionService {
-  private paymentService: PaymentService;
-  private notificationService: NotificationService;
+  private paytech: PayTech;
 
   constructor() {
-    this.paymentService = new PaymentService();
-    this.notificationService = new NotificationService();
+    this.paytech = new PayTech();
   }
 
-  private getSubscriptionPrice(type: SubscriptionType): number {
-    const prices = {
-      [SubscriptionType.BASIC]: 5000,
-      [SubscriptionType.PREMIUM]: 15000,
-      [SubscriptionType.ENTERPRISE]: 50000
-    };
-    return prices[type];
-  }
-
-  private getSubscriptionDuration(type: SubscriptionType): number {
-    const durations = {
-      [SubscriptionType.BASIC]: 30,
-      [SubscriptionType.PREMIUM]: 30,
-      [SubscriptionType.ENTERPRISE]: 30
-    };
-    return durations[type];
-  }
-
-  async initiateSubscription(userId: string, type: SubscriptionType): Promise<PaymentInitiation> {
+  async createSubscription(userId: string, planId: string): Promise<Subscription> {
     try {
-      const activeSubscription = await this.getActiveSubscription(userId);
-      if (activeSubscription) {
-        throw new AppError('Un abonnement actif existe déjà', 400);
+      const user = await User.findById(userId);
+      if (!user) {
+        throw new AppError('Utilisateur non trouvé', 404);
       }
 
-      const amount = this.getSubscriptionPrice(type);
-      const duration = this.getSubscriptionDuration(type);
-      const endDate = new Date();
-      endDate.setDate(endDate.getDate() + duration);
-
-      const subscription = new Subscription({
+      const subscription = await Subscription.create({
         userId,
-        type,
-        amount,
-        currency: 'XOF',
-        endDate
+        planId,
+        status: SubscriptionStatus.PENDING,
+        startDate: new Date(),
+        endDate: this.calculateEndDate(new Date())
       });
 
-      await subscription.save();
-
-      const paymentData = await this.paymentService.initializePayment(amount, `Abonnement ${type} BusinessConnect`);
-      
-      if (!paymentData.success || !paymentData.redirectUrl) {
-        throw new AppError('Échec de l\'initialisation du paiement', 500);
-      }
-
-      subscription.paymentId = paymentData.paymentId;
-      await subscription.save();
-
-      return {
-        redirectUrl: paymentData.redirectUrl,
-        paymentId: paymentData.paymentId
-      };
+      return subscription;
     } catch (error) {
-      logger.error('Erreur lors de l\'initiation de l\'abonnement:', error);
-      throw error;
+      logger.error('Erreur lors de la création de l\'abonnement:', error);
+      throw new AppError('Erreur lors de la création de l\'abonnement', 500);
     }
   }
 
-  async handlePaymentCallback(paymentId: string, status: 'success' | 'failed'): Promise<void> {
+  async getSubscription(userId: string): Promise<Subscription | null> {
     try {
-      const subscription = await Subscription.findOne({ paymentId });
+      return await Subscription.findOne({ userId }).sort({ createdAt: -1 });
+    } catch (error) {
+      logger.error('Erreur lors de la récupération de l\'abonnement:', error);
+      throw new AppError('Erreur lors de la récupération de l\'abonnement', 500);
+    }
+  }
+
+  async cancelSubscription(subscriptionId: string): Promise<Subscription> {
+    try {
+      const subscription = await Subscription.findById(subscriptionId);
       if (!subscription) {
         throw new AppError('Abonnement non trouvé', 404);
       }
 
-      if (status === 'success') {
-        subscription.status = SubscriptionStatus.ACTIVE;
-        await subscription.save();
-        await this.notificationService.sendSubscriptionActivatedEmail(subscription.userId);
-      } else {
-        subscription.status = SubscriptionStatus.CANCELLED;
-        await subscription.save();
-        await this.notificationService.sendSubscriptionFailedEmail(subscription.userId);
-      }
-    } catch (error) {
-      logger.error('Erreur lors du traitement du callback de paiement:', error);
-      throw error;
-    }
-  }
-
-  async getActiveSubscription(userId: string): Promise<ISubscription | null> {
-    try {
-      return await Subscription.findOne({
-        userId,
-        status: SubscriptionStatus.ACTIVE,
-        endDate: { $gt: new Date() }
-      });
-    } catch (error) {
-      logger.error('Erreur lors de la récupération de l\'abonnement actif:', error);
-      throw error;
-    }
-  }
-
-  async cancelSubscription(userId: string, subscriptionId: string): Promise<void> {
-    try {
-      const subscription = await Subscription.findOne({
-        _id: subscriptionId,
-        userId,
-        status: SubscriptionStatus.ACTIVE
-      });
-
-      if (!subscription) {
-        throw new AppError('Abonnement non trouvé ou déjà annulé', 404);
-      }
-
       subscription.status = SubscriptionStatus.CANCELLED;
+      subscription.cancelledAt = new Date();
       await subscription.save();
-      await this.notificationService.sendSubscriptionCancelledEmail(userId);
+
+      return subscription;
     } catch (error) {
       logger.error('Erreur lors de l\'annulation de l\'abonnement:', error);
-      throw error;
+      throw new AppError('Erreur lors de l\'annulation de l\'abonnement', 500);
     }
   }
 
-  async checkSubscriptionAccess(userId: string): Promise<boolean> {
+  async renewSubscription(subscriptionId: string): Promise<Subscription> {
     try {
-      const subscription = await this.getActiveSubscription(userId);
-      return !!subscription;
+      const subscription = await Subscription.findById(subscriptionId);
+      if (!subscription) {
+        throw new AppError('Abonnement non trouvé', 404);
+      }
+
+      subscription.status = SubscriptionStatus.ACTIVE;
+      subscription.startDate = new Date();
+      subscription.endDate = this.calculateEndDate(new Date());
+      subscription.renewedAt = new Date();
+      await subscription.save();
+
+      return subscription;
     } catch (error) {
-      logger.error('Erreur lors de la vérification de l\'accès:', error);
-      return false;
+      logger.error('Erreur lors du renouvellement de l\'abonnement:', error);
+      throw new AppError('Erreur lors du renouvellement de l\'abonnement', 500);
     }
+  }
+
+  private calculateEndDate(startDate: Date): Date {
+    const endDate = new Date(startDate);
+    endDate.setMonth(endDate.getMonth() + 1);
+    return endDate;
   }
 } 

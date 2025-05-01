@@ -1,71 +1,65 @@
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
-import pool from './config/database';
+import helmet from 'helmet';
+import compression from 'compression';
+import mongoose from 'mongoose';
+import { config } from './config';
 import { errorHandler } from './middleware/errorHandler';
+import { rateLimiter } from './middleware/rateLimiter';
 import authRoutes from './routes/auth';
 import userRoutes from './routes/user';
-import jobRoutes from './routes/job';
+import formationRoutes from './routes/formation';
 import subscriptionRoutes from './routes/subscription';
-import marketplaceRoutes from './routes/marketplace';
-import { forumRouter } from './routes/forum';
-import cartRoutes from './routes/cart';
-import formationRoutes from './routes/formations';
-import { healthRouter } from './routes/health';
-import { logger } from './utils/logger';
-
-dotenv.config();
+import healthRoutes from './routes/health';
 
 const app = express();
-const port = process.env.PORT || 5000;
 
-// Middleware
+// Middleware de sécurité
+app.use(helmet());
 app.use(cors());
+app.use(compression());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(rateLimiter);
 
 // Routes
-app.use('/api/health', healthRouter);
+app.use('/api/health', healthRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/jobs', jobRoutes);
-app.use('/api/subscriptions', subscriptionRoutes);
-app.use('/api/marketplace', marketplaceRoutes);
-app.use('/api/forum', forumRouter);
-app.use('/api/cart', cartRoutes);
 app.use('/api/formations', formationRoutes);
+app.use('/api/subscriptions', subscriptionRoutes);
 
-// Error handling
+// Middleware de gestion d'erreurs
 app.use(errorHandler);
 
-// Test database connection
-const testDbConnection = async () => {
-  try {
-    const client = await pool.connect();
-    logger.info('Connexion à PostgreSQL établie avec succès');
-    client.release();
-    return true;
-  } catch (error) {
-    logger.error('Erreur de connexion à PostgreSQL:', error);
-    return false;
-  }
-};
-
-// Start server
-const startServer = async () => {
-  try {
-    const isDbConnected = await testDbConnection();
-    if (!isDbConnected) {
-      throw new Error('Impossible de se connecter à la base de données');
-    }
-
+// Connexion à MongoDB
+mongoose.connect(config.mongoUri)
+  .then(() => {
+    console.log('Connecté à MongoDB');
+    const port = process.env.PORT || 3001;
     app.listen(port, () => {
-      logger.info(`Serveur démarré sur le port ${port}`);
+      console.log(`Serveur démarré sur le port ${port}`);
     });
-  } catch (error) {
-    logger.error('Erreur lors du démarrage du serveur:', error);
+  })
+  .catch((error) => {
+    console.error('Erreur de connexion à MongoDB:', error);
+    process.exit(1);
+  });
+
+// Gestion des erreurs non capturées
+process.on('unhandledRejection', (error: Error) => {
+  console.error('Erreur non gérée (Promise):', error);
+  // Ne pas arrêter le serveur en production
+  if (process.env.NODE_ENV !== 'production') {
     process.exit(1);
   }
-};
+});
 
-startServer(); 
+process.on('uncaughtException', (error: Error) => {
+  console.error('Exception non capturée:', error);
+  // Ne pas arrêter le serveur en production
+  if (process.env.NODE_ENV !== 'production') {
+    process.exit(1);
+  }
+});
+
+export default app; 

@@ -1,48 +1,50 @@
 import { Schema, model, Document } from 'mongoose';
 
-export enum SubscriptionStatus {
-  PENDING = 'pending',
-  ACTIVE = 'active',
-  EXPIRED = 'expired',
-  CANCELLED = 'cancelled'
-}
-
-export enum SubscriptionType {
-  BASIC = 'basic',
-  PREMIUM = 'premium',
-  ENTERPRISE = 'enterprise'
-}
-
 export interface ISubscription extends Document {
-  userId: string;
-  type: SubscriptionType;
-  status: SubscriptionStatus;
+  userId: Schema.Types.ObjectId;
+  planId: string;
+  status: string;
   startDate: Date;
   endDate: Date;
+  cancelledAt?: Date;
+  renewedAt?: Date;
   paymentId?: string;
-  amount: number;
-  currency: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-const subscriptionSchema = new Schema<ISubscription>({
-  userId: { type: String, required: true },
-  type: { 
-    type: String, 
-    enum: Object.values(SubscriptionType),
-    required: true 
+const subscriptionSchema = new Schema({
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   },
-  status: { 
-    type: String, 
-    enum: Object.values(SubscriptionStatus),
-    default: SubscriptionStatus.PENDING 
+  planId: {
+    type: String,
+    required: true
   },
-  startDate: { type: Date, default: Date.now },
-  endDate: { type: Date, required: true },
-  paymentId: { type: String },
-  amount: { type: Number, required: true },
-  currency: { type: String, required: true, default: 'XOF' }
+  status: {
+    type: String,
+    enum: ['active', 'inactive', 'pending', 'cancelled'],
+    default: 'pending'
+  },
+  startDate: {
+    type: Date,
+    required: true
+  },
+  endDate: {
+    type: Date,
+    required: true
+  },
+  cancelledAt: {
+    type: Date
+  },
+  renewedAt: {
+    type: Date
+  },
+  paymentId: {
+    type: String
+  }
 }, {
   timestamps: true
 });

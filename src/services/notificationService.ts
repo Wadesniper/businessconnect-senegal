@@ -1,8 +1,9 @@
 import { logger } from '../utils/logger';
 import { InAppNotificationService } from './inAppNotificationService';
 import nodemailer from 'nodemailer';
-import { User } from '../models/user';
+import { User } from '../models/User';
 import { config } from '../config';
+import { sendEmail } from '../utils/email';
 
 export type NotificationType = 
   | 'subscription_expiration' 
@@ -129,7 +130,65 @@ export class NotificationService {
     }
   }
 
-  // ... autres méthodes existantes ...
+  async sendWelcomeEmail(userId: string): Promise<void> {
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        throw new Error('Utilisateur non trouvé');
+      }
+
+      await sendEmail({
+        to: user.email,
+        subject: 'Bienvenue sur BusinessConnect Sénégal',
+        template: 'welcome',
+        context: {
+          name: user.firstName
+        }
+      });
+    } catch (error) {
+      logger.error('Erreur lors de l\'envoi de l\'email de bienvenue:', error);
+      throw error;
+    }
+  }
+
+  async sendPasswordResetEmail(email: string, resetToken: string): Promise<void> {
+    try {
+      const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
+
+      await sendEmail({
+        to: email,
+        subject: 'Réinitialisation de votre mot de passe',
+        template: 'resetPassword',
+        context: {
+          resetUrl
+        }
+      });
+    } catch (error) {
+      logger.error('Erreur lors de l\'envoi de l\'email de réinitialisation:', error);
+      throw error;
+    }
+  }
+
+  async sendSubscriptionConfirmation(userId: string): Promise<void> {
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        throw new Error('Utilisateur non trouvé');
+      }
+
+      await sendEmail({
+        to: user.email,
+        subject: 'Confirmation de votre abonnement',
+        template: 'subscriptionConfirmation',
+        context: {
+          name: user.firstName
+        }
+      });
+    } catch (error) {
+      logger.error('Erreur lors de l\'envoi de l\'email de confirmation d\'abonnement:', error);
+      throw error;
+    }
+  }
 
   private async sendEmail(to: string, subject: string, html: string, retries = 3): Promise<void> {
     let lastError;
