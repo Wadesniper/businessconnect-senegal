@@ -1,0 +1,1 @@
+web: cd businessconnect-senegal/server && npm start 
