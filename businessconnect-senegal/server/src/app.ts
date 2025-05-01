@@ -4,19 +4,33 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth';
 import webhookRoutes from './routes/webhook';
+import healthcheckRoutes from './routes/healthcheck';
 import { errorHandler } from './middleware/errorHandler';
 
 dotenv.config();
 
 const app = express();
 
+// Configuration CORS
+app.use(cors({
+  origin: [
+    process.env.CLIENT_URL || 'http://localhost:3000',
+    'https://businessconnect-senegal.vercel.app',
+    /\.vercel\.app$/
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 // Middleware
-app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/webhook', webhookRoutes);
+app.use('/api/webhooks', webhookRoutes);
+app.use('/api/healthcheck', healthcheckRoutes);
 
 // Error handling
 app.use(errorHandler);
@@ -36,3 +50,5 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+export default app;

@@ -1,7 +1,8 @@
 import React from 'react';
-import { Avatar, Progress, Tag, Typography } from 'antd';
+import { Avatar, Progress, Tag, Typography, Space, Rate } from 'antd';
 import { GithubOutlined, LinkedinOutlined, GlobalOutlined, MailOutlined, PhoneOutlined, EnvironmentOutlined } from '@ant-design/icons';
 import { CVData } from '../../types';
+import { formatDate } from '../../../../utils/dateUtils';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -100,18 +101,27 @@ const TechModernTemplate: React.FC<TechModernTemplateProps> = ({ data }) => {
           <Title level={4}>Expérience professionnelle</Title>
           {data.experience.map(exp => (
             <div key={exp.id} style={{ marginBottom: '20px' }}>
-              <Title level={5} style={{ marginBottom: '5px' }}>{exp.position}</Title>
+              <Title level={5} style={{ marginBottom: '5px' }}>{exp.title}</Title>
               <Text strong>{exp.company}</Text>
               <br />
               <Text type="secondary">
-                {new Date(exp.startDate).toLocaleDateString()} - 
-                {exp.current ? 'Présent' : new Date(exp.endDate).toLocaleDateString()}
+                {formatDate(exp.startDate)} - {exp.current ? 'Présent' : formatDate(exp.endDate || '')}
               </Text>
               <ul style={{ marginTop: '10px' }}>
                 {exp.description.map((desc, index) => (
                   <li key={index}>{desc}</li>
                 ))}
               </ul>
+              {exp.achievements && exp.achievements.length > 0 && (
+                <>
+                  <Text strong>Réalisations :</Text>
+                  <ul>
+                    {exp.achievements.map((achievement, index) => (
+                      <li key={index}>{achievement}</li>
+                    ))}
+                  </ul>
+                </>
+              )}
             </div>
           ))}
         </div>
@@ -120,14 +130,28 @@ const TechModernTemplate: React.FC<TechModernTemplateProps> = ({ data }) => {
           <Title level={4}>Formation</Title>
           {data.education.map(edu => (
             <div key={edu.id} style={{ marginBottom: '20px' }}>
-              <Title level={5} style={{ marginBottom: '5px' }}>{edu.degree}</Title>
+              <Title level={5} style={{ marginBottom: '5px' }}>
+                {edu.degree}
+                {edu.field && <span> en {edu.field}</span>}
+              </Title>
               <Text strong>{edu.school}</Text>
               <br />
               <Text type="secondary">
-                {new Date(edu.startDate).toLocaleDateString()} - 
-                {new Date(edu.endDate).toLocaleDateString()}
+                {formatDate(edu.startDate)} - {formatDate(edu.endDate)}
               </Text>
-              <Paragraph>{edu.description}</Paragraph>
+              {edu.description && (
+                <p style={{ marginTop: '10px' }}>{edu.description}</p>
+              )}
+              {edu.achievements && edu.achievements.length > 0 && (
+                <>
+                  <Text strong>Réalisations :</Text>
+                  <ul>
+                    {edu.achievements.map((achievement, index) => (
+                      <li key={index}>{achievement}</li>
+                    ))}
+                  </ul>
+                </>
+              )}
             </div>
           ))}
         </div>

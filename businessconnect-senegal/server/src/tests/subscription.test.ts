@@ -2,7 +2,13 @@ import request from 'supertest';
 import app from '../app';
 import { SubscriptionService } from '../services/subscriptionService';
 import jwt from 'jsonwebtoken';
-import { describe, expect, it, beforeAll } from '@jest/globals';
+import { describe, expect, it, beforeAll, afterAll } from '@jest/globals';
+import { Pool } from 'pg';
+import { config } from '../config';
+
+const pool = new Pool({
+  connectionString: config.DATABASE_URL
+});
 
 describe('Routes d\'abonnement', () => {
   let authToken: string;
@@ -14,6 +20,29 @@ describe('Routes d\'abonnement', () => {
       { userId, email: 'test@example.com' },
       process.env.JWT_SECRET || 'test_secret'
     );
+  });
+
+  beforeAll(async () => {
+    // Setup test database
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS subscriptions (
+        id UUID PRIMARY KEY,
+        user_id UUID NOT NULL,
+        type VARCHAR(50) NOT NULL,
+        status VARCHAR(50) NOT NULL,
+        payment_id UUID,
+        start_date TIMESTAMP NOT NULL,
+        end_date TIMESTAMP NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+  });
+
+  afterAll(async () => {
+    // Cleanup
+    await pool.query('DROP TABLE IF EXISTS subscriptions');
+    await pool.end();
   });
 
   describe('GET /:userId', () => {
@@ -122,5 +151,28 @@ describe('Routes d\'abonnement', () => {
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('status');
     });
+  });
+});
+
+describe('Subscription Service', () => {
+  test('should create a new subscription', async () => {
+    const subscriptionService = new SubscriptionService();
+    const subscription = await subscriptionService.createSubscription({
+      userId: '123e4567-e89b-12d3-a456-426614174000',
+      type: 'etudiant',
+      status: 'pending'
+    });
+
+    expect(subscription).toBeDefined();
+    expect(subscription.type).toBe('etudiant');
+    expect(subscription.status).toBe('pending');
+  });
+
+  test('should get active subscription', async () => {
+    const subscriptionService = new SubscriptionService();
+    const userId = '123e4567-e89b-12d3-a456-426614174000';
+    
+    const subscription = await subscriptionService.getActiveSubscription(userId);
+    expect(subscription).toBeDefined();
   });
 }); 

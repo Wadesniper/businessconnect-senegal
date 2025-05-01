@@ -1,91 +1,90 @@
-import { api } from './api';
+import { JobData, JobApplication, JobAlert, SavedJob } from '../types/job';
+import { localStorageService } from './localStorageService';
 
-export interface JobOffer {
-  id: string;
-  title: string;
-  company: string;
-  location: string;
-  sector: string;
-  type: string;
-  description: string;
-  requirements: string[];
-  contactEmail: string;
-  contactPhone?: string;
-  keywords: string[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface JobFilters {
-  sector?: string;
-  type?: string;
-  search?: string;
-}
-
-export const jobService = {
-  async getJobOffers(filters?: JobFilters): Promise<JobOffer[]> {
-    try {
-      const response = await api.get('/jobs', { params: filters });
-      return response.data;
-    } catch (error) {
-      console.error('Erreur lors de la récupération des offres:', error);
-      throw error;
-    }
-  },
-
-  async getJobOffer(id: string): Promise<JobOffer | null> {
-    try {
-      const response = await api.get(`/jobs/${id}`);
-      return response.data;
-    } catch (error) {
-      console.error('Erreur lors de la récupération de l\'offre:', error);
-      return null;
-    }
-  },
-
-  async createJobOffer(jobData: Omit<JobOffer, 'id' | 'createdAt' | 'updatedAt'>): Promise<JobOffer | null> {
-    try {
-      const response = await api.post('/jobs', jobData);
-      return response.data;
-    } catch (error) {
-      console.error('Erreur lors de la création de l\'offre:', error);
-      throw error;
-    }
-  },
-
-  async updateJobOffer(id: string, jobData: Partial<JobOffer>): Promise<JobOffer | null> {
-    try {
-      const response = await api.put(`/jobs/${id}`, jobData);
-      return response.data;
-    } catch (error) {
-      console.error('Erreur lors de la mise à jour de l\'offre:', error);
-      throw error;
-    }
-  },
-
-  async deleteJobOffer(id: string): Promise<boolean> {
-    try {
-      await api.delete(`/jobs/${id}`);
-      return true;
-    } catch (error) {
-      console.error('Erreur lors de la suppression de l\'offre:', error);
-      return false;
-    }
-  },
-
-  async applyToJob(jobId: string, cvFile: File): Promise<boolean> {
-    try {
-      const formData = new FormData();
-      formData.append('cv', cvFile);
-      await api.post(`/jobs/${jobId}/apply`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      return true;
-    } catch (error) {
-      console.error('Erreur lors de la candidature:', error);
-      return false;
-    }
+class JobService {
+  // Gestion des offres d'emploi
+  async getJobOffers(filters?: any): Promise<JobData[]> {
+    // Cette fonction sera mise à jour avec les vraies offres d'emploi
+    return [];
   }
-}; 
+
+  async getJobOffer(id: string): Promise<JobData | null> {
+    const jobs = await this.getJobOffers();
+    return jobs.find(job => job.id === id) || null;
+  }
+
+  // Gestion des candidatures
+  async getUserApplications(userId: string): Promise<JobApplication[]> {
+    return localStorageService.getJobApplications(userId);
+  }
+
+  async applyToJob(userId: string, jobId: string, application: Partial<JobApplication>): Promise<JobApplication> {
+    const job = await this.getJobOffer(jobId);
+    if (!job) {
+      throw new Error('Offre d\'emploi non trouvée');
+    }
+
+    const newApplication: JobApplication = {
+      id: localStorageService.generateId(),
+      userId,
+      jobId,
+      jobTitle: job.title,
+      company: job.company,
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      ...application
+    };
+
+    localStorageService.saveJobApplication(newApplication);
+    return newApplication;
+  }
+
+  // Gestion des offres sauvegardées
+  async getSavedJobs(userId: string): Promise<SavedJob[]> {
+    return localStorageService.getSavedJobs(userId);
+  }
+
+  async saveJob(userId: string, jobId: string): Promise<SavedJob> {
+    const job = await this.getJobOffer(jobId);
+    if (!job) {
+      throw new Error('Offre d\'emploi non trouvée');
+    }
+
+    const savedJob: SavedJob = {
+      id: localStorageService.generateId(),
+      userId,
+      jobId,
+      job,
+      savedAt: new Date().toISOString()
+    };
+
+    localStorageService.saveJobToFavorites(savedJob);
+    return savedJob;
+  }
+
+  // Gestion des alertes emploi
+  async getJobAlerts(userId: string): Promise<JobAlert[]> {
+    return localStorageService.getJobAlerts(userId);
+  }
+
+  async createJobAlert(userId: string, alert: Partial<JobAlert>): Promise<JobAlert> {
+    const newAlert: JobAlert = {
+      id: localStorageService.generateId(),
+      userId,
+      keywords: alert.keywords || [],
+      locations: alert.locations || [],
+      jobTypes: alert.jobTypes || [],
+      salary: alert.salary,
+      frequency: alert.frequency || 'daily',
+      active: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    localStorageService.saveJobAlert(newAlert);
+    return newAlert;
+  }
+}
+
+export const jobService = new JobService(); 

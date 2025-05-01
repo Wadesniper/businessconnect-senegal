@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Button, Tag, Space, Input, Select, message } from 'antd';
+import { Card, Button, Tag, Space, Input, Select, message, Modal, Typography, Divider } from 'antd';
 import { SearchOutlined, EyeOutlined, SendOutlined } from '@ant-design/icons';
 import { jobService, JobOffer } from '../services/jobService';
 import { authService } from '../services/authService';
 
 const { Search } = Input;
 const { Option } = Select;
+const { Title, Paragraph } = Typography;
 
 const sectors = [
   'Informatique',
@@ -134,49 +135,52 @@ export const JobList: React.FC = () => {
         ))}
       </div>
 
-      {/* Modal de détails */}
-      {selectedJob && (
-        <Card
-          title="Détails de l'offre"
-          visible={isModalVisible}
-          onCancel={() => setIsModalVisible(false)}
-          footer={[
-            <Button key="close" onClick={() => setIsModalVisible(false)}>
-              Fermer
-            </Button>,
-            <Button
-              key="apply"
-              type="primary"
-              onClick={() => handleApply(selectedJob.id)}
-            >
-              Postuler
-            </Button>
-          ]}
-        >
-          <h2>{selectedJob.title}</h2>
-          {selectedJob.company && <p><strong>Entreprise:</strong> {selectedJob.company}</p>}
-          <p><strong>Lieu:</strong> {selectedJob.location}</p>
-          <p><strong>Type:</strong> <Tag>{selectedJob.type}</Tag></p>
-          <p><strong>Secteur:</strong> <Tag color="green">{selectedJob.sector}</Tag></p>
+      <Modal
+        title="Détails de l'offre"
+        open={isModalVisible}
+        onCancel={() => setIsModalVisible(false)}
+        footer={[
+          <Button key="close" onClick={() => setIsModalVisible(false)}>
+            Fermer
+          </Button>,
+          <Button
+            key="apply"
+            type="primary"
+            onClick={() => handleApply(selectedJob!.id)}
+          >
+            Postuler
+          </Button>
+        ]}
+      >
+        {selectedJob && (
           <div>
-            <h3>Description</h3>
-            <p>{selectedJob.description}</p>
-          </div>
-          <div>
-            <h3>Prérequis</h3>
+            <Title level={4}>{selectedJob.title}</Title>
+            <Paragraph>
+              <strong>Entreprise:</strong> {selectedJob.company}
+            </Paragraph>
+            <Paragraph>
+              <strong>Lieu:</strong> {selectedJob.location}
+            </Paragraph>
+            <Paragraph>
+              <strong>Type:</strong> {selectedJob.type}
+            </Paragraph>
+            {selectedJob.salary && (
+              <Paragraph>
+                <strong>Salaire:</strong> {selectedJob.salary}
+              </Paragraph>
+            )}
+            <Divider />
+            <Title level={5}>Description</Title>
+            <Paragraph>{selectedJob.description}</Paragraph>
+            <Title level={5}>Prérequis</Title>
             <ul>
               {selectedJob.requirements.map((req, index) => (
                 <li key={index}>{req}</li>
               ))}
             </ul>
           </div>
-          <div>
-            <h3>Contact</h3>
-            {selectedJob.contactEmail && <p><strong>Email:</strong> {selectedJob.contactEmail}</p>}
-            {selectedJob.contactPhone && <p><strong>Téléphone:</strong> {selectedJob.contactPhone}</p>}
-          </div>
-        </Card>
-      )}
+        )}
+      </Modal>
     </div>
   );
 }; 

@@ -231,13 +231,15 @@ export class SubscriptionService {
       status: data.status,
       paymentId: data.paymentId,
       startDate: data.startDate || now,
-      endDate: data.endDate || new Date(now.setMonth(now.getMonth() + 1))
+      endDate: data.endDate || new Date(now.setMonth(now.getMonth() + 1)),
+      createdAt: now,
+      updatedAt: now
     };
 
     const query = `
       INSERT INTO subscriptions (
-        id, user_id, type, status, payment_id, start_date, end_date
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7)
+        id, user_id, type, status, payment_id, start_date, end_date, created_at, updated_at
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
       RETURNING *
     `;
 
@@ -248,7 +250,9 @@ export class SubscriptionService {
       subscription.status,
       subscription.paymentId,
       subscription.startDate,
-      subscription.endDate
+      subscription.endDate,
+      subscription.createdAt,
+      subscription.updatedAt
     ];
 
     try {
@@ -342,16 +346,11 @@ export class SubscriptionService {
   }
 
   async cancelSubscription(subscriptionId: string): Promise<void> {
-    await this.updateSubscriptionStatus(subscriptionId, 'cancelled');
+    await this.updateSubscriptionStatus(subscriptionId, 'expired');
   }
 }
 
-// Créer une instance du NotificationService et PayTech
-const notificationService = new NotificationService();
-const payTechService = new PayTech(
-  process.env.PAYTECH_API_KEY || '',
-  process.env.PAYTECH_WEBHOOK_SECRET
-);
-
-// Exporter l'instance du SubscriptionService
-export const subscriptionService = new SubscriptionService(notificationService, payTechService); 
+export const subscriptionService = new SubscriptionService(
+  new NotificationService(),
+  new PayTech(config.PAYTECH_API_KEY, config.PAYTECH_WEBHOOK_SECRET)
+); 

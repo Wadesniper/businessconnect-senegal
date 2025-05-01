@@ -47,7 +47,7 @@ export const marketplaceService = {
     }
   },
 
-  async createItem(itemData: Omit<MarketplaceItem, 'id' | 'createdAt' | 'updatedAt' | 'status'>): Promise<MarketplaceItem | null> {
+  async createItem(itemData: Omit<MarketplaceItem, 'id' | 'createdAt' | 'updatedAt' | 'status'>): Promise<MarketplaceItem> {
     try {
       const response = await api.post('/marketplace', itemData);
       return response.data;
@@ -57,7 +57,7 @@ export const marketplaceService = {
     }
   },
 
-  async updateItem(id: string, itemData: Partial<MarketplaceItem>): Promise<MarketplaceItem | null> {
+  async updateItem(id: string, itemData: Partial<MarketplaceItem>): Promise<MarketplaceItem> {
     try {
       const response = await api.put(`/marketplace/${id}`, itemData);
       return response.data;
@@ -67,13 +67,12 @@ export const marketplaceService = {
     }
   },
 
-  async deleteItem(id: string): Promise<boolean> {
+  async deleteItem(id: string): Promise<void> {
     try {
       await api.delete(`/marketplace/${id}`);
-      return true;
     } catch (error) {
       console.error('Erreur lors de la suppression de l\'annonce:', error);
-      return false;
+      throw error;
     }
   },
 
@@ -83,8 +82,8 @@ export const marketplaceService = {
       formData.append('image', file);
       const response = await api.post('/marketplace/upload', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          'Content-Type': 'multipart/form-data',
+        },
       });
       return response.data.url;
     } catch (error) {
