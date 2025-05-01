@@ -1,6 +1,7 @@
 import { Formation, Module } from '../models/formation';
 import { logger } from '../utils/logger';
 import { FormationFilters, FormationInput, IFormation, ModuleInput } from '../types/formation';
+import { Types } from 'mongoose';
 
 export class FormationService {
   async getAllFormations(filters?: FormationFilters): Promise<IFormation[]> {
@@ -17,10 +18,11 @@ export class FormationService {
         if (filters.instructorId) query = query.where('instructor').equals(filters.instructorId);
       }
 
-      return await query
+      const formations = await query
         .populate('instructor', 'name email avatar')
         .sort('-createdAt')
-        .exec();
+        .lean();
+      return formations as unknown as IFormation[];
     } catch (error) {
       logger.error('Erreur lors de la récupération des formations:', error);
       throw error;
@@ -29,53 +31,49 @@ export class FormationService {
 
   async getFormationById(id: string): Promise<IFormation> {
     try {
-      const formation = await Formation.findById(id)
-        .populate('instructor', 'name email avatar')
-        .populate('enrolledStudents', 'name email avatar')
-        .exec();
-
+      const formation = await Formation.findById(id).lean();
       if (!formation) {
         throw new Error('Formation non trouvée');
       }
-
-      return formation;
+      return formation as unknown as IFormation;
     } catch (error) {
       logger.error(`Erreur lors de la récupération de la formation ${id}:`, error);
       throw error;
     }
   }
 
-  async createFormation(formationData: FormationInput): Promise<IFormation> {
+  async createFormation(formationData: FormationInput, instructorId: string): Promise<IFormation> {
     try {
       const formation = new Formation({
         ...formationData,
+        instructor: new Types.ObjectId(instructorId),
+        status: formationData.status || 'draft',
         rating: 0,
         numberOfRatings: 0,
-        enrolledStudents: [],
-        status: formationData.status || 'draft'
+        enrolledStudents: []
       });
-
-      await formation.save();
-      return formation;
+      
+      const savedFormation = await formation.save();
+      return savedFormation.toObject() as unknown as IFormation;
     } catch (error) {
       logger.error('Erreur lors de la création de la formation:', error);
       throw error;
     }
   }
 
-  async updateFormation(id: string, updateData: Partial<FormationInput>): Promise<IFormation> {
+  async updateFormation(id: string, formationData: Partial<FormationInput>): Promise<IFormation> {
     try {
       const formation = await Formation.findByIdAndUpdate(
         id,
-        { $set: updateData },
+        { ...formationData, updatedAt: new Date() },
         { new: true }
-      ).exec();
+      ).lean();
 
       if (!formation) {
         throw new Error('Formation non trouvée');
       }
 
-      return formation;
+      return formation as unknown as IFormation;
     } catch (error) {
       logger.error(`Erreur lors de la mise à jour de la formation ${id}:`, error);
       throw error;
@@ -222,4 +220,6 @@ export class FormationService {
       throw error;
     }
   }
-} 
+}
+
+export const formationService = new FormationService(); 

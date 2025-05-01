@@ -119,6 +119,16 @@ export class CVService {
     }
   }
 
+  async generateCV(cvData: any): Promise<string> {
+    try {
+      const pdfBuffer = await this.generatePDF(cvData);
+      return pdfBuffer.toString('base64');
+    } catch (error) {
+      logger.error('Erreur lors de la génération du CV:', error);
+      throw new Error('Échec de la génération du CV');
+    }
+  }
+
   private async applyTemplate(doc: PDFKit.PDFDocument, cv: any) {
     switch (cv.template) {
       case 'modern':
