@@ -1,10 +1,22 @@
 import { Request, Response } from 'express';
 import { SubscriptionService } from '../services/subscriptionService';
 import { logger } from '../utils/logger';
-import { PaymentData, SubscriptionType } from '../types/subscription';
+import { PaymentData, SubscriptionType, PayTechCallbackData } from '../types/subscription';
 import { PayTechConfig } from '../config/paytech';
+import { NotificationService, NotificationConfig } from '../services/notificationService';
+import { PayTech } from '../services/paytechService';
 
-const subscriptionService = new SubscriptionService();
+// Initialisation des services
+const notificationConfig: NotificationConfig = {
+  daysBeforeExpiration: [7, 3, 1]
+};
+const notificationService = new NotificationService(notificationConfig);
+const payTechService = new PayTech(
+  process.env.PAYTECH_API_KEY || '',
+  process.env.PAYTECH_WEBHOOK_SECRET,
+  process.env.PAYTECH_API_URL || 'https://api.paytech.sn'
+);
+const subscriptionService = new SubscriptionService(notificationService, payTechService);
 
 const SUBSCRIPTION_PRICES: Record<SubscriptionType, number> = {
   etudiant: 1000,    // 1,000 FCFA / mois
@@ -26,7 +38,15 @@ export const subscriptionController = {
         });
       }
 
-      const subscription = await subscriptionService.createSubscription(userId, type as SubscriptionType);
+      const subscription = await subscriptionService.createSubscription({
+        userId,
+        type: type as SubscriptionType,
+        status: 'pending',
+        paymentId: '',
+        startDate: new Date(),
+        endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 jours
+      });
+
       logger.info(`Nouvel abonnement créé pour l'utilisateur ${userId}`);
       
       res.status(201).json({
@@ -87,17 +107,16 @@ export const subscriptionController = {
         });
       }
 
-      const updatedSubscription = await subscriptionService.updateSubscriptionStatus(
-        userId, 
-        status as 'active' | 'expired' | 'pending'
-      );
-      
-      if (!updatedSubscription) {
+      const subscription = await subscriptionService.getSubscription(userId);
+      if (!subscription) {
         return res.status(404).json({
           success: false,
           message: 'Abonnement non trouvé'
         });
       }
+
+      await subscriptionService.updateSubscriptionStatus(subscription.id, status);
+      const updatedSubscription = await subscriptionService.getSubscription(userId);
 
       logger.info(`Statut de l'abonnement mis à jour pour l'utilisateur ${userId}`);
 
@@ -132,34 +151,11 @@ export const subscriptionController = {
         });
       }
 
-      const amount = SUBSCRIPTION_PRICES[subscriptionType as SubscriptionType];
-      
-      const paymentData: PaymentData = {
-        amount,
-        description: `Abonnement ${subscriptionType} BusinessConnect`,
-        item_name: `Abonnement ${subscriptionType}`,
-        item_price: amount,
-        currency: "XOF",
-        ref_command: `SUB-${userId}-${Date.now()}`,
-        command_name: `Abonnement ${subscriptionType} BusinessConnect Senegal`,
-        customField: JSON.stringify({
-          userId,
-          subscriptionType,
-          timestamp: Date.now()
-        })
-      };
-
-      const paymentResponse = await PayTechConfig.initiatePayment(paymentData);
-      logger.info('Paiement initié avec PayTech', { userId, subscriptionType, amount });
-
-      await subscriptionService.createSubscription(userId, subscriptionType as SubscriptionType);
+      const paymentInitiation = await subscriptionService.initiatePayment(userId, subscriptionType as SubscriptionType);
 
       res.status(200).json({
         success: true,
-        data: {
-          redirectUrl: paymentResponse.redirectUrl,
-          paymentId: paymentResponse.paymentId
-        }
+        data: paymentInitiation
       });
     } catch (error) {
       logger.error('Erreur lors de l\'initiation du paiement:', error);
@@ -178,7 +174,10 @@ export const subscriptionController = {
         ref_command,
         payment_method,
         api_key_sha256,
-        api_secret_sha256
+        api_secret_sha256,
+        payment_id,
+        amount,
+        transaction_id
       } = req.body;
 
       const my_api_key = process.env.PAYTECH_API_KEY;
@@ -195,25 +194,21 @@ export const subscriptionController = {
       }
 
       const customData = JSON.parse(custom_field);
-      const { userId, subscriptionType } = customData;
 
-      if (type_event === 'SUCCESS_PAYMENT') {
-        await subscriptionService.updateSubscriptionStatus(userId, 'active');
-        logger.info(`Paiement réussi pour l'utilisateur ${userId}`);
+      const callbackData: PayTechCallbackData = {
+        paymentId: payment_id,
+        amount: amount,
+        status: type_event === 'SUCCESS_PAYMENT' ? 'completed' : 'failed',
+        customField: custom_field,
+        transactionId: transaction_id
+      };
 
-        res.json({
-          success: true,
-          message: 'Paiement traité avec succès'
-        });
-      } else {
-        await subscriptionService.updateSubscriptionStatus(userId, 'expired');
-        logger.warn(`Échec du paiement pour l'utilisateur ${userId}`);
+      await subscriptionService.handlePaymentCallback(callbackData);
 
-        res.json({
-          success: false,
-          message: 'Échec du paiement'
-        });
-      }
+      res.status(200).json({
+        success: true,
+        message: 'Callback traité avec succès'
+      });
     } catch (error) {
       logger.error('Erreur lors du traitement du callback:', error);
       res.status(500).json({
@@ -226,8 +221,16 @@ export const subscriptionController = {
   async getPaymentHistory(req: Request, res: Response) {
     try {
       const { userId } = req.params;
+
+      if (!userId) {
+        return res.status(400).json({
+          success: false,
+          message: 'UserId est requis'
+        });
+      }
+
       const history = await subscriptionService.getPaymentHistory(userId);
-      
+
       res.json({
         success: true,
         data: history
@@ -236,7 +239,7 @@ export const subscriptionController = {
       logger.error('Erreur lors de la récupération de l\'historique des paiements:', error);
       res.status(500).json({
         success: false,
-        message: 'Erreur lors de la récupération de l\'historique'
+        message: 'Erreur lors de la récupération de l\'historique des paiements'
       });
     }
   },
@@ -285,22 +288,12 @@ export const subscriptionController = {
         });
       }
 
-      const isValid = await subscriptionService.checkSubscriptionStatus(userId);
-      const subscription = await subscriptionService.getSubscription(userId);
-
-      if (!subscription) {
-        return res.status(404).json({
-          success: false,
-          message: 'Abonnement non trouvé'
-        });
-      }
+      const isActive = await subscriptionService.checkSubscriptionStatus(userId);
 
       res.json({
         success: true,
         data: {
-          status: subscription.status,
-          isValid,
-          endDate: subscription.endDate
+          isActive
         }
       });
     } catch (error) {

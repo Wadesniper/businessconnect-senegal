@@ -4,7 +4,7 @@ import path from 'path';
 // Charger les variables d'environnement
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
-interface Config {
+export interface Config {
   NODE_ENV: string;
   PORT: number;
   MONGODB_URI: string;
@@ -12,7 +12,7 @@ interface Config {
   JWT_EXPIRES_IN: string;
   PAYTECH_API_KEY: string;
   PAYTECH_WEBHOOK_SECRET: string;
-  PAYTECH_BASE_URL?: string;
+  PAYTECH_BASE_URL: string;
   
   // Configuration SMTP
   SMTP_HOST: string;
@@ -29,13 +29,13 @@ interface Config {
 
 export const config: Config = {
   NODE_ENV: process.env.NODE_ENV || 'development',
-  PORT: parseInt(process.env.PORT || '3000', 10),
+  PORT: parseInt(process.env.PORT || '5000', 10),
   MONGODB_URI: process.env.MONGODB_URI || 'mongodb://localhost:27017/businessconnect',
   JWT_SECRET: process.env.JWT_SECRET || 'your-secret-key',
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '1d',
   PAYTECH_API_KEY: process.env.PAYTECH_API_KEY || '',
   PAYTECH_WEBHOOK_SECRET: process.env.PAYTECH_WEBHOOK_SECRET || '',
-  PAYTECH_BASE_URL: process.env.PAYTECH_BASE_URL,
+  PAYTECH_BASE_URL: process.env.PAYTECH_BASE_URL || 'https://paytech.sn',
 
   // Configuration SMTP
   SMTP_HOST: process.env.SMTP_HOST || 'smtp.gmail.com',

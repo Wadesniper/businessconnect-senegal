@@ -7,7 +7,7 @@ import Home from './pages/Home';
 import Dashboard from './components/Dashboard';
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
-import SubscriptionPlans from './components/SubscriptionPlans';
+import SubscriptionPage from './pages/subscription';
 import PaymentSuccess from './pages/payment/PaymentSuccess';
 import PaymentCancel from './pages/payment/PaymentCancel';
 import PrivateRoute from './components/PrivateRoute';
@@ -77,7 +77,7 @@ const App: React.FC = () => {
               {/* Authentification */}
               <Route path="/login" element={<LoginForm />} />
               <Route path="/register" element={<RegisterForm />} />
-              <Route path="/subscription" element={<SubscriptionPlans />} />
+              <Route path="/subscription" element={<SubscriptionPage />} />
               
               {/* Routes protégées */}
               <Route 

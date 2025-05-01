@@ -8,7 +8,10 @@ import userRoutes from './routes/user';
 import jobRoutes from './routes/job';
 import subscriptionRoutes from './routes/subscription';
 import marketplaceRoutes from './routes/marketplace';
-import forumRoutes from './routes/forum';
+import { forumRouter } from './routes/forum';
+import cartRoutes from './routes/cart';
+import formationRoutes from './routes/formations';
+import { healthRouter } from './routes/health';
 import { logger } from './utils/logger';
 
 dotenv.config();
@@ -22,12 +25,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
+app.use('/api/health', healthRouter);
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/marketplace', marketplaceRoutes);
-app.use('/api/forum', forumRoutes);
+app.use('/api/forum', forumRouter);
+app.use('/api/cart', cartRoutes);
+app.use('/api/formations', formationRoutes);
 
 // Error handling
 app.use(errorHandler);

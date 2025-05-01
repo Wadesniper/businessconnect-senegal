@@ -5,8 +5,8 @@ Plateforme de mise en relation professionnelle et de services business au Séné
 ## Technologies utilisées
 
 - **Backend**: Node.js, Express, TypeScript, PostgreSQL
-- **Frontend**: React, Next.js, TypeScript
-- **Déploiement**: Railway (Backend), Vercel (Frontend)
+- **Frontend**: React, TypeScript
+- **Déploiement**: Vercel (Frontend), À définir (Backend)
 
 ## Fonctionnalités principales
 
