@@ -10,27 +10,27 @@ export interface NotificationConfig {
   daysBeforeExpiration: number[];  // Par exemple [7, 3, 1] pour notifier 7, 3 et 1 jours avant
 }
 
+const transporter = nodemailer.createTransport({
+  host: config.SMTP_HOST,
+  port: config.SMTP_PORT,
+  secure: config.SMTP_SECURE,
+  auth: {
+    user: config.SMTP_USER,
+    pass: config.SMTP_PASSWORD
+  }
+});
+
 export class NotificationService {
   private config: NotificationConfig = {
     daysBeforeExpiration: [7, 3, 1]  // Configuration par défaut
   };
   public inAppNotificationService: InAppNotificationService;
-  private transporter: nodemailer.Transporter;
 
   constructor(config?: NotificationConfig) {
     if (config) {
       this.config = config;
     }
     this.inAppNotificationService = new InAppNotificationService();
-    this.transporter = nodemailer.createTransport({
-      host: config.SMTP_HOST,
-      port: config.SMTP_PORT,
-      secure: config.SMTP_SECURE,
-      auth: {
-        user: config.SMTP_USER,
-        pass: config.SMTP_PASSWORD
-      }
-    });
   }
 
   async checkAndSendExpirationNotifications(subscription: {
@@ -95,10 +95,38 @@ export class NotificationService {
     }
   }
 
+  private async sendEmail(to: string, subject: string, html: string, retries = 3): Promise<void> {
+    let lastError;
+    
+    for (let attempt = 1; attempt <= retries; attempt++) {
+      try {
+        await transporter.sendMail({
+          from: config.SMTP_FROM,
+          to,
+          subject,
+          html
+        });
+        return;
+      } catch (error) {
+        lastError = error;
+        logger.warn(`Tentative ${attempt}/${retries} d'envoi d'email échouée:`, error);
+        
+        if (attempt < retries) {
+          await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+        }
+      }
+    }
+    
+    logger.error('Échec de l\'envoi d\'email après plusieurs tentatives:', lastError);
+    throw lastError;
+  }
+
   async sendPaymentSuccessNotification(userId: string): Promise<void> {
     try {
       const title = 'Paiement réussi';
       const message = 'Votre paiement a été traité avec succès. Votre abonnement est maintenant actif.';
+      
+      // Notification in-app
       await this.inAppNotificationService.createNotification(
         userId,
         'payment_success',
@@ -106,9 +134,26 @@ export class NotificationService {
         message,
         { action: 'subscription_activated' }
       );
-      logger.info('Notification de succès de paiement envoyée', { userId });
+
+      // Email notification
+      const user = await User.findById(userId);
+      if (user?.email) {
+        await this.sendEmail(
+          user.email,
+          'Confirmation de paiement - BusinessConnect Sénégal',
+          `
+            <h1>Paiement confirmé</h1>
+            <p>Votre paiement a été traité avec succès.</p>
+            <p>Votre abonnement est maintenant actif.</p>
+            <p>Merci de votre confiance !</p>
+          `
+        );
+      }
+
+      logger.info('Notifications de succès de paiement envoyées', { userId });
     } catch (error) {
-      logger.error('Erreur lors de l\'envoi de la notification de succès de paiement', { userId, error });
+      logger.error('Erreur lors de l\'envoi des notifications de succès de paiement', { userId, error });
+      throw error;
     }
   }
 
@@ -134,7 +179,7 @@ export class NotificationService {
       const user = await User.findById(userId);
       if (!user || !user.email) return;
 
-      await this.transporter.sendMail({
+      await transporter.sendMail({
         from: config.SMTP_FROM,
         to: user.email,
         subject: 'Nouvelle réponse à votre sujet',
@@ -158,7 +203,7 @@ export class NotificationService {
       for (const moderator of moderators) {
         if (!moderator.email) continue;
 
-        await this.transporter.sendMail({
+        await transporter.sendMail({
           from: config.SMTP_FROM,
           to: moderator.email,
           subject: 'Nouveau signalement de sujet',
@@ -183,7 +228,7 @@ export class NotificationService {
       for (const moderator of moderators) {
         if (!moderator.email) continue;
 
-        await this.transporter.sendMail({
+        await transporter.sendMail({
           from: config.SMTP_FROM,
           to: moderator.email,
           subject: 'Nouveau signalement de message',
@@ -206,7 +251,7 @@ export class NotificationService {
       const user = await User.findById(userId);
       if (!user || !user.email) return;
 
-      await this.transporter.sendMail({
+      await transporter.sendMail({
         from: config.SMTP_FROM,
         to: user.email,
         subject: 'Votre abonnement expire bientôt',
@@ -223,55 +268,11 @@ export class NotificationService {
     }
   }
 
-  async sendPaymentSuccessNotification(userId: string) {
-    try {
-      const user = await User.findById(userId);
-      if (!user || !user.email) return;
-
-      await this.transporter.sendMail({
-        from: config.SMTP_FROM,
-        to: user.email,
-        subject: 'Paiement réussi',
-        html: `
-          <h2>Paiement confirmé</h2>
-          <p>Votre paiement a été traité avec succès.</p>
-          <p>Votre abonnement est maintenant actif.</p>
-        `
-      });
-
-      logger.info(`Notification de paiement réussi envoyée à ${user.email}`);
-    } catch (error) {
-      logger.error('Erreur lors de l\'envoi de la notification de paiement réussi:', error);
-    }
-  }
-
-  async sendPaymentFailureNotification(userId: string) {
-    try {
-      const user = await User.findById(userId);
-      if (!user || !user.email) return;
-
-      await this.transporter.sendMail({
-        from: config.SMTP_FROM,
-        to: user.email,
-        subject: 'Échec du paiement',
-        html: `
-          <h2>Problème de paiement</h2>
-          <p>Votre paiement n'a pas pu être traité.</p>
-          <p>Veuillez réessayer ou contacter le support.</p>
-        `
-      });
-
-      logger.info(`Notification d'échec de paiement envoyée à ${user.email}`);
-    } catch (error) {
-      logger.error('Erreur lors de l\'envoi de la notification d\'échec de paiement:', error);
-    }
-  }
-
   async sendVerificationEmail(email: string, token: string): Promise<void> {
     const verificationUrl = `${config.CLIENT_URL}/verify-email/${token}`;
     
     try {
-      await this.transporter.sendMail({
+      await transporter.sendMail({
         from: config.SMTP_FROM,
         to: email,
         subject: 'Vérification de votre compte BusinessConnect Sénégal',
@@ -293,7 +294,7 @@ export class NotificationService {
     const resetUrl = `${config.CLIENT_URL}/reset-password/${token}`;
     
     try {
-      await this.transporter.sendMail({
+      await transporter.sendMail({
         from: config.SMTP_FROM,
         to: email,
         subject: 'Réinitialisation de votre mot de passe - BusinessConnect Sénégal',
@@ -315,7 +316,7 @@ export class NotificationService {
 
   async sendOrderNotification(email: string, orderDetails: any): Promise<void> {
     try {
-      await this.transporter.sendMail({
+      await transporter.sendMail({
         from: config.SMTP_FROM,
         to: email,
         subject: 'Confirmation de commande - BusinessConnect Sénégal',
@@ -337,7 +338,7 @@ export class NotificationService {
 
   async sendNewJobApplicationNotification(employerEmail: string, jobTitle: string, applicantName: string): Promise<void> {
     try {
-      await this.transporter.sendMail({
+      await transporter.sendMail({
         from: config.SMTP_FROM,
         to: employerEmail,
         subject: 'Nouvelle candidature - BusinessConnect Sénégal',
@@ -353,5 +354,61 @@ export class NotificationService {
       logger.error('Erreur lors de l\'envoi de la notification de candidature:', error);
       throw new Error('Erreur lors de l\'envoi de la notification');
     }
+  }
+
+  // Notification pour la création de compte
+  async sendWelcomeEmail(email: string, name: string) {
+    const mailOptions = {
+      from: config.SMTP_FROM,
+      to: email,
+      subject: 'Bienvenue sur BusinessConnect Sénégal',
+      html: `
+        <h1>Bienvenue ${name} !</h1>
+        <p>Nous sommes ravis de vous accueillir sur BusinessConnect Sénégal.</p>
+      `
+    };
+    await transporter.sendMail(mailOptions);
+  }
+
+  // Notification pour l'abonnement
+  async sendSubscriptionConfirmation(email: string, plan: string) {
+    const mailOptions = {
+      from: config.SMTP_FROM,
+      to: email,
+      subject: 'Confirmation d\'abonnement - BusinessConnect Sénégal',
+      html: `
+        <h1>Abonnement confirmé</h1>
+        <p>Votre abonnement au plan ${plan} a été activé avec succès.</p>
+      `
+    };
+    await transporter.sendMail(mailOptions);
+  }
+
+  // Notification pour le paiement
+  async sendPaymentConfirmation(email: string, amount: number) {
+    const mailOptions = {
+      from: config.SMTP_FROM,
+      to: email,
+      subject: 'Confirmation de paiement - BusinessConnect Sénégal',
+      html: `
+        <h1>Paiement reçu</h1>
+        <p>Nous avons bien reçu votre paiement de ${amount} FCFA.</p>
+      `
+    };
+    await transporter.sendMail(mailOptions);
+  }
+
+  // Notification pour l'expiration d'abonnement
+  async sendSubscriptionExpiration(email: string) {
+    const mailOptions = {
+      from: config.SMTP_FROM,
+      to: email,
+      subject: 'Expiration d\'abonnement - BusinessConnect Sénégal',
+      html: `
+        <h1>Votre abonnement expire bientôt</h1>
+        <p>N'oubliez pas de renouveler votre abonnement pour continuer à profiter de nos services.</p>
+      `
+    };
+    await transporter.sendMail(mailOptions);
   }
 } 

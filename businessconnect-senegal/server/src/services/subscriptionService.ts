@@ -4,7 +4,8 @@ import { NotificationService } from './notificationService';
 import { v4 as uuidv4 } from 'uuid';
 import { Subscription, SubscriptionType, SubscriptionStatus, PaymentInitiation, PayTechCallbackData } from '../types/subscription';
 import { logger } from '../utils/logger';
-import pool from '../config/database';
+import { config } from '../config';
+import { Pool } from 'pg';
 import { PayTech } from './paytechService';
 import { Schema, model } from 'mongoose';
 
@@ -35,6 +36,10 @@ const subscriptionSchema = new Schema<ISubscription>({
 
 const SubscriptionModel = model<ISubscription>('Subscription', subscriptionSchema);
 
+const pool = new Pool({
+  connectionString: config.DATABASE_URL
+});
+
 export class SubscriptionService {
   private notificationService: NotificationService;
   private payTechService: PayTech;
@@ -46,9 +51,9 @@ export class SubscriptionService {
 
   // Prix des abonnements en FCFA
   private readonly SUBSCRIPTION_PRICES = {
-    etudiant: 5000,    // 5,000 FCFA / mois
-    annonceur: 15000,   // 15,000 FCFA / mois
-    recruteur: 25000    // 25,000 FCFA / mois
+    etudiant: 1000,    // 1,000 FCFA / mois
+    annonceur: 5000,   // 5,000 FCFA / mois
+    recruteur: 9000    // 9,000 FCFA / mois
   };
 
   private getSubscriptionPrice(type: SubscriptionType): number {
@@ -56,36 +61,49 @@ export class SubscriptionService {
   }
 
   public async initiatePayment(userId: string, type: SubscriptionType): Promise<PaymentInitiation> {
-    const existingSubscription = await this.getActiveSubscription(userId);
-    if (existingSubscription) {
-      throw new Error('Utilisateur a déjà un abonnement actif');
-    }
-
-    const amount = this.getSubscriptionPrice(type);
-    const paymentData = await this.payTechService.createPaymentIntent({
-      amount,
-      currency: 'XOF',
-      customer: userId,
-      payment_method: 'card',
-      metadata: {
-        subscriptionType: type,
-        userId
+    try {
+      const existingSubscription = await this.getActiveSubscription(userId);
+      if (existingSubscription) {
+        throw new Error('Utilisateur a déjà un abonnement actif');
       }
-    });
 
-    await this.createSubscription({
-      userId,
-      type,
-      status: 'pending',
-      paymentId: paymentData.id,
-      startDate: new Date(),
-      endDate: this.calculateEndDate(new Date()),
-    });
+      const amount = this.getSubscriptionPrice(type);
+      if (!amount) {
+        throw new Error('Type d\'abonnement invalide');
+      }
 
-    return {
-      redirectUrl: paymentData.next_action?.redirect_url || '',
-      paymentId: paymentData.id
-    };
+      const paymentData = await this.payTechService.createPaymentIntent({
+        amount,
+        currency: 'XOF',
+        customer: userId,
+        payment_method: 'card',
+        metadata: {
+          subscriptionType: type,
+          userId
+        }
+      });
+
+      if (!paymentData || !paymentData.id) {
+        throw new Error('Échec de l\'initialisation du paiement');
+      }
+
+      const subscription = await this.createSubscription({
+        userId,
+        type,
+        status: 'pending',
+        paymentId: paymentData.id,
+        startDate: new Date(),
+        endDate: this.calculateEndDate(new Date()),
+      });
+
+      return {
+        redirectUrl: paymentData.next_action?.redirect_url || '',
+        paymentId: paymentData.id
+      };
+    } catch (error) {
+      logger.error('Erreur lors de l\'initiation du paiement:', error);
+      throw error;
+    }
   }
 
   public async handlePaymentCallback(paymentData: PayTechCallbackData): Promise<void> {
@@ -104,15 +122,20 @@ export class SubscriptionService {
   }
 
   public async updateSubscriptionStatus(subscriptionId: string, status: SubscriptionStatus): Promise<void> {
-    const subscription = await this.getSubscription(subscriptionId);
-    if (!subscription) {
-      throw new Error('Souscription non trouvée');
-    }
+    const query = `
+      UPDATE subscriptions 
+      SET status = $1, 
+          updated_at = NOW() 
+      WHERE id = $2
+    `;
 
-    subscription.status = status;
-    subscription.updatedAt = new Date();
-    
-    await this.saveSubscription(subscription);
+    try {
+      await pool.query(query, [status, subscriptionId]);
+      logger.info('Subscription status updated successfully', { subscriptionId, status });
+    } catch (error) {
+      logger.error('Error updating subscription status:', error);
+      throw error;
+    }
   }
 
   public async getSubscription(userId: string): Promise<Subscription | null> {
@@ -168,11 +191,22 @@ export class SubscriptionService {
   }
 
   public async getActiveSubscription(userId: string): Promise<Subscription | null> {
-    const subscription = await this.getSubscription(userId);
-    if (subscription && subscription.status === 'active') {
-      return subscription;
+    const query = `
+      SELECT * FROM subscriptions 
+      WHERE user_id = $1 
+        AND status = 'active' 
+        AND end_date > NOW()
+      ORDER BY created_at DESC 
+      LIMIT 1
+    `;
+    
+    try {
+      const result = await pool.query(query, [userId]);
+      return result.rows[0] || null;
+    } catch (error) {
+      logger.error('Error getting active subscription:', error);
+      throw error;
     }
-    return null;
   }
 
   public async getSubscriptionByPaymentId(paymentId: string): Promise<Subscription | null> {
@@ -185,19 +219,46 @@ export class SubscriptionService {
     userId: string;
     type: SubscriptionType;
     status: SubscriptionStatus;
-    paymentId: string;
-    startDate: Date;
-    endDate: Date;
+    paymentId?: string;
+    startDate?: Date;
+    endDate?: Date;
   }): Promise<Subscription> {
+    const now = new Date();
     const subscription: Subscription = {
       id: uuidv4(),
-      ...data,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      userId: data.userId,
+      type: data.type,
+      status: data.status,
+      paymentId: data.paymentId,
+      startDate: data.startDate || now,
+      endDate: data.endDate || new Date(now.setMonth(now.getMonth() + 1))
     };
 
-    await this.saveSubscription(subscription);
-    return subscription;
+    const query = `
+      INSERT INTO subscriptions (
+        id, user_id, type, status, payment_id, start_date, end_date
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING *
+    `;
+
+    const values = [
+      subscription.id,
+      subscription.userId,
+      subscription.type,
+      subscription.status,
+      subscription.paymentId,
+      subscription.startDate,
+      subscription.endDate
+    ];
+
+    try {
+      const result = await pool.query(query, values);
+      logger.info('Subscription created successfully', { subscriptionId: subscription.id });
+      return result.rows[0];
+    } catch (error) {
+      logger.error('Error creating subscription:', error);
+      throw error;
+    }
   }
 
   private async saveSubscription(subscription: Subscription): Promise<void> {
@@ -224,44 +285,6 @@ export class SubscriptionService {
     const endDate = new Date(startDate);
     endDate.setMonth(endDate.getMonth() + 1);
     return endDate;
-  }
-
-  async createSubscription(data: {
-    userId: string;
-    plan: string;
-    status: string;
-    paymentId?: string;
-  }) {
-    const query = `
-      INSERT INTO subscriptions (
-        id, 
-        user_id, 
-        plan, 
-        status, 
-        payment_id, 
-        start_date, 
-        expires_at, 
-        created_at
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-      RETURNING *
-    `;
-
-    const now = new Date();
-    const expiresAt = this.calculateExpiryDate(data.plan);
-
-    const values = [
-      uuidv4(),
-      data.userId,
-      data.plan,
-      data.status,
-      data.paymentId,
-      now,
-      expiresAt,
-      now
-    ];
-
-    const result = await pool.query(query, values);
-    return result.rows[0];
   }
 
   async updateSubscription(userId: string, data: {
@@ -304,20 +327,6 @@ export class SubscriptionService {
     return result.rows[0];
   }
 
-  async getActiveSubscription(userId: string) {
-    const query = `
-      SELECT * FROM subscriptions 
-      WHERE user_id = $1 
-        AND status = 'active' 
-        AND expires_at > NOW()
-      ORDER BY created_at DESC 
-      LIMIT 1
-    `;
-    
-    const result = await pool.query(query, [userId]);
-    return result.rows[0];
-  }
-
   async checkSubscriptionAccess(userId: string): Promise<boolean> {
     const subscription = await this.getActiveSubscription(userId);
     return !!subscription;
@@ -330,6 +339,10 @@ export class SubscriptionService {
     }
     // Par défaut, abonnement mensuel
     return new Date(now.setMonth(now.getMonth() + 1));
+  }
+
+  async cancelSubscription(subscriptionId: string): Promise<void> {
+    await this.updateSubscriptionStatus(subscriptionId, 'cancelled');
   }
 }
 
