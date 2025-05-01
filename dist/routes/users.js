@@ -1,0 +1,20 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const authController_1 = require("../controllers/authController");
+const authMiddleware_1 = require("../middleware/authMiddleware");
+const router = (0, express_1.Router)();
+router.post('/register', authController_1.authController.register);
+router.post('/login', authController_1.authController.login);
+router.post('/forgot-password', authController_1.authController.forgotPassword);
+router.post('/reset-password/:token', authController_1.authController.resetPassword);
+router.use(authMiddleware_1.authMiddleware.authenticate);
+router.get('/profile', authController_1.authController.getProfile);
+router.put('/profile', authController_1.authController.updateProfile);
+router.put('/password', authController_1.authController.updatePassword);
+router.delete('/account', authController_1.authController.deleteAccount);
+router.get('/admin/users', authMiddleware_1.authMiddleware.isAdmin, authController_1.authController.getAllUsers);
+router.put('/admin/user/:id', authMiddleware_1.authMiddleware.isAdmin, authController_1.authController.updateUser);
+router.delete('/admin/user/:id', authMiddleware_1.authMiddleware.isAdmin, authController_1.authController.deleteUser);
+exports.default = router;
+//# sourceMappingURL=users.js.map

@@ -6,74 +6,33 @@ import { Types } from 'mongoose';
 
 export class FormationService {
   async getAllFormations(): Promise<IFormation[]> {
-    try {
-      const formations = await Formation.find().lean();
-      return formations as IFormation[];
-    } catch (error) {
-      logger.error('Erreur lors de la récupération des formations:', error);
-      throw new AppError('Erreur lors de la récupération des formations', 500);
-    }
+    const formations = await Formation.find();
+    return formations;
   }
 
   async getFormationById(id: string): Promise<IFormation | null> {
-    try {
-      if (!Types.ObjectId.isValid(id)) {
-        throw new AppError('ID de formation invalide', 400);
-      }
-      const formation = await Formation.findById(id).lean();
-      return formation as IFormation | null;
-    } catch (error) {
-      if (error instanceof AppError) throw error;
-      logger.error('Erreur lors de la récupération de la formation:', error);
-      throw new AppError('Erreur lors de la récupération de la formation', 500);
-    }
+    const formation = await Formation.findById(id);
+    return formation;
   }
 
   async createFormation(formationData: Partial<IFormation>): Promise<IFormation> {
-    try {
-      const formation = new Formation(formationData);
-      await formation.validate();
-      const savedFormation = await formation.save();
-      return savedFormation.toObject() as IFormation;
-    } catch (error) {
-      logger.error('Erreur lors de la création de la formation:', error);
-      throw new AppError('Erreur lors de la création de la formation', 500);
-    }
+    const formation = await Formation.create(formationData);
+    return formation;
   }
 
-  async updateFormation(id: string, updateData: Partial<IFormation>): Promise<IFormation | null> {
-    try {
-      if (!Types.ObjectId.isValid(id)) {
-        throw new AppError('ID de formation invalide', 400);
-      }
-      const formation = await Formation.findByIdAndUpdate(
-        id,
-        { $set: updateData },
-        { new: true, runValidators: true }
-      ).lean();
-      return formation as IFormation | null;
-    } catch (error) {
-      logger.error('Erreur lors de la mise à jour de la formation:', error);
-      throw new AppError('Erreur lors de la mise à jour de la formation', 500);
-    }
+  async updateFormation(id: string, formationData: Partial<IFormation>): Promise<IFormation | null> {
+    const formation = await Formation.findByIdAndUpdate(id, formationData, { new: true });
+    return formation;
   }
 
   async deleteFormation(id: string): Promise<boolean> {
-    try {
-      if (!Types.ObjectId.isValid(id)) {
-        throw new AppError('ID de formation invalide', 400);
-      }
-      const result = await Formation.findByIdAndDelete(id);
-      return !!result;
-    } catch (error) {
-      logger.error('Erreur lors de la suppression de la formation:', error);
-      throw new AppError('Erreur lors de la suppression de la formation', 500);
-    }
+    const result = await Formation.findByIdAndDelete(id);
+    return !!result;
   }
 
   async getFormationsByCategory(category: string): Promise<IFormation[]> {
-    const formations = await Formation.find({ category }).lean();
-    return formations as IFormation[];
+    const formations = await Formation.find({ category });
+    return formations;
   }
 
   async addModule(formationId: string, moduleData: IModule): Promise<IFormation | null> {
