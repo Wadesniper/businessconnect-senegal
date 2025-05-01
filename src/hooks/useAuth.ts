@@ -1,134 +1,141 @@
-import { useState, useEffect, useContext, createContext } from 'react';
-
-interface Subscription {
-  isActive: boolean;
-  plan: 'basic' | 'premium' | 'enterprise';
-  expiresAt: string;
-}
-
-interface User {
-  id: string;
-  email: string;
-  name: string;
-  subscription?: Subscription;
-}
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { User } from '../types/user';
+import { authService } from '../services/authService';
+import { useRouter } from 'next/router';
+import { message } from 'antd';
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   error: string | null;
+  isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
+  register: (userData: Partial<User>) => Promise<void>;
   logout: () => Promise<void>;
-  register: (email: string, password: string, name: string) => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
+  updateProfile: (userData: Partial<User>) => Promise<void>;
+  checkSubscription: () => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
-    // Vérifier le token et charger les données utilisateur au démarrage
-    const checkAuth = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (token) {
-          // Appel API pour vérifier le token et obtenir les données utilisateur
-          // Pour l'exemple, on simule un utilisateur
-          setUser({
-            id: '1',
-            email: 'user@example.com',
-            name: 'John Doe',
-            subscription: {
-              isActive: true,
-              plan: 'premium',
-              expiresAt: '2024-12-31'
-            }
-          });
-        }
-      } catch (err) {
-        setError('Erreur lors de la vérification de l\'authentification');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     checkAuth();
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const checkAuth = async () => {
     try {
-      setLoading(true);
-      // Appel API pour la connexion
-      // Simulé pour l'exemple
-      const response = {
-        token: 'fake-token',
-        user: {
-          id: '1',
-          email,
-          name: 'John Doe',
-          subscription: {
-            isActive: true,
-            plan: 'premium',
-            expiresAt: '2024-12-31'
-          }
-        }
-      };
-
-      localStorage.setItem('token', response.token);
-      setUser(response.user);
-      setError(null);
-    } catch (err) {
-      setError('Erreur lors de la connexion');
-      throw err;
+      const currentUser = await authService.getCurrentUser();
+      if (currentUser) {
+        setUser(currentUser);
+        await checkSubscription();
+      }
+    } catch (error) {
+      console.error('Erreur de vérification d\'authentification:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const login = async (email: string, password: string) => {
+    try {
+      setError(null);
+      const user = await authService.login({ email, password });
+      setUser(user);
+      await checkSubscription();
+      message.success('Connexion réussie !');
+      router.push('/dashboard');
+    } catch (error: any) {
+      const errorMessage = error.message || 'Erreur lors de la connexion';
+      setError(errorMessage);
+      message.error(errorMessage);
+      throw error;
+    }
+  };
+
+  const register = async (userData: Partial<User>) => {
+    try {
+      setError(null);
+      const user = await authService.register(userData);
+      setUser(user);
+      message.success('Inscription réussie !');
+      router.push('/dashboard');
+    } catch (error: any) {
+      const errorMessage = error.message || 'Erreur lors de l\'inscription';
+      setError(errorMessage);
+      message.error(errorMessage);
+      throw error;
     }
   };
 
   const logout = async () => {
     try {
-      setLoading(true);
-      localStorage.removeItem('token');
+      await authService.logout();
       setUser(null);
-      setError(null);
-    } catch (err) {
-      setError('Erreur lors de la déconnexion');
-      throw err;
-    } finally {
-      setLoading(false);
+      message.success('Déconnexion réussie');
+      router.push('/login');
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error);
+      message.error('Erreur lors de la déconnexion');
     }
   };
 
-  const register = async (email: string, password: string, name: string) => {
+  const resetPassword = async (email: string) => {
     try {
-      setLoading(true);
-      // Appel API pour l'inscription
-      // Simulé pour l'exemple
-      const response = {
-        token: 'fake-token',
-        user: {
-          id: '1',
-          email,
-          name,
-          subscription: {
-            isActive: false,
-            plan: 'basic',
-            expiresAt: ''
-          }
-        }
-      };
-
-      localStorage.setItem('token', response.token);
-      setUser(response.user);
       setError(null);
-    } catch (err) {
-      setError('Erreur lors de l\'inscription');
-      throw err;
-    } finally {
-      setLoading(false);
+      await authService.request('reset-password', {
+        method: 'POST',
+        data: { email }
+      });
+      message.success('Instructions envoyées par email');
+    } catch (error: any) {
+      const errorMessage = error.message || 'Erreur lors de la réinitialisation du mot de passe';
+      setError(errorMessage);
+      message.error(errorMessage);
+      throw error;
+    }
+  };
+
+  const updateProfile = async (userData: Partial<User>) => {
+    try {
+      setError(null);
+      if (!user?.id) throw new Error('Utilisateur non connecté');
+      const updatedUser = await authService.updateUserProfile(user.id, userData);
+      setUser(updatedUser);
+      message.success('Profil mis à jour avec succès');
+    } catch (error: any) {
+      const errorMessage = error.message || 'Erreur lors de la mise à jour du profil';
+      setError(errorMessage);
+      message.error(errorMessage);
+      throw error;
+    }
+  };
+
+  const checkSubscription = async () => {
+    if (!user) return false;
+    try {
+      const response = await authService.request('subscriptions/status');
+      const { hasActiveSubscription, subscriptionType, subscriptionEndDate } = response;
+      setUser(prev => prev ? {
+        ...prev,
+        hasActiveSubscription,
+        subscriptionType,
+        subscriptionEndDate: subscriptionEndDate ? new Date(subscriptionEndDate) : undefined
+      } : null);
+      return hasActiveSubscription;
+    } catch (error) {
+      console.error('Erreur lors de la vérification de l\'abonnement:', error);
+      return false;
     }
   };
 
@@ -138,9 +145,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         user,
         loading,
         error,
+        isAuthenticated: !!user,
         login,
+        register,
         logout,
-        register
+        resetPassword,
+        updateProfile,
+        checkSubscription
       }}
     >
       {children}

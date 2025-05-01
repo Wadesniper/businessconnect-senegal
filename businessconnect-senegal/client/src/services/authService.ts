@@ -1,98 +1,134 @@
 import { User, LoginCredentials, RegisterData } from '../types/user';
-import { localStorageService } from './localStorageService';
+import axios from 'axios';
+
+const API_URL = process.env.REACT_APP_API_URL || '';
 
 class AuthService {
-  async login(credentials: LoginCredentials): Promise<User> {
-    const users = localStorageService.getUsers();
-    const user = users.find(u => u.email === credentials.email);
-
-    if (!user || user.password !== credentials.password) {
-      throw new Error('Email ou mot de passe incorrect');
+  private async request(endpoint: string, options: any = {}) {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios({
+        url: `${API_URL}/api/auth/${endpoint}`,
+        ...options,
+        headers: {
+          ...options.headers,
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        }
+      });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        try {
+          await this.refreshToken();
+          const token = localStorage.getItem('token');
+          const retryResponse = await axios({
+            url: `${API_URL}/api/auth/${endpoint}`,
+            ...options,
+            headers: {
+              ...options.headers,
+              Authorization: `Bearer ${token}`
+            }
+          });
+          return retryResponse.data;
+        } catch (refreshError) {
+          this.logout();
+          throw refreshError;
+        }
+      }
+      throw error;
     }
+  }
 
-    const { password, ...userWithoutPassword } = user;
-    localStorageService.setCurrentUser(userWithoutPassword);
-    return userWithoutPassword;
+  async login(credentials: LoginCredentials): Promise<User> {
+    try {
+      const { user, token, refreshToken } = await this.request('login', {
+        method: 'POST',
+        data: credentials
+      });
+
+      localStorage.setItem('token', token);
+      localStorage.setItem('refreshToken', refreshToken);
+      return user;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.message || 'Erreur lors de la connexion');
+      }
+      throw error;
+    }
   }
 
   async register(data: RegisterData): Promise<User> {
-    const users = localStorageService.getUsers();
-    
-    // Vérifier si l'email existe déjà
-    if (users.some(u => u.email === data.email)) {
-      throw new Error('Cet email est déjà utilisé');
+    try {
+      const { user, token, refreshToken } = await this.request('register', {
+        method: 'POST',
+        data
+      });
+
+      localStorage.setItem('token', token);
+      localStorage.setItem('refreshToken', refreshToken);
+      return user;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.message || 'Erreur lors de l\'inscription');
+      }
+      throw error;
     }
-
-    const newUser: User = {
-      id: localStorageService.generateId(),
-      fullName: data.fullName,
-      email: data.email,
-      phoneNumber: data.phoneNumber,
-      role: data.role || 'user',
-      company: data.company,
-      settings: {
-        notifications: true,
-        newsletter: true,
-        language: 'fr',
-        theme: 'light'
-      },
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      password: data.password
-    };
-
-    localStorageService.saveUser(newUser);
-
-    // Créer un abonnement gratuit par défaut
-    const freeSubscription = {
-      id: localStorageService.generateId(),
-      userId: newUser.id,
-      type: 'free',
-      status: 'active',
-      startDate: new Date().toISOString(),
-      endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 jours
-      autoRenew: false,
-      features: ['basic_search', 'cv_creation'],
-      price: 0,
-      currency: 'XOF',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-
-    localStorageService.saveSubscription(freeSubscription);
-
-    const { password, ...userWithoutPassword } = newUser;
-    localStorageService.setCurrentUser(userWithoutPassword);
-    return userWithoutPassword;
   }
 
-  logout(): void {
-    localStorageService.setCurrentUser(null);
+  async refreshToken(): Promise<void> {
+    try {
+      const refreshToken = localStorage.getItem('refreshToken');
+      if (!refreshToken) {
+        throw new Error('Refresh token manquant');
+      }
+
+      const { token, refreshToken: newRefreshToken } = await axios.post(
+        `${API_URL}/api/auth/refresh`,
+        { refreshToken }
+      ).then(response => response.data);
+
+      localStorage.setItem('token', token);
+      localStorage.setItem('refreshToken', newRefreshToken);
+    } catch (error) {
+      this.logout();
+      throw error;
+    }
   }
 
-  getCurrentUser(): User | null {
-    return localStorageService.getCurrentUser();
+  async logout(): Promise<void> {
+    try {
+      const token = localStorage.getItem('token');
+      if (token) {
+        await this.request('logout', {
+          method: 'POST'
+        });
+      }
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error);
+    } finally {
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+    }
+  }
+
+  async getCurrentUser(): Promise<User | null> {
+    try {
+      const user = await this.request('me');
+      return user;
+    } catch (error) {
+      return null;
+    }
   }
 
   isAuthenticated(): boolean {
-    return !!this.getCurrentUser();
+    return !!localStorage.getItem('token');
   }
 
   async updateUserProfile(userId: string, updates: Partial<User>): Promise<User> {
-    const currentUser = this.getCurrentUser();
-    if (!currentUser || currentUser.id !== userId) {
-      throw new Error('Non autorisé');
-    }
-
-    const updatedUser = {
-      ...currentUser,
-      ...updates,
-      updatedAt: new Date().toISOString()
-    };
-
-    localStorageService.saveUser(updatedUser);
-    localStorageService.setCurrentUser(updatedUser);
-    return updatedUser;
+    return this.request(`users/${userId}`, {
+      method: 'PATCH',
+      data: updates
+    });
   }
 }
 
