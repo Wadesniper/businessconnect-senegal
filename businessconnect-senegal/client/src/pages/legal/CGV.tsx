@@ -42,6 +42,14 @@ const CGV: React.FC = () => {
 
           <Title level={2}>Article 4 : Abonnements</Title>
           <Paragraph>
+            BusinessConnect Sénégal propose trois types d'abonnements :
+          </Paragraph>
+          <Space direction="vertical">
+            <Text>• Étudiant/Chercheur d'emploi : 1000 FCFA/mois - Accès aux offres d'emploi, espace CV, forum, fiches métiers et formations</Text>
+            <Text>• Annonceur : 5000 FCFA/mois - Publication d'offres, visibilité plateforme, statistiques et outils de promotion</Text>
+            <Text>• Recruteur : 9000 FCFA/mois - Accès CVthèque, contact direct candidats, publications illimitées et outils avancés</Text>
+          </Space>
+          <Paragraph>
             Les abonnements sont souscrits pour une durée déterminée. Le renouvellement n'est pas automatique et nécessite une action explicite de l'utilisateur. Les tarifs peuvent être modifiés à tout moment, mais les modifications ne s'appliquent pas aux abonnements en cours.
           </Paragraph>
 

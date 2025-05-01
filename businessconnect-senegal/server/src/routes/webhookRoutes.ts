@@ -1,10 +1,10 @@
-import express from 'express';
+import { Router } from 'express';
 import { WebhookController } from '../controllers/webhookController';
 
-const router = express.Router();
+const router = Router();
 const webhookController = new WebhookController();
 
-// Route pour le webhook PayTech
-router.post('/paytech', webhookController.handlePaytechWebhook);
+// Routes pour les webhooks
+router.post('/paytech', webhookController.handlePaymentWebhook);
 
 export default router; 

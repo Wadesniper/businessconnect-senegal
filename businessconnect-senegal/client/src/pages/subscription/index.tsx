@@ -18,28 +18,45 @@ import { useSubscription } from '../../hooks/useSubscription';
 
 const subscriptionPlans = [
   {
-    id: 'monthly',
-    title: 'Abonnement Mensuel',
-    price: '15000',
+    id: 'etudiant',
+    title: 'Étudiant / Chercheur d\'emploi',
+    price: '1000',
     period: 'mois',
     features: [
-      'Accès à toutes les formations Cursa.app',
-      'Certificats numériques inclus',
-      'Support prioritaire',
-      'Annulation à tout moment'
+      'Accès aux offres d\'emploi',
+      'Espace CV',
+      'Forum',
+      'Fiches métiers',
+      'Formations',
+      'Support standard'
     ]
   },
   {
-    id: 'yearly',
-    title: 'Abonnement Annuel',
-    price: '150000',
-    period: 'an',
+    id: 'annonceur',
+    title: 'Annonceur',
+    price: '5000',
+    period: 'mois',
     features: [
-      'Accès à toutes les formations Cursa.app',
-      'Certificats numériques inclus',
+      'Publication d\'offres',
+      'Visibilité plateforme',
+      'Statistiques de vues',
       'Support prioritaire',
-      'Économisez 30000 FCFA',
-      'Annulation à tout moment'
+      'Badge "Annonceur Vérifié"',
+      'Outils de promotion'
+    ]
+  },
+  {
+    id: 'recruteur',
+    title: 'Recruteur',
+    price: '9000',
+    period: 'mois',
+    features: [
+      'Accès CVthèque complète',
+      'Contact direct candidats',
+      'Publication offres illimitées',
+      'Statistiques avancées',
+      'Support dédié 24/7',
+      'Outils de filtrage premium'
     ],
     recommended: true
   }

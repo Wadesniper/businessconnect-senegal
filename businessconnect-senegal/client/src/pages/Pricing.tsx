@@ -68,12 +68,12 @@ const plans = [
     title: 'Étudiant / Chercheur d\'emploi',
     price: 1000,
     features: [
-      'Accès aux fiches métiers détaillées',
-      'Consultation des offres d\'emploi premium',
-      'CV mis en avant auprès des recruteurs',
-      'Alertes emploi personnalisées',
-      'Accès aux statistiques du marché',
-      'Participation aux forums spécialisés'
+      'Accès aux offres d\'emploi',
+      'Espace CV',
+      'Forum',
+      'Fiches métiers',
+      'Formations',
+      'Support standard'
     ],
     icon: <UserOutlined />,
     color: '#1890ff'
@@ -82,12 +82,12 @@ const plans = [
     title: 'Annonceur',
     price: 5000,
     features: [
-      'Publication d\'annonces illimitées',
-      'Mise en avant dans la marketplace',
-      'Statistiques de vues détaillées',
+      'Publication d\'offres',
+      'Visibilité plateforme',
+      'Statistiques de vues',
       'Support prioritaire',
-      'Outils de promotion avancés',
-      'Badge "Annonceur Vérifié"'
+      'Badge "Annonceur Vérifié"',
+      'Outils de promotion'
     ],
     icon: <ShopOutlined />,
     color: '#52c41a'
@@ -96,12 +96,12 @@ const plans = [
     title: 'Recruteur',
     price: 9000,
     features: [
-      'Accès à la base de CV complète',
-      'Publication d\'offres d\'emploi illimitées',
-      'Outils de filtrage avancés',
-      'Statistiques de recrutement',
-      'Contact direct avec les candidats',
-      'Support dédié 24/7'
+      'Accès CVthèque complète',
+      'Contact direct candidats',
+      'Publication offres illimitées',
+      'Statistiques avancées',
+      'Support dédié 24/7',
+      'Outils de filtrage premium'
     ],
     icon: <TeamOutlined />,
     color: '#722ed1'

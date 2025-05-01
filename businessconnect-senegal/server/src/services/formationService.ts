@@ -99,11 +99,13 @@ export class FormationService {
         throw new Error('Formation non trouvée');
       }
 
-      const module = new Module(moduleData);
+      const module = new Module({
+        ...moduleData,
+        description: moduleData.description || ''
+      });
       formation.modules.push(module);
-      await formation.save();
-
-      return formation;
+      const savedFormation = await formation.save();
+      return savedFormation.toObject() as unknown as IFormation;
     } catch (error) {
       logger.error(`Erreur lors de l'ajout du module à la formation ${formationId}:`, error);
       throw error;
@@ -114,15 +116,22 @@ export class FormationService {
     try {
       const formation = await Formation.findOneAndUpdate(
         { _id: formationId, 'modules._id': moduleId },
-        { $set: { 'modules.$': updateData } },
+        { 
+          $set: { 
+            'modules.$': {
+              ...updateData,
+              description: updateData.description || ''
+            }
+          } 
+        },
         { new: true }
-      ).exec();
+      ).lean();
 
       if (!formation) {
         throw new Error('Formation ou module non trouvé');
       }
 
-      return formation;
+      return formation as unknown as IFormation;
     } catch (error) {
       logger.error(`Erreur lors de la mise à jour du module ${moduleId}:`, error);
       throw error;
@@ -208,13 +217,21 @@ export class FormationService {
 
   async searchFormations(searchTerm: string): Promise<IFormation[]> {
     try {
-      return await Formation.find(
+      const formations = await Formation.find(
         { $text: { $search: searchTerm }, status: 'published' },
         { score: { $meta: 'textScore' } }
       )
         .sort({ score: { $meta: 'textScore' } })
         .populate('instructor', 'name email avatar')
-        .exec();
+        .lean();
+      
+      return formations.map(formation => ({
+        ...formation,
+        modules: formation.modules.map(module => ({
+          ...module,
+          description: module.description || ''
+        }))
+      })) as unknown as IFormation[];
     } catch (error) {
       logger.error('Erreur lors de la recherche de formations:', error);
       throw error;

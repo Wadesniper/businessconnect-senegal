@@ -1,91 +1,124 @@
 import { message } from 'antd';
+import { Subscription } from '../types/user';
+
+interface PayTechConfig {
+  apiKey: string;
+  apiSecret: string;
+  environment: 'test' | 'production';
+}
 
 interface PaymentRequest {
   amount: number;
-  planType: string;
   currency: string;
+  description: string;
+  customerId: string;
+  customerEmail: string;
+  customerFullName: string;
+  subscriptionType: 'premium' | 'enterprise';
 }
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
-const PAYTECH_API_KEY = 'be2b2e9b3a0ed01d69d30dff8a21f05199e2e71968788b4890690d7af56ba32b';
-const PAYTECH_API_SECRET = '6860a504cc73992c2e8dc623c7b31d948ef5a4ec2507a0a4771e62755cca9277';
-
-// URLs de PayTech
+// URLs de PayTech configurées
 const PAYTECH_URLS = {
   IPN: 'https://businessconnectsenegal.com/api/subscriptions/ipn',
   SUCCESS: 'https://businessconnectsenegal.com/payment/success',
   CANCEL: 'https://businessconnectsenegal.com/payment/cancel'
 };
 
-export const paymentService = {
-  async initiatePayment(data: PaymentRequest) {
+// Configuration PayTech
+const PAYTECH_CONFIG = {
+  API_KEY: 'be2b2e9b3a0ed01d69d30dff8a21f05199e2e71968788b4890690d7af56ba32b',
+  API_SECRET: '6860a504cc73992c2e8dc623c7b31d948ef5a4ec2507a0a4771e62755cca9277',
+  ENV: 'prod' as 'test' | 'production'
+};
+
+class PaymentService {
+  private config: PayTechConfig = {
+    apiKey: PAYTECH_CONFIG.API_KEY,
+    apiSecret: PAYTECH_CONFIG.API_SECRET,
+    environment: PAYTECH_CONFIG.ENV
+  };
+
+  private getPayTechUrl(): string {
+    return this.config.environment === 'production'
+      ? 'https://paytech.sn'
+      : 'https://demo.paytech.sn';
+  }
+
+  async initiateSubscriptionPayment(request: PaymentRequest): Promise<string> {
     try {
-      // Construction de l'URL de l'API PayTech
-      const payTechApiUrl = 'https://paytech.sn/api/payment/request-payment';
-      
-      // Préparation des données pour PayTech
-      const paymentData = {
-        item_name: `Abonnement ${data.planType}`,
-        item_price: data.amount,
-        currency: 'XOF',
-        ref_command: `BC-${Date.now()}-${Math.random().toString(36).substring(7)}`,
-        command_name: `Abonnement BusinessConnect - ${data.planType}`,
-        env: 'prod', // Mode production activé
+      const payload = {
+        item_name: `Abonnement ${request.subscriptionType} BusinessConnect Sénégal`,
+        item_price: request.amount,
+        currency: request.currency,
+        ref_command: `SUB-${Date.now()}-${Math.random().toString(36).substring(7)}`,
+        command_name: request.description,
+        env: this.config.environment,
         ipn_url: PAYTECH_URLS.IPN,
         success_url: PAYTECH_URLS.SUCCESS,
         cancel_url: PAYTECH_URLS.CANCEL,
         custom_field: JSON.stringify({
-          userId: localStorage.getItem('userId'),
-          planType: data.planType,
-          timestamp: Date.now()
+          customerId: request.customerId,
+          subscriptionType: request.subscriptionType
         })
       };
 
-      const response = await fetch(payTechApiUrl, {
+      const response = await fetch(`${this.getPayTechUrl()}/api/payment/request-payment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-API-KEY': PAYTECH_API_KEY,
-          'X-API-SECRET': PAYTECH_API_SECRET
+          'API-KEY': this.config.apiKey,
+          'API-SECRET': this.config.apiSecret
         },
-        body: JSON.stringify(paymentData)
+        body: JSON.stringify(payload)
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Erreur PayTech:', errorData);
-        throw new Error(errorData.message || 'Erreur lors de l\'initialisation du paiement');
+        throw new Error('Erreur lors de l\'initialisation du paiement');
       }
 
-      const responseData = await response.json();
-      
-      if (responseData.success) {
-        // Sauvegarde des informations de la transaction
-        localStorage.setItem('pending_subscription', JSON.stringify({
-          planType: data.planType,
-          amount: data.amount,
-          ref: paymentData.ref_command,
-          timestamp: Date.now()
-        }));
-        
-        // Redirection vers la page de paiement PayTech
-        window.location.href = responseData.redirect_url;
+      const data = await response.json();
+      if (data.success) {
+        return data.redirect_url;
       } else {
-        throw new Error(responseData.message || 'Erreur lors de l\'initialisation du paiement');
+        throw new Error(data.message || 'Erreur lors de l\'initialisation du paiement');
       }
     } catch (error) {
       console.error('Erreur PayTech:', error);
-      message.error('Une erreur est survenue lors de l\'initialisation du paiement');
-      throw error;
+      throw new Error('Le service de paiement est temporairement indisponible');
     }
-  },
-
-  getPaymentAmount(planType: string): number {
-    const prices = {
-      'etudiant-chercheur-emploi': 1000,
-      'annonceur': 5000,
-      'recruteur': 9000
-    };
-    return prices[planType as keyof typeof prices] || 1000;
   }
-}; 
+
+  async verifyPayment(token: string): Promise<boolean> {
+    try {
+      const response = await fetch(`${this.getPayTechUrl()}/api/payment/check-status`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'API-KEY': this.config.apiKey,
+          'API-SECRET': this.config.apiSecret
+        },
+        body: JSON.stringify({ token })
+      });
+
+      if (!response.ok) {
+        throw new Error('Erreur lors de la vérification du paiement');
+      }
+
+      const data = await response.json();
+      return data.success && data.status === 'completed';
+    } catch (error) {
+      console.error('Erreur de vérification PayTech:', error);
+      return false;
+    }
+  }
+
+  getSubscriptionAmount(type: 'premium' | 'enterprise'): number {
+    const prices = {
+      premium: 15000,
+      enterprise: 50000
+    };
+    return prices[type];
+  }
+}
+
+export const paymentService = new PaymentService(); 

@@ -9,25 +9,10 @@ import { NotificationService } from '../services/notificationService';
 import { config } from '../config';
 import { User } from '../models/User';
 
-const SUBSCRIPTION_PRICES = {
-  etudiant: {
-    1: 5000,    // 5,000 FCFA / mois
-    3: 13500,   // 4,500 FCFA / mois
-    6: 24000,   // 4,000 FCFA / mois
-    12: 42000   // 3,500 FCFA / mois
-  },
-  annonceur: {
-    1: 15000,   // 15,000 FCFA / mois
-    3: 40500,   // 13,500 FCFA / mois
-    6: 72000,   // 12,000 FCFA / mois
-    12: 126000  // 10,500 FCFA / mois
-  },
-  recruteur: {
-    1: 25000,   // 25,000 FCFA / mois
-    3: 67500,   // 22,500 FCFA / mois
-    6: 120000,  // 20,000 FCFA / mois
-    12: 210000  // 17,500 FCFA / mois
-  }
+const PLAN_PRICES = {
+  'etudiant': 1000,    // 1,000 FCFA / mois
+  'annonceur': 5000,   // 5,000 FCFA / mois
+  'recruteur': 9000    // 9,000 FCFA / mois
 };
 
 const VALID_SUBSCRIPTION_TYPES: SubscriptionType[] = ['etudiant', 'annonceur', 'recruteur'];
@@ -42,7 +27,11 @@ export const subscriptionController = {
 
       const { type } = req.body as { type: SubscriptionType };
       
-      const subscription = await subscriptionService.createSubscription(userId, type);
+      const subscription = await subscriptionService.createSubscription({
+        userId,
+        type,
+        status: 'pending'
+      });
       
       logger.info('Abonnement créé avec succès', { userId, type });
       return res.status(201).json(subscription);
@@ -78,7 +67,7 @@ export const subscriptionController = {
         return res.status(400).json({ error: 'Type d\'abonnement invalide' });
       }
       
-      const price = await subscriptionService.getPrice(type as SubscriptionType);
+      const price = PLAN_PRICES[type as SubscriptionType];
       return res.json({ price });
     } catch (error) {
       logger.error('Erreur lors de la récupération du prix:', error);
@@ -250,7 +239,7 @@ export const subscriptionController = {
       res.json({
         success: true,
         data: {
-          plans: SUBSCRIPTION_PRICES,
+          plans: PLAN_PRICES,
           features: {
             etudiant: [
               'Accès aux formations en ligne',
@@ -310,7 +299,7 @@ export const subscriptionController = {
       const { plan, duration } = req.body;
       const userId = req.user?.id;
 
-      const amount = SUBSCRIPTION_PRICES[plan][duration];
+      const amount = PLAN_PRICES[plan];
       if (!amount) {
         return res.status(400).json({
           success: false,
@@ -394,7 +383,7 @@ export const subscriptionController = {
 
       // Créer une nouvelle session de paiement pour le renouvellement
       const paymentSession = await this.paytech.createPaymentSession({
-        amount: SUBSCRIPTION_PRICES[user.subscription.plan][user.subscription.duration],
+        amount: PLAN_PRICES[user.subscription.plan],
         description: `Renouvellement abonnement ${user.subscription.plan}`,
         customerId: userId,
         customerEmail: user.email,

@@ -8,12 +8,29 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: process.env.NODE_ENV === 'production' ? {
     rejectUnauthorized: false
-  } : false
+  } : false,
+  max: 20, // nombre maximum de clients dans le pool
+  idleTimeoutMillis: 30000, // temps maximum d'inactivité d'un client
+  connectionTimeoutMillis: 2000, // temps d'attente maximum pour une connexion
+  maxUses: 7500, // nombre maximum d'utilisations d'une connexion avant recyclage
+});
+
+// Monitoring du pool
+pool.on('connect', () => {
+  logger.info('Nouvelle connexion au pool PostgreSQL');
 });
 
 pool.on('error', (err) => {
   logger.error('Erreur inattendue du pool PostgreSQL:', err);
   process.exit(-1);
+});
+
+pool.on('acquire', () => {
+  logger.debug('Client acquis depuis le pool');
+});
+
+pool.on('remove', () => {
+  logger.info('Client retiré du pool');
 });
 
 // Fonction utilitaire pour exécuter des requêtes

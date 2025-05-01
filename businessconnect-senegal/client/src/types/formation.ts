@@ -9,4 +9,14 @@ export interface Formation {
   featured: boolean;
   createdAt: string;
   updatedAt: string;
-} 
+}
+
+export type DomainType = 
+  | 'informatique'
+  | 'marketing'
+  | 'gestion'
+  | 'langues'
+  | 'softSkills'
+  | 'design'
+  | 'finance'
+  | 'entrepreneuriat'; 

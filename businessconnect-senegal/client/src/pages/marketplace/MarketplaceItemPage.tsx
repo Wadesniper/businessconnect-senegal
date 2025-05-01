@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Layout,
@@ -42,11 +42,7 @@ const MarketplaceItemPage: React.FC = () => {
   const [form] = Form.useForm();
   const [isOwner, setIsOwner] = useState(false);
 
-  useEffect(() => {
-    fetchItem();
-  }, [id]);
-
-  const fetchItem = async () => {
+  const fetchItem = useCallback(async () => {
     if (!id) return;
     setLoading(true);
     try {
@@ -60,7 +56,11 @@ const MarketplaceItemPage: React.FC = () => {
       message.error('Erreur lors de la récupération de l\'annonce');
     }
     setLoading(false);
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchItem();
+  }, [fetchItem]);
 
   const handleUpdate = async (values: any) => {
     if (!id) return;
@@ -204,7 +204,7 @@ const MarketplaceItemPage: React.FC = () => {
 
         <Modal
           title="Modifier l'annonce"
-          visible={isModalVisible}
+          open={isModalVisible}
           onCancel={() => setIsModalVisible(false)}
           footer={null}
         >

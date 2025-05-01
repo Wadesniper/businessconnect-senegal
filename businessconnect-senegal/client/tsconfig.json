@@ -15,7 +15,11 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "baseUrl": "src"
+    "baseUrl": "src",
+    "paths": {
+      "@/*": ["*"]
+    },
+    "incremental": true
   },
   "include": ["src"],
   "exclude": ["node_modules"]

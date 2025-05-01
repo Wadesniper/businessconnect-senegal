@@ -1,0 +1,24 @@
+/* Styles pour la version desktop */
+@media (min-width: 992px) {
+  .preview-section {
+    display: block !important;
+  }
+
+  .preview-toggle {
+    display: none !important;
+  }
+}
+
+/* Styles pour la version mobile */
+@media (max-width: 991px) {
+  .form-section,
+  .preview-section {
+    margin-bottom: 60px; /* Espace pour le bouton flottant */
+  }
+}
+
+/* Animations de transition */
+.form-section,
+.preview-section {
+  transition: all 0.3s ease;
+} 

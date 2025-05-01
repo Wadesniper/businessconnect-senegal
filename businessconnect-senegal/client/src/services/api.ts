@@ -1,5 +1,38 @@
-import axios from 'axios';
-import { discussionsData } from '../data/forumData';
+import axios, { AxiosResponse } from 'axios';
+import { discussionsData, Discussion as ForumDiscussion, Reply as ForumReply } from '../data/forumData';
+
+interface DiscussionData {
+  title: string;
+  content: string;
+  category: string;
+  author: {
+    name: string;
+    avatar?: string;
+  };
+  tags?: string[];
+}
+
+interface ReplyData {
+  content: string;
+  author: {
+    name: string;
+    avatar?: string;
+  };
+}
+
+interface Discussion extends DiscussionData {
+  id: string;
+  createdAt: string;
+  repliesCount: number;
+  likesCount: number;
+  replies: Reply[];
+}
+
+interface Reply extends ReplyData {
+  id: string;
+  createdAt: string;
+  likesCount: number;
+}
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
@@ -38,11 +71,11 @@ api.interceptors.response.use(
 
 // Mock des appels API pour le forum en attendant l'implémentation backend
 const forumApi = {
-  getDiscussions: () => {
+  getDiscussions: (): Promise<{ data: ForumDiscussion[] }> => {
     return Promise.resolve({ data: discussionsData });
   },
 
-  getDiscussion: (id: string) => {
+  getDiscussion: (id: string): Promise<{ data: ForumDiscussion }> => {
     const discussion = discussionsData.find(d => d.id === id);
     if (discussion) {
       return Promise.resolve({ data: discussion });
@@ -50,8 +83,8 @@ const forumApi = {
     return Promise.reject(new Error('Discussion non trouvée'));
   },
 
-  createDiscussion: (data: any) => {
-    const newDiscussion = {
+  createDiscussion: (data: DiscussionData): Promise<{ data: ForumDiscussion }> => {
+    const newDiscussion: ForumDiscussion = {
       id: String(discussionsData.length + 1),
       ...data,
       createdAt: new Date().toISOString(),
@@ -63,10 +96,10 @@ const forumApi = {
     return Promise.resolve({ data: newDiscussion });
   },
 
-  addReply: (discussionId: string, data: any) => {
+  addReply: (discussionId: string, data: ReplyData): Promise<{ data: ForumReply }> => {
     const discussion = discussionsData.find(d => d.id === discussionId);
     if (discussion) {
-      const newReply = {
+      const newReply: ForumReply = {
         id: `${discussionId}-${discussion.replies.length + 1}`,
         ...data,
         createdAt: new Date().toISOString(),
@@ -79,7 +112,7 @@ const forumApi = {
     return Promise.reject(new Error('Discussion non trouvée'));
   },
 
-  likeDiscussion: (discussionId: string) => {
+  likeDiscussion: (discussionId: string): Promise<{ data: { likesCount: number } }> => {
     const discussion = discussionsData.find(d => d.id === discussionId);
     if (discussion) {
       discussion.likesCount += 1;
@@ -89,15 +122,78 @@ const forumApi = {
   }
 };
 
-// Remplacer les appels API réels par les mocks pour le développement
-api.get('/forum/discussions', () => forumApi.getDiscussions());
-api.get('/forum/discussions/:id', (config: any) => forumApi.getDiscussion(config.url?.split('/').pop() || ''));
-api.post('/forum/discussions', (config: any) => forumApi.createDiscussion(config.data));
-api.post('/forum/discussions/:id/replies', (config: any) => {
-  const id = config.url?.split('/')[3];
-  return forumApi.addReply(id, config.data);
-});
-api.post('/forum/discussions/:id/like', (config: any) => {
-  const id = config.url?.split('/')[3];
-  return forumApi.likeDiscussion(id);
+// Configuration des intercepteurs pour le mock du forum
+api.interceptors.request.use(config => {
+  if (config.url?.startsWith('/forum')) {
+    const mockResponse = async (): Promise<AxiosResponse> => {
+      const method = config.method?.toLowerCase();
+      const url = config.url;
+
+      if (!url) {
+        throw new Error('URL non définie');
+      }
+
+      if (method === 'get') {
+        if (url === '/forum/discussions') {
+          const { data } = await forumApi.getDiscussions();
+          return {
+            data,
+            status: 200,
+            statusText: 'OK',
+            headers: {},
+            config
+          };
+        } else if (url.match(/\/forum\/discussions\/\w+$/)) {
+          const id = url.split('/').pop() || '';
+          const { data } = await forumApi.getDiscussion(id);
+          return {
+            data,
+            status: 200,
+            statusText: 'OK',
+            headers: {},
+            config
+          };
+        }
+      } else if (method === 'post') {
+        if (url === '/forum/discussions') {
+          const { data } = await forumApi.createDiscussion(config.data);
+          return {
+            data,
+            status: 201,
+            statusText: 'Created',
+            headers: {},
+            config
+          };
+        } else if (url.match(/\/forum\/discussions\/\w+\/replies$/)) {
+          const id = url.split('/')[3];
+          const { data } = await forumApi.addReply(id, config.data);
+          return {
+            data,
+            status: 201,
+            statusText: 'Created',
+            headers: {},
+            config
+          };
+        } else if (url.match(/\/forum\/discussions\/\w+\/like$/)) {
+          const id = url.split('/')[3];
+          const { data } = await forumApi.likeDiscussion(id);
+          return {
+            data,
+            status: 200,
+            statusText: 'OK',
+            headers: {},
+            config
+          };
+        }
+      }
+
+      throw new Error('Route non trouvée');
+    };
+
+    return {
+      ...config,
+      adapter: mockResponse
+    };
+  }
+  return config;
 }); 

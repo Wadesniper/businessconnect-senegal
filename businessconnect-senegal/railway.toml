@@ -1,20 +1,32 @@
 [build]
-builder = "nixpacks"
-buildCommand = "cd businessconnect-senegal/server && npm install && npm run build"
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "cd businessconnect-senegal/server && npm run migrate:up && npm start"
-healthcheckPath = "/api/health"
-healthcheckTimeout = 100
-restartPolicyType = "on_failure"
+startCommand = "nginx -g 'daemon off;'"
+healthcheckPath = "/"
+healthcheckTimeout = 180
+restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 3
 
-[service]
-name = "businessconnect-senegal"
-internal_port = 5000
+[[services]]
+name = "web"
+internal_port = 3000
+protocol = "http"
 auto_deploy = true
 
 [[services]]
 name = "postgresql"
 type = "postgresql"
-version = "14" 
+version = "14"
+auto_deploy = true
+
+[env]
+NODE_ENV = "production"
+PORT = "3000"
+DATABASE_URL = "${POSTGRESQL_URL}"
+PAYTECH_API_KEY = "${PAYTECH_API_KEY}"
+PAYTECH_SECRET_KEY = "${PAYTECH_SECRET_KEY}"
+PAYTECH_IPN_URL = "https://businessconnect-senegal.up.railway.app/api/payment/ipn"
+PAYTECH_SUCCESS_URL = "https://businessconnect-senegal.up.railway.app/payment/success"
+PAYTECH_CANCEL_URL = "https://businessconnect-senegal.up.railway.app/payment/cancel" 

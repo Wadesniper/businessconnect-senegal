@@ -7,6 +7,18 @@ const getAuthHeaders = () => ({
   headers: { Authorization: `Bearer ${authService.getToken()}` }
 });
 
+export interface JobData {
+  title: string;
+  company: string;
+  location: string;
+  description: string;
+  requirements: string[];
+  type: string;
+  salary?: string;
+  contactEmail: string;
+  contactPhone?: string;
+}
+
 export const adminService = {
   // Statistiques
   getStatistics: async (dateRange?: { start: Date; end: Date }, viewType: 'day' | 'week' | 'month' = 'week') => {
@@ -76,7 +88,16 @@ export const adminService = {
     return response.data;
   },
 
-  updateJob: async (jobId: string, data: any) => {
+  createJob: async (jobData: JobData) => {
+    const response = await axios.post(
+      `${API_URL}/admin/jobs`,
+      jobData,
+      getAuthHeaders()
+    );
+    return response.data;
+  },
+
+  updateJob: async (jobId: string, data: Partial<JobData>) => {
     const response = await axios.patch(
       `${API_URL}/admin/jobs/${jobId}`,
       data,
@@ -93,11 +114,17 @@ export const adminService = {
   importJobsFromFile: async (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
-    const response = await axios.post(`${API_URL}/admin/jobs/import`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    const response = await axios.post(
+      `${API_URL}/admin/jobs/import`,
+      formData,
+      {
+        ...getAuthHeaders(),
+        headers: {
+          ...getAuthHeaders().headers,
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
     return response.data;
   },
 
