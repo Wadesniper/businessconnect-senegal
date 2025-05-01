@@ -2,6 +2,7 @@ import { Formation, Module } from '../models/formation';
 import { logger } from '../utils/logger';
 import { FormationFilters, FormationInput, IFormation, ModuleInput } from '../types/formation';
 import { Types } from 'mongoose';
+import { IModule } from '../types/formation';
 
 export class FormationService {
   async getAllFormations(filters?: FormationFilters): Promise<IFormation[]> {
@@ -42,54 +43,24 @@ export class FormationService {
     }
   }
 
-  async createFormation(formationData: FormationInput, instructorId: string): Promise<IFormation> {
-    try {
-      const formation = new Formation({
-        ...formationData,
-        instructor: new Types.ObjectId(instructorId),
-        status: formationData.status || 'draft',
-        rating: 0,
-        numberOfRatings: 0,
-        enrolledStudents: []
-      });
-      
-      const savedFormation = await formation.save();
-      return savedFormation.toObject() as unknown as IFormation;
-    } catch (error) {
-      logger.error('Erreur lors de la création de la formation:', error);
-      throw error;
-    }
+  async createFormation(data: Partial<IFormation>): Promise<IFormation> {
+    const formation = await Formation.create(data);
+    return formation.toObject();
   }
 
-  async updateFormation(id: string, formationData: Partial<FormationInput>): Promise<IFormation> {
-    try {
-      const formation = await Formation.findByIdAndUpdate(
-        id,
-        { ...formationData, updatedAt: new Date() },
-        { new: true }
-      ).lean();
-
-      if (!formation) {
-        throw new Error('Formation non trouvée');
-      }
-
-      return formation as unknown as IFormation;
-    } catch (error) {
-      logger.error(`Erreur lors de la mise à jour de la formation ${id}:`, error);
-      throw error;
-    }
+  async getFormation(id: string): Promise<IFormation | null> {
+    const formation = await Formation.findById(id);
+    return formation ? formation.toObject() : null;
   }
 
-  async deleteFormation(id: string): Promise<void> {
-    try {
-      const formation = await Formation.findByIdAndDelete(id).exec();
-      if (!formation) {
-        throw new Error('Formation non trouvée');
-      }
-    } catch (error) {
-      logger.error(`Erreur lors de la suppression de la formation ${id}:`, error);
-      throw error;
-    }
+  async updateFormation(id: string, data: Partial<IFormation>): Promise<IFormation | null> {
+    const formation = await Formation.findByIdAndUpdate(id, data, { new: true });
+    return formation ? formation.toObject() : null;
+  }
+
+  async deleteFormation(id: string): Promise<boolean> {
+    const result = await Formation.findByIdAndDelete(id);
+    return !!result;
   }
 
   async addModule(formationId: string, moduleData: ModuleInput): Promise<IFormation> {
