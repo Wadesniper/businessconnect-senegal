@@ -6,6 +6,7 @@ import { Subscription, SubscriptionType, SubscriptionStatus, PaymentInitiation, 
 import { logger } from '../utils/logger';
 import pool from '../config/database';
 import { PayTech } from './paytechService';
+import { Schema, model } from 'mongoose';
 
 interface PayTechResponse {
   paymentId: string;
@@ -14,13 +15,31 @@ interface PayTechResponse {
   transactionId?: string;
 }
 
+interface ISubscription {
+  userId: string;
+  status: 'pending' | 'active' | 'expired' | 'cancelled';
+  plan: string;
+  paymentId?: string;
+  startDate: Date;
+  expiresAt: Date;
+}
+
+const subscriptionSchema = new Schema<ISubscription>({
+  userId: { type: String, required: true },
+  status: { type: String, required: true },
+  plan: { type: String, required: true },
+  paymentId: { type: String },
+  startDate: { type: Date, default: Date.now },
+  expiresAt: { type: Date, required: true },
+});
+
+const SubscriptionModel = model<ISubscription>('Subscription', subscriptionSchema);
+
 export class SubscriptionService {
-  private subscriptions: Map<string, Subscription>;
   private notificationService: NotificationService;
   private payTechService: PayTech;
   
   constructor(notificationService: NotificationService, payTechService: PayTech) {
-    this.subscriptions = new Map<string, Subscription>();
     this.notificationService = notificationService;
     this.payTechService = payTechService;
   }
@@ -54,7 +73,7 @@ export class SubscriptionService {
       }
     });
 
-    const subscription = await this.createSubscription({
+    await this.createSubscription({
       userId,
       type,
       status: 'pending',
@@ -84,31 +103,7 @@ export class SubscriptionService {
     }
   }
 
-  private async sendPaymentSuccessNotification(userId: string): Promise<void> {
-    const title = 'Paiement réussi';
-    const message = 'Votre paiement a été traité avec succès. Votre abonnement est maintenant actif.';
-    await this.notificationService.inAppNotificationService.createNotification(
-      userId,
-      'payment_success',
-      title,
-      message,
-      { action: 'subscription_activated' }
-    );
-  }
-
-  private async sendPaymentFailureNotification(userId: string): Promise<void> {
-    const title = 'Échec du paiement';
-    const message = 'Votre paiement n\'a pas pu être traité. Veuillez réessayer ou contacter le support.';
-    await this.notificationService.inAppNotificationService.createNotification(
-      userId,
-      'payment_failure',
-      title,
-      message,
-      { action: 'retry_payment' }
-    );
-  }
-
-  private async updateSubscriptionStatus(subscriptionId: string, status: SubscriptionStatus): Promise<void> {
+  public async updateSubscriptionStatus(subscriptionId: string, status: SubscriptionStatus): Promise<void> {
     const subscription = await this.getSubscription(subscriptionId);
     if (!subscription) {
       throw new Error('Souscription non trouvée');
@@ -118,10 +113,9 @@ export class SubscriptionService {
     subscription.updatedAt = new Date();
     
     await this.saveSubscription(subscription);
-    this.subscriptions.set(subscriptionId, subscription);
   }
 
-  async getSubscription(userId: string): Promise<Subscription | null> {
+  public async getSubscription(userId: string): Promise<Subscription | null> {
     try {
       const result = await pool.query(
         'SELECT * FROM subscriptions WHERE user_id = $1 ORDER BY created_at DESC LIMIT 1',
@@ -134,7 +128,7 @@ export class SubscriptionService {
     }
   }
 
-  async checkSubscriptionStatus(userId: string): Promise<boolean> {
+  public async checkSubscriptionStatus(userId: string): Promise<boolean> {
     const subscription = await this.getSubscription(userId);
     
     if (!subscription || subscription.status !== 'active') {
@@ -150,7 +144,7 @@ export class SubscriptionService {
     return true;
   }
 
-  async getPaymentHistory(userId: string): Promise<Subscription[]> {
+  public async getPaymentHistory(userId: string): Promise<Subscription[]> {
     try {
       const result = await pool.query(
         'SELECT * FROM subscriptions WHERE user_id = $1 ORDER BY created_at DESC',
@@ -163,7 +157,7 @@ export class SubscriptionService {
     }
   }
 
-  async getAllSubscriptions(): Promise<Subscription[]> {
+  public async getAllSubscriptions(): Promise<Subscription[]> {
     try {
       const result = await pool.query('SELECT * FROM subscriptions ORDER BY created_at DESC');
       return result.rows;
@@ -187,6 +181,25 @@ export class SubscriptionService {
     return result.rows[0] || null;
   }
 
+  public async createSubscription(data: {
+    userId: string;
+    type: SubscriptionType;
+    status: SubscriptionStatus;
+    paymentId: string;
+    startDate: Date;
+    endDate: Date;
+  }): Promise<Subscription> {
+    const subscription: Subscription = {
+      id: uuidv4(),
+      ...data,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    await this.saveSubscription(subscription);
+    return subscription;
+  }
+
   private async saveSubscription(subscription: Subscription): Promise<void> {
     const query = `
       INSERT INTO subscriptions (id, user_id, type, status, payment_id, start_date, end_date, updated_at)
@@ -207,30 +220,116 @@ export class SubscriptionService {
     ]);
   }
 
-  private async createSubscription(data: {
-    userId: string;
-    type: SubscriptionType;
-    status: SubscriptionStatus;
-    paymentId: string;
-    startDate: Date;
-    endDate: Date;
-  }): Promise<Subscription> {
-    const subscription: Subscription = {
-      id: uuidv4(),
-      ...data,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-
-    await this.saveSubscription(subscription);
-    this.subscriptions.set(subscription.id, subscription);
-    return subscription;
-  }
-
   private calculateEndDate(startDate: Date): Date {
     const endDate = new Date(startDate);
     endDate.setMonth(endDate.getMonth() + 1);
     return endDate;
+  }
+
+  async createSubscription(data: {
+    userId: string;
+    plan: string;
+    status: string;
+    paymentId?: string;
+  }) {
+    const query = `
+      INSERT INTO subscriptions (
+        id, 
+        user_id, 
+        plan, 
+        status, 
+        payment_id, 
+        start_date, 
+        expires_at, 
+        created_at
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      RETURNING *
+    `;
+
+    const now = new Date();
+    const expiresAt = this.calculateExpiryDate(data.plan);
+
+    const values = [
+      uuidv4(),
+      data.userId,
+      data.plan,
+      data.status,
+      data.paymentId,
+      now,
+      expiresAt,
+      now
+    ];
+
+    const result = await pool.query(query, values);
+    return result.rows[0];
+  }
+
+  async updateSubscription(userId: string, data: {
+    status?: string;
+    paymentId?: string;
+    expiresAt?: Date;
+  }) {
+    const updates = [];
+    const values = [userId];
+    let valueCount = 2;
+
+    if (data.status) {
+      updates.push(`status = $${valueCount}`);
+      values.push(data.status);
+      valueCount++;
+    }
+
+    if (data.paymentId) {
+      updates.push(`payment_id = $${valueCount}`);
+      values.push(data.paymentId);
+      valueCount++;
+    }
+
+    if (data.expiresAt) {
+      updates.push(`expires_at = $${valueCount}`);
+      values.push(data.expiresAt);
+      valueCount++;
+    }
+
+    updates.push(`updated_at = NOW()`);
+
+    const query = `
+      UPDATE subscriptions 
+      SET ${updates.join(', ')}
+      WHERE user_id = $1 AND status != 'cancelled'
+      RETURNING *
+    `;
+
+    const result = await pool.query(query, values);
+    return result.rows[0];
+  }
+
+  async getActiveSubscription(userId: string) {
+    const query = `
+      SELECT * FROM subscriptions 
+      WHERE user_id = $1 
+        AND status = 'active' 
+        AND expires_at > NOW()
+      ORDER BY created_at DESC 
+      LIMIT 1
+    `;
+    
+    const result = await pool.query(query, [userId]);
+    return result.rows[0];
+  }
+
+  async checkSubscriptionAccess(userId: string): Promise<boolean> {
+    const subscription = await this.getActiveSubscription(userId);
+    return !!subscription;
+  }
+
+  calculateExpiryDate(plan: string): Date {
+    const now = new Date();
+    if (plan === 'yearly') {
+      return new Date(now.setFullYear(now.getFullYear() + 1));
+    }
+    // Par défaut, abonnement mensuel
+    return new Date(now.setMonth(now.getMonth() + 1));
   }
 }
 

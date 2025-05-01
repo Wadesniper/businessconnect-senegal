@@ -1,0 +1,20 @@
+[build]
+builder = "nixpacks"
+buildCommand = "cd businessconnect-senegal/server && npm install && npm run build"
+
+[deploy]
+startCommand = "cd businessconnect-senegal/server && npm run migrate:up && npm start"
+healthcheckPath = "/api/health"
+healthcheckTimeout = 100
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
+
+[service]
+name = "businessconnect-senegal"
+internal_port = 5000
+auto_deploy = true
+
+[[services]]
+name = "postgresql"
+type = "postgresql"
+version = "14" 

@@ -1,18 +1,23 @@
+export type SubscriptionType = 'monthly' | 'yearly';
+
 export interface Subscription {
   id: string;
   userId: string;
   type: SubscriptionType;
-  status: SubscriptionStatus;
+  status: 'active' | 'inactive' | 'cancelled' | 'expired';
   startDate: string;
   endDate: string;
+  autoRenew: boolean;
+  lastPaymentDate: string;
+  nextPaymentDate: string;
 }
-
-export type SubscriptionType = 'etudiant' | 'annonceur' | 'recruteur';
-export type SubscriptionStatus = 'active' | 'pending' | 'expired';
 
 export interface PaymentInitiation {
   paymentUrl: string;
-  reference: string;
+  transactionId: string;
+  amount: number;
+  currency: string;
+  expiresAt: string;
 }
 
 export interface SubscriptionPricing {

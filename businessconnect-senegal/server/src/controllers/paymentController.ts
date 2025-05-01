@@ -6,6 +6,7 @@ import { emailService } from '../services/emailService';
 import { pdfService } from '../services/pdfService';
 import { AppError } from '../utils/errors';
 import { config } from '../config';
+import { AuthRequest } from '../types/user';
 
 interface PaymentIntent {
   id: string;
@@ -20,9 +21,13 @@ interface PaymentIntent {
 const paytech = new PayTech(config.PAYTECH_API_KEY, config.PAYTECH_WEBHOOK_SECRET);
 
 export const paymentController = {
-  async createSetupIntent(req: Request, res: Response) {
+  async createSetupIntent(req: AuthRequest, res: Response) {
     try {
       const { user } = req;
+      if (!user) {
+        throw new AppError('Utilisateur non authentifié', 401);
+      }
+      
       const setupIntent = await paytech.createSetupIntent({
         customer: user.id,
         payment_method_types: ['card']
@@ -57,9 +62,13 @@ export const paymentController = {
     }
   },
 
-  async processPayment(req: Request, res: Response) {
+  async processPayment(req: AuthRequest, res: Response) {
     try {
       const { user } = req;
+      if (!user) {
+        throw new AppError('Utilisateur non authentifié', 401);
+      }
+
       const { amount, currency, payment_method_id, order_id } = req.body;
 
       const paymentIntent = await paytech.createPaymentIntent({
@@ -77,9 +86,13 @@ export const paymentController = {
     }
   },
 
-  async createSubscription(req: Request, res: Response) {
+  async createSubscription(req: AuthRequest, res: Response) {
     try {
       const { user } = req;
+      if (!user) {
+        throw new AppError('Utilisateur non authentifié', 401);
+      }
+
       const { plan_id, payment_method_id } = req.body;
 
       const subscription = await paytech.createSubscription({
@@ -95,8 +108,13 @@ export const paymentController = {
     }
   },
 
-  async cancelSubscription(req: Request, res: Response) {
+  async cancelSubscription(req: AuthRequest, res: Response) {
     try {
+      const { user } = req;
+      if (!user) {
+        throw new AppError('Utilisateur non authentifié', 401);
+      }
+
       const { subscription_id } = req.body;
       await paytech.cancelSubscription(subscription_id);
       res.json({ success: true });

@@ -1,15 +1,28 @@
 import express from 'express';
 import { Request, Response } from 'express';
 import { SubscriptionService } from '../services/subscriptionService';
-import { authenticateToken } from '../middleware/authMiddleware';
-import { validatePaytechCallback } from '../middleware/paytechMiddleware';
+import { NotificationService } from '../services/notificationService';
+import { PayTech } from '../services/paytechService';
+import { authenticate } from '../middleware/authMiddleware';
+import { paytechMiddleware } from '../middleware/paytechMiddleware';
 import { logger } from '../utils/logger';
+import { PayTechCallbackData } from '../types/subscription';
 
 const router = express.Router();
-const subscriptionService = new SubscriptionService();
+
+// Initialisation des services
+const notificationService = new NotificationService({
+  daysBeforeExpiration: [7, 3, 1]
+});
+const payTechService = new PayTech(
+  process.env.PAYTECH_API_KEY || '',
+  process.env.PAYTECH_WEBHOOK_SECRET,
+  process.env.PAYTECH_API_URL || 'https://api.paytech.sn'
+);
+const subscriptionService = new SubscriptionService(notificationService, payTechService);
 
 // Récupérer l'abonnement d'un utilisateur
-router.get('/:userId', authenticateToken, async (req: Request, res: Response) => {
+router.get('/:userId', authenticate, async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const subscription = await subscriptionService.getSubscription(userId);
@@ -26,11 +39,11 @@ router.get('/:userId', authenticateToken, async (req: Request, res: Response) =>
 });
 
 // Vérifier le statut d'un abonnement
-router.get('/:userId/status', authenticateToken, async (req: Request, res: Response) => {
+router.get('/:userId/status', authenticate, async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    const status = await subscriptionService.checkSubscriptionStatus(userId);
-    res.json({ status });
+    const isActive = await subscriptionService.checkSubscriptionStatus(userId);
+    res.json({ isActive });
   } catch (error) {
     logger.error('Erreur lors de la vérification du statut:', error);
     res.status(500).json({ message: 'Erreur serveur lors de la vérification du statut' });
@@ -38,7 +51,7 @@ router.get('/:userId/status', authenticateToken, async (req: Request, res: Respo
 });
 
 // Initier un nouvel abonnement
-router.post('/initiate', authenticateToken, async (req: Request, res: Response) => {
+router.post('/initiate', authenticate, async (req: Request, res: Response) => {
   try {
     const { userId, subscriptionType } = req.body;
 
@@ -46,7 +59,7 @@ router.post('/initiate', authenticateToken, async (req: Request, res: Response) 
       return res.status(400).json({ message: 'UserId et type d\'abonnement requis' });
     }
 
-    const paymentInitiation = await subscriptionService.createSubscription(userId, subscriptionType);
+    const paymentInitiation = await subscriptionService.initiatePayment(userId, subscriptionType);
     res.json(paymentInitiation);
   } catch (error) {
     logger.error('Erreur lors de l\'initiation de l\'abonnement:', error);
@@ -55,19 +68,27 @@ router.post('/initiate', authenticateToken, async (req: Request, res: Response) 
 });
 
 // Callback PayTech pour la confirmation du paiement
-router.post('/payment-callback', validatePaytechCallback, async (req: Request, res: Response) => {
+router.post('/payment-callback', paytechMiddleware, async (req: Request, res: Response) => {
   try {
-    const { reference, status, userId } = req.body;
+    const {
+      type_event,
+      custom_field,
+      payment_id,
+      amount,
+      transaction_id
+    } = req.body;
 
-    if (status === 'success') {
-      await subscriptionService.updateSubscriptionStatus(userId, 'active');
-      logger.info(`Paiement réussi pour la référence: ${reference}`);
-      res.json({ message: 'Paiement confirmé et abonnement activé' });
-    } else {
-      await subscriptionService.updateSubscriptionStatus(userId, 'expired');
-      logger.warn(`Échec du paiement pour la référence: ${reference}`);
-      res.status(400).json({ message: 'Échec du paiement' });
-    }
+    const callbackData: PayTechCallbackData = {
+      paymentId: payment_id,
+      amount: amount,
+      status: type_event === 'SUCCESS_PAYMENT' ? 'completed' : 'failed',
+      customField: custom_field,
+      transactionId: transaction_id
+    };
+
+    await subscriptionService.handlePaymentCallback(callbackData);
+    
+    res.json({ message: 'Callback traité avec succès' });
   } catch (error) {
     logger.error('Erreur lors du traitement du callback de paiement:', error);
     res.status(500).json({ message: 'Erreur serveur lors du traitement du callback' });

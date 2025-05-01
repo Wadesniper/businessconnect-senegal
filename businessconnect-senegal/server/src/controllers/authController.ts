@@ -1,109 +1,242 @@
 import { Request, Response } from 'express';
-import { authService } from '../services/authService';
-import logger from '../utils/logger';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { User } from '../models/User';
+import { config } from '../config';
+import { NotificationService } from '../services/notificationService';
+import { logger } from '../utils/logger';
 
-export const authController = {
-  async register(req: Request, res: Response) {
+export class AuthController {
+  private notificationService: NotificationService;
+
+  constructor() {
+    this.notificationService = new NotificationService({ daysBeforeExpiration: [] });
+  }
+
+  register = async (req: Request, res: Response) => {
     try {
-      const { fullName, email, phoneNumber, password } = req.body;
+      const { name, email, password } = req.body;
 
-      // Validation des champs
-      if (!fullName || !email || !phoneNumber || !password) {
+      // Vérifier si l'utilisateur existe déjà
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
         return res.status(400).json({
           success: false,
-          message: 'Tous les champs sont requis'
+          message: 'Cet email est déjà utilisé'
         });
       }
 
-      // Validation du format email
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        return res.status(400).json({
-          success: false,
-          message: 'Format d\'email invalide'
-        });
-      }
+      // Hasher le mot de passe
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
 
-      // Validation du numéro de téléphone (format sénégalais)
-      const phoneRegex = /^(70|75|76|77|78)[0-9]{7}$/;
-      if (!phoneRegex.test(phoneNumber)) {
-        return res.status(400).json({
-          success: false,
-          message: 'Format de numéro de téléphone invalide'
-        });
-      }
-
-      // Validation du mot de passe
-      if (password.length < 8) {
-        return res.status(400).json({
-          success: false,
-          message: 'Le mot de passe doit contenir au moins 8 caractères'
-        });
-      }
-
-      const { user, token } = await authService.register({
-        fullName,
+      // Créer le nouvel utilisateur
+      const user = new User({
+        name,
         email,
-        phoneNumber,
-        password
+        password: hashedPassword
       });
 
-      logger.info(`Nouvel utilisateur enregistré: ${user.fullName}`);
+      await user.save();
+
+      // Générer le token de vérification
+      const verificationToken = jwt.sign(
+        { id: user._id },
+        config.JWT_SECRET,
+        { expiresIn: '24h' }
+      );
+
+      // Envoyer l'email de vérification
+      await this.notificationService.sendVerificationEmail(email, verificationToken);
 
       res.status(201).json({
         success: true,
-        data: { user, token }
+        message: 'Inscription réussie. Veuillez vérifier votre email.'
       });
     } catch (error) {
       logger.error('Erreur lors de l\'inscription:', error);
-      
-      if (error instanceof Error) {
-        return res.status(400).json({
-          success: false,
-          message: error.message
-        });
-      }
-
       res.status(500).json({
         success: false,
-        message: 'Erreur lors de l\'inscription'
+        message: 'Une erreur est survenue lors de l\'inscription'
       });
     }
-  },
+  };
 
-  async login(req: Request, res: Response) {
+  login = async (req: Request, res: Response) => {
     try {
-      const { identifier, password } = req.body;
+      const { email, password } = req.body;
 
-      if (!identifier || !password) {
-        return res.status(400).json({
+      // Vérifier si l'utilisateur existe
+      const user = await User.findOne({ email }).select('+password');
+      if (!user) {
+        return res.status(401).json({
           success: false,
-          message: 'Identifiant et mot de passe requis'
+          message: 'Email ou mot de passe incorrect'
         });
       }
 
-      const { user, token } = await authService.login(identifier, password);
+      // Vérifier le mot de passe
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(401).json({
+          success: false,
+          message: 'Email ou mot de passe incorrect'
+        });
+      }
 
-      logger.info(`Connexion réussie: ${user.fullName}`);
+      // Vérifier si l'email est vérifié
+      if (!user.isVerified) {
+        return res.status(401).json({
+          success: false,
+          message: 'Veuillez vérifier votre email avant de vous connecter'
+        });
+      }
 
-      res.json({
+      // Générer le token JWT
+      const token = jwt.sign(
+        { id: user._id },
+        config.JWT_SECRET,
+        { expiresIn: config.JWT_EXPIRES_IN }
+      );
+
+      res.status(200).json({
         success: true,
-        data: { user, token }
+        token,
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role
+        }
       });
     } catch (error) {
       logger.error('Erreur lors de la connexion:', error);
-      
-      res.status(401).json({
+      res.status(500).json({
         success: false,
-        message: 'Identifiants invalides'
+        message: 'Une erreur est survenue lors de la connexion'
       });
     }
-  },
+  };
 
-  async verifyToken(req: Request, res: Response) {
+  verifyEmail = async (req: Request, res: Response) => {
+    try {
+      const { token } = req.params;
+
+      // Vérifier le token
+      const decoded = jwt.verify(token, config.JWT_SECRET) as { id: string };
+      const user = await User.findById(decoded.id);
+
+      if (!user) {
+        return res.status(400).json({
+          success: false,
+          message: 'Token invalide'
+        });
+      }
+
+      // Mettre à jour le statut de vérification
+      user.isVerified = true;
+      await user.save();
+
+      res.status(200).json({
+        success: true,
+        message: 'Email vérifié avec succès'
+      });
+    } catch (error) {
+      logger.error('Erreur lors de la vérification de l\'email:', error);
+      res.status(400).json({
+        success: false,
+        message: 'Token invalide ou expiré'
+      });
+    }
+  };
+
+  forgotPassword = async (req: Request, res: Response) => {
+    try {
+      const { email } = req.body;
+
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'Aucun compte associé à cet email'
+        });
+      }
+
+      // Générer le token de réinitialisation
+      const resetToken = jwt.sign(
+        { id: user._id },
+        config.JWT_SECRET,
+        { expiresIn: '1h' }
+      );
+
+      // Sauvegarder le token
+      user.resetPasswordToken = resetToken;
+      user.resetPasswordExpire = new Date(Date.now() + 3600000); // 1 heure
+      await user.save();
+
+      // Envoyer l'email de réinitialisation
+      await this.notificationService.sendPasswordResetEmail(email, resetToken);
+
+      res.status(200).json({
+        success: true,
+        message: 'Email de réinitialisation envoyé'
+      });
+    } catch (error) {
+      logger.error('Erreur lors de la demande de réinitialisation:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Une erreur est survenue'
+      });
+    }
+  };
+
+  resetPassword = async (req: Request, res: Response) => {
+    try {
+      const { token } = req.params;
+      const { password } = req.body;
+
+      // Vérifier le token
+      const decoded = jwt.verify(token, config.JWT_SECRET) as { id: string };
+      const user = await User.findOne({
+        _id: decoded.id,
+        resetPasswordToken: token,
+        resetPasswordExpire: { $gt: Date.now() }
+      });
+
+      if (!user) {
+        return res.status(400).json({
+          success: false,
+          message: 'Token invalide ou expiré'
+        });
+      }
+
+      // Hasher le nouveau mot de passe
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      // Mettre à jour le mot de passe
+      user.password = hashedPassword;
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpire = undefined;
+      await user.save();
+
+      res.status(200).json({
+        success: true,
+        message: 'Mot de passe réinitialisé avec succès'
+      });
+    } catch (error) {
+      logger.error('Erreur lors de la réinitialisation du mot de passe:', error);
+      res.status(400).json({
+        success: false,
+        message: 'Token invalide ou expiré'
+      });
+    }
+  };
+
+  verifyToken = async (req: Request, res: Response) => {
     try {
       const token = req.headers.authorization?.split(' ')[1];
-
+      
       if (!token) {
         return res.status(401).json({
           success: false,
@@ -111,19 +244,31 @@ export const authController = {
         });
       }
 
-      const user = await authService.verifyToken(token);
+      const decoded = jwt.verify(token, config.JWT_SECRET) as { id: string };
+      const user = await User.findById(decoded.id);
 
-      res.json({
+      if (!user) {
+        return res.status(401).json({
+          success: false,
+          message: 'Utilisateur non trouvé'
+        });
+      }
+
+      res.status(200).json({
         success: true,
-        data: { user }
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role
+        }
       });
     } catch (error) {
       logger.error('Erreur lors de la vérification du token:', error);
-      
       res.status(401).json({
         success: false,
         message: 'Token invalide'
       });
     }
-  }
-}; 
+  };
+} 

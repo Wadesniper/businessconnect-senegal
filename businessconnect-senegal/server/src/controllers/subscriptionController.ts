@@ -1,19 +1,38 @@
 import { Request, Response } from 'express';
-import { AuthRequest } from '../middleware/auth';
+import { AuthRequest } from '../types/user';
 import { SubscriptionType, SubscriptionStatus, Subscription } from '../types/subscription';
 import { subscriptionService } from '../services/subscriptionService';
 import { logger } from '../utils/logger';
 import { PayTechConfig } from '../config/paytech';
+import { PayTech } from '../services/paytechService';
+import { NotificationService } from '../services/notificationService';
+import { config } from '../config';
+import { User } from '../models/User';
 
 const SUBSCRIPTION_PRICES = {
-  etudiant: 1000,    // 1,000 FCFA / mois
-  annonceur: 5000,   // 5,000 FCFA / mois
-  recruteur: 9000    // 9,000 FCFA / mois
+  etudiant: {
+    1: 5000,    // 5,000 FCFA / mois
+    3: 13500,   // 4,500 FCFA / mois
+    6: 24000,   // 4,000 FCFA / mois
+    12: 42000   // 3,500 FCFA / mois
+  },
+  annonceur: {
+    1: 15000,   // 15,000 FCFA / mois
+    3: 40500,   // 13,500 FCFA / mois
+    6: 72000,   // 12,000 FCFA / mois
+    12: 126000  // 10,500 FCFA / mois
+  },
+  recruteur: {
+    1: 25000,   // 25,000 FCFA / mois
+    3: 67500,   // 22,500 FCFA / mois
+    6: 120000,  // 20,000 FCFA / mois
+    12: 210000  // 17,500 FCFA / mois
+  }
 };
 
 const VALID_SUBSCRIPTION_TYPES: SubscriptionType[] = ['etudiant', 'annonceur', 'recruteur'];
 
-export class SubscriptionController {
+export const subscriptionController = {
   async createSubscription(req: AuthRequest, res: Response) {
     try {
       const userId = req.user?.id;
@@ -31,22 +50,26 @@ export class SubscriptionController {
       logger.error('Erreur lors de la création de l\'abonnement:', error);
       return res.status(500).json({ error: 'Erreur lors de la création de l\'abonnement' });
     }
-  }
+  },
 
   async updateSubscriptionStatus(req: AuthRequest, res: Response) {
     try {
-      const { subscriptionId } = req.params;
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ error: 'Utilisateur non authentifié' });
+      }
+
       const { status } = req.body as { status: SubscriptionStatus };
 
-      const updatedSubscription = await subscriptionService.updateSubscriptionStatus(subscriptionId, status);
+      const updatedSubscription = await subscriptionService.updateSubscriptionStatus(userId, status);
       
-      logger.info('Statut de l\'abonnement mis à jour', { subscriptionId, status });
+      logger.info('Statut de l\'abonnement mis à jour', { userId, status });
       return res.json(updatedSubscription);
     } catch (error) {
       logger.error('Erreur lors de la mise à jour du statut:', error);
       return res.status(500).json({ error: 'Erreur lors de la mise à jour du statut' });
     }
-  }
+  },
 
   async getSubscriptionPrice(req: Request, res: Response) {
     try {
@@ -61,7 +84,7 @@ export class SubscriptionController {
       logger.error('Erreur lors de la récupération du prix:', error);
       return res.status(500).json({ error: 'Erreur lors de la récupération du prix' });
     }
-  }
+  },
 
   async getSubscription(req: AuthRequest, res: Response) {
     try {
@@ -76,7 +99,7 @@ export class SubscriptionController {
       logger.error('Erreur lors de la récupération de l\'abonnement:', error);
       return res.status(500).json({ error: 'Erreur lors de la récupération de l\'abonnement' });
     }
-  }
+  },
 
   async getAllSubscriptions(_req: Request, res: Response) {
     try {
@@ -86,7 +109,7 @@ export class SubscriptionController {
       logger.error('Erreur lors de la récupération des abonnements:', error);
       return res.status(500).json({ error: 'Erreur lors de la récupération des abonnements' });
     }
-  }
+  },
 
   async checkSubscriptionStatus(req: AuthRequest, res: Response) {
     try {
@@ -96,148 +119,74 @@ export class SubscriptionController {
       }
 
       const isActive = await subscriptionService.checkSubscriptionStatus(userId);
-      return res.json({ isActive });
+      const subscription = await subscriptionService.getSubscription(userId);
+
+      return res.json({
+        isActive,
+        subscription
+      });
     } catch (error) {
       logger.error('Erreur lors de la vérification du statut:', error);
       return res.status(500).json({ error: 'Erreur lors de la vérification du statut' });
     }
   },
 
-  async initiatePayment(req: Request, res: Response) {
+  async initiatePayment(req: AuthRequest, res: Response) {
     try {
-      const { userId, subscriptionType } = req.body;
-
-      if (!userId || !subscriptionType) {
-        return res.status(400).json({ 
-          success: false,
-          message: 'UserId et type d\'abonnement sont requis' 
-        });
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ error: 'Utilisateur non authentifié' });
       }
 
-      if (!VALID_SUBSCRIPTION_TYPES.includes(subscriptionType)) {
-        return res.status(400).json({ 
-          success: false,
-          message: `Type d'abonnement invalide. Types disponibles : etudiant (${SUBSCRIPTION_PRICES.etudiant} FCFA), annonceur (${SUBSCRIPTION_PRICES.annonceur} FCFA), recruteur (${SUBSCRIPTION_PRICES.recruteur} FCFA)` 
-        });
+      const { type } = req.body as { type: SubscriptionType };
+      if (!type) {
+        return res.status(400).json({ error: 'Type d\'abonnement requis' });
       }
 
-      const amount = SUBSCRIPTION_PRICES[subscriptionType];
+      const paymentInitiation = await subscriptionService.initiatePayment(userId, type);
       
-      // Préparer les données pour PayTech
-      const paymentData = {
-        item_name: `Abonnement ${subscriptionType} BusinessConnect`,
-        item_price: amount.toString(),
-        currency: "XOF",
-        ref_command: `SUB-${userId}-${Date.now()}`,
-        command_name: `Abonnement ${subscriptionType} BusinessConnect Senegal`,
-        env: process.env.NODE_ENV === 'production' ? 'prod' : 'test',
-        custom_field: JSON.stringify({
-          userId,
-          subscriptionType,
-          timestamp: Date.now()
-        })
-      };
-
-      // Initier le paiement avec PayTech
-      const paymentResponse = await PayTechConfig.initiatePayment(paymentData);
-      logger.info('Paiement initié avec PayTech', { userId, subscriptionType, amount });
-
-      // Créer un abonnement en attente
-      await subscriptionService.createSubscription(userId, subscriptionType as SubscriptionType);
-
-      res.status(200).json({
-        success: true,
-        data: {
-          redirectUrl: paymentResponse.redirectUrl,
-          paymentId: paymentResponse.paymentId
-        }
-      });
+      logger.info('Paiement initié avec succès', { userId, type });
+      return res.status(200).json(paymentInitiation);
     } catch (error) {
       logger.error('Erreur lors de l\'initiation du paiement:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Erreur lors de l\'initiation du paiement'
-      });
+      return res.status(500).json({ error: 'Erreur lors de l\'initiation du paiement' });
     }
   },
 
   async handlePaymentCallback(req: Request, res: Response) {
     try {
-      const {
-        type_event,
-        custom_field,
-        ref_command,
-        payment_method,
-        api_key_sha256,
-        api_secret_sha256
-      } = req.body;
-
-      // Vérifier que la requête vient bien de PayTech
-      const my_api_key = process.env.PAYTECH_API_KEY;
-      const my_api_secret = process.env.PAYTECH_API_SECRET;
-      const crypto = require('crypto');
-
-      const isValidRequest = 
-        crypto.createHash('sha256').update(my_api_secret).digest('hex') === api_secret_sha256 &&
-        crypto.createHash('sha256').update(my_api_key).digest('hex') === api_key_sha256;
-
-      if (!isValidRequest) {
-        logger.error('Tentative de callback invalide détectée');
-        return res.status(403).json({ success: false, message: 'Requête non autorisée' });
-      }
-
-      const customData = JSON.parse(custom_field);
-      const { userId, subscriptionType } = customData;
-
-      if (type_event === 'SUCCESS_PAYMENT') {
-        // Mettre à jour le statut de l'abonnement
-        await subscriptionService.updateSubscriptionStatus(userId, 'active');
-        logger.info(`Paiement réussi pour l'utilisateur ${userId}`);
-
-        res.json({
-          success: true,
-          message: 'Paiement traité avec succès'
-        });
-      } else {
-        // En cas d'échec, marquer l'abonnement comme expiré
-        await subscriptionService.updateSubscriptionStatus(userId, 'expired');
-        logger.warn(`Échec du paiement pour l'utilisateur ${userId}`);
-
-        res.json({
-          success: false,
-          message: 'Échec du paiement'
-        });
-      }
+      const callbackData = req.body;
+      await subscriptionService.handlePaymentCallback(callbackData);
+      
+      return res.json({ success: true });
     } catch (error) {
       logger.error('Erreur lors du traitement du callback:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Erreur lors du traitement du callback'
-      });
+      return res.status(500).json({ error: 'Erreur lors du traitement du callback' });
     }
   },
 
-  async getPaymentHistory(req: Request, res: Response) {
+  async getPaymentHistory(req: AuthRequest, res: Response) {
     try {
-      const { userId } = req.params;
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ error: 'Utilisateur non authentifié' });
+      }
+
       const history = await subscriptionService.getPaymentHistory(userId);
-      
-      res.json({
-        success: true,
-        data: history
-      });
+      return res.json(history);
     } catch (error) {
-      logger.error('Erreur lors de la récupération de l\'historique des paiements:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Erreur lors de la récupération de l\'historique'
-      });
+      logger.error('Erreur lors de la récupération de l\'historique:', error);
+      return res.status(500).json({ error: 'Erreur lors de la récupération de l\'historique' });
     }
   },
 
-  async checkRenewalEligibility(req: Request, res: Response) {
+  async checkRenewalEligibility(req: AuthRequest, res: Response) {
     try {
-      const { userId } = req.params;
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ error: 'Utilisateur non authentifié' });
+      }
+
       const subscription = await subscriptionService.getSubscription(userId);
       
       if (!subscription) {
@@ -266,7 +215,264 @@ export class SubscriptionController {
         message: 'Erreur lors de la vérification de l\'éligibilité'
       });
     }
-  }
-}
+  },
 
-export const subscriptionController = new SubscriptionController(); 
+  async getActiveSubscription(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ error: 'Utilisateur non authentifié' });
+      }
+
+      const subscription = await subscriptionService.getActiveSubscription(userId);
+      if (!subscription) {
+        return res.status(404).json({
+          success: false,
+          message: 'Aucun abonnement actif trouvé'
+        });
+      }
+
+      return res.json({
+        success: true,
+        data: subscription
+      });
+    } catch (error) {
+      logger.error('Erreur lors de la récupération de l\'abonnement actif:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la récupération de l\'abonnement actif'
+      });
+    }
+  },
+
+  getSubscriptionPlans: async (req: Request, res: Response) => {
+    try {
+      res.json({
+        success: true,
+        data: {
+          plans: SUBSCRIPTION_PRICES,
+          features: {
+            etudiant: [
+              'Accès aux formations en ligne',
+              'Générateur de CV',
+              'Forum communautaire'
+            ],
+            annonceur: [
+              'Tous les avantages Étudiant',
+              'Publication d\'annonces sur le marketplace',
+              'Statistiques de vente'
+            ],
+            recruteur: [
+              'Tous les avantages Annonceur',
+              'Publication d\'offres d\'emploi',
+              'Accès à la CVthèque',
+              'Matching automatique CV/offres'
+            ]
+          }
+        }
+      });
+    } catch (error) {
+      logger.error('Erreur lors de la récupération des plans:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la récupération des plans'
+      });
+    }
+  },
+
+  getCurrentSubscription: async (req: Request, res: Response) => {
+    try {
+      const userId = req.user?.id;
+      const user = await User.findById(userId).select('+subscription');
+
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'Utilisateur non trouvé'
+        });
+      }
+
+      res.json({
+        success: true,
+        data: user.subscription || null
+      });
+    } catch (error) {
+      logger.error('Erreur lors de la récupération de l\'abonnement:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la récupération de l\'abonnement'
+      });
+    }
+  },
+
+  subscribe: async (req: Request, res: Response) => {
+    try {
+      const { plan, duration } = req.body;
+      const userId = req.user?.id;
+
+      const amount = SUBSCRIPTION_PRICES[plan][duration];
+      if (!amount) {
+        return res.status(400).json({
+          success: false,
+          message: 'Plan ou durée invalide'
+        });
+      }
+
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'Utilisateur non trouvé'
+        });
+      }
+
+      // Créer la session de paiement PayTech
+      const paymentSession = await this.paytech.createPaymentSession({
+        amount,
+        description: `Abonnement ${plan} - ${duration} mois`,
+        customerId: userId,
+        customerEmail: user.email,
+        metadata: {
+          plan,
+          duration,
+          userId
+        }
+      });
+
+      res.json({
+        success: true,
+        data: paymentSession
+      });
+    } catch (error) {
+      logger.error('Erreur lors de la souscription:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la souscription'
+      });
+    }
+  },
+
+  cancelSubscription: async (req: Request, res: Response) => {
+    try {
+      const userId = req.user?.id;
+      const user = await User.findById(userId);
+
+      if (!user || !user.subscription) {
+        return res.status(404).json({
+          success: false,
+          message: 'Abonnement non trouvé'
+        });
+      }
+
+      user.subscription.status = 'cancelled';
+      await user.save();
+
+      res.json({
+        success: true,
+        message: 'Abonnement annulé avec succès'
+      });
+    } catch (error) {
+      logger.error('Erreur lors de l\'annulation:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors de l\'annulation'
+      });
+    }
+  },
+
+  renewSubscription: async (req: Request, res: Response) => {
+    try {
+      const userId = req.user?.id;
+      const user = await User.findById(userId);
+
+      if (!user || !user.subscription) {
+        return res.status(404).json({
+          success: false,
+          message: 'Abonnement non trouvé'
+        });
+      }
+
+      // Créer une nouvelle session de paiement pour le renouvellement
+      const paymentSession = await this.paytech.createPaymentSession({
+        amount: SUBSCRIPTION_PRICES[user.subscription.plan][user.subscription.duration],
+        description: `Renouvellement abonnement ${user.subscription.plan}`,
+        customerId: userId,
+        customerEmail: user.email,
+        metadata: {
+          plan: user.subscription.plan,
+          duration: user.subscription.duration,
+          userId,
+          isRenewal: true
+        }
+      });
+
+      res.json({
+        success: true,
+        data: paymentSession
+      });
+    } catch (error) {
+      logger.error('Erreur lors du renouvellement:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors du renouvellement'
+      });
+    }
+  },
+
+  handlePayTechWebhook: async (req: Request, res: Response) => {
+    try {
+      const { signature } = req.headers;
+      const payload = req.body;
+
+      // Vérifier la signature
+      if (!this.paytech.verifyWebhookSignature(payload, signature as string)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Signature invalide'
+        });
+      }
+
+      const { status, metadata } = payload;
+      const { userId, plan, duration, isRenewal } = metadata;
+
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'Utilisateur non trouvé'
+        });
+      }
+
+      if (status === 'success') {
+        // Mettre à jour l'abonnement
+        const now = new Date();
+        const endDate = new Date();
+        endDate.setMonth(endDate.getMonth() + duration);
+
+        user.subscription = {
+          plan,
+          status: 'active',
+          startDate: now,
+          endDate,
+          duration
+        };
+
+        await user.save();
+
+        // Envoyer la notification
+        await this.notificationService.sendPaymentSuccessNotification(userId);
+      } else {
+        // Envoyer la notification d'échec
+        await this.notificationService.sendPaymentFailureNotification(userId);
+      }
+
+      res.json({ success: true });
+    } catch (error) {
+      logger.error('Erreur lors du traitement du webhook:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors du traitement du webhook'
+      });
+    }
+  }
+}; 
