@@ -1,8 +1,7 @@
-import { Formation, Module } from '../models/formation';
+import { Formation } from '../models/formation';
 import { logger } from '../utils/logger';
-import { FormationFilters, FormationInput, IFormation, ModuleInput } from '../types/formation';
+import { FormationFilters, IFormation, ModuleInput } from '../types/formation';
 import { Types } from 'mongoose';
-import { IModule } from '../types/formation';
 
 export class FormationService {
   async getAllFormations(filters?: FormationFilters): Promise<IFormation[]> {
@@ -21,9 +20,15 @@ export class FormationService {
 
       const formations = await query
         .populate('instructor', 'name email avatar')
-        .sort('-createdAt')
         .lean();
-      return formations as unknown as IFormation[];
+
+      return formations.map(formation => ({
+        ...formation,
+        modules: formation.modules.map(module => ({
+          ...module,
+          description: module.description || ''
+        }))
+      })) as IFormation[];
     } catch (error) {
       logger.error('Erreur lors de la récupération des formations:', error);
       throw error;
@@ -36,7 +41,13 @@ export class FormationService {
       if (!formation) {
         throw new Error('Formation non trouvée');
       }
-      return formation as unknown as IFormation;
+      return {
+        ...formation,
+        modules: formation.modules.map(module => ({
+          ...module,
+          description: module.description || ''
+        }))
+      } as IFormation;
     } catch (error) {
       logger.error(`Erreur lors de la récupération de la formation ${id}:`, error);
       throw error;
@@ -70,13 +81,13 @@ export class FormationService {
         throw new Error('Formation non trouvée');
       }
 
-      const module = new Module({
+      formation.modules.push({
         ...moduleData,
         description: moduleData.description || ''
       });
-      formation.modules.push(module);
+
       const savedFormation = await formation.save();
-      return savedFormation.toObject() as unknown as IFormation;
+      return savedFormation.toObject() as IFormation;
     } catch (error) {
       logger.error(`Erreur lors de l'ajout du module à la formation ${formationId}:`, error);
       throw error;
@@ -102,7 +113,13 @@ export class FormationService {
         throw new Error('Formation ou module non trouvé');
       }
 
-      return formation as unknown as IFormation;
+      return {
+        ...formation,
+        modules: formation.modules.map(module => ({
+          ...module,
+          description: module.description || ''
+        }))
+      } as IFormation;
     } catch (error) {
       logger.error(`Erreur lors de la mise à jour du module ${moduleId}:`, error);
       throw error;
@@ -115,13 +132,19 @@ export class FormationService {
         formationId,
         { $pull: { modules: { _id: moduleId } } },
         { new: true }
-      ).exec();
+      ).lean();
 
       if (!formation) {
         throw new Error('Formation non trouvée');
       }
 
-      return formation;
+      return {
+        ...formation,
+        modules: formation.modules.map(module => ({
+          ...module,
+          description: module.description || ''
+        }))
+      } as IFormation;
     } catch (error) {
       logger.error(`Erreur lors de la suppression du module ${moduleId}:`, error);
       throw error;
@@ -202,7 +225,7 @@ export class FormationService {
           ...module,
           description: module.description || ''
         }))
-      })) as unknown as IFormation[];
+      })) as IFormation[];
     } catch (error) {
       logger.error('Erreur lors de la recherche de formations:', error);
       throw error;

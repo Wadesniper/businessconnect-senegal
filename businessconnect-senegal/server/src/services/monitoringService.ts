@@ -10,8 +10,10 @@ export class MonitoringService {
   private readonly memoryThreshold = 0.85; // 85% d'utilisation mémoire
   private readonly diskThreshold = 0.80; // 80% d'utilisation disque
   private readonly cpuThreshold = 0.70; // 70% d'utilisation CPU
+  private readonly storageService: StorageService;
 
   private constructor() {
+    this.storageService = new StorageService();
     this.startMonitoring();
   }
 
@@ -55,12 +57,12 @@ export class MonitoringService {
   private async handleMetrics(metrics: SystemMetrics): Promise<void> {
     if (metrics.memoryUsage > this.memoryThreshold) {
       logger.warn('Usage mémoire élevé, nettoyage du cache...');
-      await this.optimizeMemory(metrics);
+      await this.optimizeMemory();
     }
 
     if (metrics.cpuUsage > this.cpuThreshold) {
       logger.warn('Usage CPU élevé, optimisation des processus...');
-      await this.optimizeCPU(metrics);
+      await this.optimizeCPU();
     }
 
     if (metrics.diskUsage > this.diskThreshold) {
@@ -69,18 +71,17 @@ export class MonitoringService {
     }
   }
 
-  private async optimizeMemory(metrics: SystemMetrics): Promise<void> {
+  private async optimizeMemory(): Promise<void> {
     const cacheService = CacheService.getInstance();
     await cacheService.clear();
   }
 
-  private async optimizeCPU(metrics: SystemMetrics): Promise<void> {
+  private async optimizeCPU(): Promise<void> {
     // Implémentation de l'optimisation CPU si nécessaire
   }
 
   private async optimizeDiskSpace(): Promise<void> {
-    const storageService = StorageService.getInstance();
-    await storageService.cleanupTempFiles();
+    await this.storageService.cleanupTempFiles();
   }
 
   private logMetrics(metrics: SystemMetrics): void {
