@@ -1,3 +1,27 @@
+const validateConfig = () => {
+  const requiredEnvVars = [
+    'MONGODB_URI',
+    'JWT_SECRET',
+    'PAYTECH_API_KEY',
+    'PAYTECH_WEBHOOK_SECRET'
+  ];
+
+  const missingVars = requiredEnvVars.filter(
+    varName => !process.env[varName]
+  );
+
+  if (missingVars.length > 0) {
+    throw new Error(
+      `Variables d'environnement manquantes : ${missingVars.join(', ')}`
+    );
+  }
+};
+
+// Valider la configuration en production
+if (process.env.NODE_ENV === 'production') {
+  validateConfig();
+}
+
 export const config = {
   JWT_SECRET: process.env.JWT_SECRET || 'your-secret-key',
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '7d',
@@ -6,17 +30,19 @@ export const config = {
   NODE_ENV: process.env.NODE_ENV || 'development',
   
   // Configuration SMTP
-  SMTP_HOST: process.env.SMTP_HOST || 'smtp-relay.brevo.com',
-  SMTP_PORT: parseInt(process.env.SMTP_PORT || '587'),
+  SMTP_HOST: process.env.SMTP_HOST || 'smtp.gmail.com',
+  SMTP_PORT: Number(process.env.SMTP_PORT) || 587,
   SMTP_SECURE: process.env.SMTP_SECURE === 'true',
-  SMTP_USER: process.env.SMTP_USER || '88ccee002@smtp-brevo.com',
-  SMTP_PASSWORD: process.env.SMTP_PASSWORD || 'myFchwr5H6AYtJdq',
-  SMTP_FROM: process.env.SMTP_FROM || '88ccee002@smtp-brevo.com',
+  SMTP_USER: process.env.SMTP_USER || '',
+  SMTP_PASSWORD: process.env.SMTP_PASSWORD || '',
+  SMTP_FROM: process.env.SMTP_FROM || 'noreply@businessconnect.sn',
 
   // Configuration PayTech
-  PAYTECH_API_KEY: process.env.PAYTECH_API_KEY || 'be2b2e9b3a0ed01d69d30dff8a21f05199e2e71968788b4890690d7af56ba32b',
-  PAYTECH_WEBHOOK_SECRET: process.env.PAYTECH_WEBHOOK_SECRET || '6860a504cc73992c2e8dc623c7b31d948ef5a4ec2507a0a4771e62755cca9277',
-  PAYTECH_BASE_URL: process.env.PAYTECH_BASE_URL || 'https://paytech.sn',
+  paytech: {
+    apiKey: process.env.PAYTECH_API_KEY || '',
+    webhookSecret: process.env.PAYTECH_WEBHOOK_SECRET || '',
+    baseUrl: process.env.PAYTECH_BASE_URL || 'https://paytech.sn'
+  },
 
   // URLs de l'application
   CLIENT_URL: process.env.CLIENT_URL || 'http://localhost:3000',
