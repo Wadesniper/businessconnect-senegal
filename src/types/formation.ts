@@ -1,11 +1,12 @@
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 export interface IModule {
+  _id?: Types.ObjectId;
   title: string;
-  duration: number;
-  content: string;
-  order: number;
   description?: string;
+  content: string;
+  duration: number;
+  order: number;
 }
 
 export interface IFormation extends Document {
@@ -14,11 +15,15 @@ export interface IFormation extends Document {
   level: 'débutant' | 'intermédiaire' | 'avancé';
   duration: number;
   price: number;
+  instructor: Types.ObjectId;
   category: string;
-  instructor: string;
+  tags: string[];
   thumbnail: string;
   status: 'draft' | 'published' | 'archived';
   modules: IModule[];
+  rating: number;
+  reviews: Types.ObjectId[];
+  enrollments: number;
   featured: boolean;
   cursaUrl?: string;
   createdAt: Date;
