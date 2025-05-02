@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Button, Tag, Space, Input, Select, message, Modal, Typography, Divider } from 'antd';
 import { SearchOutlined, EyeOutlined, SendOutlined } from '@ant-design/icons';
-import { jobService, JobOffer } from '../services/jobService';
+import { jobService } from '../services/jobService';
 import { authService } from '../services/authService';
+import { JobData } from '../types/job';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -27,12 +28,12 @@ const contractTypes = [
 ];
 
 export const JobList: React.FC = () => {
-  const [jobs, setJobs] = useState<JobOffer[]>([]);
+  const [jobs, setJobs] = useState<JobData[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedSector, setSelectedSector] = useState<string>();
   const [selectedType, setSelectedType] = useState<string>();
   const [searchText, setSearchText] = useState('');
-  const [selectedJob, setSelectedJob] = useState<JobOffer | null>(null);
+  const [selectedJob, setSelectedJob] = useState<JobData | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
@@ -54,7 +55,7 @@ export const JobList: React.FC = () => {
     setLoading(false);
   };
 
-  const handleViewDetails = (job: JobOffer) => {
+  const handleViewDetails = (job: JobData) => {
     setSelectedJob(job);
     setIsModalVisible(true);
   };
@@ -166,7 +167,7 @@ export const JobList: React.FC = () => {
             </Paragraph>
             {selectedJob.salary && (
               <Paragraph>
-                <strong>Salaire:</strong> {selectedJob.salary}
+                <strong>Salaire:</strong> {typeof selectedJob.salary === 'object' ? `${selectedJob.salary.min} - ${selectedJob.salary.max} ${selectedJob.salary.currency}` : selectedJob.salary}
               </Paragraph>
             )}
             <Divider />

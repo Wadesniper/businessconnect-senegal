@@ -21,7 +21,7 @@ const RegisterPage: React.FC = () => {
       const { fullName, confirmPassword, ...rest } = values;
       await authService.register({
         ...rest,
-        name: fullName
+        fullName
       });
       message.success('Inscription réussie !');
       navigate('/login');

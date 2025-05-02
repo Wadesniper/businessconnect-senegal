@@ -69,7 +69,7 @@ export const cvService = {
     try {
       const response = await axios.get(`${API_URL}/cv/templates`, {
         headers: {
-          Authorization: `Bearer ${authService.getToken()}`
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
       return response.data;
@@ -83,7 +83,7 @@ export const cvService = {
     try {
       const response = await axios.get(`${API_URL}/cv`, {
         headers: {
-          Authorization: `Bearer ${authService.getToken()}`
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
       return response.data;
@@ -97,7 +97,7 @@ export const cvService = {
     try {
       const response = await axios.get(`${API_URL}/cv/${id}`, {
         headers: {
-          Authorization: `Bearer ${authService.getToken()}`
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
       return response.data;
@@ -111,7 +111,7 @@ export const cvService = {
     try {
       const response = await axios.post(`${API_URL}/cv`, cvData, {
         headers: {
-          Authorization: `Bearer ${authService.getToken()}`
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
       return response.data;
@@ -125,7 +125,7 @@ export const cvService = {
     try {
       const response = await axios.put(`${API_URL}/cv/${id}`, cvData, {
         headers: {
-          Authorization: `Bearer ${authService.getToken()}`
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
       return response.data;
@@ -139,7 +139,7 @@ export const cvService = {
     try {
       await axios.delete(`${API_URL}/cv/${id}`, {
         headers: {
-          Authorization: `Bearer ${authService.getToken()}`
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
     } catch (error) {
@@ -152,7 +152,7 @@ export const cvService = {
     try {
       const response = await axios.get(`${API_URL}/cv/${id}/pdf`, {
         headers: {
-          Authorization: `Bearer ${authService.getToken()}`
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         },
         responseType: 'blob'
       });
@@ -167,7 +167,7 @@ export const cvService = {
     try {
       await axios.post(`${API_URL}/cv/${id}/share`, { email }, {
         headers: {
-          Authorization: `Bearer ${authService.getToken()}`
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
     } catch (error) {

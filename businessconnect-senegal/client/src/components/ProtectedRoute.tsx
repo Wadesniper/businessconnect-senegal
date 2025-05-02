@@ -20,7 +20,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (requiresSubscription && !user?.hasActiveSubscription) {
+  if (requiresSubscription && !(user?.subscription && user.subscription.status === 'active' && new Date(user.subscription.expiresAt) > new Date())) {
     message.warning('Cette fonctionnalité est réservée aux abonnés Premium');
     return <Navigate to="/pricing" state={{ from: location }} replace />;
   }

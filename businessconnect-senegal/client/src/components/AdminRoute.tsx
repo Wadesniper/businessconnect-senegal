@@ -1,20 +1,23 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { authService } from '../services/authService';
+import { useAuth } from '../hooks/useAuth';
 
 interface AdminRouteProps {
   children: React.ReactNode;
 }
 
 const AdminRoute: React.FC<AdminRouteProps> = ({ children }) => {
-  const isAdmin = authService.isAdmin();
-  const isAuthenticated = authService.isAuthenticated();
+  const { user, isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return <div>Chargement...</div>;
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
   }
 
-  if (!isAdmin) {
+  if (user?.role !== 'admin') {
     return <Navigate to="/" />;
   }
 

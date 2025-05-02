@@ -5,6 +5,9 @@ export interface PersonalInfo {
   email: string;
   phone: string;
   address?: string;
+  photo?: string;
+  linkedin?: string;
+  portfolio?: string;
 }
 
 export interface Experience {
@@ -24,16 +27,19 @@ export interface Education {
 }
 
 export interface Skill {
+  id?: string;
   name: string;
   level: number; // 1-5
 }
 
 export interface Language {
+  id?: string;
   name: string;
   level: 'débutant' | 'intermédiaire' | 'avancé' | 'bilingue';
 }
 
 export interface Certification {
+  id?: string;
   name: string;
   issuer: string;
   date: string;
@@ -41,7 +47,7 @@ export interface Certification {
 }
 
 export interface Project {
-  id: string;
+  id?: string;
   name: string;
   description: string;
   technologies: string[];

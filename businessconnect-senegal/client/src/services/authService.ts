@@ -132,4 +132,5 @@ class AuthService {
   }
 }
 
-export const authService = new AuthService(); 
+export const authService = new AuthService();
+export type { RegisterData } from '../types/user'; 
