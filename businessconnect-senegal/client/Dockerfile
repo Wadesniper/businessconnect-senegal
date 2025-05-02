@@ -19,10 +19,12 @@ FROM node:18-alpine
 
 WORKDIR /app
 
+# Installation de serve
+RUN npm install -g serve
+
 # Copie des fichiers nécessaires depuis l'étape de build
 COPY --from=builder /app/build ./build
 COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/node_modules ./node_modules
 
 # Variables d'environnement
 ENV NODE_ENV=production
@@ -32,4 +34,4 @@ ENV PORT=3000
 EXPOSE 3000
 
 # Démarrage de l'application
-CMD ["npm", "start"] 
+CMD ["serve", "-s", "build", "-l", "3000"] 
