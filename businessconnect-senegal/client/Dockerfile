@@ -5,14 +5,15 @@ WORKDIR /app
 # Copie des fichiers de dépendances
 COPY package*.json ./
 
-# Installation des dépendances
+# Installation des dépendances et react-scripts globalement
 RUN npm install
+RUN npm install -g react-scripts
 
 # Copie du code source
 COPY . .
 
-# Build de l'application
-RUN npm run build
+# Build de l'application avec le chemin complet
+RUN ./node_modules/.bin/react-scripts build
 
 # Étape de production
 FROM node:18-alpine
@@ -24,7 +25,6 @@ RUN npm install -g serve
 
 # Copie des fichiers nécessaires depuis l'étape de build
 COPY --from=builder /app/build ./build
-COPY --from=builder /app/package*.json ./
 
 # Variables d'environnement
 ENV NODE_ENV=production
