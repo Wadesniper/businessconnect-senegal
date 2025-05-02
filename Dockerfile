@@ -17,7 +17,7 @@ RUN npm install -g react-scripts
 # Copie du code source
 COPY . .
 
-# Build de l'application
+# Build de l'application avec npm
 RUN npm run build
 
 # Variables d'environnement
