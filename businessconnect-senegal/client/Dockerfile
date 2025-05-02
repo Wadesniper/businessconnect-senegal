@@ -12,6 +12,9 @@ RUN npm install -g react-scripts
 # Copie du code source
 COPY . .
 
+# Correction des permissions sur react-scripts
+RUN chmod +x ./node_modules/.bin/react-scripts
+
 # Build de l'application avec le chemin complet
 RUN ./node_modules/.bin/react-scripts build
 
