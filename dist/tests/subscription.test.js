@@ -41,6 +41,19 @@ globals_1.jest.mock('../config/paytech');
                 .rejects
                 .toThrow(errors_1.AppError);
         });
+        (0, globals_1.it)('should create a subscription', async () => {
+            const subscriptionData = {
+                userId: '123',
+                type: 'premium',
+                status: 'active',
+                startDate: new Date(),
+                expiresAt: new Date(),
+                autoRenew: true
+            };
+            const result = await subscriptionService.createSubscription(subscriptionData);
+            (0, globals_1.expect)(result).toBeDefined();
+            (0, globals_1.expect)(result.userId).toBe(subscriptionData.userId);
+        });
     });
     (0, globals_1.describe)('getSubscription', () => {
         (0, globals_1.it)('devrait retourner l\'abonnement le plus récent', async () => {

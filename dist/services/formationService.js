@@ -7,70 +7,27 @@ const logger_1 = require("../utils/logger");
 const mongoose_1 = require("mongoose");
 class FormationService {
     async getAllFormations() {
-        try {
-            const formations = await formation_1.Formation.find().lean();
-            return formations;
-        }
-        catch (error) {
-            logger_1.logger.error('Erreur lors de la récupération des formations:', error);
-            throw new errors_1.AppError('Erreur lors de la récupération des formations', 500);
-        }
+        const formations = await formation_1.Formation.find();
+        return formations;
     }
     async getFormationById(id) {
-        try {
-            if (!mongoose_1.Types.ObjectId.isValid(id)) {
-                throw new errors_1.AppError('ID de formation invalide', 400);
-            }
-            const formation = await formation_1.Formation.findById(id).lean();
-            return formation;
-        }
-        catch (error) {
-            if (error instanceof errors_1.AppError)
-                throw error;
-            logger_1.logger.error('Erreur lors de la récupération de la formation:', error);
-            throw new errors_1.AppError('Erreur lors de la récupération de la formation', 500);
-        }
+        const formation = await formation_1.Formation.findById(id);
+        return formation;
     }
     async createFormation(formationData) {
-        try {
-            const formation = new formation_1.Formation(formationData);
-            await formation.validate();
-            const savedFormation = await formation.save();
-            return savedFormation.toObject();
-        }
-        catch (error) {
-            logger_1.logger.error('Erreur lors de la création de la formation:', error);
-            throw new errors_1.AppError('Erreur lors de la création de la formation', 500);
-        }
+        const formation = await formation_1.Formation.create(formationData);
+        return formation;
     }
-    async updateFormation(id, updateData) {
-        try {
-            if (!mongoose_1.Types.ObjectId.isValid(id)) {
-                throw new errors_1.AppError('ID de formation invalide', 400);
-            }
-            const formation = await formation_1.Formation.findByIdAndUpdate(id, { $set: updateData }, { new: true, runValidators: true }).lean();
-            return formation;
-        }
-        catch (error) {
-            logger_1.logger.error('Erreur lors de la mise à jour de la formation:', error);
-            throw new errors_1.AppError('Erreur lors de la mise à jour de la formation', 500);
-        }
+    async updateFormation(id, formationData) {
+        const formation = await formation_1.Formation.findByIdAndUpdate(id, formationData, { new: true });
+        return formation;
     }
     async deleteFormation(id) {
-        try {
-            if (!mongoose_1.Types.ObjectId.isValid(id)) {
-                throw new errors_1.AppError('ID de formation invalide', 400);
-            }
-            const result = await formation_1.Formation.findByIdAndDelete(id);
-            return !!result;
-        }
-        catch (error) {
-            logger_1.logger.error('Erreur lors de la suppression de la formation:', error);
-            throw new errors_1.AppError('Erreur lors de la suppression de la formation', 500);
-        }
+        const result = await formation_1.Formation.findByIdAndDelete(id);
+        return !!result;
     }
     async getFormationsByCategory(category) {
-        const formations = await formation_1.Formation.find({ category }).lean();
+        const formations = await formation_1.Formation.find({ category });
         return formations;
     }
     async addModule(formationId, moduleData) {

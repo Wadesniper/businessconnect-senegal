@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CVModel = void 0;
+exports.CV = void 0;
 const mongoose_1 = require("mongoose");
 const cvSchema = new mongoose_1.Schema({
     template: {
@@ -52,5 +52,5 @@ const cvSchema = new mongoose_1.Schema({
     interests: [String],
     references: [String]
 });
-exports.CVModel = (0, mongoose_1.model)('CV', cvSchema);
+exports.CV = (0, mongoose_1.model)('CV', cvSchema);
 //# sourceMappingURL=cv.js.map
