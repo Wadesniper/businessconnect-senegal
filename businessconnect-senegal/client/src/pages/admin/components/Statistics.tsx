@@ -91,7 +91,13 @@ const Statistics: React.FC = () => {
         <Row gutter={16} align="middle">
           <Col>
             <RangePicker
-              onChange={(dates) => setDateRange(dates as [Date, Date])}
+              onChange={(dates) => {
+                if (dates && dates[0] && dates[1]) {
+                  setDateRange([dates[0].toDate(), dates[1].toDate()]);
+                } else {
+                  setDateRange(null);
+                }
+              }}
               style={{ marginRight: 16 }}
             />
           </Col>

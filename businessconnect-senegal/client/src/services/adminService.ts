@@ -1,23 +1,11 @@
 import axios from 'axios';
-import { authService } from './authService';
+import { JobData } from '../types/job';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
 
 const getAuthHeaders = () => ({
-  headers: { Authorization: `Bearer ${authService.getToken()}` }
+  headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
 });
-
-export interface JobData {
-  title: string;
-  company: string;
-  location: string;
-  description: string;
-  requirements: string[];
-  type: string;
-  salary?: string;
-  contactEmail: string;
-  contactPhone?: string;
-}
 
 export const adminService = {
   // Statistiques

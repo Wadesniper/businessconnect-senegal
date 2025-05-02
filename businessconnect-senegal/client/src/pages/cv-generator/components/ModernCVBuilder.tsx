@@ -25,7 +25,6 @@ import {
   DeleteOutlined
 } from '@ant-design/icons';
 import { CVData, Template, CustomizationOptions, Section } from '../../../types/cv';
-import CVPreview from './CVPreview';
 import './ModernCVBuilder.css';
 import moment from 'moment';
 
@@ -560,15 +559,7 @@ const ModernCVBuilder: React.FC<ModernCVBuilderProps> = ({
 
         <Col xs={24} lg={previewMode ? 0 : 12}>
           <div ref={previewRef} className="preview-container">
-            <CVPreview
-              data={{
-                ...form.getFieldsValue(),
-                sections,
-                template: selectedTemplate
-              } as PreviewData}
-              template={selectedTemplate}
-              customization={customization}
-            />
+            {/* CVPreview component is removed as per the instructions */}
           </div>
         </Col>
       </Row>
