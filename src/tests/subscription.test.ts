@@ -4,6 +4,7 @@ import { Subscription } from '../models/subscription';
 import { User } from '../models/User';
 import { AppError } from '../utils/errors';
 import mongoose from 'mongoose';
+import { ISubscription } from '../types/subscription';
 
 jest.mock('../models/subscription');
 jest.mock('../models/User');
@@ -44,6 +45,21 @@ describe('SubscriptionService', () => {
       await expect(subscriptionService.createSubscription(mockUserId, mockPlanId))
         .rejects
         .toThrow(AppError);
+    });
+
+    it('should create a subscription', async () => {
+      const subscriptionData: Partial<ISubscription> = {
+        userId: '123',
+        type: 'premium',
+        status: 'active',
+        startDate: new Date(),
+        expiresAt: new Date(),
+        autoRenew: true
+      };
+
+      const result = await subscriptionService.createSubscription(subscriptionData);
+      expect(result).toBeDefined();
+      expect(result.userId).toBe(subscriptionData.userId);
     });
   });
 

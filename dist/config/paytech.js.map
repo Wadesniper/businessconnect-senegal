@@ -1,0 +1,1 @@
+{"version":3,"file":"paytech.js","sourceRoot":"","sources":["../../src/config/paytech.ts"],"names":[],"mappings":";;;AAOa,QAAA,aAAa,GAAkB;IAC1C,MAAM,EAAE,OAAO,CAAC,GAAG,CAAC,eAAe,IAAI,EAAE;IACzC,SAAS,EAAE,OAAO,CAAC,GAAG,CAAC,kBAAkB,IAAI,EAAE;IAC/C,MAAM,EAAE,OAAO,CAAC,GAAG,CAAC,eAAe,IAAI,oBAAoB;IAC3D,OAAO,EAAE,OAAO,CAAC,GAAG,CAAC,gBAAgB,IAAI,2BAA2B;CACrE,CAAC"}

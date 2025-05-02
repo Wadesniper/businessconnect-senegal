@@ -1,3 +1,7 @@
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 const validateConfig = () => {
   const requiredEnvVars = [
     'MONGODB_URI',
@@ -24,14 +28,14 @@ if (process.env.NODE_ENV === 'production') {
 
 export const config = {
   JWT_SECRET: process.env.JWT_SECRET || 'your-secret-key',
-  JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '7d',
+  JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '1d',
   MONGODB_URI: process.env.MONGODB_URI || 'mongodb://localhost:27017/businessconnect',
   PORT: process.env.PORT || 3000,
   NODE_ENV: process.env.NODE_ENV || 'development',
   
   // Configuration SMTP
   SMTP_HOST: process.env.SMTP_HOST || 'smtp.gmail.com',
-  SMTP_PORT: Number(process.env.SMTP_PORT) || 587,
+  SMTP_PORT: parseInt(process.env.SMTP_PORT || '587', 10),
   SMTP_SECURE: process.env.SMTP_SECURE === 'true',
   SMTP_USER: process.env.SMTP_USER || '',
   SMTP_PASSWORD: process.env.SMTP_PASSWORD || '',
@@ -40,11 +44,11 @@ export const config = {
   // Configuration PayTech
   paytech: {
     apiKey: process.env.PAYTECH_API_KEY || '',
-    webhookSecret: process.env.PAYTECH_WEBHOOK_SECRET || '',
-    baseUrl: process.env.PAYTECH_BASE_URL || 'https://paytech.sn'
+    apiSecret: process.env.PAYTECH_API_SECRET || '',
+    apiUrl: process.env.PAYTECH_API_URL || 'https://paytech.sn'
   },
 
   // URLs de l'application
   CLIENT_URL: process.env.CLIENT_URL || 'http://localhost:3000',
-  API_URL: process.env.API_URL || 'http://localhost:3001'
+  API_URL: process.env.API_URL || 'http://localhost:5000'
 }; 

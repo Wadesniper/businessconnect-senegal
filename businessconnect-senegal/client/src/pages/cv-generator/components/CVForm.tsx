@@ -94,64 +94,64 @@ const CVForm: React.FC<CVFormProps> = ({ initialValues, onSubmit, loading }) => 
       <Title level={3}>Informations personnelles</Title>
       <Row gutter={16}>
         <Col span={12}>
-          <Form.Item
+      <Form.Item
             name={['personalInfo', 'fullName']}
             label="Nom complet"
             rules={[{ required: true, message: 'Le nom est requis' }]}
-          >
-            <Input />
-          </Form.Item>
+        >
+          <Input />
+        </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item
-            name={['personalInfo', 'email']}
-            label="Email"
-            rules={[
+      <Form.Item
+        name={['personalInfo', 'email']}
+        label="Email"
+        rules={[
               { required: true, message: 'L\'email est requis' },
               { type: 'email', message: 'Email invalide' }
-            ]}
-          >
-            <Input />
-          </Form.Item>
+        ]}
+      >
+        <Input />
+      </Form.Item>
         </Col>
       </Row>
 
       <Row gutter={16}>
         <Col span={12}>
-          <Form.Item
-            name={['personalInfo', 'phone']}
-            label="Téléphone"
+      <Form.Item
+        name={['personalInfo', 'phone']}
+        label="Téléphone"
             rules={[{ required: true, message: 'Le téléphone est requis' }]}
-          >
-            <Input />
-          </Form.Item>
+      >
+        <Input />
+      </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item
-            name={['personalInfo', 'address']}
-            label="Adresse"
-          >
-            <Input />
-          </Form.Item>
+      <Form.Item
+        name={['personalInfo', 'address']}
+        label="Adresse"
+      >
+        <Input />
+      </Form.Item>
         </Col>
       </Row>
 
       <Row gutter={16}>
         <Col span={12}>
-          <Form.Item
-            name={['personalInfo', 'linkedin']}
-            label="LinkedIn"
-          >
-            <Input />
-          </Form.Item>
+        <Form.Item
+          name={['personalInfo', 'linkedin']}
+          label="LinkedIn"
+        >
+          <Input />
+        </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item
+        <Form.Item
             name={['personalInfo', 'website']}
             label="Site web"
-          >
-            <Input />
-          </Form.Item>
+        >
+          <Input />
+        </Form.Item>
         </Col>
       </Row>
 
