@@ -7,6 +7,7 @@ COPY package*.json ./
 
 # Installation des dépendances
 RUN npm install
+RUN npm install -g react-scripts
 
 # Copie du code source
 COPY . .
