@@ -1,30 +1,22 @@
-# Étape de build du serveur
-FROM node:18-alpine AS server-builder
+# Étape de build
+FROM node:18-alpine as builder
 
-WORKDIR /app/server
+# Définition du répertoire de travail
+WORKDIR /app
 
-# Copie des fichiers du serveur
-COPY businessconnect-senegal/server/package*.json ./
-COPY businessconnect-senegal/server/tsconfig.json ./
+# Installation des dépendances globales
+RUN npm install -g react-scripts
+
+# Copie des fichiers package
+COPY package*.json ./
+
+# Installation des dépendances
 RUN npm install
 
-# Copie du code source du serveur
-COPY businessconnect-senegal/server/src ./src
-RUN npm run build
+# Copie des sources
+COPY . .
 
-# Étape de build du client
-FROM node:18-alpine AS client-builder
-
-WORKDIR /app/client
-
-# Copie des fichiers du client
-COPY businessconnect-senegal/client/package*.json ./
-COPY businessconnect-senegal/client/tsconfig.json ./
-RUN npm install
-
-# Copie du code source du client
-COPY businessconnect-senegal/client/src ./src
-COPY businessconnect-senegal/client/public ./public
+# Build de l'application
 RUN npm run build
 
 # Étape de production
@@ -32,24 +24,18 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Copie des fichiers du serveur
-COPY --from=server-builder /app/server/dist ./dist
-COPY --from=server-builder /app/server/package*.json ./
-COPY --from=server-builder /app/server/node_modules ./node_modules
+# Installation de serve
+RUN npm install -g serve
 
-# Copie des fichiers du client
-COPY --from=client-builder /app/client/build ./public
+# Copie des fichiers de build depuis l'étape précédente
+COPY --from=builder /app/build ./build
 
-# Configuration pour la production
+# Variables d'environnement
 ENV NODE_ENV=production
 ENV PORT=3000
 
 # Exposition du port
 EXPOSE 3000
 
-# Création d'un utilisateur non-root
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-USER appuser
-
 # Démarrage de l'application
-CMD ["npm", "start"] 
+CMD ["serve", "-s", "build", "-l", "3000"] 

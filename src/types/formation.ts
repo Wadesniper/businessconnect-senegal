@@ -1,31 +1,23 @@
-import { Document, Types } from 'mongoose';
-
-export interface IModule {
-  _id?: Types.ObjectId;
-  title: string;
-  description?: string;
-  content: string;
-  duration: number;
-  order: number;
-}
+import { Document } from 'mongoose';
 
 export interface IFormation extends Document {
   title: string;
   description: string;
+  category: string;
   level: 'débutant' | 'intermédiaire' | 'avancé';
   duration: number;
   price: number;
-  instructor: Types.ObjectId;
-  category: string;
-  tags: string[];
-  thumbnail: string;
-  status: 'draft' | 'published' | 'archived';
-  modules: IModule[];
-  rating: number;
-  reviews: Types.ObjectId[];
-  enrollments: number;
-  featured: boolean;
+  instructor: string;
   cursaUrl?: string;
+  thumbnail?: string;
+  enrollments: number;
+  rating?: number;
+  reviews?: Array<{
+    userId: string;
+    rating: number;
+    comment: string;
+    date: Date;
+  }>;
   createdAt: Date;
   updatedAt: Date;
 } 

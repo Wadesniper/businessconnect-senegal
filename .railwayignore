@@ -18,4 +18,17 @@ build/
 # Ignore Railway config files except the root ones
 **/railway.toml
 !railway.toml
-.railway/ 
+.railway/
+
+# Ignore test files
+tests/
+__tests__/
+*.test.ts
+*.spec.ts
+
+# Ignore TypeScript files
+*.ts
+!*.d.ts
+src/**/*.ts
+!src/**/*.d.ts
+tsconfig.json 
