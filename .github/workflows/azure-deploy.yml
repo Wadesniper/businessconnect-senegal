@@ -27,18 +27,28 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        cd server
+        cd businessconnect-senegal/server
         npm ci
 
     - name: Build
       run: |
-        cd server
+        cd businessconnect-senegal/server
         npm run build
 
-    - name: Zip artifact for deployment
+    - name: Prepare for deployment
       run: |
-        cd server
-        zip -r ../node-app.zip ./*
+        cd businessconnect-senegal/server
+        zip -r ../../deploy.zip ./*
+
+    - name: Deploy to Azure via FTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: waws-prod-am2-281.ftp.azurewebsites.windows.net
+        username: businessconnect-api\$businessconnect-api
+        password: ${{ secrets.AZURE_FTP_PASSWORD }}
+        protocol: ftps
+        local-dir: ./businessconnect-senegal/server/
+        server-dir: /site/wwwroot/
 
     - name: Login to Azure
       uses: azure/login@v1
