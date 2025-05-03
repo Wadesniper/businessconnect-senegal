@@ -11,7 +11,7 @@ const LoginForm: React.FC = () => {
   const onFinish = async (values: { email: string; password: string }) => {
     try {
       setLoading(true);
-      await authService.login(values.email, values.password);
+      await authService.login({ email: values.email, password: values.password });
       message.success('Connexion réussie !');
       navigate('/');
     } catch (error) {
