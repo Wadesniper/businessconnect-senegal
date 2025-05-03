@@ -1,0 +1,52 @@
+name: Deploy to Azure Web App
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  AZURE_WEBAPP_NAME: businessconnect-api
+  AZURE_WEBAPP_PACKAGE_PATH: './server'
+  NODE_VERSION: '20.x'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: './server/package-lock.json'
+
+    - name: Install Dependencies
+      run: |
+        cd server
+        npm ci
+
+    - name: Build
+      run: |
+        cd server
+        npm run build
+
+    - name: Zip artifact for deployment
+      run: |
+        cd server
+        zip -r ../node-app.zip ./*
+
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        package: node-app.zip 
