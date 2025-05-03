@@ -38,7 +38,7 @@ jobs:
       with:
         server: waws-prod-am2-281.ftp.azurewebsites.windows.net
         username: businessconnect-api\$businessconnect-api
-        password: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        password: ${{ secrets.AZURE_FTP_PASSWORD }}
         protocol: ftps
         local-dir: ./server/
         server-dir: /site/wwwroot/ 
