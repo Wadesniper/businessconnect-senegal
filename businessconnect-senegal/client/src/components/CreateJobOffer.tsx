@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Select, message, Card } from 'antd';
-import { jobService } from '../services/jobService';
+import { adminService } from '../services/adminService';
 import { authService } from '../services/authService';
 
 const { TextArea } = Input;
@@ -43,7 +43,7 @@ export const CreateJobOffer: React.FC = () => {
         keywords: values.keywords.split(',').map((kw: string) => kw.trim())
       };
 
-      const result = await jobService.createJobOffer(jobData);
+      const result = await adminService.createJob(jobData);
       if (result) {
         message.success('Offre créée avec succès');
         form.resetFields();

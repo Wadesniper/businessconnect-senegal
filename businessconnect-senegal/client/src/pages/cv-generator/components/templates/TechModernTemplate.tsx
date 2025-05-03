@@ -18,7 +18,7 @@ const TechModernTemplate: React.FC<TechModernTemplateProps> = ({ data }) => {
         <div style={{ textAlign: 'center', marginBottom: '20px' }}>
           <Avatar
             size={150}
-            src={data.personalInfo.photo}
+            src={data.personalInfo.photo || undefined}
             style={{ marginBottom: '10px' }}
           >
             {data.personalInfo.firstName[0]}{data.personalInfo.lastName[0]}

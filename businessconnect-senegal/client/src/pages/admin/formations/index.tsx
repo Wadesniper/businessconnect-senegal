@@ -71,7 +71,7 @@ const AdminFormationsPage = () => {
   };
 
   const handleSubmit = async () => {
-    if (!validateForm()) return;
+    if (!validateForm() || !editingFormation) return;
 
     try {
       if (editingFormation._id) {
@@ -173,7 +173,7 @@ const AdminFormationsPage = () => {
               <InputLabel>Catégorie</InputLabel>
               <Select
                 value={editingFormation?.category || ''}
-                onChange={(e) => setEditingFormation({ ...editingFormation, category: e.target.value })}
+                onChange={(e) => setEditingFormation({ ...editingFormation, category: e.target.value as Formation['category'] })}
                 label="Catégorie"
               >
                 {categories.map((category) => (
