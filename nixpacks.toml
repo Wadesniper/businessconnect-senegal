@@ -1,8 +1,14 @@
 [phases.setup]
-nixPkgs = ['nodejs']
+nixPkgs = ['nodejs', 'yarn', 'gcc', 'python3']
 
 [phases.install]
-cmds = ['npm install --production']
+cmds = ['yarn install --frozen-lockfile']
+
+[phases.build]
+cmds = ['yarn build']
 
 [start]
-cmd = 'node src/index.js' 
+cmd = 'yarn start'
+
+[variables]
+NODE_ENV = 'production' 

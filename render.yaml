@@ -2,22 +2,45 @@ services:
   - type: web
     name: businessconnect-senegal-api
     env: node
-    buildCommand: npm install
-    startCommand: node src/index.js
+    region: frankfurt
+    plan: starter
+    buildCommand: yarn install && yarn build
+    startCommand: yarn start
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
     autoDeploy: true
 
   - type: web
-    name: businessconnect-senegal
-    env: docker
-    rootDir: businessconnect-senegal/client
-    dockerfilePath: ./Dockerfile
+    name: businessconnect-senegal-client
+    env: node
+    region: frankfurt
+    plan: starter
+    buildCommand: cd businessconnect-senegal/client && yarn install && yarn build
+    startCommand: cd businessconnect-senegal/client && yarn start
     envVars:
       - key: NODE_ENV
         value: production
       - key: NEXT_PUBLIC_API_URL
-        value: https://businessconnect-senegal2025.onrender.com
-    autoDeploy: true 
+        value: https://businessconnect-senegal-api.onrender.com
+      - key: NEXT_PUBLIC_CURSA_API_URL
+        value: https://api.cursa.app/v1
+    autoDeploy: true
+
+databases:
+  - name: businessconnect-db
+    plan: starter
+    region: frankfurt 
