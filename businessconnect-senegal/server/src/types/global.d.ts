@@ -1,3 +1,6 @@
+import { Request } from 'express';
+import { ObjectId } from 'mongoose';
+
 declare module 'pdfkit' {
   class PDFDocument {
     constructor(options?: any);
@@ -260,4 +263,52 @@ interface HealthCheckResult {
     };
   };
   timestamp: Date;
-} 
+}
+
+declare global {
+  interface UserPayload {
+    id: string;
+    email: string;
+    role: string;
+  }
+
+  interface AuthRequest extends Request {
+    user: UserPayload;
+  }
+
+  interface WebSocketConnection {
+    userId: string;
+    socket: WebSocket;
+    lastActivity: Date;
+  }
+
+  interface IUser {
+    id: string;
+    email: string;
+    role: string;
+  }
+
+  interface PaymentWebhookData {
+    event: string;
+    paymentId: string;
+    status: string;
+  }
+
+  interface PayTechCallbackData extends PaymentWebhookData {
+    token: string;
+    type: string;
+  }
+
+  namespace PDFKit {
+    interface PDFDocument {
+      fontSize(size: number): this;
+      font(name: string): this;
+      text(text: string, x?: number, y?: number, options?: any): this;
+      moveDown(lines?: number): this;
+      addPage(options?: any): this;
+      image(src: string | Buffer, x?: number, y?: number, options?: any): this;
+    }
+  }
+}
+
+export {}; 
