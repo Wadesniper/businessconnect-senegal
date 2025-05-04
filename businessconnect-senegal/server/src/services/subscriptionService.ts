@@ -65,6 +65,15 @@ const SUBSCRIPTION_PLANS: Record<SubscriptionType, ISubscriptionPlan> = {
   }
 };
 
+interface ISubscriptionCreate {
+  userId: string;
+  type: SubscriptionType;
+  startDate: Date;
+  endDate: Date;
+  price: number;
+  autoRenew: boolean;
+}
+
 export class SubscriptionService {
   private notificationService: NotificationService;
   private paymentService: PaymentService;
@@ -103,7 +112,14 @@ export class SubscriptionService {
         throw new AppError('Type d\'abonnement invalide', 400);
       }
 
-      const subscription = await this.createSubscription(userId, type);
+      const subscription = await this.createSubscription({
+        userId,
+        type,
+        startDate: new Date(),
+        endDate: new Date(),
+        price: plan.price,
+        autoRenew: true
+      });
 
       const paymentSession = await this.paytechService.createPaymentSession({
         amount: plan.price,
@@ -149,28 +165,17 @@ export class SubscriptionService {
     }
   }
 
-  public async createSubscription(userId: string, type: SubscriptionType): Promise<SubscriptionDocument> {
-    const plan = SUBSCRIPTION_PLANS[type];
-    if (!plan) {
-      throw new AppError('Type d\'abonnement invalide', 400);
-    }
-
-    const startDate = new Date();
-    const endDate = new Date();
-    endDate.setMonth(endDate.getMonth() + 1);
-
-    const subscription = new Subscription({
-      userId: new Types.ObjectId(userId),
-      type,
-      status: 'pending' as SubscriptionStatus,
-      startDate,
-      endDate,
-      price: plan.price,
-      autoRenew: true
+  public async createSubscription(data: ISubscriptionCreate): Promise<ISubscription> {
+    const subscription = await Subscription.create({
+      ...data,
+      status: 'active'
     });
 
-    await subscription.save();
-    return subscription;
+    await User.findByIdAndUpdate(data.userId, {
+      $set: { subscription: subscription._id }
+    });
+
+    return this.formatSubscription(subscription);
   }
 
   public async updateSubscriptionStatus(subscriptionId: string, status: SubscriptionStatus): Promise<SubscriptionDocument> {
@@ -187,8 +192,11 @@ export class SubscriptionService {
     return updatedSubscription;
   }
 
-  public async getSubscription(userId: string): Promise<ISubscription | null> {
-    return await Subscription.findOne({ userId, status: 'active' });
+  public async getSubscription(id: string): Promise<ISubscription | null> {
+    const subscription = await Subscription.findById(id)
+      .populate('userId', 'name email');
+    
+    return subscription ? this.formatSubscription(subscription) : null;
   }
 
   public async checkSubscriptionStatus(userId: string): Promise<boolean> {
@@ -228,66 +236,51 @@ export class SubscriptionService {
     }
   }
 
-  public async cancelSubscription(subscriptionId: string, reason?: string): Promise<SubscriptionDocument> {
-    try {
-      const subscription = await Subscription.findById(subscriptionId).exec();
-      
-      if (!subscription) {
-        throw new AppError('Abonnement non trouvé', 404);
-      }
+  public async cancelSubscription(id: string): Promise<ISubscription | null> {
+    const subscription = await Subscription.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          status: 'cancelled',
+          autoRenew: false
+        }
+      },
+      { new: true }
+    );
 
-      subscription.status = 'cancelled';
-      subscription.cancelReason = reason;
-      subscription.autoRenew = false;
-      
-      await subscription.save();
-      
-      await this.notificationService.sendSubscriptionCancelledNotification(
-        subscription.userId.toString()
-      );
-
-      return subscription;
-    } catch (error) {
-      logger.error('Erreur lors de l\'annulation de l\'abonnement:', error);
-      throw error;
+    if (!subscription) {
+      return null;
     }
+
+    await User.findByIdAndUpdate(subscription.userId, {
+      $unset: { subscription: 1 }
+    });
+
+    return this.formatSubscription(subscription);
   }
 
-  public async renewSubscription(subscriptionId: string): Promise<SubscriptionDocument> {
-    try {
-      const subscription = await Subscription.findById(subscriptionId).exec();
-      
-      if (!subscription) {
-        throw new AppError('Abonnement non trouvé', 404);
-      }
-
-      if (subscription.status !== 'active') {
-        throw new AppError('Seuls les abonnements actifs peuvent être renouvelés', 400);
-      }
-
-      const plan = SUBSCRIPTION_PLANS[subscription.type];
-      if (!plan) {
-        throw new AppError('Type d\'abonnement invalide', 400);
-      }
-
-      const newEndDate = new Date(subscription.endDate);
-      newEndDate.setMonth(newEndDate.getMonth() + 1);
-
-      subscription.endDate = newEndDate;
-      subscription.lastPaymentDate = new Date();
-      subscription.nextPaymentDate = newEndDate;
-      
-      await subscription.save();
-
-      await this.notificationService.sendSubscriptionRenewedNotification(
-        subscription.userId.toString()
-      );
-
-      return subscription;
-    } catch (error) {
-      logger.error('Erreur lors du renouvellement de l\'abonnement:', error);
-      throw error;
+  public async renewSubscription(id: string): Promise<ISubscription | null> {
+    const subscription = await Subscription.findById(id);
+    
+    if (!subscription || !subscription.autoRenew) {
+      return null;
     }
+
+    const newEndDate = new Date(subscription.endDate);
+    newEndDate.setMonth(newEndDate.getMonth() + 1);
+
+    const updatedSubscription = await Subscription.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          endDate: newEndDate,
+          status: 'active'
+        }
+      },
+      { new: true }
+    );
+
+    return updatedSubscription ? this.formatSubscription(updatedSubscription) : null;
   }
 
   public getSubscriptionPlans(): typeof SUBSCRIPTION_PLANS {
@@ -337,5 +330,16 @@ export class SubscriptionService {
       logger.error('Erreur lors de la récupération des abonnements expirants:', error);
       throw error;
     }
+  }
+
+  private formatSubscription(doc: any): ISubscription {
+    const subscription = doc.toObject();
+    return {
+      ...subscription,
+      id: subscription._id.toString(),
+      userId: subscription.userId?._id || subscription.userId,
+      type: subscription.type,
+      autoRenew: subscription.autoRenew
+    };
   }
 } 

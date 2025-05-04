@@ -16,84 +16,102 @@ import { FormationRequest } from '../types/controllers';
 import { Types } from 'mongoose';
 
 export default class FormationService {
-  async createFormation(data: FormationInput): Promise<IFormationDocument> {
-    const formation = new Formation({
+  async createFormation(data: IFormationCreationDTO): Promise<IFormation> {
+    const formation = await Formation.create({
       ...data,
-      status: data.status || FormationStatus.DRAFT,
-      enrolledStudents: 0,
+      enrollments: [],
       rating: 0,
-      enrollments: []
+      reviews: []
     });
-    return await formation.save();
+    
+    return this.formatFormation(formation);
   }
 
-  async getFormationById(id: string): Promise<IFormationDocument | null> {
-    return await Formation.findById(id).lean();
+  async getFormation(id: string): Promise<IFormation | null> {
+    const formation = await Formation.findById(id)
+      .populate('instructor', 'name email')
+      .populate('enrollments', 'name email');
+    
+    return formation ? this.formatFormation(formation) : null;
   }
 
-  async updateFormation(id: string, data: IFormationUpdateDTO, userId: string): Promise<IFormationDocument | null> {
-    return await Formation.findByIdAndUpdate(id, data, { new: true }).lean();
+  async listFormations(filters: {
+    category?: string;
+    level?: string;
+    language?: string;
+    instructor?: string;
+    status?: string;
+  } = {}): Promise<IFormation[]> {
+    const query = Formation.find(filters)
+      .populate('instructor', 'name email')
+      .populate('enrollments', 'name email');
+
+    const formations = await query.exec();
+    return formations.map(formation => this.formatFormation(formation));
   }
 
-  async deleteFormation(id: string, userId: string): Promise<boolean> {
-    const result = await Formation.findByIdAndDelete(id);
-    return result !== null;
+  async updateFormation(id: string, data: IFormationUpdateDTO): Promise<IFormation | null> {
+    const formation = await Formation.findByIdAndUpdate(
+      id,
+      { $set: data },
+      { new: true }
+    ).populate('instructor enrollments');
+
+    return formation ? this.formatFormation(formation) : null;
   }
 
-  async listFormations(filters: FormationFilters, page: number = 1, limit: number = 10): Promise<{
-    formations: IFormationDocument[];
-    total: number;
-    page: number;
-    totalPages: number;
-  }> {
-    const query: FilterQuery<IFormationDocument> = {};
-
-    if (filters.category) query.category = filters.category;
-    if (filters.level) query.level = filters.level;
-    if (filters.status) query.status = filters.status;
-    if (filters.priceMin !== undefined) query.price = { $gte: filters.priceMin };
-    if (filters.priceMax !== undefined) query.price = { ...query.price, $lte: filters.priceMax };
-    if (filters.instructorId) query.instructor = filters.instructorId;
-
-    const skip = (page - 1) * limit;
-    const [formations, total] = await Promise.all([
-      Formation.find(query).skip(skip).limit(limit).sort({ createdAt: -1 }).lean(),
-      Formation.countDocuments(query)
-    ]);
-
-    return {
-      formations: formations as IFormationDocument[],
-      total,
-      page,
-      totalPages: Math.ceil(total / limit)
-    };
+  async deleteFormation(id: string): Promise<boolean> {
+    const result = await Formation.deleteOne({ _id: id });
+    return result.deletedCount === 1;
   }
 
-  async searchFormations(searchTerm: string, page: number = 1, limit: number = 10): Promise<{
-    formations: IFormationDocument[];
-    total: number;
-    page: number;
-    totalPages: number;
-  }> {
-    const query = {
-      $text: { $search: searchTerm }
-    };
+  async enrollStudent(formationId: string, studentId: string): Promise<IFormation> {
+    const formation = await Formation.findByIdAndUpdate(
+      formationId,
+      { $addToSet: { enrollments: new Types.ObjectId(studentId) } },
+      { new: true }
+    ).populate('instructor enrollments');
 
-    const skip = (page - 1) * limit;
-    const [formations, total] = await Promise.all([
-      Formation.find(query)
-        .skip(skip)
-        .limit(limit)
-        .sort({ score: { $meta: 'textScore' } }),
-      Formation.countDocuments(query)
-    ]);
+    if (!formation) {
+      throw new Error('Formation non trouvée');
+    }
 
-    return {
-      formations,
-      total,
-      page,
-      totalPages: Math.ceil(total / limit)
-    };
+    return this.formatFormation(formation);
+  }
+
+  async unenrollStudent(formationId: string, studentId: string): Promise<IFormation> {
+    const formation = await Formation.findByIdAndUpdate(
+      formationId,
+      { $pull: { enrollments: new Types.ObjectId(studentId) } },
+      { new: true }
+    ).populate('instructor enrollments');
+
+    if (!formation) {
+      throw new Error('Formation non trouvée');
+    }
+
+    return this.formatFormation(formation);
+  }
+
+  async searchFormations(query: string): Promise<IFormation[]> {
+    const formations = await Formation.find({
+      $or: [
+        { title: { $regex: query, $options: 'i' } },
+        { description: { $regex: query, $options: 'i' } },
+        { category: { $regex: query, $options: 'i' } }
+      ]
+    }).populate('instructor enrollments');
+
+    return formations.map(formation => this.formatFormation(formation));
+  }
+
+  async getPopularFormations(): Promise<IFormation[]> {
+    const formations = await Formation.find({ status: 'published' })
+      .sort({ rating: -1, 'enrollments.length': -1 })
+      .limit(10)
+      .populate('instructor enrollments');
+
+    return formations.map(formation => this.formatFormation(formation));
   }
 
   async getFormationStats(formationId: string): Promise<IFormationStats> {
@@ -144,11 +162,6 @@ export default class FormationService {
       logger.error('Erreur lors de la récupération des formations:', error);
       throw error;
     }
-  }
-
-  async getFormation(id: string): Promise<IFormation | null> {
-    const formation = await Formation.findById(id);
-    return formation ? formation.toObject() : null;
   }
 
   async addModule(formationId: string, moduleData: ModuleInput): Promise<IFormation> {
@@ -228,48 +241,6 @@ export default class FormationService {
     }
   }
 
-  async enrollStudent(formationId: string, studentId: string): Promise<IFormationDocument> {
-    try {
-      const formation = await Formation.findByIdAndUpdate(
-        formationId,
-        { 
-          $inc: { enrolledStudents: 1 }
-        },
-        { new: true }
-      ).exec();
-
-      if (!formation) {
-        throw new Error('Formation non trouvée');
-      }
-
-      return formation;
-    } catch (error) {
-      logger.error(`Erreur lors de l'inscription de l'étudiant ${studentId}:`, error);
-      throw error;
-    }
-  }
-
-  async unenrollStudent(formationId: string, studentId: string): Promise<IFormationDocument> {
-    try {
-      const formation = await Formation.findByIdAndUpdate(
-        formationId,
-        { 
-          $inc: { enrolledStudents: -1 }
-        },
-        { new: true }
-      ).exec();
-
-      if (!formation) {
-        throw new Error('Formation non trouvée');
-      }
-
-      return formation;
-    } catch (error) {
-      logger.error(`Erreur lors de la désinscription de l'étudiant ${studentId}:`, error);
-      throw error;
-    }
-  }
-
   async rateFormation(formationId: string, userId: string, rating: number): Promise<IFormationDocument> {
     try {
       const formation = await Formation.findById(formationId);
@@ -285,5 +256,17 @@ export default class FormationService {
       logger.error(`Erreur lors de l'évaluation de la formation ${formationId}:`, error);
       throw error;
     }
+  }
+
+  private formatFormation(doc: any): IFormation {
+    const formation = doc.toObject();
+    return {
+      ...formation,
+      id: formation._id.toString(),
+      instructor: formation.instructor?._id || formation.instructor,
+      enrollments: (formation.enrollments || []).map((e: any) => 
+        typeof e === 'object' ? e._id : e
+      )
+    };
   }
 } 
