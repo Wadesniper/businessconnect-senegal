@@ -1,26 +1,40 @@
+import { Types } from 'mongoose';
 import Formation from '../models/Formation';
 import { 
-  IFormation, 
+  IFormation,
   IFormationDocument,
-  IFormationCreationDTO,
-  IFormationUpdateDTO,
+  FormationCreationDTO,
+  FormationUpdateDTO,
   IFormationStats,
   FormationFilters,
-  FormationInput,
-  ModuleInput,
-  FormationStatus
-} from '../types/formation';
-import { FilterQuery } from 'mongoose';
+  ModuleInput
+} from '../types/formation.types';
 import { logger } from '../utils/logger';
 import { FormationRequest } from '../types/controllers';
-import { Types } from 'mongoose';
 
-export default class FormationService {
-  async createFormation(data: IFormationCreationDTO): Promise<IFormation> {
+export class FormationService {
+  private formatFormation(doc: IFormationDocument): IFormation {
+    const formation = doc.toObject();
+    return {
+      ...formation,
+      id: formation._id.toString(),
+      instructor: formation.instructor.toString(),
+      enrollments: formation.enrollments.map(e => e.toString()),
+      reviews: formation.reviews.map(r => ({
+        ...r,
+        userId: r.userId.toString()
+      }))
+    };
+  }
+
+  async createFormation(data: FormationCreationDTO): Promise<IFormation> {
     const formation = await Formation.create({
       ...data,
+      instructor: new Types.ObjectId(data.instructor),
       enrollments: [],
       rating: 0,
+      views: 0,
+      enrolledStudents: 0,
       reviews: []
     });
     
@@ -35,13 +49,7 @@ export default class FormationService {
     return formation ? this.formatFormation(formation) : null;
   }
 
-  async listFormations(filters: {
-    category?: string;
-    level?: string;
-    language?: string;
-    instructor?: string;
-    status?: string;
-  } = {}): Promise<IFormation[]> {
+  async listFormations(filters: FormationFilters = {}): Promise<IFormation[]> {
     const query = Formation.find(filters)
       .populate('instructor', 'name email')
       .populate('enrollments', 'name email');
@@ -50,10 +58,15 @@ export default class FormationService {
     return formations.map(formation => this.formatFormation(formation));
   }
 
-  async updateFormation(id: string, data: IFormationUpdateDTO): Promise<IFormation | null> {
+  async updateFormation(id: string, data: FormationUpdateDTO): Promise<IFormation | null> {
+    const updateData = { ...data };
+    if (data.instructor) {
+      updateData.instructor = new Types.ObjectId(data.instructor);
+    }
+
     const formation = await Formation.findByIdAndUpdate(
       id,
-      { $set: data },
+      { $set: updateData },
       { new: true }
     ).populate('instructor enrollments');
 
@@ -68,7 +81,10 @@ export default class FormationService {
   async enrollStudent(formationId: string, studentId: string): Promise<IFormation> {
     const formation = await Formation.findByIdAndUpdate(
       formationId,
-      { $addToSet: { enrollments: new Types.ObjectId(studentId) } },
+      { 
+        $addToSet: { enrollments: new Types.ObjectId(studentId) },
+        $inc: { enrolledStudents: 1 }
+      },
       { new: true }
     ).populate('instructor enrollments');
 
@@ -82,7 +98,10 @@ export default class FormationService {
   async unenrollStudent(formationId: string, studentId: string): Promise<IFormation> {
     const formation = await Formation.findByIdAndUpdate(
       formationId,
-      { $pull: { enrollments: new Types.ObjectId(studentId) } },
+      { 
+        $pull: { enrollments: new Types.ObjectId(studentId) },
+        $inc: { enrolledStudents: -1 }
+      },
       { new: true }
     ).populate('instructor enrollments');
 
@@ -107,7 +126,7 @@ export default class FormationService {
 
   async getPopularFormations(): Promise<IFormation[]> {
     const formations = await Formation.find({ status: 'published' })
-      .sort({ rating: -1, 'enrollments.length': -1 })
+      .sort({ rating: -1, enrolledStudents: -1 })
       .limit(10)
       .populate('instructor enrollments');
 
@@ -116,14 +135,16 @@ export default class FormationService {
 
   async getFormationStats(formationId: string): Promise<IFormationStats> {
     const formation = await Formation.findById(formationId);
-    if (!formation) throw new Error('Formation not found');
+    if (!formation) {
+      throw new Error('Formation non trouvée');
+    }
 
     return {
       totalEnrollments: formation.enrolledStudents || 0,
       averageRating: formation.rating || 0,
-      completionRate: 0, // À implémenter avec le suivi des progrès
+      completionRate: 0,
       revenue: formation.price * (formation.enrolledStudents || 0),
-      studentProgress: [] // À implémenter avec le suivi des progrès
+      studentProgress: []
     };
   }
 
@@ -133,140 +154,66 @@ export default class FormationService {
     });
   }
 
-  async getAllFormations(filters?: FormationFilters): Promise<IFormation[]> {
-    try {
-      let query = Formation.find();
-
-      if (filters) {
-        if (filters.category) query = query.where('category').equals(filters.category);
-        if (filters.level) query = query.where('level').equals(filters.level);
-        if (filters.status) query = query.where('status').equals(filters.status);
-        if (filters.featured !== undefined) query = query.where('featured').equals(filters.featured);
-        if (filters.priceMin !== undefined) query = query.where('price').gte(filters.priceMin);
-        if (filters.priceMax !== undefined) query = query.where('price').lte(filters.priceMax);
-        if (filters.instructorId) query = query.where('instructor').equals(filters.instructorId);
-      }
-
-      const formations = await query
-        .populate('instructor', 'name email avatar')
-        .lean();
-
-      return formations.map(formation => ({
-        ...formation,
-        modules: formation.modules.map(module => ({
-          ...module,
-          description: module.description || ''
-        }))
-      })) as IFormation[];
-    } catch (error) {
-      logger.error('Erreur lors de la récupération des formations:', error);
-      throw error;
-    }
-  }
-
   async addModule(formationId: string, moduleData: ModuleInput): Promise<IFormation> {
-    try {
-      const formation = await Formation.findById(formationId);
-      if (!formation) {
-        throw new Error('Formation non trouvée');
-      }
+    const formation = await Formation.findByIdAndUpdate(
+      formationId,
+      {
+        $push: {
+          syllabus: {
+            ...moduleData,
+            description: moduleData.description || ''
+          }
+        }
+      },
+      { new: true }
+    ).populate('instructor enrollments');
 
-      formation.modules.push({
-        ...moduleData,
-        description: moduleData.description || ''
-      });
-
-      const savedFormation = await formation.save();
-      return savedFormation.toObject() as IFormation;
-    } catch (error) {
-      logger.error(`Erreur lors de l'ajout du module à la formation ${formationId}:`, error);
-      throw error;
+    if (!formation) {
+      throw new Error('Formation non trouvée');
     }
+
+    return this.formatFormation(formation);
   }
 
   async updateModule(formationId: string, moduleId: string, updateData: Partial<ModuleInput>): Promise<IFormation> {
-    try {
-      const formation = await Formation.findOneAndUpdate(
-        { _id: formationId, 'modules._id': moduleId },
-        { 
-          $set: { 
-            'modules.$': {
-              ...updateData,
-              description: updateData.description || ''
-            }
-          } 
-        },
-        { new: true }
-      ).lean();
+    const formation = await Formation.findOneAndUpdate(
+      { 
+        _id: formationId,
+        'syllabus._id': moduleId
+      },
+      {
+        $set: {
+          'syllabus.$': {
+            ...updateData,
+            description: updateData.description || ''
+          }
+        }
+      },
+      { new: true }
+    ).populate('instructor enrollments');
 
-      if (!formation) {
-        throw new Error('Formation ou module non trouvé');
-      }
-
-      return {
-        ...formation,
-        modules: formation.modules.map(module => ({
-          ...module,
-          description: module.description || ''
-        }))
-      } as IFormation;
-    } catch (error) {
-      logger.error(`Erreur lors de la mise à jour du module ${moduleId}:`, error);
-      throw error;
+    if (!formation) {
+      throw new Error('Formation ou module non trouvé');
     }
+
+    return this.formatFormation(formation);
   }
 
   async deleteModule(formationId: string, moduleId: string): Promise<IFormation> {
-    try {
-      const formation = await Formation.findByIdAndUpdate(
-        formationId,
-        { $pull: { modules: { _id: moduleId } } },
-        { new: true }
-      ).lean();
+    const formation = await Formation.findByIdAndUpdate(
+      formationId,
+      {
+        $pull: {
+          syllabus: { _id: moduleId }
+        }
+      },
+      { new: true }
+    ).populate('instructor enrollments');
 
-      if (!formation) {
-        throw new Error('Formation non trouvée');
-      }
-
-      return {
-        ...formation,
-        modules: formation.modules.map(module => ({
-          ...module,
-          description: module.description || ''
-        }))
-      } as IFormation;
-    } catch (error) {
-      logger.error(`Erreur lors de la suppression du module ${moduleId}:`, error);
-      throw error;
+    if (!formation) {
+      throw new Error('Formation non trouvée');
     }
-  }
 
-  async rateFormation(formationId: string, userId: string, rating: number): Promise<IFormationDocument> {
-    try {
-      const formation = await Formation.findById(formationId);
-      if (!formation) {
-        throw new Error('Formation non trouvée');
-      }
-
-      formation.rating = ((formation.rating || 0) + rating) / 2;
-      await formation.save();
-      
-      return formation;
-    } catch (error) {
-      logger.error(`Erreur lors de l'évaluation de la formation ${formationId}:`, error);
-      throw error;
-    }
-  }
-
-  private formatFormation(doc: any): IFormation {
-    const formation = doc.toObject();
-    return {
-      ...formation,
-      id: formation._id.toString(),
-      instructor: formation.instructor?._id || formation.instructor,
-      enrollments: (formation.enrollments || []).map((e: any) => 
-        typeof e === 'object' ? e._id : e
-      )
-    };
+    return this.formatFormation(formation);
   }
 } 

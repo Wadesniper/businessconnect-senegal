@@ -1,7 +1,8 @@
-import { Document, Types } from 'mongoose';
+import { Types } from 'mongoose';
+import { BaseDocument, BaseEntity } from './common';
 
-export interface IFormation {
-  id: string;
+// Types de base
+export interface IFormationBase {
   title: string;
   description: string;
   instructor: Types.ObjectId;
@@ -20,26 +21,84 @@ export interface IFormation {
   startDate: Date;
   endDate: Date;
   maxParticipants: number;
-  enrollments: Types.ObjectId[];
   status: 'draft' | 'published' | 'archived';
   rating: number;
+  views: number;
+  enrolledStudents: number;
+}
+
+// Interface pour le modèle Mongoose
+export interface IFormationDocument extends IFormationBase, BaseDocument {
+  enrollments: Types.ObjectId[];
   reviews: {
     userId: Types.ObjectId;
     rating: number;
     comment: string;
     date: Date;
   }[];
-  createdAt: Date;
-  updatedAt: Date;
 }
 
-export interface IFormationDocument extends Omit<IFormation, 'id'>, Document {
-  id: string; // Redéfinition de id pour éviter le conflit avec Document
+// Interface pour l'objet DTO
+export interface IFormation extends IFormationBase, BaseEntity {
+  enrollments: string[];
+  reviews: {
+    userId: string;
+    rating: number;
+    comment: string;
+    date: Date;
+  }[];
 }
 
-export type FormationCreationDTO = Omit<IFormation, 'id' | 'enrollments' | 'rating' | 'reviews' | 'createdAt' | 'updatedAt'>;
+// DTOs pour la création et la mise à jour
+export type FormationCreationDTO = Omit<IFormationBase, 'rating' | 'views' | 'enrolledStudents'> & {
+  instructor: string;
+};
 
 export type FormationUpdateDTO = Partial<FormationCreationDTO>;
+
+// Types pour les filtres et les statistiques
+export interface FormationFilters {
+  category?: string;
+  level?: string;
+  language?: string;
+  instructor?: string;
+  status?: string;
+  priceMin?: number;
+  priceMax?: number;
+}
+
+export interface IFormationStats {
+  totalEnrollments: number;
+  averageRating: number;
+  completionRate: number;
+  revenue: number;
+  studentProgress: Array<{
+    userId: string;
+    progress: number;
+    lastActivity: Date;
+  }>;
+}
+
+// Type pour les modules
+export interface ModuleInput {
+  title: string;
+  description: string;
+  duration: number;
+  content: string;
+  order: number;
+}
+
+// Type pour la requête de formation
+export interface FormationRequest {
+  body: FormationCreationDTO | FormationUpdateDTO;
+  params: {
+    id?: string;
+  };
+  query: FormationFilters & {
+    page?: string;
+    limit?: string;
+  };
+}
 
 export interface IFormationService {
   createFormation(data: FormationCreationDTO): Promise<IFormation>;
