@@ -1,8 +1,17 @@
 import { Document, Types } from 'mongoose';
 
 export type FormationCategory = 'développement' | 'business' | 'marketing' | 'design' | 'langues' | 'soft-skills';
-export type FormationLevel = 'débutant' | 'intermédiaire' | 'avancé';
-export type FormationStatus = 'draft' | 'published' | 'archived';
+export enum FormationLevel {
+  BEGINNER = 'beginner',
+  INTERMEDIATE = 'intermediate',
+  ADVANCED = 'advanced',
+  EXPERT = 'expert'
+}
+export enum FormationStatus {
+  DRAFT = 'draft',
+  PUBLISHED = 'published',
+  ARCHIVED = 'archived'
+}
 
 export interface IModule {
   _id?: Types.ObjectId;
@@ -13,31 +22,58 @@ export interface IModule {
   order: number;
 }
 
-export interface IFormation extends Document {
+export interface IFormationContent {
   title: string;
   description: string;
-  category: FormationCategory;
+  duration: number; // en minutes
+  videoUrl?: string;
+  resources?: string[];
+}
+
+export interface IFormation {
+  title: string;
+  description: string;
+  category: FormationCategory[];
   level: FormationLevel;
   duration: number; // durée totale en minutes
   price: number;
-  instructor: Types.ObjectId; // ID de l'utilisateur
-  thumbnail: string;
-  modules: IModule[];
-  requirements: string[];
+  currency: string;
+  instructor: string;
+  thumbnail?: string;
+  content: IFormationContent[];
+  prerequisites?: string[];
   objectives: string[];
-  rating: number;
-  numberOfRatings: number;
-  enrolledStudents: Types.ObjectId[]; // IDs des utilisateurs
+  rating?: number;
+  enrolledStudents?: number;
   status: FormationStatus;
-  featured: boolean;
+  modules: IModule[];
   createdAt: Date;
   updatedAt: Date;
 }
 
+export interface IFormationDocument extends IFormation, Document {
+  id: string;
+}
+
+export interface IFormationCreationDTO extends Omit<IFormation, 'createdAt' | 'updatedAt' | 'rating' | 'enrolledStudents' | 'numberOfRatings'> {}
+
+export interface IFormationUpdateDTO extends Partial<IFormationCreationDTO> {}
+
+export interface IFormationStats {
+  totalEnrollments: number;
+  averageRating: number;
+  completionRate: number;
+  revenue: number;
+  studentProgress: {
+    userId: string;
+    progress: number;
+  }[];
+}
+
 export interface FormationFilters {
-  category?: FormationCategory;
-  level?: FormationLevel;
-  status?: FormationStatus;
+  category?: string;
+  level?: string;
+  status?: string;
   featured?: boolean;
   priceMin?: number;
   priceMax?: number;
