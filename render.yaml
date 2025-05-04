@@ -10,18 +10,32 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: PORT
+        value: 3000
       - key: MONGODB_URI
-        sync: false
+        value: mongodb+srv://businessconnect:tlIQzehUEZnFPwoa@cluster0.gtehtk.mongodb.net/businessconnect?retryWrites=true&w=majority
       - key: JWT_SECRET
-        generateValue: true
+        value: fc5c01210b133afeb2c293bfd28c59df3bb9d3b272999be0eb838c930b1419fd
+      - key: JWT_EXPIRES_IN
+        value: 7d
       - key: SMTP_HOST
-        sync: false
+        value: smtp-relay.brevo.com
       - key: SMTP_PORT
-        sync: false
+        value: 587
+      - key: SMTP_SECURE
+        value: false
       - key: SMTP_USER
-        sync: false
-      - key: SMTP_PASS
-        sync: false
+        value: 88ccee002@smtp-brevo.com
+      - key: SMTP_PASSWORD
+        value: myFchwr5H6AYtJdq
+      - key: SMTP_FROM
+        value: 88ccee002@smtp-brevo.com
+      - key: PAYTECH_API_KEY
+        value: be2b2e9b3a0ed01d69d30dff8a21f05199e2e71968788b4890690d7af56ba32b
+      - key: PAYTECH_WEBHOOK_SECRET
+        value: 6860a504cc73992c2e8dc623c7b31d948ef5a4ec2507a0a4771e62755cca9277
+      - key: PAYTECH_BASE_URL
+        value: https://paytech.sn
     autoDeploy: true
 
   - type: web
