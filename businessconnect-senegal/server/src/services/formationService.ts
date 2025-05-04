@@ -1,9 +1,120 @@
-import { Formation } from '../models/formation';
+import Formation from '../models/Formation';
+import { 
+  IFormation, 
+  IFormationDocument,
+  IFormationCreationDTO,
+  IFormationUpdateDTO,
+  IFormationStats,
+  FormationFilters,
+  FormationInput,
+  ModuleInput,
+  FormationStatus
+} from '../types/formation';
+import { FilterQuery } from 'mongoose';
 import { logger } from '../utils/logger';
-import { FormationFilters, IFormation, ModuleInput } from '../types/formation';
+import { FormationRequest } from '../types/controllers';
 import { Types } from 'mongoose';
 
-export class FormationService {
+export default class FormationService {
+  async createFormation(data: FormationInput): Promise<IFormationDocument> {
+    const formation = new Formation({
+      ...data,
+      status: data.status || FormationStatus.DRAFT,
+      enrolledStudents: 0,
+      rating: 0,
+      enrollments: []
+    });
+    return await formation.save();
+  }
+
+  async getFormationById(id: string): Promise<IFormationDocument | null> {
+    return await Formation.findById(id).lean();
+  }
+
+  async updateFormation(id: string, data: IFormationUpdateDTO, userId: string): Promise<IFormationDocument | null> {
+    return await Formation.findByIdAndUpdate(id, data, { new: true }).lean();
+  }
+
+  async deleteFormation(id: string, userId: string): Promise<boolean> {
+    const result = await Formation.findByIdAndDelete(id);
+    return result !== null;
+  }
+
+  async listFormations(filters: FormationFilters, page: number = 1, limit: number = 10): Promise<{
+    formations: IFormationDocument[];
+    total: number;
+    page: number;
+    totalPages: number;
+  }> {
+    const query: FilterQuery<IFormationDocument> = {};
+
+    if (filters.category) query.category = filters.category;
+    if (filters.level) query.level = filters.level;
+    if (filters.status) query.status = filters.status;
+    if (filters.priceMin !== undefined) query.price = { $gte: filters.priceMin };
+    if (filters.priceMax !== undefined) query.price = { ...query.price, $lte: filters.priceMax };
+    if (filters.instructorId) query.instructor = filters.instructorId;
+
+    const skip = (page - 1) * limit;
+    const [formations, total] = await Promise.all([
+      Formation.find(query).skip(skip).limit(limit).sort({ createdAt: -1 }).lean(),
+      Formation.countDocuments(query)
+    ]);
+
+    return {
+      formations: formations as IFormationDocument[],
+      total,
+      page,
+      totalPages: Math.ceil(total / limit)
+    };
+  }
+
+  async searchFormations(searchTerm: string, page: number = 1, limit: number = 10): Promise<{
+    formations: IFormationDocument[];
+    total: number;
+    page: number;
+    totalPages: number;
+  }> {
+    const query = {
+      $text: { $search: searchTerm }
+    };
+
+    const skip = (page - 1) * limit;
+    const [formations, total] = await Promise.all([
+      Formation.find(query)
+        .skip(skip)
+        .limit(limit)
+        .sort({ score: { $meta: 'textScore' } }),
+      Formation.countDocuments(query)
+    ]);
+
+    return {
+      formations,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit)
+    };
+  }
+
+  async getFormationStats(formationId: string): Promise<IFormationStats> {
+    const formation = await Formation.findById(formationId);
+    if (!formation) throw new Error('Formation not found');
+
+    return {
+      totalEnrollments: formation.enrolledStudents || 0,
+      averageRating: formation.rating || 0,
+      completionRate: 0, // À implémenter avec le suivi des progrès
+      revenue: formation.price * (formation.enrolledStudents || 0),
+      studentProgress: [] // À implémenter avec le suivi des progrès
+    };
+  }
+
+  async incrementViews(formationId: string): Promise<void> {
+    await Formation.findByIdAndUpdate(formationId, {
+      $inc: { views: 1 }
+    });
+  }
+
   async getAllFormations(filters?: FormationFilters): Promise<IFormation[]> {
     try {
       let query = Formation.find();
@@ -35,43 +146,9 @@ export class FormationService {
     }
   }
 
-  async getFormationById(id: string): Promise<IFormation> {
-    try {
-      const formation = await Formation.findById(id).lean();
-      if (!formation) {
-        throw new Error('Formation non trouvée');
-      }
-      return {
-        ...formation,
-        modules: formation.modules.map(module => ({
-          ...module,
-          description: module.description || ''
-        }))
-      } as IFormation;
-    } catch (error) {
-      logger.error(`Erreur lors de la récupération de la formation ${id}:`, error);
-      throw error;
-    }
-  }
-
-  async createFormation(data: Partial<IFormation>): Promise<IFormation> {
-    const formation = await Formation.create(data);
-    return formation.toObject();
-  }
-
   async getFormation(id: string): Promise<IFormation | null> {
     const formation = await Formation.findById(id);
     return formation ? formation.toObject() : null;
-  }
-
-  async updateFormation(id: string, data: Partial<IFormation>): Promise<IFormation | null> {
-    const formation = await Formation.findByIdAndUpdate(id, data, { new: true });
-    return formation ? formation.toObject() : null;
-  }
-
-  async deleteFormation(id: string): Promise<boolean> {
-    const result = await Formation.findByIdAndDelete(id);
-    return !!result;
   }
 
   async addModule(formationId: string, moduleData: ModuleInput): Promise<IFormation> {
@@ -151,11 +228,13 @@ export class FormationService {
     }
   }
 
-  async enrollStudent(formationId: string, studentId: string): Promise<IFormation> {
+  async enrollStudent(formationId: string, studentId: string): Promise<IFormationDocument> {
     try {
       const formation = await Formation.findByIdAndUpdate(
         formationId,
-        { $addToSet: { enrolledStudents: studentId } },
+        { 
+          $inc: { enrolledStudents: 1 }
+        },
         { new: true }
       ).exec();
 
@@ -170,11 +249,13 @@ export class FormationService {
     }
   }
 
-  async unenrollStudent(formationId: string, studentId: string): Promise<IFormation> {
+  async unenrollStudent(formationId: string, studentId: string): Promise<IFormationDocument> {
     try {
       const formation = await Formation.findByIdAndUpdate(
         formationId,
-        { $pull: { enrolledStudents: studentId } },
+        { 
+          $inc: { enrolledStudents: -1 }
+        },
         { new: true }
       ).exec();
 
@@ -189,48 +270,20 @@ export class FormationService {
     }
   }
 
-  async rateFormation(formationId: string, rating: number): Promise<IFormation> {
+  async rateFormation(formationId: string, userId: string, rating: number): Promise<IFormationDocument> {
     try {
       const formation = await Formation.findById(formationId);
       if (!formation) {
         throw new Error('Formation non trouvée');
       }
 
-      const newRating = ((formation.rating * formation.numberOfRatings) + rating) / (formation.numberOfRatings + 1);
-      
-      formation.rating = Number(newRating.toFixed(1));
-      formation.numberOfRatings += 1;
-      
+      formation.rating = ((formation.rating || 0) + rating) / 2;
       await formation.save();
+      
       return formation;
     } catch (error) {
       logger.error(`Erreur lors de l'évaluation de la formation ${formationId}:`, error);
       throw error;
     }
   }
-
-  async searchFormations(searchTerm: string): Promise<IFormation[]> {
-    try {
-      const formations = await Formation.find(
-        { $text: { $search: searchTerm }, status: 'published' },
-        { score: { $meta: 'textScore' } }
-      )
-        .sort({ score: { $meta: 'textScore' } })
-        .populate('instructor', 'name email avatar')
-        .lean();
-      
-      return formations.map(formation => ({
-        ...formation,
-        modules: formation.modules.map(module => ({
-          ...module,
-          description: module.description || ''
-        }))
-      })) as IFormation[];
-    } catch (error) {
-      logger.error('Erreur lors de la recherche de formations:', error);
-      throw error;
-    }
-  }
-}
-
-export const formationService = new FormationService(); 
+} 

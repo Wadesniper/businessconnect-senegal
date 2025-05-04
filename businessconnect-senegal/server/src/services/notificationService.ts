@@ -3,12 +3,18 @@ import { InAppNotificationService } from './inAppNotificationService';
 import nodemailer from 'nodemailer';
 import { User } from '../models/user';
 import { config } from '../config';
-
-export type NotificationType = 'subscription_expiration' | 'new_offer' | 'system' | 'payment_success' | 'payment_failure';
-
-export interface NotificationConfig {
-  daysBeforeExpiration: number[];  // Par exemple [7, 3, 1] pour notifier 7, 3 et 1 jours avant
-}
+import { Notification } from '../models/notification';
+import { Schema } from 'mongoose';
+import { WebSocket } from 'ws';
+import {
+  NotificationType,
+  NotificationConfig,
+  NotificationOptions,
+  NotificationResponse,
+  NotificationCreateData,
+  BulkNotificationData,
+  WebSocketConnection
+} from '../types/notification';
 
 const transporter = nodemailer.createTransport({
   host: config.SMTP_HOST,
@@ -22,15 +28,29 @@ const transporter = nodemailer.createTransport({
 
 export class NotificationService {
   private config: NotificationConfig = {
-    daysBeforeExpiration: [7, 3, 1]  // Configuration par défaut
+    daysBeforeExpiration: [7, 3, 1],
+    emailRetries: 3,
+    maxBulkSize: 100
   };
   public inAppNotificationService: InAppNotificationService;
+  private connections: Map<string, WebSocketConnection>;
+  private transporter: nodemailer.Transporter;
 
-  constructor(config?: NotificationConfig) {
+  constructor(config?: Partial<NotificationConfig>) {
     if (config) {
-      this.config = config;
+      this.config = { ...this.config, ...config };
     }
     this.inAppNotificationService = new InAppNotificationService();
+    this.connections = new Map();
+    this.transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST || 'smtp-relay.brevo.com',
+      port: parseInt(process.env.SMTP_PORT || '587', 10),
+      secure: false,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
+      }
+    });
   }
 
   async checkAndSendExpirationNotifications(subscription: {
@@ -123,54 +143,57 @@ export class NotificationService {
 
   async sendPaymentSuccessNotification(userId: string): Promise<void> {
     try {
-      const title = 'Paiement réussi';
-      const message = 'Votre paiement a été traité avec succès. Votre abonnement est maintenant actif.';
-      
-      // Notification in-app
-      await this.inAppNotificationService.createNotification(
-        userId,
-        'payment_success',
-        title,
-        message,
-        { action: 'subscription_activated' }
-      );
-
-      // Email notification
       const user = await User.findById(userId);
-      if (user?.email) {
-        await this.sendEmail(
-          user.email,
-          'Confirmation de paiement - BusinessConnect Sénégal',
-          `
-            <h1>Paiement confirmé</h1>
-            <p>Votre paiement a été traité avec succès.</p>
-            <p>Votre abonnement est maintenant actif.</p>
-            <p>Merci de votre confiance !</p>
-          `
-        );
+      if (!user) {
+        throw new Error('Utilisateur non trouvé');
       }
 
-      logger.info('Notifications de succès de paiement envoyées', { userId });
+      await this.transporter.sendMail({
+        from: process.env.SMTP_FROM || 'noreply@businessconnect.sn',
+        to: user.email,
+        subject: 'Paiement réussi - BusinessConnect Sénégal',
+        html: `
+          <h1>Paiement réussi</h1>
+          <p>Cher(e) ${user.firstName},</p>
+          <p>Votre paiement a été traité avec succès. Votre abonnement est maintenant actif.</p>
+          <p>Type d'abonnement : ${user.subscription?.plan}</p>
+          <p>Date de fin : ${new Date(user.subscription?.endDate || '').toLocaleDateString()}</p>
+          <p>Merci de votre confiance !</p>
+          <p>L'équipe BusinessConnect Sénégal</p>
+        `
+      });
+
+      logger.info('Email de confirmation de paiement envoyé', { userId });
     } catch (error) {
-      logger.error('Erreur lors de l\'envoi des notifications de succès de paiement', { userId, error });
+      logger.error('Erreur lors de l\'envoi de l\'email de confirmation:', error);
       throw error;
     }
   }
 
   async sendPaymentFailureNotification(userId: string): Promise<void> {
     try {
-      const title = 'Échec du paiement';
-      const message = 'Votre paiement n\'a pas pu être traité. Veuillez réessayer ou contacter le support.';
-      await this.inAppNotificationService.createNotification(
-        userId,
-        'payment_failure',
-        title,
-        message,
-        { action: 'retry_payment' }
-      );
-      logger.info('Notification d\'échec de paiement envoyée', { userId });
+      const user = await User.findById(userId);
+      if (!user) {
+        throw new Error('Utilisateur non trouvé');
+      }
+
+      await this.transporter.sendMail({
+        from: process.env.SMTP_FROM || 'noreply@businessconnect.sn',
+        to: user.email,
+        subject: 'Échec du paiement - BusinessConnect Sénégal',
+        html: `
+          <h1>Échec du paiement</h1>
+          <p>Cher(e) ${user.firstName},</p>
+          <p>Nous n'avons pas pu traiter votre paiement. Veuillez vérifier vos informations de paiement et réessayer.</p>
+          <p>Si vous continuez à rencontrer des problèmes, n'hésitez pas à nous contacter.</p>
+          <p>L'équipe BusinessConnect Sénégal</p>
+        `
+      });
+
+      logger.info('Email d\'échec de paiement envoyé', { userId });
     } catch (error) {
-      logger.error('Erreur lors de l\'envoi de la notification d\'échec de paiement', { userId, error });
+      logger.error('Erreur lors de l\'envoi de l\'email d\'échec:', error);
+      throw error;
     }
   }
 
@@ -246,25 +269,30 @@ export class NotificationService {
     }
   }
 
-  async sendSubscriptionExpirationNotification(userId: string, daysLeft: number) {
+  async sendSubscriptionExpirationNotification(userId: string, daysRemaining: number): Promise<void> {
     try {
       const user = await User.findById(userId);
-      if (!user || !user.email) return;
+      if (!user) {
+        throw new Error('Utilisateur non trouvé');
+      }
 
-      await transporter.sendMail({
-        from: config.SMTP_FROM,
+      await this.transporter.sendMail({
+        from: process.env.SMTP_FROM || 'noreply@businessconnect.sn',
         to: user.email,
-        subject: 'Votre abonnement expire bientôt',
+        subject: 'Expiration prochaine de votre abonnement - BusinessConnect Sénégal',
         html: `
-          <h2>Rappel d'expiration</h2>
-          <p>Votre abonnement expire dans ${daysLeft} jours.</p>
-          <p>Connectez-vous pour le renouveler.</p>
+          <h1>Expiration prochaine de votre abonnement</h1>
+          <p>Cher(e) ${user.firstName},</p>
+          <p>Votre abonnement ${user.subscription?.plan} expire dans ${daysRemaining} jours.</p>
+          <p>Pour continuer à profiter de nos services, veuillez renouveler votre abonnement.</p>
+          <p>L'équipe BusinessConnect Sénégal</p>
         `
       });
 
-      logger.info(`Notification d'expiration envoyée à ${user.email}`);
+      logger.info('Email d\'expiration d\'abonnement envoyé', { userId });
     } catch (error) {
-      logger.error('Erreur lors de l\'envoi de la notification d\'expiration:', error);
+      logger.error('Erreur lors de l\'envoi de l\'email d\'expiration:', error);
+      throw error;
     }
   }
 
@@ -410,5 +438,269 @@ export class NotificationService {
       `
     };
     await transporter.sendMail(mailOptions);
+  }
+
+  async sendSubscriptionCreatedNotification(userId: string, type: string): Promise<void> {
+    await this.createNotification({
+      userId,
+      type: 'subscription_created',
+      title: 'Abonnement créé',
+      message: `Votre abonnement ${type} a été créé avec succès.`,
+      metadata: { subscriptionType: type }
+    });
+  }
+
+  async sendSubscriptionCancelledNotification(userId: string): Promise<void> {
+    await this.createNotification({
+      userId,
+      type: 'subscription_cancelled',
+      title: 'Abonnement annulé',
+      message: 'Votre abonnement a été annulé.',
+      metadata: { event: 'subscription_cancelled' }
+    });
+  }
+
+  async sendSubscriptionExpirationNotification(userId: string, daysLeft: number): Promise<void> {
+    await this.createNotification({
+      userId,
+      type: 'subscription_expired',
+      title: 'Expiration d\'abonnement',
+      message: `Votre abonnement expire dans ${daysLeft} jours.`,
+      metadata: { event: 'subscription_expiration', daysLeft }
+    });
+  }
+
+  async createNotification(data: NotificationCreateData): Promise<void> {
+    try {
+      const notification = new Notification({
+        ...data,
+        user: new Schema.Types.ObjectId(data.userId)
+      });
+
+      await notification.save();
+      this.sendRealTimeNotification(data.userId, notification);
+    } catch (error) {
+      logger.error('Erreur lors de la création de la notification:', error);
+      throw error;
+    }
+  }
+
+  async getNotificationById(notificationId: string): Promise<Notification | null> {
+    try {
+      return await Notification.findById(notificationId).lean();
+    } catch (error) {
+      logger.error('Erreur lors de la récupération de la notification:', error);
+      throw error;
+    }
+  }
+
+  async getNotificationsByUser(
+    userId: string, 
+    options: NotificationOptions = {}
+  ): Promise<NotificationResponse> {
+    try {
+      const query = {
+        user: new Schema.Types.ObjectId(userId),
+        ...(options.isRead !== undefined && { isRead: options.isRead })
+      };
+
+      const [notifications, total, unread] = await Promise.all([
+        Notification.find(query)
+          .sort({ createdAt: -1 })
+          .skip(options.offset || 0)
+          .limit(options.limit || 10)
+          .lean(),
+        Notification.countDocuments(query),
+        Notification.countDocuments({ user: new Schema.Types.ObjectId(userId), isRead: false })
+      ]);
+
+      return { notifications, total, unread };
+    } catch (error) {
+      logger.error('Erreur lors de la récupération des notifications:', error);
+      throw error;
+    }
+  }
+
+  async markAsRead(notificationId: string, userId: string): Promise<Notification | null> {
+    try {
+      return await Notification.findOneAndUpdate(
+        { _id: notificationId, user: new Schema.Types.ObjectId(userId) },
+        { isRead: true },
+        { new: true }
+      ).lean();
+    } catch (error) {
+      logger.error('Erreur lors du marquage de la notification comme lue:', error);
+      throw error;
+    }
+  }
+
+  async markAllAsRead(userId: string): Promise<void> {
+    try {
+      await Notification.updateMany(
+        { user: new Schema.Types.ObjectId(userId) },
+        { isRead: true }
+      );
+    } catch (error) {
+      logger.error('Erreur lors du marquage de toutes les notifications comme lues:', error);
+      throw error;
+    }
+  }
+
+  async deleteNotification(notificationId: string, userId: string): Promise<boolean> {
+    try {
+      const result = await Notification.deleteOne({
+        _id: notificationId,
+        user: new Schema.Types.ObjectId(userId)
+      });
+      return result.deletedCount > 0;
+    } catch (error) {
+      logger.error('Erreur lors de la suppression de la notification:', error);
+      throw error;
+    }
+  }
+
+  async deleteAllNotifications(userId: string): Promise<void> {
+    try {
+      await Notification.deleteMany({
+        user: new Schema.Types.ObjectId(userId)
+      });
+    } catch (error) {
+      logger.error('Erreur lors de la suppression de toutes les notifications:', error);
+      throw error;
+    }
+  }
+
+  // Méthodes pour la gestion des WebSockets
+  addConnection(userId: string, socket: WebSocket): void {
+    this.connections.set(userId, { userId, socket });
+  }
+
+  removeConnection(userId: string): void {
+    this.connections.delete(userId);
+  }
+
+  private sendRealTimeNotification(userId: string, notification: Notification): void {
+    const connection = this.connections.get(userId);
+    if (connection?.socket.readyState === WebSocket.OPEN) {
+      connection.socket.send(JSON.stringify(notification));
+    }
+  }
+
+  // Méthodes pour les notifications de masse
+  async sendBulkNotifications(data: BulkNotificationData): Promise<Notification[]> {
+    try {
+      if (data.userIds.length > this.config.maxBulkSize) {
+        throw new Error(`Le nombre maximum de destinataires est ${this.config.maxBulkSize}`);
+      }
+
+      const notifications = await Promise.all(
+        data.userIds.map(userId =>
+          this.createNotification({
+            ...data,
+            userId
+          })
+        )
+      );
+
+      return notifications;
+    } catch (error) {
+      logger.error('Erreur lors de l\'envoi des notifications en masse:', error);
+      throw error;
+    }
+  }
+
+  async getUnreadCount(userId: string): Promise<number> {
+    try {
+      return await Notification.countDocuments({
+        user: new Schema.Types.ObjectId(userId),
+        isRead: false
+      });
+    } catch (error) {
+      logger.error('Erreur lors du comptage des notifications non lues:', error);
+      throw error;
+    }
+  }
+
+  async sendNotification(
+    userId: string,
+    type: NotificationType,
+    data: Record<string, any>
+  ): Promise<void> {
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        throw new Error('Utilisateur non trouvé');
+      }
+
+      // Créer la notification in-app
+      await this.createNotification({
+        userId,
+        type,
+        title: this.getNotificationTitle(type),
+        message: this.getNotificationMessage(type, data),
+        data
+      });
+
+      // Envoyer l'email si activé
+      if (config.NOTIFICATION_CONFIG.email) {
+        await this.sendEmail(
+          user.email,
+          this.getNotificationTitle(type),
+          this.getNotificationEmailTemplate(type, data)
+        );
+      }
+
+      logger.info('Notification envoyée avec succès', { userId, type });
+    } catch (error) {
+      logger.error('Erreur lors de l\'envoi de la notification:', error);
+      throw error;
+    }
+  }
+
+  private getNotificationTitle(type: NotificationType): string {
+    const titles: Record<NotificationType, string> = {
+      subscription_created: 'Nouvel abonnement créé',
+      subscription_cancelled: 'Abonnement annulé',
+      subscription_renewed: 'Abonnement renouvelé',
+      subscription_expiration: 'Abonnement expirant bientôt',
+      payment_success: 'Paiement réussi',
+      payment_failure: 'Échec du paiement',
+      new_post: 'Nouvelle publication',
+      topic_report: 'Signalement de sujet',
+      post_report: 'Signalement de message',
+      new_job_application: 'Nouvelle candidature',
+      order_notification: 'Mise à jour de commande'
+    };
+    return titles[type] || 'Notification';
+  }
+
+  private getNotificationMessage(type: NotificationType, data: Record<string, any>): string {
+    switch (type) {
+      case 'subscription_created':
+        return `Votre abonnement ${data.type} a été créé avec succès.`;
+      case 'subscription_cancelled':
+        return `Votre abonnement ${data.type} a été annulé. Raison : ${data.reason}`;
+      case 'subscription_renewed':
+        return `Votre abonnement ${data.type} a été renouvelé jusqu'au ${new Date(data.endDate).toLocaleDateString()}.`;
+      case 'subscription_expiration':
+        return `Votre abonnement ${data.type} expire dans ${data.daysRemaining} jours.`;
+      case 'payment_success':
+        return `Votre paiement de ${data.amount} FCFA a été traité avec succès.`;
+      case 'payment_failure':
+        return 'Votre paiement n\'a pas pu être traité. Veuillez réessayer.';
+      default:
+        return 'Nouvelle notification';
+    }
+  }
+
+  private getNotificationEmailTemplate(type: NotificationType, data: Record<string, any>): string {
+    const message = this.getNotificationMessage(type, data);
+    return `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h1 style="color: #333;">${this.getNotificationTitle(type)}</h1>
+        <p style="color: #666; font-size: 16px;">${message}</p>
+        <p style="color: #888; font-size: 14px;">L'équipe BusinessConnect Sénégal</p>
+      </div>
+    `;
   }
 } 

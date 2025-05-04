@@ -36,7 +36,10 @@ export const useNotifications = () => {
   const markAsRead = async (notificationId: string) => {
     try {
       const response = await fetch(`/api/notifications/${notificationId}/read`, {
-        method: 'PUT'
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
       
       if (!response.ok) throw new Error('Erreur lors du marquage de la notification');
@@ -56,7 +59,10 @@ export const useNotifications = () => {
   const markAllAsRead = async () => {
     try {
       const response = await fetch('/api/notifications/mark-all-read', {
-        method: 'PUT'
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
       
       if (!response.ok) throw new Error('Erreur lors du marquage des notifications');

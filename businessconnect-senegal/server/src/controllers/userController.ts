@@ -1,304 +1,462 @@
 import { Request, Response } from 'express';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import { logger } from '../utils/logger';
-import { query } from '../config/database';
-
-interface User {
-  id: string;
-  email: string;
-  password: string;
-  role: string;
-  name: string;
-  created_at: Date;
-  updated_at: Date;
-}
+import { User } from '../models/user';
+import { ApiResponse, AuthenticatedRequest, ApiError } from '../types/global';
+import { generateToken } from '../utils/auth';
+import { sendEmail } from '../utils/email';
+import { v4 as uuidv4 } from 'uuid';
+import { IUser, UserRole, UserCreateData, UserResponse, UserLoginRequest } from '../types/user';
 
 export const userController = {
-  async register(req: Request, res: Response) {
+  async register(req: Request<{}, {}, UserCreateData>, res: Response<ApiResponse<{ token: string; user: UserResponse }>>) {
     try {
-      const { email, password, name } = req.body;
+      const { email, password, firstName, lastName, role } = req.body;
 
-      // Vérifier si l'utilisateur existe déjà
-      const existingUser = await query('SELECT * FROM users WHERE email = $1', [email]);
-      if (existingUser.rows.length > 0) {
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
         return res.status(400).json({
-          status: 'error',
+          success: false,
           message: 'Un utilisateur avec cet email existe déjà'
         });
       }
 
-      // Hasher le mot de passe
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
+      const verificationToken = uuidv4();
+      const user = new User({
+        email,
+        password,
+        firstName,
+        lastName,
+        role,
+        verificationToken
+      });
 
-      // Créer l'utilisateur
-      const result = await query(
-        'INSERT INTO users (email, password, name, role) VALUES ($1, $2, $3, $4) RETURNING id, email, name, role',
-        [email, hashedPassword, name, 'user']
-      );
+      await user.save();
 
-      const user = result.rows[0];
+      // Envoyer l'email de vérification
+      const verificationUrl = `${process.env.FRONTEND_URL}/verify-email/${verificationToken}`;
+      await sendEmail({
+        to: email,
+        subject: 'Vérification de votre compte BusinessConnect',
+        html: `
+          <h1>Bienvenue sur BusinessConnect Sénégal</h1>
+          <p>Cliquez sur le lien suivant pour vérifier votre compte :</p>
+          <a href="${verificationUrl}">${verificationUrl}</a>
+        `
+      });
 
-      // Générer le token JWT
-      const token = jwt.sign(
-        { userId: user.id, role: user.role },
-        process.env.JWT_SECRET || 'default_secret',
-        { expiresIn: '24h' }
-      );
+      const token = generateToken(user);
 
       res.status(201).json({
-        status: 'success',
+        success: true,
+        message: 'Inscription réussie. Veuillez vérifier votre email.',
         data: {
+          token,
           user: {
-            id: user.id,
+            id: user._id,
             email: user.email,
-            name: user.name,
-            role: user.role
-          },
-          token
+            firstName: user.firstName,
+            lastName: user.lastName,
+            role: user.role,
+            isVerified: user.isVerified
+          }
         }
       });
     } catch (error) {
-      logger.error('Erreur lors de l\'inscription:', error);
       res.status(500).json({
-        status: 'error',
-        message: 'Erreur lors de l\'inscription'
+        success: false,
+        message: 'Erreur lors de l\'inscription',
+        errors: [{
+          msg: error instanceof Error ? error.message : 'Une erreur inconnue est survenue'
+        }]
       });
     }
   },
 
-  async login(req: Request, res: Response) {
+  async login(req: Request<{}, {}, UserLoginRequest>, res: Response<ApiResponse<{ token: string; user: UserResponse }>>) {
     try {
       const { email, password } = req.body;
 
-      // Vérifier si l'utilisateur existe
-      const result = await query('SELECT * FROM users WHERE email = $1', [email]);
-      if (result.rows.length === 0) {
+      const user = await User.findOne({ email }).select('+password');
+      if (!user) {
         return res.status(401).json({
-          status: 'error',
+          success: false,
           message: 'Email ou mot de passe incorrect'
         });
       }
 
-      const user = result.rows[0] as User;
-
-      // Vérifier le mot de passe
-      const isValidPassword = await bcrypt.compare(password, user.password);
-      if (!isValidPassword) {
+      const isMatch = await user.comparePassword(password);
+      if (!isMatch) {
         return res.status(401).json({
-          status: 'error',
+          success: false,
           message: 'Email ou mot de passe incorrect'
         });
       }
 
-      // Générer le token JWT
-      const token = jwt.sign(
-        { userId: user.id, role: user.role },
-        process.env.JWT_SECRET || 'default_secret',
-        { expiresIn: '24h' }
-      );
+      const token = generateToken(user);
 
       res.json({
-        status: 'success',
+        success: true,
+        message: 'Connexion réussie',
         data: {
+          token,
           user: {
-            id: user.id,
+            id: user._id,
             email: user.email,
-            name: user.name,
-            role: user.role
-          },
-          token
+            firstName: user.firstName,
+            lastName: user.lastName,
+            role: user.role,
+            isVerified: user.isVerified
+          }
         }
       });
     } catch (error) {
-      logger.error('Erreur lors de la connexion:', error);
       res.status(500).json({
-        status: 'error',
-        message: 'Erreur lors de la connexion'
+        success: false,
+        message: 'Erreur lors de la connexion',
+        errors: [{
+          msg: error instanceof Error ? error.message : 'Une erreur inconnue est survenue'
+        }]
       });
     }
   },
 
-  async getProfile(req: Request, res: Response) {
+  async verifyEmail(req: Request, res: Response<ApiResponse>) {
     try {
-      const userId = req.user?.id;
-      const result = await query(
-        'SELECT id, email, name, role, created_at, updated_at FROM users WHERE id = $1',
-        [userId]
-      );
+      const { token } = req.params;
 
-      if (result.rows.length === 0) {
+      const user = await User.findOne({ verificationToken: token });
+      if (!user) {
+        return res.status(400).json({
+          success: false,
+          message: 'Token de vérification invalide'
+        });
+      }
+
+      user.isVerified = true;
+      user.verificationToken = undefined;
+      await user.save();
+
+      res.json({
+        success: true,
+        message: 'Email vérifié avec succès'
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la vérification de l\'email',
+        error: error instanceof Error ? error.message : 'Une erreur inconnue est survenue'
+      });
+    }
+  },
+
+  async forgotPassword(req: Request, res: Response<ApiResponse>) {
+    try {
+      const { email } = req.body;
+
+      const user = await User.findOne({ email });
+      if (!user) {
         return res.status(404).json({
-          status: 'error',
+          success: false,
+          message: 'Aucun utilisateur trouvé avec cet email'
+        });
+      }
+
+      const resetToken = uuidv4();
+      user.resetPasswordToken = resetToken;
+      user.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 heure
+      await user.save();
+
+      const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+      await sendEmail({
+        to: email,
+        subject: 'Réinitialisation de votre mot de passe BusinessConnect',
+        html: `
+          <h1>Réinitialisation de mot de passe</h1>
+          <p>Cliquez sur le lien suivant pour réinitialiser votre mot de passe :</p>
+          <a href="${resetUrl}">${resetUrl}</a>
+          <p>Ce lien expirera dans 1 heure.</p>
+        `
+      });
+
+      res.json({
+        success: true,
+        message: 'Email de réinitialisation envoyé'
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors de l\'envoi de l\'email de réinitialisation',
+        error: error instanceof Error ? error.message : 'Une erreur inconnue est survenue'
+      });
+    }
+  },
+
+  async resetPassword(req: Request, res: Response<ApiResponse>) {
+    try {
+      const { token } = req.params;
+      const { password } = req.body;
+
+      const user = await User.findOne({
+        resetPasswordToken: token,
+        resetPasswordExpires: { $gt: Date.now() }
+      });
+
+      if (!user) {
+        return res.status(400).json({
+          success: false,
+          message: 'Token de réinitialisation invalide ou expiré'
+        });
+      }
+
+      user.password = password;
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpires = undefined;
+      await user.save();
+
+      res.json({
+        success: true,
+        message: 'Mot de passe réinitialisé avec succès'
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la réinitialisation du mot de passe',
+        error: error instanceof Error ? error.message : 'Une erreur inconnue est survenue'
+      });
+    }
+  },
+
+  async changePassword(req: Request, res: Response<ApiResponse>) {
+    try {
+      const { currentPassword, newPassword } = req.body;
+      const userId = req.user?.id;
+
+      const user = await User.findById(userId).select('+password');
+      if (!user) {
+        return res.status(404).json({
+          success: false,
           message: 'Utilisateur non trouvé'
         });
       }
 
-      res.json({
-        status: 'success',
-        data: result.rows[0]
-      });
-    } catch (error) {
-      logger.error('Erreur lors de la récupération du profil:', error);
-      res.status(500).json({
-        status: 'error',
-        message: 'Erreur lors de la récupération du profil'
-      });
-    }
-  },
-
-  async updateProfile(req: Request, res: Response) {
-    try {
-      const userId = req.user?.id;
-      const { name, email } = req.body;
-
-      const result = await query(
-        'UPDATE users SET name = $1, email = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $3 RETURNING id, email, name, role',
-        [name, email, userId]
-      );
-
-      res.json({
-        status: 'success',
-        data: result.rows[0]
-      });
-    } catch (error) {
-      logger.error('Erreur lors de la mise à jour du profil:', error);
-      res.status(500).json({
-        status: 'error',
-        message: 'Erreur lors de la mise à jour du profil'
-      });
-    }
-  },
-
-  async updatePassword(req: Request, res: Response) {
-    try {
-      const userId = req.user?.id;
-      const { currentPassword, newPassword } = req.body;
-
-      // Vérifier le mot de passe actuel
-      const user = await query('SELECT * FROM users WHERE id = $1', [userId]);
-      const isValidPassword = await bcrypt.compare(currentPassword, user.rows[0].password);
-
-      if (!isValidPassword) {
+      const isMatch = await user.comparePassword(currentPassword);
+      if (!isMatch) {
         return res.status(401).json({
-          status: 'error',
+          success: false,
           message: 'Mot de passe actuel incorrect'
         });
       }
 
-      // Hasher le nouveau mot de passe
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(newPassword, salt);
-
-      // Mettre à jour le mot de passe
-      await query(
-        'UPDATE users SET password = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2',
-        [hashedPassword, userId]
-      );
+      user.password = newPassword;
+      await user.save();
 
       res.json({
-        status: 'success',
-        message: 'Mot de passe mis à jour avec succès'
+        success: true,
+        message: 'Mot de passe modifié avec succès'
       });
     } catch (error) {
-      logger.error('Erreur lors de la mise à jour du mot de passe:', error);
       res.status(500).json({
-        status: 'error',
-        message: 'Erreur lors de la mise à jour du mot de passe'
+        success: false,
+        message: 'Erreur lors du changement de mot de passe',
+        error: error instanceof Error ? error.message : 'Une erreur inconnue est survenue'
       });
     }
   },
 
-  async deleteAccount(req: Request, res: Response) {
+  async getProfile(req: AuthenticatedRequest, res: Response<ApiResponse<UserResponse>>) {
     try {
       const userId = req.user?.id;
-      await query('DELETE FROM users WHERE id = $1', [userId]);
+
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'Utilisateur non trouvé'
+        });
+      }
 
       res.json({
-        status: 'success',
+        success: true,
+        data: {
+          id: user._id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role,
+          isVerified: user.isVerified,
+          subscription: user.subscription
+        }
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la récupération du profil',
+        error: error instanceof Error ? error.message : 'Une erreur inconnue est survenue'
+      });
+    }
+  },
+
+  async updateProfile(req: AuthenticatedRequest, res: Response<ApiResponse<UserResponse>>) {
+    try {
+      const userId = req.user?.id;
+      const { firstName, lastName, email } = req.body;
+
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'Utilisateur non trouvé'
+        });
+      }
+
+      if (email && email !== user.email) {
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+          return res.status(400).json({
+            success: false,
+            message: 'Cet email est déjà utilisé'
+          });
+        }
+        user.email = email;
+      }
+
+      if (firstName) user.firstName = firstName;
+      if (lastName) user.lastName = lastName;
+
+      await user.save();
+
+      res.json({
+        success: true,
+        message: 'Profil mis à jour avec succès',
+        data: {
+          id: user._id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role,
+          isVerified: user.isVerified
+        }
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la mise à jour du profil',
+        error: error instanceof Error ? error.message : 'Une erreur inconnue est survenue'
+      });
+    }
+  },
+
+  async deleteAccount(req: Request, res: Response<ApiResponse>) {
+    try {
+      const userId = req.user?.id;
+
+      await User.findByIdAndDelete(userId);
+
+      res.json({
+        success: true,
         message: 'Compte supprimé avec succès'
       });
     } catch (error) {
-      logger.error('Erreur lors de la suppression du compte:', error);
       res.status(500).json({
-        status: 'error',
-        message: 'Erreur lors de la suppression du compte'
+        success: false,
+        message: 'Erreur lors de la suppression du compte',
+        error: error instanceof Error ? error.message : 'Une erreur inconnue est survenue'
       });
     }
   },
 
-  // Méthodes administrateur
-  async getAllUsers(req: Request, res: Response) {
+  async getAllUsers(req: AuthenticatedRequest, res: Response<ApiResponse<UserResponse[]>>): Promise<void> {
     try {
-      const result = await query(
-        'SELECT id, email, name, role, created_at, updated_at FROM users ORDER BY created_at DESC'
-      );
+      const users = await User.find().select('-password');
 
       res.json({
-        status: 'success',
-        data: result.rows
+        success: true,
+        data: users.map(user => ({
+          id: user._id.toString(),
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role,
+          isVerified: user.isVerified,
+          subscription: user.subscription
+        }))
       });
     } catch (error) {
-      logger.error('Erreur lors de la récupération des utilisateurs:', error);
       res.status(500).json({
-        status: 'error',
-        message: 'Erreur lors de la récupération des utilisateurs'
+        success: false,
+        message: 'Erreur lors de la récupération des utilisateurs',
+        errors: [{
+          msg: error instanceof Error ? error.message : 'Une erreur inconnue est survenue'
+        }]
       });
     }
   },
 
-  async updateUser(req: Request, res: Response) {
+  async updateUser(req: AuthenticatedRequest, res: Response<ApiResponse<UserResponse>>): Promise<void> {
     try {
       const { id } = req.params;
-      const { name, email, role } = req.body;
+      const updateData = req.body;
 
-      const result = await query(
-        'UPDATE users SET name = $1, email = $2, role = $3, updated_at = CURRENT_TIMESTAMP WHERE id = $4 RETURNING id, email, name, role',
-        [name, email, role, id]
-      );
+      const user = await User.findByIdAndUpdate(
+        id,
+        { $set: updateData },
+        { new: true }
+      ).select('-password');
 
-      if (result.rows.length === 0) {
-        return res.status(404).json({
-          status: 'error',
+      if (!user) {
+        res.status(404).json({
+          success: false,
           message: 'Utilisateur non trouvé'
         });
+        return;
       }
 
       res.json({
-        status: 'success',
-        data: result.rows[0]
+        success: true,
+        data: {
+          id: user._id.toString(),
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role,
+          isVerified: user.isVerified,
+          subscription: user.subscription
+        }
       });
     } catch (error) {
-      logger.error('Erreur lors de la mise à jour de l\'utilisateur:', error);
       res.status(500).json({
-        status: 'error',
-        message: 'Erreur lors de la mise à jour de l\'utilisateur'
+        success: false,
+        message: 'Erreur lors de la mise à jour de l\'utilisateur',
+        errors: [{
+          msg: error instanceof Error ? error.message : 'Une erreur inconnue est survenue'
+        }]
       });
     }
   },
 
-  async deleteUser(req: Request, res: Response) {
+  async deleteUser(req: AuthenticatedRequest, res: Response<ApiResponse>): Promise<void> {
     try {
       const { id } = req.params;
-      const result = await query('DELETE FROM users WHERE id = $1 RETURNING id', [id]);
 
-      if (result.rows.length === 0) {
-        return res.status(404).json({
-          status: 'error',
+      const user = await User.findByIdAndDelete(id);
+      if (!user) {
+        res.status(404).json({
+          success: false,
           message: 'Utilisateur non trouvé'
         });
+        return;
       }
 
       res.json({
-        status: 'success',
+        success: true,
         message: 'Utilisateur supprimé avec succès'
       });
     } catch (error) {
-      logger.error('Erreur lors de la suppression de l\'utilisateur:', error);
       res.status(500).json({
-        status: 'error',
-        message: 'Erreur lors de la suppression de l\'utilisateur'
+        success: false,
+        message: 'Erreur lors de la suppression de l\'utilisateur',
+        errors: [{
+          msg: error instanceof Error ? error.message : 'Une erreur inconnue est survenue'
+        }]
       });
     }
   }

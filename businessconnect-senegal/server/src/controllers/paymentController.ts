@@ -7,6 +7,8 @@ import { pdfService } from '../services/pdfService';
 import { AppError } from '../utils/errors';
 import { config } from '../config';
 import { AuthRequest } from '../types/user';
+import { PaymentService } from '../services/paymentService';
+import { AuthenticatedRequest, ApiResponse } from '../types/controllers';
 
 interface PaymentIntent {
   id: string;
@@ -20,7 +22,13 @@ interface PaymentIntent {
 
 const paytech = new PayTech(config.PAYTECH_API_KEY, config.PAYTECH_WEBHOOK_SECRET);
 
-export const paymentController = {
+export class PaymentController {
+  private paymentService: PaymentService;
+
+  constructor() {
+    this.paymentService = new PaymentService();
+  }
+
   async createSetupIntent(req: AuthRequest, res: Response) {
     try {
       const { user } = req;
@@ -38,7 +46,7 @@ export const paymentController = {
       logger.error('Error creating setup intent:', error);
       throw new AppError('Erreur lors de la configuration du paiement', 500);
     }
-  },
+  }
 
   async getPaymentMethods(req: Request, res: Response) {
     try {
@@ -49,7 +57,7 @@ export const paymentController = {
       logger.error('Error fetching payment methods:', error);
       throw new AppError('Erreur lors de la récupération des méthodes de paiement', 500);
     }
-  },
+  }
 
   async deletePaymentMethod(req: Request, res: Response) {
     try {
@@ -60,7 +68,7 @@ export const paymentController = {
       logger.error('Error deleting payment method:', error);
       throw new AppError('Erreur lors de la suppression de la méthode de paiement', 500);
     }
-  },
+  }
 
   async processPayment(req: AuthRequest, res: Response) {
     try {
@@ -84,7 +92,7 @@ export const paymentController = {
       logger.error('Error processing payment:', error);
       throw new AppError('Erreur lors du traitement du paiement', 500);
     }
-  },
+  }
 
   async createSubscription(req: AuthRequest, res: Response) {
     try {
@@ -106,7 +114,7 @@ export const paymentController = {
       logger.error('Error creating subscription:', error);
       throw new AppError('Erreur lors de la création de l\'abonnement', 500);
     }
-  },
+  }
 
   async cancelSubscription(req: AuthRequest, res: Response) {
     try {
@@ -122,25 +130,27 @@ export const paymentController = {
       logger.error('Error canceling subscription:', error);
       throw new AppError('Erreur lors de l\'annulation de l\'abonnement', 500);
     }
-  },
+  }
 
-  async refundPayment(req: Request, res: Response) {
+  async refundPayment(req: AuthenticatedRequest, res: Response<ApiResponse>) {
     try {
       const { paymentId } = req.params;
-      const { amount, reason } = req.body;
+      const { reason } = req.body;
 
-      const refund = await paytech.createRefund({
-        payment_intent: paymentId,
-        amount,
-        reason
+      const payment = await this.paymentService.refundPayment(paymentId, reason);
+
+      res.json({
+        success: true,
+        data: payment
       });
-
-      res.json(refund);
     } catch (error) {
-      logger.error('Error processing refund:', error);
-      throw new AppError('Erreur lors du remboursement', 500);
+      logger.error('Erreur lors du remboursement:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors du remboursement'
+      });
     }
-  },
+  }
 
   async getInvoices(req: Request, res: Response) {
     try {
@@ -151,7 +161,7 @@ export const paymentController = {
       logger.error('Error fetching invoices:', error);
       throw new AppError('Erreur lors de la récupération des factures', 500);
     }
-  },
+  }
 
   async getInvoice(req: Request, res: Response) {
     try {
@@ -162,7 +172,7 @@ export const paymentController = {
       logger.error('Error fetching invoice:', error);
       throw new AppError('Erreur lors de la récupération de la facture', 500);
     }
-  },
+  }
 
   async downloadInvoice(req: Request, res: Response) {
     try {
@@ -198,7 +208,7 @@ export const paymentController = {
         });
       }
     }
-  },
+  }
 
   async handleWebhook(req: Request, res: Response) {
     try {
@@ -241,7 +251,129 @@ export const paymentController = {
       });
     }
   }
-};
+
+  initiatePayment = async (req: AuthenticatedRequest, res: Response<ApiResponse>) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          message: 'Non autorisé'
+        });
+      }
+
+      const { amount, currency, description, paymentMethod, metadata } = req.body;
+
+      const payment = await this.paymentService.initiatePayment({
+        amount,
+        currency,
+        description,
+        userId,
+        paymentMethod,
+        metadata
+      });
+
+      res.status(201).json({
+        success: true,
+        data: payment
+      });
+    } catch (error) {
+      logger.error('Erreur lors de l\'initiation du paiement:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors de l\'initiation du paiement'
+      });
+    }
+  };
+
+  confirmPayment = async (req: AuthenticatedRequest, res: Response<ApiResponse>) => {
+    try {
+      const { paymentId } = req.params;
+      const transactionData = req.body;
+
+      const payment = await this.paymentService.confirmPayment(paymentId, transactionData);
+
+      res.json({
+        success: true,
+        data: payment
+      });
+    } catch (error) {
+      logger.error('Erreur lors de la confirmation du paiement:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la confirmation du paiement'
+      });
+    }
+  };
+
+  getPaymentById = async (req: AuthenticatedRequest, res: Response<ApiResponse>) => {
+    try {
+      const { paymentId } = req.params;
+      const payment = await this.paymentService.getPaymentById(paymentId);
+
+      if (!payment) {
+        return res.status(404).json({
+          success: false,
+          message: 'Paiement non trouvé'
+        });
+      }
+
+      res.json({
+        success: true,
+        data: payment
+      });
+    } catch (error) {
+      logger.error('Erreur lors de la récupération du paiement:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la récupération du paiement'
+      });
+    }
+  };
+
+  getPaymentsByUser = async (req: AuthenticatedRequest, res: Response<ApiResponse>) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          message: 'Non autorisé'
+        });
+      }
+
+      const payments = await this.paymentService.getPaymentsByUser(userId);
+
+      res.json({
+        success: true,
+        data: payments
+      });
+    } catch (error) {
+      logger.error('Erreur lors de la récupération des paiements:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la récupération des paiements'
+      });
+    }
+  };
+
+  getPaymentsByStatus = async (req: AuthenticatedRequest, res: Response<ApiResponse>) => {
+    try {
+      const { status } = req.params;
+      const payments = await this.paymentService.getPaymentsByStatus(status as any);
+
+      res.json({
+        success: true,
+        data: payments
+      });
+    } catch (error) {
+      logger.error('Erreur lors de la récupération des paiements par statut:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la récupération des paiements'
+      });
+    }
+  };
+}
 
 // Fonctions de gestion des webhooks
 async function handlePaymentSuccess(data: any) {

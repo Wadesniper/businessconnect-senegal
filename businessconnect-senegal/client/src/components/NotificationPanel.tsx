@@ -1,79 +1,157 @@
 import React from 'react';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
-import { Notification } from '../types/notification';
+import { List, Badge, Spin, Empty, message } from 'antd';
+import { useAuth } from '../hooks/useAuth';
+import axios from 'axios';
 
-interface NotificationPanelProps {
-  notifications: Notification[];
-  onNotificationClick: (notificationId: string) => void;
+interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  type: 'info' | 'success' | 'warning' | 'error';
+  read: boolean;
+  createdAt: string;
 }
 
-const NotificationPanel: React.FC<NotificationPanelProps> = ({
-  notifications,
-  onNotificationClick,
-}) => {
-  const getNotificationIcon = (type: Notification['type']) => {
-    switch (type) {
-      case 'subscription_expiration':
-        return '⚠️';
-      case 'new_offer':
-        return '💼';
-      case 'system':
-        return 'ℹ️';
-      default:
-        return '📢';
+interface NotificationPanelProps {
+  onClose?: () => void;
+}
+
+const NotificationPanel: React.FC<NotificationPanelProps> = ({ onClose }) => {
+  const [notifications, setNotifications] = React.useState<Notification[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const { user } = useAuth();
+
+  React.useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  const fetchNotifications = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get('/api/notifications');
+      setNotifications(response.data);
+    } catch (error) {
+      message.error('Erreur lors du chargement des notifications');
+      console.error('Erreur:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleNotificationClick = (notification: Notification) => {
-    onNotificationClick(notification.id);
-    
-    // Si c'est une notification d'expiration d'abonnement, rediriger vers la page de renouvellement
-    if (notification.type === 'subscription_expiration' && notification.data?.action === 'renewal') {
-      window.location.href = '/renouveler-abonnement';
+  const markAsRead = async (notificationId: string) => {
+    try {
+      await axios.put(`/api/notifications/${notificationId}/read`);
+      setNotifications(prevNotifications =>
+        prevNotifications.map(notif =>
+          notif.id === notificationId ? { ...notif, read: true } : notif
+        )
+      );
+      if (onClose) {
+        onClose();
+      }
+    } catch (error) {
+      message.error('Erreur lors du marquage de la notification comme lue');
+      console.error('Erreur:', error);
     }
   };
 
-  if (notifications.length === 0) {
+  const markAllAsRead = async () => {
+    try {
+      await axios.put('/api/notifications/read-all');
+      setNotifications(prevNotifications =>
+        prevNotifications.map(notif => ({ ...notif, read: true }))
+      );
+      message.success('Toutes les notifications ont été marquées comme lues');
+    } catch (error) {
+      message.error('Erreur lors du marquage des notifications comme lues');
+      console.error('Erreur:', error);
+    }
+  };
+
+  const deleteNotification = async (notificationId: string) => {
+    try {
+      await axios.delete(`/api/notifications/${notificationId}`);
+      setNotifications(prevNotifications =>
+        prevNotifications.filter(notif => notif.id !== notificationId)
+      );
+      message.success('Notification supprimée');
+    } catch (error) {
+      message.error('Erreur lors de la suppression de la notification');
+      console.error('Erreur:', error);
+    }
+  };
+
+  if (loading) {
     return (
-      <div className="p-4 text-center text-gray-500">
-        Aucune notification
+      <div className="flex justify-center items-center p-4">
+        <Spin />
       </div>
+    );
+  }
+
+  if (!notifications.length) {
+    return (
+      <Empty
+        description="Aucune notification"
+        className="p-4"
+      />
     );
   }
 
   return (
     <div className="max-h-96 overflow-y-auto">
-      {notifications.map((notification) => (
-        <div
-          key={notification.id}
-          onClick={() => handleNotificationClick(notification)}
-          className={`
-            p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50
-            ${!notification.isRead ? 'bg-blue-50' : ''}
-          `}
+      <div className="flex justify-between items-center p-4 border-b">
+        <h3 className="m-0">Notifications</h3>
+        <button
+          onClick={markAllAsRead}
+          className="text-blue-600 hover:text-blue-800"
         >
-          <div className="flex items-start">
-            <span className="text-2xl mr-3">
-              {getNotificationIcon(notification.type)}
-            </span>
-            <div className="flex-1">
-              <h4 className={`font-semibold ${!notification.isRead ? 'text-blue-600' : 'text-gray-900'}`}>
-                {notification.title}
-              </h4>
-              <p className="text-sm text-gray-600 mt-1">
-                {notification.message}
-              </p>
-              <p className="text-xs text-gray-500 mt-2">
-                {format(new Date(notification.createdAt), "d MMMM 'à' HH:mm", { locale: fr })}
-              </p>
+          Tout marquer comme lu
+        </button>
+      </div>
+      <List
+        dataSource={notifications}
+        renderItem={(notification) => (
+          <List.Item
+            className={`cursor-pointer hover:bg-gray-50 ${
+              !notification.read ? 'bg-blue-50' : ''
+            }`}
+            onClick={() => markAsRead(notification.id)}
+            actions={[
+              <button
+                key="delete"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteNotification(notification.id);
+                }}
+                className="text-red-600 hover:text-red-800"
+              >
+                Supprimer
+              </button>
+            ]}
+          >
+            <List.Item.Meta
+              title={
+                <div className="flex items-center">
+                  {!notification.read && (
+                    <Badge status="processing" className="mr-2" />
+                  )}
+                  {notification.title}
+                </div>
+              }
+              description={notification.message}
+            />
+            <div className="text-sm text-gray-500">
+              {new Date(notification.createdAt).toLocaleDateString('fr-FR', {
+                day: 'numeric',
+                month: 'long',
+                hour: '2-digit',
+                minute: '2-digit'
+              })}
             </div>
-            {!notification.isRead && (
-              <span className="w-2 h-2 bg-blue-600 rounded-full mt-2"></span>
-            )}
-          </div>
-        </div>
-      ))}
+          </List.Item>
+        )}
+      />
     </div>
   );
 };

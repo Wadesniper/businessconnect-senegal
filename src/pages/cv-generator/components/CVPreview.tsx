@@ -1,11 +1,11 @@
 import React from 'react';
 import { Card } from 'antd';
-import { CVTemplateData } from '../../../data/cv-templates';
+import { CVData, Template } from '../../../types/cv';
 import ModernTemplate from './templates/ModernTemplate';
 
 interface CVPreviewProps {
-  data: CVTemplateData;
-  template: 'modern' | string;
+  data: CVData;
+  template: Template;
   scale?: number;
 }
 
@@ -20,7 +20,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, scale = 0.7 }) =>
         overflow: 'auto'
       }}
     >
-      {template === 'modern' && <ModernTemplate data={data} />}
+      <ModernTemplate data={data} template={template} />
     </Card>
   );
 };

@@ -1,56 +1,26 @@
-import { Request, Response } from 'express';
-import { FormationService } from '../services/formationService';
+import { Response } from 'express';
+import FormationService from '../services/formationService';
 import { logger } from '../utils/logger';
-import { AuthRequest } from '../types/user';
+import { AuthenticatedRequest, ApiResponse, FormationRequest } from '../types/controllers';
+import { Schema } from 'mongoose';
 
 interface CursaFormation {
   url: string;
   categories: string[];
 }
 
-interface CursaFormations {
-  informatique: CursaFormation;
-  langues: CursaFormation;
-  gestion: CursaFormation;
-  pro: CursaFormation;
-  art: CursaFormation;
-  education: CursaFormation;
-  esthetique: CursaFormation;
-  sante: CursaFormation;
-}
-
-const CURSA_FORMATIONS: CursaFormations = {
-  informatique: {
-    url: 'https://cursa.app/cours-online-linformatique-gratuits',
-    categories: ['Programmation web', 'IA', 'Bases de données', 'Développement mobile', 'Cybersécurité']
+const CURSA_FORMATIONS: Record<string, CursaFormation> = {
+  'developpement-web': {
+    url: 'https://cursa.app/fr/formation/developpement-web',
+    categories: ['Développement', 'Web']
   },
-  langues: {
-    url: 'https://cursa.app/cours-online-langues-et-communication-gratuits',
-    categories: ['Anglais', 'Espagnol', 'Français', 'Chinois', 'Japonais']
+  'marketing-digital': {
+    url: 'https://cursa.app/fr/formation/marketing-digital',
+    categories: ['Marketing', 'Digital']
   },
-  gestion: {
-    url: 'https://cursa.app/cours-online-gestion-et-affaires-gratuits',
-    categories: ['Marketing', 'Finance', 'Entrepreneuriat', 'Management', 'Comptabilité']
-  },
-  pro: {
-    url: 'https://cursa.app/cours-online-professionnaliser-gratuits',
-    categories: ['Immobilier', 'Automobile', 'Sécurité', 'Construction', 'Services']
-  },
-  art: {
-    url: 'https://cursa.app/cours-online-art-et-design-gratuits',
-    categories: ['Graphisme', 'UX/UI', '3D', 'Animation', 'Vidéo']
-  },
-  education: {
-    url: 'https://cursa.app/cours-online-education-de-base-gratuits',
-    categories: ['Mathématiques', 'Sciences', 'Histoire', 'Philosophie', 'Littérature']
-  },
-  esthetique: {
-    url: 'https://cursa.app/cours-online-esthetique-gratuits',
-    categories: ['Maquillage', 'Soins', 'Coiffure']
-  },
-  sante: {
-    url: 'https://cursa.app/cours-online-sante-gratuits',
-    categories: ['Soins', 'Nutrition', 'Psychologie', 'Premiers secours']
+  'design-ux': {
+    url: 'https://cursa.app/fr/formation/design-ux',
+    categories: ['Design', 'UX/UI']
   }
 };
 
@@ -61,8 +31,7 @@ export class FormationController {
     this.formationService = new FormationService();
   }
 
-  // Obtenir toutes les formations externes (Cursa)
-  getCursaFormations = async (req: Request, res: Response) => {
+  getCursaFormations = async (req: AuthenticatedRequest, res: Response<ApiResponse>) => {
     try {
       const { category } = req.query;
       let formations = CURSA_FORMATIONS;
@@ -88,8 +57,7 @@ export class FormationController {
     }
   };
 
-  // Obtenir toutes les catégories de formations
-  getCategories = async (req: Request, res: Response) => {
+  getCategories = async (_req: AuthenticatedRequest, res: Response<ApiResponse>) => {
     try {
       const categories = new Set<string>();
       Object.values(CURSA_FORMATIONS).forEach(data => {
@@ -109,55 +77,26 @@ export class FormationController {
     }
   };
 
-  // Obtenir les formations internes
-  getAllFormations = async (req: Request, res: Response) => {
+  createFormation = async (req: AuthenticatedRequest, res: Response<ApiResponse>) => {
     try {
-      const { category, level, featured } = req.query;
-      const formations = await this.formationService.getAllFormations({
-        category: category as string,
-        level: level as string,
-        featured: featured === 'true'
-      });
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          message: 'Non autorisé'
+        });
+      }
 
-      res.json({
-        success: true,
-        data: formations
-      });
-    } catch (error) {
-      logger.error('Erreur lors de la récupération des formations:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Erreur lors de la récupération des formations'
-      });
-    }
-  };
-
-  // Obtenir une formation par son ID
-  getFormationById = async (req: Request, res: Response) => {
-    try {
-      const formation = await this.formationService.getFormationById(req.params.id);
-      res.json({
-        success: true,
-        data: formation
-      });
-    } catch (error) {
-      logger.error(`Erreur lors de la récupération de la formation ${req.params.id}:`, error);
-      res.status(404).json({
-        success: false,
-        message: 'Formation non trouvée'
-      });
-    }
-  };
-
-  // Créer une nouvelle formation
-  createFormation = async (req: AuthRequest, res: Response) => {
-    try {
-      const formationData = {
+      const formationData: FormationRequest = {
         ...req.body,
-        instructor: req.user?.id
+        instructor: new Schema.Types.ObjectId(userId)
       };
 
-      const formation = await this.formationService.createFormation(formationData);
+      const formation = await this.formationService.createFormation({
+        ...formationData,
+        createdBy: new Schema.Types.ObjectId(userId)
+      });
+
       res.status(201).json({
         success: true,
         data: formation
@@ -171,16 +110,59 @@ export class FormationController {
     }
   };
 
-  // Mettre à jour une formation
-  updateFormation = async (req: Request, res: Response) => {
+  getFormationById = async (req: AuthenticatedRequest, res: Response<ApiResponse>) => {
     try {
-      const formation = await this.formationService.updateFormation(req.params.id, req.body);
+      const formation = await this.formationService.getFormationById(req.params.id);
+      if (!formation) {
+        return res.status(404).json({
+          success: false,
+          message: 'Formation non trouvée'
+        });
+      }
+
       res.json({
         success: true,
         data: formation
       });
     } catch (error) {
-      logger.error(`Erreur lors de la mise à jour de la formation ${req.params.id}:`, error);
+      logger.error('Erreur lors de la récupération de la formation:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la récupération de la formation'
+      });
+    }
+  };
+
+  updateFormation = async (req: AuthenticatedRequest, res: Response<ApiResponse>) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          message: 'Non autorisé'
+        });
+      }
+
+      const formationData: Partial<FormationRequest> = req.body;
+      const formation = await this.formationService.updateFormation(
+        req.params.id,
+        formationData,
+        userId
+      );
+
+      if (!formation) {
+        return res.status(404).json({
+          success: false,
+          message: 'Formation non trouvée'
+        });
+      }
+
+      res.json({
+        success: true,
+        data: formation
+      });
+    } catch (error) {
+      logger.error('Erreur lors de la mise à jour de la formation:', error);
       res.status(500).json({
         success: false,
         message: 'Erreur lors de la mise à jour de la formation'
@@ -188,16 +170,30 @@ export class FormationController {
     }
   };
 
-  // Supprimer une formation
-  deleteFormation = async (req: Request, res: Response) => {
+  deleteFormation = async (req: AuthenticatedRequest, res: Response<ApiResponse>) => {
     try {
-      await this.formationService.deleteFormation(req.params.id);
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          message: 'Non autorisé'
+        });
+      }
+
+      const success = await this.formationService.deleteFormation(req.params.id, userId);
+      if (!success) {
+        return res.status(404).json({
+          success: false,
+          message: 'Formation non trouvée'
+        });
+      }
+
       res.json({
         success: true,
         message: 'Formation supprimée avec succès'
       });
     } catch (error) {
-      logger.error(`Erreur lors de la suppression de la formation ${req.params.id}:`, error);
+      logger.error('Erreur lors de la suppression de la formation:', error);
       res.status(500).json({
         success: false,
         message: 'Erreur lors de la suppression de la formation'
@@ -205,73 +201,7 @@ export class FormationController {
     }
   };
 
-  // Inscrire un étudiant à une formation
-  enrollStudent = async (req: AuthRequest, res: Response) => {
-    try {
-      const formation = await this.formationService.enrollStudent(
-        req.params.id,
-        req.user?.id as string
-      );
-      res.json({
-        success: true,
-        data: formation
-      });
-    } catch (error) {
-      logger.error('Erreur lors de l\'inscription à la formation:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Erreur lors de l\'inscription à la formation'
-      });
-    }
-  };
-
-  // Désinscrire un étudiant d'une formation
-  unenrollStudent = async (req: AuthRequest, res: Response) => {
-    try {
-      const formation = await this.formationService.unenrollStudent(
-        req.params.id,
-        req.user?.id as string
-      );
-      res.json({
-        success: true,
-        data: formation
-      });
-    } catch (error) {
-      logger.error('Erreur lors de la désinscription de la formation:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Erreur lors de la désinscription de la formation'
-      });
-    }
-  };
-
-  // Noter une formation
-  rateFormation = async (req: Request, res: Response) => {
-    try {
-      const { rating } = req.body;
-      if (rating < 0 || rating > 5) {
-        return res.status(400).json({
-          success: false,
-          message: 'La note doit être comprise entre 0 et 5'
-        });
-      }
-
-      const formation = await this.formationService.rateFormation(req.params.id, rating);
-      res.json({
-        success: true,
-        data: formation
-      });
-    } catch (error) {
-      logger.error('Erreur lors de l\'évaluation de la formation:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Erreur lors de l\'évaluation de la formation'
-      });
-    }
-  };
-
-  // Rechercher des formations
-  searchFormations = async (req: Request, res: Response) => {
+  searchFormations = async (req: AuthenticatedRequest, res: Response<ApiResponse>) => {
     try {
       const { q } = req.query;
       if (!q) {
@@ -291,6 +221,109 @@ export class FormationController {
       res.status(500).json({
         success: false,
         message: 'Erreur lors de la recherche de formations'
+      });
+    }
+  };
+
+  enrollStudent = async (req: AuthenticatedRequest, res: Response<ApiResponse>) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          message: 'Non autorisé'
+        });
+      }
+
+      const formationId = req.params.id;
+      const result = await this.formationService.enrollStudent(formationId, userId);
+
+      if (!result) {
+        return res.status(404).json({
+          success: false,
+          message: 'Formation non trouvée ou inscription impossible'
+        });
+      }
+
+      res.json({
+        success: true,
+        message: 'Inscription réussie',
+        data: result
+      });
+    } catch (error) {
+      logger.error('Erreur lors de l\'inscription à la formation:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors de l\'inscription à la formation'
+      });
+    }
+  };
+
+  unenrollStudent = async (req: AuthenticatedRequest, res: Response<ApiResponse>) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          message: 'Non autorisé'
+        });
+      }
+
+      const formationId = req.params.id;
+      const result = await this.formationService.unenrollStudent(formationId, userId);
+
+      if (!result) {
+        return res.status(404).json({
+          success: false,
+          message: 'Formation non trouvée ou désinscription impossible'
+        });
+      }
+
+      res.json({
+        success: true,
+        message: 'Désinscription réussie'
+      });
+    } catch (error) {
+      logger.error('Erreur lors de la désinscription de la formation:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la désinscription de la formation'
+      });
+    }
+  };
+
+  rateFormation = async (req: AuthenticatedRequest, res: Response<ApiResponse>) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          message: 'Non autorisé'
+        });
+      }
+
+      const formationId = req.params.id;
+      const { rating } = req.body;
+
+      const result = await this.formationService.rateFormation(formationId, rating);
+
+      if (!result) {
+        return res.status(404).json({
+          success: false,
+          message: 'Formation non trouvée ou notation impossible'
+        });
+      }
+
+      res.json({
+        success: true,
+        message: 'Notation enregistrée avec succès',
+        data: result
+      });
+    } catch (error) {
+      logger.error('Erreur lors de la notation de la formation:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la notation de la formation'
       });
     }
   };

@@ -11,7 +11,7 @@ const formationController = new FormationController();
 router.get('/cursa', formationController.getCursaFormations);
 router.get('/categories', formationController.getCategories);
 router.get('/search', formationController.searchFormations);
-router.get('/', formationController.getAllFormations);
+router.get('/', formationController.searchFormations);
 router.get('/:id', formationController.getFormationById);
 
 // Routes protégées

@@ -3,9 +3,15 @@ import 'moment/locale/fr';
 
 moment.locale('fr');
 
-export const formatDate = (date: Date | string): string => {
+export const formatDate = (date: string): string => {
   if (!date) return '';
-  return moment(date).format('MMMM YYYY');
+  
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'long'
+  };
+
+  return new Date(date).toLocaleDateString('fr-FR', options);
 };
 
 export const parseDate = (dateString: string): Date => {

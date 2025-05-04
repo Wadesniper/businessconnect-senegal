@@ -1,33 +1,35 @@
 import { Schema, model } from 'mongoose';
+import { ISubscription, SubscriptionType, SubscriptionStatus, SubscriptionDocument } from '../types/subscription';
 
-export interface ISubscription {
-  _id: string;
-  userId: string;
-  plan: string;
-  status: 'pending' | 'active' | 'expired' | 'cancelled';
-  paymentId?: string;
-  startDate: Date;
-  endDate: Date;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const subscriptionSchema = new Schema<ISubscription>({
-  userId: { type: String, required: true },
-  plan: { type: String, required: true },
+const subscriptionSchema = new Schema<SubscriptionDocument>({
+  userId: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
+  type: { 
+    type: String, 
+    enum: ['etudiant', 'annonceur', 'recruteur'] as SubscriptionType[],
+    required: true 
+  },
   status: { 
     type: String, 
-    enum: ['pending', 'active', 'expired', 'cancelled'],
+    enum: ['active', 'inactive', 'pending', 'cancelled', 'expired'] as SubscriptionStatus[],
     default: 'pending'
   },
+  startDate: { type: Date, required: true },
+  endDate: { type: Date, required: true },
+  price: { type: Number, required: true },
+  currency: { type: String, required: true, default: 'XOF' },
+  autoRenew: { type: Boolean, default: true },
+  paymentMethod: { type: String },
+  lastPaymentDate: { type: Date },
+  nextPaymentDate: { type: Date },
+  cancelReason: { type: String },
   paymentId: { type: String },
-  startDate: { type: Date, default: Date.now },
-  endDate: { type: Date, required: true }
+  metadata: { type: Schema.Types.Mixed }
 }, {
   timestamps: true
 });
 
+// Index pour améliorer les performances des requêtes
 subscriptionSchema.index({ userId: 1, status: 1 });
-subscriptionSchema.index({ paymentId: 1 });
+subscriptionSchema.index({ endDate: 1 });
 
-export const Subscription = model<ISubscription>('Subscription', subscriptionSchema); 
+export const Subscription = model<SubscriptionDocument>('Subscription', subscriptionSchema); 

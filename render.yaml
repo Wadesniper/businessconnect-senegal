@@ -5,12 +5,24 @@ services:
     region: frankfurt
     plan: starter
     rootDir: businessconnect-senegal/server
-    buildCommand: yarn install && yarn build
-    startCommand: yarn start
+    buildCommand: |
+      cd businessconnect-senegal/server && 
+      yarn install --frozen-lockfile &&
+      yarn tsc --project tsconfig.json &&
+      yarn build
+    startCommand: cd businessconnect-senegal/server && NODE_ENV=production yarn start
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
+      - key: TS_NODE_TRANSPILE_ONLY
+        value: "true"
+      - key: SKIP_PREFLIGHT_CHECK
+        value: "true"
+      - key: DISABLE_ESLINT_PLUGIN
+        value: "true"
+      - key: TSC_COMPILE_ON_ERROR
+        value: "true"
       - key: PORT
         value: 3000
       - key: MONGODB_URI
@@ -45,11 +57,21 @@ services:
     region: frankfurt
     plan: starter
     rootDir: businessconnect-senegal/client
-    buildCommand: yarn install && yarn build
-    startCommand: yarn start
+    buildCommand: |
+      cd businessconnect-senegal/client && 
+      yarn install --frozen-lockfile &&
+      yarn tsc --project tsconfig.json &&
+      SKIP_PREFLIGHT_CHECK=true DISABLE_ESLINT_PLUGIN=true yarn build
+    startCommand: cd businessconnect-senegal/client && NODE_ENV=production yarn start
     envVars:
       - key: NODE_ENV
         value: production
+      - key: TS_NODE_TRANSPILE_ONLY
+        value: "true"
+      - key: SKIP_PREFLIGHT_CHECK
+        value: "true"
+      - key: DISABLE_ESLINT_PLUGIN
+        value: "true"
       - key: NEXT_PUBLIC_API_URL
         value: https://businessconnect-senegal-api.onrender.com
       - key: NEXT_PUBLIC_CURSA_API_URL

@@ -1,70 +1,61 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { config } from '../config';
-import { User } from '../models/User';
-import { logger } from '../utils/logger';
+import { ApiResponse, AuthenticatedRequest } from '../types/global';
+import { UserRole } from '../types/user';
+
+interface JwtPayload {
+  id: string;
+  role: UserRole;
+}
 
 export const authMiddleware = async (
   req: Request,
-  res: Response,
+  res: Response<ApiResponse>,
   next: NextFunction
 ) => {
   try {
-    // Vérifier le header Authorization
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    const token = req.headers.authorization?.split(' ')[1];
+
+    if (!token) {
       return res.status(401).json({
         success: false,
-        message: 'Accès non autorisé. Token manquant'
+        message: 'Token d\'authentification manquant'
       });
     }
 
-    // Extraire et vérifier le token
-    const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, config.JWT_SECRET) as { id: string };
-
-    // Vérifier l'utilisateur
-    const user = await User.findById(decoded.id);
-    if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: 'Utilisateur non trouvé'
-      });
-    }
-
-    // Vérifier si l'utilisateur est vérifié
-    if (!user.isVerified) {
-      return res.status(401).json({
-        success: false,
-        message: 'Veuillez vérifier votre email'
-      });
-    }
-
-    // Ajouter l'utilisateur à la requête
-    req.user = {
-      id: user._id.toString(),
-      email: user.email,
-      role: user.role
+    const decoded = jwt.verify(token, config.jwt.secret) as JwtPayload;
+    (req as AuthenticatedRequest).user = {
+      id: decoded.id,
+      role: decoded.role
     };
 
     next();
   } catch (error) {
-    logger.error('Erreur d\'authentification:', error);
     return res.status(401).json({
       success: false,
-      message: 'Token invalide'
+      message: 'Token d\'authentification invalide'
     });
   }
 };
 
-export const isAdmin = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const isAdmin = async (
+  req: AuthenticatedRequest,
+  res: Response<ApiResponse>,
+  next: NextFunction
+) => {
   try {
-    if (req.user?.role !== 'admin') {
-      return res.status(403).json({ message: 'Accès refusé' });
+    if (req.user.role !== UserRole.ADMIN) {
+      return res.status(403).json({
+        success: false,
+        message: 'Accès non autorisé'
+      });
     }
     next();
   } catch (error) {
-    logger.error('Erreur de vérification admin:', error);
-    res.status(500).json({ message: 'Erreur serveur' });
+    return res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la vérification des droits'
+    });
   }
 }; 

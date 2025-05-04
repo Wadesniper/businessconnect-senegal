@@ -1,41 +1,32 @@
-import express from 'express';
-import { body } from 'express-validator';
-import { UserController } from '../controllers/userController';
+import { Router } from 'express';
+import { userController } from '../controllers/userController';
 import { authMiddleware } from '../middleware/authMiddleware';
+import {
+  registerValidation,
+  loginValidation,
+  updateProfileValidation,
+  changePasswordValidation,
+  validateRequest
+} from '../utils/validation';
 
-const router = express.Router();
-const userController = new UserController();
+const router = Router();
 
 // Routes publiques
-router.post(
-  '/register',
-  [
-    body('email').isEmail().withMessage('Email invalide'),
-    body('password')
-      .isLength({ min: 6 })
-      .withMessage('Le mot de passe doit contenir au moins 6 caractères'),
-    body('name').not().isEmpty().withMessage('Le nom est requis'),
-  ],
-  userController.register
-);
+router.post('/register', registerValidation, validateRequest, userController.register);
+router.post('/login', loginValidation, validateRequest, userController.login);
+router.post('/forgot-password', userController.forgotPassword);
+router.post('/reset-password/:token', userController.resetPassword);
+router.get('/verify/:token', userController.verifyEmail);
 
-router.post(
-  '/login',
-  [
-    body('email').isEmail().withMessage('Email invalide'),
-    body('password').exists().withMessage('Le mot de passe est requis'),
-  ],
-  userController.login
-);
-
-// Routes protégées
-router.get('/profile', authMiddleware, userController.getProfile);
-router.put('/profile', authMiddleware, userController.updateProfile);
-router.put('/password', authMiddleware, userController.updatePassword);
+// Routes authentifiées
+router.use(authMiddleware);
+router.get('/profile', userController.getProfile);
+router.put('/profile', updateProfileValidation, validateRequest, userController.updateProfile);
+router.put('/password', changePasswordValidation, validateRequest, userController.changePassword);
 
 // Routes admin
-router.get('/admin/users', authMiddleware, userController.getAllUsers);
-router.put('/admin/users/:id', authMiddleware, userController.updateUser);
-router.delete('/admin/users/:id', authMiddleware, userController.deleteUser);
+router.get('/admin/users', authMiddleware.isAdmin, userController.getAllUsers);
+router.put('/admin/users/:id', authMiddleware.isAdmin, userController.updateUser);
+router.delete('/admin/users/:id', authMiddleware.isAdmin, userController.deleteUser);
 
 export default router; 

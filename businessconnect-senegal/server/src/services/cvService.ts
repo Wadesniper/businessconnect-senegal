@@ -4,6 +4,7 @@ import PDFDocument from 'pdfkit';
 import fs from 'fs';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
+import { CVData, PersonalInfo, Experience, Education, Skill, Language, Certification, Project, CustomSection } from '../types/cv';
 
 export class CVService {
   private readonly UPLOAD_DIR = 'uploads/cv';
@@ -15,7 +16,7 @@ export class CVService {
     }
   }
 
-  async createCV(userId: string, data: any) {
+  async createCV(userId: string, data: CVData) {
     try {
       const cv = new CV({
         userId,
@@ -29,7 +30,7 @@ export class CVService {
     }
   }
 
-  async updateCV(cvId: string, userId: string, data: any) {
+  async updateCV(cvId: string, userId: string, data: Partial<CVData>) {
     try {
       const cv = await CV.findOneAndUpdate(
         { _id: cvId, userId },
@@ -95,7 +96,7 @@ export class CVService {
       const writeStream = fs.createWriteStream(outputPath);
 
       // Créer le PDF selon le template choisi
-      await this.applyTemplate(doc, cv);
+      await this.applyTemplate(doc, cv.toObject() as CVData);
 
       // Sauvegarder le PDF
       doc.pipe(writeStream);
@@ -119,9 +120,9 @@ export class CVService {
     }
   }
 
-  async generateCV(cvData: any): Promise<string> {
+  async generateCV(cvData: CVData): Promise<string> {
     try {
-      const pdfBuffer = await this.generatePDF(cvData);
+      const pdfBuffer = await this.generatePDFfromData(cvData);
       return pdfBuffer.toString('base64');
     } catch (error) {
       logger.error('Erreur lors de la génération du CV:', error);
@@ -129,7 +130,17 @@ export class CVService {
     }
   }
 
-  private async applyTemplate(doc: PDFKit.PDFDocument, cv: any) {
+  private async generatePDFfromData(cvData: CVData): Promise<Buffer> {
+    const doc = new PDFDocument();
+    const buffers: Buffer[] = [];
+    doc.on('data', buffers.push.bind(buffers));
+    await this.applyTemplate(doc, cvData);
+    doc.end();
+    await new Promise(resolve => doc.on('end', resolve));
+    return Buffer.concat(buffers);
+  }
+
+  private async applyTemplate(doc: PDFKit.PDFDocument, cv: CVData) {
     switch (cv.template) {
       case 'modern':
         await this.applyModernTemplate(doc, cv);
@@ -148,10 +159,10 @@ export class CVService {
     }
   }
 
-  private async applyModernTemplate(doc: PDFKit.PDFDocument, cv: any) {
+  private async applyModernTemplate(doc: PDFKit.PDFDocument, cv: CVData) {
     // En-tête
     doc.fontSize(24)
-      .fillColor(cv.color)
+      .fillColor(cv.color || '#2196f3')
       .text(`${cv.personalInfo.firstName} ${cv.personalInfo.lastName}`, { align: 'center' });
 
     if (cv.personalInfo.title) {
@@ -184,10 +195,10 @@ export class CVService {
     if (cv.experience && cv.experience.length > 0) {
       doc.moveDown()
         .fontSize(16)
-        .fillColor(cv.color)
+        .fillColor(cv.color || '#2196f3')
         .text('Expérience Professionnelle');
 
-      cv.experience.forEach((exp: any) => {
+      cv.experience.forEach((exp: Experience) => {
         doc.moveDown()
           .fontSize(14)
           .fillColor('#333')
@@ -196,7 +207,7 @@ export class CVService {
           .fillColor('#666')
           .text(`${exp.company} | ${exp.location || ''}`)
           .fontSize(10)
-          .text(`${new Date(exp.startDate).toLocaleDateString('fr-FR')} - ${exp.current ? 'Présent' : new Date(exp.endDate).toLocaleDateString('fr-FR')}`);
+          .text(`${new Date(exp.startDate).toLocaleDateString('fr-FR')} - ${exp.current ? 'Présent' : exp.endDate ? new Date(exp.endDate).toLocaleDateString('fr-FR') : ''}`);
 
         if (exp.description) {
           doc.moveDown(0.5)
@@ -219,10 +230,10 @@ export class CVService {
     if (cv.education && cv.education.length > 0) {
       doc.moveDown()
         .fontSize(16)
-        .fillColor(cv.color)
+        .fillColor(cv.color || '#2196f3')
         .text('Formation');
 
-      cv.education.forEach((edu: any) => {
+      cv.education.forEach((edu: Education) => {
         doc.moveDown()
           .fontSize(14)
           .fillColor('#333')
@@ -246,26 +257,12 @@ export class CVService {
     if (cv.skills && cv.skills.length > 0) {
       doc.moveDown()
         .fontSize(16)
-        .fillColor(cv.color)
+        .fillColor(cv.color || '#2196f3')
         .text('Compétences');
-
-      const skillsByCategory = cv.skills.reduce((acc: any, skill: any) => {
-        if (!acc[skill.category]) {
-          acc[skill.category] = [];
-        }
-        acc[skill.category].push(skill);
-        return acc;
-      }, {});
-
-      Object.entries(skillsByCategory).forEach(([category, skills]: [string, any]) => {
-        doc.moveDown()
-          .fontSize(12)
+      cv.skills.forEach((skill: Skill) => {
+        doc.fontSize(12)
           .fillColor('#333')
-          .text(category.charAt(0).toUpperCase() + category.slice(1));
-
-        doc.fontSize(11)
-          .fillColor('#666')
-          .text(skills.map((s: any) => `${s.name} (${s.level})`).join(' • '));
+          .text(`• ${skill.name} (${skill.level})`);
       });
     }
 
@@ -273,51 +270,66 @@ export class CVService {
     if (cv.languages && cv.languages.length > 0) {
       doc.moveDown()
         .fontSize(16)
-        .fillColor(cv.color)
+        .fillColor(cv.color || '#2196f3')
         .text('Langues');
-
-      doc.moveDown()
-        .fontSize(11)
-        .fillColor('#666')
-        .text(cv.languages.map((lang: any) => `${lang.name} (${lang.level})`).join(' • '));
+      cv.languages.forEach((lang: Language) => {
+        doc.fontSize(12)
+          .fillColor('#333')
+          .text(`• ${lang.name} (${lang.level})`);
+      });
     }
 
     // Certifications
     if (cv.certifications && cv.certifications.length > 0) {
       doc.moveDown()
         .fontSize(16)
-        .fillColor(cv.color)
+        .fillColor(cv.color || '#2196f3')
         .text('Certifications');
+      cv.certifications.forEach((cert: Certification) => {
+        doc.fontSize(12)
+          .fillColor('#333')
+          .text(`• ${cert.name} (${cert.issuer}, ${new Date(cert.date).getFullYear()})`);
+      });
+    }
 
-      cv.certifications.forEach((cert: any) => {
+    // Projets
+    if (cv.projects && cv.projects.length > 0) {
+      doc.moveDown()
+        .fontSize(16)
+        .fillColor(cv.color || '#2196f3')
+        .text('Projets');
+      cv.projects.forEach((proj: Project) => {
+        doc.fontSize(12)
+          .fillColor('#333')
+          .text(`• ${proj.name}${proj.url ? ' (' + proj.url + ')' : ''}`);
+      });
+    }
+
+    // Sections personnalisées
+    if (cv.customSections && cv.customSections.length > 0) {
+      cv.customSections.forEach((section: CustomSection) => {
         doc.moveDown()
+          .fontSize(16)
+          .fillColor(cv.color || '#2196f3')
+          .text(section.title)
           .fontSize(12)
           .fillColor('#333')
-          .text(cert.name)
-          .fontSize(11)
-          .fillColor('#666')
-          .text(`${cert.issuer} | ${new Date(cert.date).toLocaleDateString('fr-FR')}`);
-
-        if (cert.credentialUrl) {
-          doc.fontSize(10)
-            .fillColor('#0066cc')
-            .text(cert.credentialUrl, { link: cert.credentialUrl });
-        }
+          .text(section.content);
       });
     }
   }
 
-  private async applyClassicTemplate(doc: PDFKit.PDFDocument, cv: any) {
+  private async applyClassicTemplate(doc: PDFKit.PDFDocument, cv: CVData) {
     // Implémentation similaire au template moderne mais avec un style plus classique
     // À implémenter selon les besoins
   }
 
-  private async applyCreativeTemplate(doc: PDFKit.PDFDocument, cv: any) {
+  private async applyCreativeTemplate(doc: PDFKit.PDFDocument, cv: CVData) {
     // Template créatif avec plus de couleurs et de mise en page dynamique
     // À implémenter selon les besoins
   }
 
-  private async applyProfessionalTemplate(doc: PDFKit.PDFDocument, cv: any) {
+  private async applyProfessionalTemplate(doc: PDFKit.PDFDocument, cv: CVData) {
     // Template professionnel avec une mise en page sobre et élégante
     // À implémenter selon les besoins
   }

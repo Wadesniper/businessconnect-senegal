@@ -1,49 +1,65 @@
+export interface Template {
+  id: string;
+  name: string;
+  thumbnail: string;
+  previewImage: string;
+  description: string;
+  category: string;
+  features: string[];
+  profileImage: string;
+  sampleData: {
+    title: string;
+    experience: string[];
+    education: string[];
+    skills: string[];
+  };
+}
+
+export interface PersonalInfo {
+  fullName: string;
+  title: string;
+  email: string;
+  phone: string;
+  location: string;
+  photo?: string;
+  linkedin?: string;
+  portfolio?: string;
+}
+
 export interface Experience {
   company: string;
   position: string;
-  location: string;
   startDate: string;
   endDate?: string;
   current?: boolean;
-  description: string[];
+  description: string;
   achievements?: string[];
 }
 
 export interface Education {
-  school: string;
+  institution: string;
   degree: string;
   field: string;
   startDate: string;
   endDate?: string;
   current?: boolean;
-  description?: string[];
+  description?: string;
 }
 
 export interface Skill {
   name: string;
-  level: number;
+  level: 'Débutant' | 'Intermédiaire' | 'Avancé' | 'Expert';
   category?: string;
 }
 
 export interface Language {
   name: string;
-  level: string;
+  level: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
 }
 
-export interface CV {
-  template: 'modern' | 'classic' | 'creative' | 'professional';
-  personalInfo: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    address?: string;
-    title?: string;
-    summary?: string;
-    website?: string;
-    linkedin?: string;
-    github?: string;
-  };
+export interface CVData {
+  personalInfo: PersonalInfo;
+  summary?: string;
   experience: Experience[];
   education: Education[];
   skills: Skill[];
@@ -51,4 +67,12 @@ export interface CV {
   certifications?: string[];
   interests?: string[];
   references?: string[];
+}
+
+export interface CustomizationOptions {
+  primaryColor: string;
+  secondaryColor: string;
+  fontFamily: string;
+  fontSize: string;
+  spacing: 'compact' | 'comfortable' | 'spacious';
 } 

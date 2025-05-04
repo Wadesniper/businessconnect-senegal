@@ -1,56 +1,32 @@
-import express from 'express';
+import { Router, Request, Response } from 'express';
 import { body } from 'express-validator';
 import { authenticate } from '../middleware/auth';
 import { ForumController } from '../controllers/forumController';
 import { validateRequest } from '../middleware/validateRequest';
 
-const router = express.Router();
+const router = Router();
 const forumController = new ForumController();
 
-// Routes publiques
-router.get('/topics', forumController.getAllTopics);
-router.get('/topics/:id', forumController.getTopicById);
-router.get('/topics/:id/posts', forumController.getPostsByTopic);
-
-// Routes protégées
+// Routes du forum
+router.get('/', authenticate, forumController.getAllPosts);
 router.post(
-  '/topics',
+  '/',
   authenticate,
   [
-    body('title').trim().isLength({ min: 5 }).withMessage('Le titre doit contenir au moins 5 caractères'),
-    body('description').trim().isLength({ min: 10 }).withMessage('La description doit contenir au moins 10 caractères'),
-    body('category').trim().notEmpty().withMessage('La catégorie est requise'),
-  ],
-  validateRequest,
-  forumController.createTopic
-);
-
-router.post(
-  '/topics/:id/posts',
-  authenticate,
-  [
-    body('content').trim().isLength({ min: 10 }).withMessage('Le contenu doit contenir au moins 10 caractères'),
+    body('title').notEmpty().withMessage('Le titre est requis'),
+    body('content').notEmpty().withMessage('Le contenu est requis'),
+    body('category').notEmpty().withMessage('La catégorie est requise')
   ],
   validateRequest,
   forumController.createPost
 );
 
-router.put(
-  '/topics/:id',
-  authenticate,
-  [
-    body('title').optional().trim().isLength({ min: 5 }).withMessage('Le titre doit contenir au moins 5 caractères'),
-    body('description').optional().trim().isLength({ min: 10 }).withMessage('La description doit contenir au moins 10 caractères'),
-  ],
-  validateRequest,
-  forumController.updateTopic
-);
+router.get('/:id', authenticate, forumController.getPostById);
+router.put('/:id', authenticate, forumController.updatePost);
+router.delete('/:id', authenticate, forumController.deletePost);
+router.post('/:id/like', authenticate, forumController.likePost);
+router.post('/:id/comment', authenticate, forumController.addComment);
+router.post('/:id/report', authenticate, forumController.reportPost);
 
-router.delete('/topics/:id', authenticate, forumController.deleteTopic);
-router.delete('/posts/:id', authenticate, forumController.deletePost);
-
-// Modération
-router.post('/topics/:id/report', authenticate, forumController.reportTopic);
-router.post('/posts/:id/report', authenticate, forumController.reportPost);
-
-export { router as forumRouter }; 
+export { router as forumRouter };
+export default router; 

@@ -16,52 +16,45 @@ export interface Template {
 }
 
 export interface PersonalInfo {
-  firstName: string;
-  lastName: string;
+  fullName: string;
   title: string;
   email: string;
   phone: string;
-  address?: string;
+  location: string;
   photo?: string;
   linkedin?: string;
   portfolio?: string;
 }
 
 export interface Experience {
-  id: string;
-  title: string;
   company: string;
-  location?: string;
+  position: string;
   startDate: string;
   endDate?: string;
   current?: boolean;
-  description: string[];
+  description: string;
   achievements?: string[];
 }
 
 export interface Education {
-  id: string;
+  institution: string;
   degree: string;
-  field?: string;
-  school: string;
-  location?: string;
+  field: string;
   startDate: string;
-  endDate: string;
+  endDate?: string;
+  current?: boolean;
   description?: string;
-  achievements?: string[];
 }
 
 export interface Skill {
-  id: string;
   name: string;
-  level: number;
+  level: 'Débutant' | 'Intermédiaire' | 'Avancé' | 'Expert';
   category?: string;
 }
 
 export interface Language {
-  id: string;
   name: string;
-  level: string;
+  level: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
 }
 
 export interface Project {
@@ -94,19 +87,13 @@ export interface Section {
 export interface CVData {
   personalInfo: PersonalInfo;
   summary?: string;
-  sections: Section[];
   experience: Experience[];
   education: Education[];
   skills: Skill[];
   languages: Language[];
-  projects?: Project[];
+  certifications?: string[];
   interests?: string[];
-  certifications?: Certification[];
-  template: Template | null;
-}
-
-export interface CVTemplateData extends CVData {
-  template: Template;
+  references?: string[];
 }
 
 export interface CustomizationOptions {
@@ -117,4 +104,36 @@ export interface CustomizationOptions {
   spacing: 'compact' | 'comfortable' | 'spacious';
 }
 
-export type Template = 'modern' | 'classic' | 'creative' | 'tech'; 
+export interface CVTemplateData extends CVData {
+  template: Template;
+}
+
+export type Template = 'modern' | 'classic' | 'creative' | 'tech';
+
+export interface CV {
+  id: string;
+  userId: string;
+  personalInfo: {
+    fullName: string;
+    title: string;
+    email: string;
+    phone: string;
+    location: string;
+    summary: string;
+    photo?: string;
+  };
+  experience: Experience[];
+  education: Education[];
+  skills: Skill[];
+  languages: Language[];
+  certifications: {
+    id: string;
+    name: string;
+    issuer: string;
+    date: string;
+    url?: string;
+  }[];
+  createdAt: string;
+  updatedAt: string;
+  template: Template;
+} 
