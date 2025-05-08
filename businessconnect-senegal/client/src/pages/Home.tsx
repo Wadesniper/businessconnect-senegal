@@ -1,8 +1,8 @@
-import React from 'react';
-import { Layout, Typography, Card, Row, Col, Button, Space, Avatar, Rate, Tag } from 'antd';
-import { motion } from 'framer-motion';
+import React, { useEffect } from 'react';
+import { Layout, Typography, Card, Row, Col, Button, Space, Avatar, Rate, Tag, Carousel } from 'antd';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import styled from 'styled-components';
-import Hero from '../components/Hero';
+import Hero from '../components/Hero/index';
 import type { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
 import {
   TeamOutlined,
@@ -15,9 +15,11 @@ import {
   SearchOutlined,
   CrownOutlined,
   SafetyCertificateOutlined,
-  RocketOutlined
+  RocketOutlined,
+  RiseOutlined
 } from '@ant-design/icons';
 import styles from './Home.module.css';
+import { useNavigate } from 'react-router-dom';
 
 const { Content } = Layout;
 const { Title, Paragraph, Text } = Typography;
@@ -176,10 +178,209 @@ const testimonials: Testimonial[] = [
   }
 ];
 
-const Home: React.FC = () => {
+const subscriptions = [
+  {
+    title: "Étudiant / Chercheur d'emploi",
+    price: '1 000 FCFA/mois',
+    features: [
+      "Accès aux offres d'emploi",
+      'Espace CV',
+      'Forum',
+      'Fiches métiers',
+      'Formations',
+      'Support standard'
+    ],
+    cta: "S'abonner",
+    color: '#1890ff',
+    popular: false
+  },
+  {
+    title: 'Annonceur',
+    price: '5 000 FCFA/mois',
+    features: [
+      "Publication d'offres",
+      'Visibilité plateforme',
+      'Statistiques de vues',
+      'Support prioritaire',
+      'Badge \"Annonceur Vérifié\"',
+      'Outils de promotion'
+    ],
+    cta: "S'abonner",
+    color: '#52c41a',
+    popular: false
+  },
+  {
+    title: 'Recruteur',
+    price: '9 000 FCFA/mois',
+    features: [
+      'Accès CVthèque complète',
+      'Contact direct candidats',
+      'Publication offres illimitées',
+      'Statistiques avancées',
+      'Support dédié 24/7',
+      'Outils de filtrage premium'
+    ],
+    cta: "S'abonner",
+    color: '#faad14',
+    popular: true
+  }
+];
+
+const secteursCarousel = [
+  { id: 'tech', nom: 'Technologies & Numérique', icone: '💻', couleur: '#1890ff' },
+  { id: 'finance', nom: 'Finance & Banque', icone: '💰', couleur: '#52c41a' },
+  { id: 'construction', nom: 'Construction & BTP', icone: '🏗️', couleur: '#faad14' },
+  { id: 'tourisme', nom: 'Tourisme & Hôtellerie', icone: '🏨', couleur: '#13c2c2' },
+  { id: 'agriculture', nom: 'Agriculture & Agroalimentaire', icone: '🌾', couleur: '#a0d911' },
+  { id: 'medias', nom: 'Médias & Communication', icone: '📺', couleur: '#f759ab' },
+  { id: 'industrie', nom: 'Industrie & Manufacturing', icone: '🏭', couleur: '#597ef7' },
+  { id: 'commerce', nom: 'Commerce & Distribution', icone: '🏪', couleur: '#36cfc9' },
+  { id: 'juridique', nom: 'Droit & Justice', icone: '⚖️', couleur: '#ffc53d' },
+  { id: 'mode', nom: 'Mode & Luxe', icone: '👗', couleur: '#ff85c0' }
+];
+
+const carouselStyle: React.CSSProperties = {
+  overflow: 'hidden',
+  width: '100%',
+  position: 'relative',
+  paddingBottom: 16,
+};
+const trackStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  animation: 'marquee 20s linear infinite',
+};
+
+const MarqueeKeyframes = () => (
+  <style>
+    {`
+      @keyframes marquee {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+      }
+    `}
+  </style>
+);
+
+const Home = () => {
+  const navigate = useNavigate();
+  const { scrollYProgress } = useScroll();
+  
+  const scaleProgress = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
+  const opacityProgress = useTransform(scrollYProgress, [0, 1], [0.5, 1]);
+
   return (
     <Layout>
       <Hero />
+      {/* Section Secteurs défilants avec animation améliorée */}
+      <StyledSection $background="#fff">
+        <Container>
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <Title level={2} style={{ textAlign: 'center', marginBottom: 32 }}>
+              Explorez les secteurs qui recrutent
+            </Title>
+          </motion.div>
+          <Carousel
+            slidesToShow={4}
+            autoplay
+            autoplaySpeed={2500}
+            dots={false}
+            responsive={[
+              { breakpoint: 1200, settings: { slidesToShow: 3 } },
+              { breakpoint: 900, settings: { slidesToShow: 2 } },
+              { breakpoint: 600, settings: { slidesToShow: 1 } }
+            ]}
+            style={{ marginBottom: 32 }}
+          >
+            {secteursCarousel.map((secteur, index) => (
+              <motion.div
+                key={secteur.id}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                style={{ padding: 12 }}
+              >
+                <div
+                  style={{
+                    background: secteur.couleur,
+                    color: '#fff',
+                    borderRadius: 20,
+                    padding: '32px 24px',
+                    minHeight: 160,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+                    fontSize: 24,
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    position: 'relative',
+                    overflow: 'hidden',
+                  }}
+                  onClick={() => navigate(`/careers?secteur=${secteur.id}`)}
+                  className={styles.sectorCard}
+                >
+                  <div className={styles.sectorCardOverlay} />
+                  <span style={{ fontSize: 48, marginBottom: 12 }}>{secteur.icone}</span>
+                  <div style={{ fontWeight: 600, fontSize: 20, marginTop: 8 }}>{secteur.nom}</div>
+                </div>
+              </motion.div>
+            ))}
+          </Carousel>
+        </Container>
+      </StyledSection>
+      {/* Section Abonnements */}
+      <StyledSection $background="#f6f8fa">
+        <Container>
+          <GradientTitle level={2} style={{ textAlign: 'center', marginBottom: 40 }}>
+            Nos abonnements
+          </GradientTitle>
+          <Row gutter={[32, 32]} justify="center">
+            {subscriptions.map((sub, idx) => (
+              <Col xs={24} sm={12} md={8} key={idx}>
+                <motion.div
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.1 * idx }}
+                >
+                  <Card
+                    bordered={false}
+                    style={{
+                      borderRadius: 20,
+                      boxShadow: sub.popular ? '0 8px 32px rgba(24,144,255,0.15)' : '0 4px 16px rgba(0,0,0,0.08)',
+                      border: sub.popular ? `2px solid ${sub.color}` : '1px solid #f0f0f0',
+                      background: sub.popular ? 'linear-gradient(135deg, #e6f7ff 0%, #ffffff 100%)' : 'white',
+                      minHeight: 400
+                    }}
+                  >
+                    <div style={{ textAlign: 'center', marginBottom: 24 }}>
+                      <Title level={3} style={{ color: sub.color, marginBottom: 0 }}>{sub.title}</Title>
+                      <Text style={{ fontSize: 32, fontWeight: 700, color: sub.color }}>{sub.price}</Text>
+                      {sub.popular && <Tag color="gold" style={{ marginLeft: 8 }}>Populaire</Tag>}
+                    </div>
+                    <ul style={{ listStyle: 'none', padding: 0, marginBottom: 32 }}>
+                      {sub.features.map((f, i) => (
+                        <li key={i} style={{ marginBottom: 12, fontSize: 16 }}>
+                          <span style={{ color: sub.color, marginRight: 8 }}>✔</span>{f}
+                        </li>
+                      ))}
+                    </ul>
+                    <Button type="primary" size="large" block style={{ background: sub.color, borderColor: sub.color, borderRadius: 25 }}>
+                      {sub.cta}
+                    </Button>
+                  </Card>
+                </motion.div>
+              </Col>
+            ))}
+          </Row>
+        </Container>
+      </StyledSection>
       
       <Content>
         <div className={styles.container}>
@@ -280,8 +481,97 @@ const Home: React.FC = () => {
             </Row>
           </div>
 
-          {/* Section CTA */}
-          <div className={styles.ctaSection}>
+          {/* Section Statistiques avec parallax */}
+          <motion.div
+            style={{
+              scale: scaleProgress,
+              opacity: opacityProgress
+            }}
+          >
+            <Row gutter={[32, 32]} justify="center" style={{ margin: '60px 0' }}>
+              <Col xs={24} md={8}>
+                <motion.div
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <Card 
+                    hoverable 
+                    className={`${styles.statCard} ${styles.blueGradient}`}
+                  >
+                    <div style={{ fontSize: '48px', marginBottom: '16px' }}>
+                      <TeamOutlined className={styles.bounceAnimation} />
+                    </div>
+                    <Title level={2} style={{ color: '#fff', marginBottom: '8px' }}>+500</Title>
+                    <Text style={{ fontSize: '18px', color: '#fff' }}>entreprises partenaires</Text>
+                    <div style={{ marginTop: '16px', fontSize: '14px' }}>
+                      <Text style={{ color: 'rgba(255,255,255,0.85)' }}>
+                        Rejoignez notre réseau d'entreprises
+                      </Text>
+                    </div>
+                  </Card>
+                </motion.div>
+              </Col>
+              <Col xs={24} md={8}>
+                <motion.div
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                  <Card 
+                    hoverable 
+                    className={`${styles.statCard} ${styles.greenGradient}`}
+                  >
+                    <div style={{ fontSize: '48px', marginBottom: '16px' }}>
+                      <RiseOutlined className={styles.pulseAnimation} />
+                    </div>
+                    <Title level={2} style={{ color: '#fff', marginBottom: '8px' }}>24/7</Title>
+                    <Text style={{ fontSize: '18px', color: '#fff' }}>Nouvelles offres</Text>
+                    <div style={{ marginTop: '16px', fontSize: '14px' }}>
+                      <Text style={{ color: 'rgba(255,255,255,0.85)' }}>
+                        Mises à jour quotidiennes
+                      </Text>
+                    </div>
+                  </Card>
+                </motion.div>
+              </Col>
+              <Col xs={24} md={8}>
+                <motion.div
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.4 }}
+                >
+                  <Card 
+                    hoverable 
+                    className={`${styles.statCard} ${styles.orangeGradient}`}
+                  >
+                    <div style={{ fontSize: '48px', marginBottom: '16px' }}>
+                      <UserOutlined className={styles.scaleAnimation} />
+                    </div>
+                    <Title level={2} style={{ color: '#fff', marginBottom: '8px' }}>10K+</Title>
+                    <Text style={{ fontSize: '18px', color: '#fff' }}>Membres actifs</Text>
+                    <div style={{ marginTop: '16px', fontSize: '14px' }}>
+                      <Text style={{ color: 'rgba(255,255,255,0.85)' }}>
+                        Une communauté grandissante
+                      </Text>
+                    </div>
+                  </Card>
+                </motion.div>
+              </Col>
+            </Row>
+          </motion.div>
+
+          {/* Section CTA améliorée */}
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className={styles.ctaSection}
+          >
             <Row justify="center" align="middle" style={{ textAlign: 'center' }}>
               <Col xs={24} md={16}>
                 <Title level={2} className={styles.ctaTitle}>
@@ -291,21 +581,25 @@ const Home: React.FC = () => {
                   Rejoignez notre communauté de professionnels et accédez à des opportunités exclusives.
                 </Paragraph>
                 <Space size="large">
-                  <Button type="primary" size="large">
+                  <Button 
+                    type="primary" 
+                    size="large"
+                    className={styles.ctaButton}
+                  >
                     S'inscrire gratuitement
                   </Button>
                   <Button 
                     type="default" 
                     size="large" 
                     icon={<CrownOutlined />}
-                    style={{ background: '#ffd700', borderColor: '#ffd700' }}
+                    className={styles.ctaPremiumButton}
                   >
                     Devenir Premium
                   </Button>
                 </Space>
               </Col>
             </Row>
-          </div>
+          </motion.div>
         </div>
       </Content>
     </Layout>
