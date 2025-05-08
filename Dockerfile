@@ -4,31 +4,21 @@ FROM node:18-alpine as builder
 # Définition du répertoire de travail
 WORKDIR /app
 
-# Installation des dépendances globales
-RUN npm install -g react-scripts
-
-# Copie des fichiers package
-COPY package*.json ./
-
 # Installation des dépendances
+COPY package*.json ./
 RUN npm install
 
-# Copie des sources
+# Build du projet
 COPY . .
-
-# Build de l'application
 RUN npm run build
 
-# Étape de production
+# Image de production
 FROM node:18-alpine
-
 WORKDIR /app
 
-# Installation de serve
-RUN npm install -g serve
-
-# Copie des fichiers de build depuis l'étape précédente
-COPY --from=builder /app/build ./build
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY package*.json ./
 
 # Variables d'environnement
 ENV NODE_ENV=production
@@ -38,4 +28,4 @@ ENV PORT=3000
 EXPOSE 3000
 
 # Démarrage de l'application
-CMD ["serve", "-s", "build", "-l", "3000"] 
+CMD ["npm", "start"] 

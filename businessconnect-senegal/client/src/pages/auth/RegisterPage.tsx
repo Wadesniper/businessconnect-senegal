@@ -1,10 +1,22 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Form, Input, Button, Typography, Card, message } from 'antd';
-import { UserOutlined, LockOutlined, MailOutlined, PhoneOutlined } from '@ant-design/icons';
+import { UserOutlined, LockOutlined, MailOutlined, PhoneOutlined, EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import { authService, RegisterData } from '../../services/authService';
+import styles from './styles/Auth.module.css';
 
 const { Title } = Typography;
+
+// Styles pour les icônes
+const iconStyle = {
+  fontSize: 20,
+  color: '#1890ff',
+};
+
+const eyeIconStyle = {
+  fontSize: 18,
+  color: '#aaa',
+};
 
 interface FormValues extends Omit<RegisterData, 'name'> {
   fullName: string;
@@ -14,6 +26,8 @@ interface FormValues extends Omit<RegisterData, 'name'> {
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const onFinish = async (values: FormValues) => {
     try {
@@ -21,7 +35,7 @@ const RegisterPage: React.FC = () => {
       const { fullName, confirmPassword, ...rest } = values;
       await authService.register({
         ...rest,
-        fullName
+        name: fullName
       });
       message.success('Inscription réussie !');
       navigate('/login');
@@ -32,48 +46,37 @@ const RegisterPage: React.FC = () => {
     }
   };
 
+  const togglePasswordVisibility = (field: 'password' | 'confirm') => {
+    if (field === 'password') {
+      setShowPassword(!showPassword);
+    } else {
+      setShowConfirmPassword(!showConfirmPassword);
+    }
+  };
+
   return (
-    <div style={{ 
-      display: 'flex', 
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      minHeight: '100vh',
-      padding: '20px',
-      background: '#f0f2f5'
-    }}>
-      <Card style={{ width: '100%', maxWidth: 400 }}>
-        <Title level={2} style={{ textAlign: 'center', marginBottom: 30 }}>
+    <div className={styles.authContainer}>
+      <Card className={styles.authCard}>
+        <Title level={2} className={styles.title}>
           Inscription
         </Title>
 
-        <Form<FormValues>
+        <Form
           name="register"
           onFinish={onFinish}
           layout="vertical"
           requiredMark={false}
+          className={styles.form}
         >
           <Form.Item
             name="fullName"
             rules={[{ required: true, message: 'Veuillez saisir votre nom complet' }]}
           >
             <Input 
-              prefix={<UserOutlined />} 
+              prefix={<UserOutlined {...iconStyle} />}
               placeholder="Nom complet"
               size="large"
-            />
-          </Form.Item>
-
-          <Form.Item
-            name="email"
-            rules={[
-              { required: true, message: 'Veuillez saisir votre email' },
-              { type: 'email', message: 'Email invalide' }
-            ]}
-          >
-            <Input 
-              prefix={<MailOutlined />} 
-              placeholder="Email"
-              size="large"
+              autoComplete="name"
             />
           </Form.Item>
 
@@ -88,9 +91,24 @@ const RegisterPage: React.FC = () => {
             ]}
           >
             <Input 
-              prefix={<PhoneOutlined />} 
+              prefix={<PhoneOutlined {...iconStyle} />}
               placeholder="Numéro de téléphone (ex: +221 77 123 4567)"
               size="large"
+              autoComplete="tel"
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="email"
+            rules={[
+              { type: 'email', message: 'Email invalide' }
+            ]}
+          >
+            <Input 
+              prefix={<MailOutlined {...iconStyle} />}
+              placeholder="Email (optionnel)"
+              size="large"
+              autoComplete="email"
             />
           </Form.Item>
 
@@ -101,10 +119,21 @@ const RegisterPage: React.FC = () => {
               { min: 6, message: 'Le mot de passe doit contenir au moins 6 caractères' }
             ]}
           >
-            <Input.Password 
-              prefix={<LockOutlined />} 
+            <Input
+              prefix={<LockOutlined {...iconStyle} />}
+              type={showPassword ? 'text' : 'password'}
               placeholder="Mot de passe"
               size="large"
+              autoComplete="new-password"
+              className={styles.passwordInput}
+              suffix={
+                <div onClick={() => togglePasswordVisibility('password')}>
+                  {showPassword ? 
+                    <EyeInvisibleOutlined {...eyeIconStyle} /> : 
+                    <EyeOutlined {...eyeIconStyle} />
+                  }
+                </div>
+              }
             />
           </Form.Item>
 
@@ -123,27 +152,38 @@ const RegisterPage: React.FC = () => {
               }),
             ]}
           >
-            <Input.Password 
-              prefix={<LockOutlined />} 
+            <Input
+              prefix={<LockOutlined {...iconStyle} />}
+              type={showConfirmPassword ? 'text' : 'password'}
               placeholder="Confirmer le mot de passe"
               size="large"
+              autoComplete="new-password"
+              className={styles.passwordInput}
+              suffix={
+                <div onClick={() => togglePasswordVisibility('confirm')}>
+                  {showConfirmPassword ? 
+                    <EyeInvisibleOutlined {...eyeIconStyle} /> : 
+                    <EyeOutlined {...eyeIconStyle} />
+                  }
+                </div>
+              }
             />
           </Form.Item>
 
           <Form.Item>
             <Button 
-              type="primary" 
-              htmlType="submit" 
+              type="primary"
+              htmlType="submit"
               loading={loading}
-              style={{ width: '100%' }}
-              size="large"
+              className={styles.submitButton}
             >
               S'inscrire
             </Button>
           </Form.Item>
 
-          <div style={{ textAlign: 'center' }}>
-            Déjà inscrit ? <Link to="/login">Se connecter</Link>
+          <div className={styles.linkText}>
+            Déjà inscrit ?
+            <Link to="/login">Se connecter</Link>
           </div>
         </Form>
       </Card>

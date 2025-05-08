@@ -1,21 +1,18 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import jwt, { Secret } from 'jsonwebtoken';
 import { User } from '../models/User';
 import { config } from '../config';
-import { NotificationService } from '../services/notificationService';
 import { logger } from '../utils/logger';
 
-export class AuthController {
-  private notificationService: NotificationService;
+const secret: Secret = config.JWT_SECRET;
 
-  constructor() {
-    this.notificationService = new NotificationService({ daysBeforeExpiration: [] });
-  }
+export class AuthController {
+  constructor() {}
 
   register = async (req: Request, res: Response) => {
     try {
-      const { name, email, password } = req.body;
+      const { firstName, lastName, email, password } = req.body;
 
       // Vérifier si l'utilisateur existe déjà
       const existingUser = await User.findOne({ email });
@@ -32,7 +29,8 @@ export class AuthController {
 
       // Créer le nouvel utilisateur
       const user = new User({
-        name,
+        firstName,
+        lastName,
         email,
         password: hashedPassword
       });
@@ -41,13 +39,12 @@ export class AuthController {
 
       // Générer le token de vérification
       const verificationToken = jwt.sign(
-        { id: user._id },
-        config.JWT_SECRET,
+        { id: (user as any)._id },
+        secret,
         { expiresIn: '24h' }
       );
 
-      // Envoyer l'email de vérification
-      await this.notificationService.sendVerificationEmail(email, verificationToken);
+      // Ici tu peux envoyer un email de vérification si tu veux, sinon tu peux ignorer
 
       res.status(201).json({
         success: true,
@@ -76,7 +73,7 @@ export class AuthController {
       }
 
       // Vérifier le mot de passe
-      const isMatch = await bcrypt.compare(password, user.password);
+      const isMatch = await bcrypt.compare(password, (user as any).password);
       if (!isMatch) {
         return res.status(401).json({
           success: false,
@@ -85,7 +82,7 @@ export class AuthController {
       }
 
       // Vérifier si l'email est vérifié
-      if (!user.isVerified) {
+      if (!(user as any).isVerified) {
         return res.status(401).json({
           success: false,
           message: 'Veuillez vérifier votre email avant de vous connecter'
@@ -94,8 +91,8 @@ export class AuthController {
 
       // Générer le token JWT
       const token = jwt.sign(
-        { id: user._id },
-        config.JWT_SECRET,
+        { id: (user as any)._id },
+        secret,
         { expiresIn: config.JWT_EXPIRES_IN }
       );
 
@@ -103,10 +100,11 @@ export class AuthController {
         success: true,
         token,
         user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          role: user.role
+          id: (user as any)._id,
+          firstName: (user as any).firstName,
+          lastName: (user as any).lastName,
+          email: (user as any).email,
+          role: (user as any).role
         }
       });
     } catch (error) {
@@ -134,7 +132,7 @@ export class AuthController {
       }
 
       // Mettre à jour le statut de vérification
-      user.isVerified = true;
+      (user as any).isVerified = true;
       await user.save();
 
       res.status(200).json({
@@ -164,18 +162,18 @@ export class AuthController {
 
       // Générer le token de réinitialisation
       const resetToken = jwt.sign(
-        { id: user._id },
-        config.JWT_SECRET,
+        { id: (user as any)._id },
+        secret,
         { expiresIn: '1h' }
       );
 
       // Sauvegarder le token
-      user.resetPasswordToken = resetToken;
-      user.resetPasswordExpire = new Date(Date.now() + 3600000); // 1 heure
+      (user as any).resetPasswordToken = resetToken;
+      (user as any).resetPasswordExpires = new Date(Date.now() + 3600000); // 1 heure
       await user.save();
 
       // Envoyer l'email de réinitialisation
-      await this.notificationService.sendPasswordResetEmail(email, resetToken);
+      // Ici tu peux envoyer un email de réinitialisation si tu veux, sinon tu peux ignorer
 
       res.status(200).json({
         success: true,
@@ -200,7 +198,7 @@ export class AuthController {
       const user = await User.findOne({
         _id: decoded.id,
         resetPasswordToken: token,
-        resetPasswordExpire: { $gt: Date.now() }
+        resetPasswordExpires: { $gt: Date.now() }
       });
 
       if (!user) {
@@ -215,9 +213,9 @@ export class AuthController {
       const hashedPassword = await bcrypt.hash(password, salt);
 
       // Mettre à jour le mot de passe
-      user.password = hashedPassword;
-      user.resetPasswordToken = undefined;
-      user.resetPasswordExpire = undefined;
+      (user as any).password = hashedPassword;
+      (user as any).resetPasswordToken = undefined;
+      (user as any).resetPasswordExpires = undefined;
       await user.save();
 
       res.status(200).json({
@@ -236,7 +234,7 @@ export class AuthController {
   verifyToken = async (req: Request, res: Response) => {
     try {
       const token = req.headers.authorization?.split(' ')[1];
-      
+
       if (!token) {
         return res.status(401).json({
           success: false,
@@ -257,10 +255,11 @@ export class AuthController {
       res.status(200).json({
         success: true,
         user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          role: user.role
+          id: (user as any)._id,
+          firstName: (user as any).firstName,
+          lastName: (user as any).lastName,
+          email: (user as any).email,
+          role: (user as any).role
         }
       });
     } catch (error) {
@@ -271,4 +270,4 @@ export class AuthController {
       });
     }
   };
-} 
+}

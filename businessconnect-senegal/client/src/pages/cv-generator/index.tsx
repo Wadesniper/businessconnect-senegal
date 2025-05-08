@@ -1,163 +1,210 @@
-import React, { useState, useRef } from 'react';
-import { Layout, Steps, Button, message, Row, Col, Modal, Radio } from 'antd';
-import { CVData, Template, CustomizationOptions } from './types';
+import React, { useState } from 'react';
+import { Steps, Button, message, Layout, Typography, Spin } from 'antd';
 import TemplateSelection from './components/TemplateSelection';
 import CVForm from './components/CVForm';
 import CustomizationForm from './components/CustomizationForm';
 import CVPreview from './components/CVPreview';
-import { exportCV, ExportFormat } from './services/documentExport';
+import { CVProvider, useCV } from './context/CVContext';
+import { exportCV } from './services/documentExport';
+import { CVGeneratorProps } from './types/index';
+import { useSubscription } from '../../hooks/useSubscription';
+import { useNavigate } from 'react-router-dom';
 
 const { Content } = Layout;
+const { Title: AntTitle } = Typography;
 
-const defaultCustomization: CustomizationOptions = {
-  primaryColor: '#1890ff',
-  secondaryColor: '#52c41a',
-  fontFamily: 'Arial, sans-serif',
-  fontSize: '14px',
-  spacing: 'comfortable',
-};
+const steps = [
+  {
+    title: 'Modèle',
+    description: 'Choisissez votre template'
+  },
+  {
+    title: 'Informations',
+    description: 'Remplissez vos informations'
+  },
+  {
+    title: 'Personnalisation',
+    description: 'Personnalisez le design'
+  },
+  {
+    title: 'Aperçu & Export',
+    description: 'Prévisualisez et exportez'
+  }
+];
 
-const CVGenerator: React.FC = () => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [template, setTemplate] = useState<Template | null>(null);
-  const [cvData, setCVData] = useState<CVData | null>(null);
-  const [customization, setCustomization] = useState<CustomizationOptions>(defaultCustomization);
-  const [isExportModalVisible, setIsExportModalVisible] = useState(false);
-  const [exportFormat, setExportFormat] = useState<ExportFormat>('pdf');
-  const previewRef = useRef<HTMLDivElement>(null);
+const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
+  const {
+    cvData,
+    setCVData,
+    selectedTemplate,
+    setSelectedTemplate,
+    customization,
+    setCustomization,
+    currentStep,
+    setCurrentStep,
+    isValid
+  } = useCV();
 
-  const steps = [
-    {
-      title: 'Modèle',
-      content: (
-        <TemplateSelection
-          selected={template}
-          onSelect={setTemplate}
-        />
-      ),
-    },
-    {
-      title: 'Informations',
-      content: (
-        <CVForm
-          data={cvData}
-          onChange={setCVData}
-        />
-      ),
-    },
-    {
-      title: 'Personnalisation',
-      content: (
-        <CustomizationForm
-          options={customization}
-          onChange={setCustomization}
-        />
-      ),
-    },
-    {
-      title: 'Aperçu',
-      content: cvData && template && (
-        <div ref={previewRef}>
-          <CVPreview
-            data={cvData}
-            template={template}
-            customization={customization}
-          />
-        </div>
-      ),
-    },
-  ];
+  const previewRef = React.useRef<HTMLDivElement>(null);
+  const [isExporting, setIsExporting] = useState(false);
 
-  const next = () => {
-    if (currentStep === 0 && !template) {
-      message.error('Veuillez sélectionner un modèle');
-      return;
+  const handleNext = () => {
+    if (currentStep === 0) {
+      if (!selectedTemplate) {
+        message.error('Veuillez sélectionner un modèle');
+        return;
+      }
+      message.success('Template sélectionné avec succès !');
     }
-    if (currentStep === 1 && !cvData) {
-      message.error('Veuillez remplir les informations requises');
+    if (currentStep === 1 && !isValid) {
+      message.error('Veuillez remplir correctement tous les champs obligatoires');
       return;
     }
     setCurrentStep(currentStep + 1);
   };
 
-  const prev = () => {
+  const handlePrev = () => {
     setCurrentStep(currentStep - 1);
   };
 
-  const showExportModal = () => {
-    setIsExportModalVisible(true);
+  const handleExport = async (format: 'pdf' | 'docx') => {
+    try {
+      if (!isValid || !selectedTemplate || !previewRef.current) {
+        message.error('Veuillez remplir correctement tous les champs obligatoires avant l\'export');
+        return;
+      }
+      
+      setIsExporting(true);
+      await exportCV(cvData!, selectedTemplate, customization, previewRef, format);
+      message.success(`CV exporté avec succès en format ${format.toUpperCase()}`);
+    } catch (error) {
+      message.error('Erreur lors de l\'export : ' + (error as Error).message);
+    } finally {
+      setIsExporting(false);
+    }
   };
 
-  const handleExportModalCancel = () => {
-    setIsExportModalVisible(false);
-  };
-
-  const handleExport = async () => {
-    if (!cvData || !template) {
-      message.error('Données du CV manquantes');
-      return;
+  const renderStepContent = () => {
+    if (isExporting) {
+      return (
+        <div style={{ textAlign: 'center', padding: '50px' }}>
+          <Spin size="large" />
+          <p style={{ marginTop: '20px' }}>Export en cours...</p>
+        </div>
+      );
     }
 
-    try {
-      await exportCV(cvData, template, customization, previewRef, exportFormat);
-      message.success(`CV exporté avec succès en format ${exportFormat.toUpperCase()}`);
-      setIsExportModalVisible(false);
-    } catch (error: any) {
-      message.error(`Erreur lors de l'export du CV : ${error?.message || 'Une erreur est survenue'}`);
+    switch (currentStep) {
+      case 0:
+        return (
+          <TemplateSelection
+            selected={selectedTemplate}
+            onSelect={setSelectedTemplate}
+          />
+        );
+      case 1:
+        return (
+          <CVForm
+            data={cvData}
+            onChange={setCVData}
+          />
+        );
+      case 2:
+        return (
+          <CustomizationForm
+            options={customization}
+            onChange={setCustomization}
+          />
+        );
+      case 3:
+        return (
+          <div>
+            <div ref={previewRef}>
+              <CVPreview
+                data={cvData!}
+                template={selectedTemplate!}
+                customization={customization}
+                isSubscribed={isSubscribed}
+              />
+            </div>
+            <div style={{ marginTop: 20, display: 'flex', gap: 10 }}>
+              <Button 
+                type="primary" 
+                onClick={() => handleExport('pdf')}
+                loading={isExporting}
+              >
+                Exporter en PDF
+              </Button>
+              <Button 
+                onClick={() => handleExport('docx')}
+                loading={isExporting}
+              >
+                Exporter en Word
+              </Button>
+            </div>
+          </div>
+        );
+      default:
+        return null;
     }
   };
 
   return (
-    <Layout>
-      <Content style={{ padding: '24px', maxWidth: 1200, margin: '0 auto' }}>
-        <Steps current={currentStep} style={{ marginBottom: 24 }}>
-          {steps.map(item => (
-            <Steps.Step key={item.title} title={item.title} />
-          ))}
-        </Steps>
+    <Layout style={{ minHeight: '100vh', backgroundColor: '#fff' }}>
+      <Content style={{ padding: '50px 50px 0', maxWidth: 1200, margin: '0 auto' }}>
+        <AntTitle level={2} style={{ textAlign: 'center', marginBottom: 40 }}>
+          Créez votre CV professionnel
+        </AntTitle>
 
-        <div style={{ marginBottom: 24, minHeight: 400 }}>
-          {steps[currentStep].content}
+        <Steps
+          current={currentStep}
+          items={steps}
+          style={{ marginBottom: 40 }}
+        />
+
+        <div style={{ marginBottom: 40 }}>
+          {renderStepContent()}
         </div>
 
-        <Row justify="end" gutter={16}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 50 }}>
           {currentStep > 0 && (
-            <Col>
-              <Button onClick={prev}>
-                Précédent
-              </Button>
-            </Col>
+            <Button onClick={handlePrev}>
+              Précédent
+            </Button>
           )}
-          <Col>
-            {currentStep < steps.length - 1 && (
-              <Button type="primary" onClick={next}>
-                Suivant
-              </Button>
-            )}
-            {currentStep === steps.length - 1 && (
-              <Button type="primary" onClick={showExportModal}>
-                Exporter
-              </Button>
-            )}
-          </Col>
-        </Row>
-
-        <Modal
-          title="Exporter le CV"
-          open={isExportModalVisible}
-          onOk={handleExport}
-          onCancel={handleExportModalCancel}
-          okText="Exporter"
-          cancelText="Annuler"
-        >
-          <p>Choisissez le format d'export :</p>
-          <Radio.Group value={exportFormat} onChange={e => setExportFormat(e.target.value)}>
-            <Radio.Button value="pdf">PDF</Radio.Button>
-            <Radio.Button value="docx">Word (DOCX)</Radio.Button>
-          </Radio.Group>
-        </Modal>
+          {currentStep < steps.length - 1 && (
+            <Button 
+              type="primary" 
+              onClick={handleNext}
+              disabled={currentStep === 0 && !selectedTemplate}
+            >
+              Suivant
+            </Button>
+          )}
+        </div>
       </Content>
     </Layout>
+  );
+};
+
+const CVGenerator: React.FC<Partial<CVGeneratorProps>> = (props) => {
+  const { hasActiveSubscription, loading } = useSubscription();
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (!loading && !hasActiveSubscription) {
+      navigate('/subscription', { replace: true });
+    }
+  }, [loading, hasActiveSubscription, navigate]);
+
+  if (loading) {
+    return <div style={{ textAlign: 'center', marginTop: 100 }}>Chargement...</div>;
+  }
+
+  return (
+    <CVProvider>
+      <CVGeneratorContent {...props} />
+    </CVProvider>
   );
 };
 

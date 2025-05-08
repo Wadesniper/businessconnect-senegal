@@ -5,58 +5,73 @@ import compression from 'compression';
 import mongoose from 'mongoose';
 import { config } from './config';
 import { errorHandler } from './middleware/errorHandler';
-import { rateLimiter } from './middleware/rateLimiter';
-import authRoutes from './routes/auth';
-import userRoutes from './routes/user';
-import formationRoutes from './routes/formation';
-import subscriptionRoutes from './routes/subscription';
-import healthRoutes from './routes/health';
+import { logger } from './utils/logger';
 
 const app = express();
 
 // Middleware de sécurité
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+  origin: [config.CLIENT_URL, /\.vercel\.app$/],
+  credentials: true
+}));
 app.use(compression());
 app.use(express.json());
-app.use(rateLimiter);
+app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use('/api/health', healthRoutes);
+const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/formations', formationRoutes);
-app.use('/api/subscriptions', subscriptionRoutes);
 
-// Middleware de gestion d'erreurs
+// Middleware d'erreur
 app.use(errorHandler);
 
-// Connexion à MongoDB
-mongoose.connect(config.mongoUri)
-  .then(() => {
-    console.log('Connecté à MongoDB');
-    const port = process.env.PORT || 3001;
-    app.listen(port, () => {
-      console.log(`Serveur démarré sur le port ${port}`);
+// Connexion à MongoDB et démarrage du serveur
+const startServer = async () => {
+  try {
+    // Vérifier si le port est déjà utilisé
+    const server = app.listen(config.PORT);
+    
+    server.on('error', (error: any) => {
+      if (error.code === 'EADDRINUSE') {
+        logger.error(`Le port ${config.PORT} est déjà utilisé. Tentative avec le port ${config.PORT + 1}`);
+        server.close();
+        // Essayer avec le port suivant
+        app.listen(config.PORT + 1, () => {
+          logger.info(`Serveur démarré sur le port ${config.PORT + 1}`);
+        });
+      } else {
+        logger.error('Erreur lors du démarrage du serveur:', error);
+        process.exit(1);
+      }
     });
-  })
-  .catch((error) => {
-    console.error('Erreur de connexion à MongoDB:', error);
+
+    // Connexion MongoDB
+    await mongoose.connect(config.DATABASE_URL);
+    logger.info('Connecté à MongoDB');
+    
+    server.on('listening', () => {
+      logger.info(`Serveur démarré sur le port ${config.PORT}`);
+    });
+
+  } catch (error) {
+    logger.error('Erreur de connexion à la base de données:', error);
     process.exit(1);
-  });
+  }
+};
+
+startServer();
 
 // Gestion des erreurs non capturées
 process.on('unhandledRejection', (error: Error) => {
-  console.error('Erreur non gérée (Promise):', error);
-  // Ne pas arrêter le serveur en production
+  logger.error('Erreur non gérée (Promise):', error);
   if (process.env.NODE_ENV !== 'production') {
     process.exit(1);
   }
 });
 
 process.on('uncaughtException', (error: Error) => {
-  console.error('Exception non capturée:', error);
-  // Ne pas arrêter le serveur en production
+  logger.error('Exception non capturée:', error);
   if (process.env.NODE_ENV !== 'production') {
     process.exit(1);
   }

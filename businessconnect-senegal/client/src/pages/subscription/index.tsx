@@ -1,18 +1,5 @@
 import React from 'react';
-import {
-  Container,
-  Typography,
-  Box,
-  Card,
-  CardContent,
-  Button,
-  Grid,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-} from '@mui/material';
-import { Check as CheckIcon } from '@mui/icons-material';
+import { Container, Typography, Box, Button, Grid, Card, CardContent, CardActions } from '@mui/material';
 import { useAuth } from '../../hooks/useAuth';
 import { useSubscription } from '../../hooks/useSubscription';
 
@@ -20,8 +7,8 @@ const subscriptionPlans = [
   {
     id: 'etudiant',
     title: 'Étudiant / Chercheur d\'emploi',
-    price: '1000',
-    period: 'mois',
+    price: '1 000 FCFA',
+    period: '/ mois',
     features: [
       'Accès aux offres d\'emploi',
       'Espace CV',
@@ -34,8 +21,8 @@ const subscriptionPlans = [
   {
     id: 'annonceur',
     title: 'Annonceur',
-    price: '5000',
-    period: 'mois',
+    price: '5 000 FCFA',
+    period: '/ mois',
     features: [
       'Publication d\'offres',
       'Visibilité plateforme',
@@ -48,8 +35,8 @@ const subscriptionPlans = [
   {
     id: 'recruteur',
     title: 'Recruteur',
-    price: '9000',
-    period: 'mois',
+    price: '9 000 FCFA',
+    period: '/ mois',
     features: [
       'Accès CVthèque complète',
       'Contact direct candidats',
@@ -64,19 +51,39 @@ const subscriptionPlans = [
 
 const SubscriptionPage = () => {
   const { user } = useAuth();
-  const { hasActiveSubscription, initiateSubscription } = useSubscription();
+  const { hasActiveSubscription } = useSubscription();
 
   const handleSubscribe = async (planId: string) => {
     if (!user) {
-      window.location.href = `/auth/login?redirect=${window.location.pathname}`;
+      window.location.href = `/login?redirect=${window.location.pathname}`;
       return;
     }
 
     try {
-      const { paymentUrl } = await initiateSubscription(planId);
-      window.location.href = paymentUrl;
+      const response = await fetch('/api/subscriptions/initiate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: planId,
+          customer_name: user.firstName || '',
+          customer_surname: user.lastName || '',
+          customer_email: user.email,
+          customer_phone_number: user.phone || ''
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success && data.data.payment_url) {
+        window.location.href = data.data.payment_url;
+      } else {
+        throw new Error(data.error || 'Erreur lors de l\'initiation du paiement');
+      }
     } catch (error) {
-      console.error('Erreur lors de l\'initiation du paiement:', error);
+      console.error('Erreur:', error);
+      // Gérer l'erreur (afficher un message, etc.)
     }
   };
 
@@ -93,83 +100,55 @@ const SubscriptionPage = () => {
 
       <Grid container spacing={4} justifyContent="center">
         {subscriptionPlans.map((plan) => (
-          <Grid item key={plan.id} xs={12} md={6} lg={4}>
-            <Card
-              sx={{
+          <Grid item key={plan.id} xs={12} sm={6} md={4}>
+            <Card 
+              sx={{ 
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
-                position: 'relative',
-                ...(plan.recommended && {
-                  border: '2px solid',
-                  borderColor: 'primary.main'
-                })
+                '&:hover': {
+                  transform: 'scale(1.02)',
+                  transition: 'transform 0.2s ease-in-out'
+                }
               }}
             >
-              {plan.recommended && (
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    top: 16,
-                    right: 16,
-                    bgcolor: 'primary.main',
-                    color: 'white',
-                    px: 2,
-                    py: 0.5,
-                    borderRadius: 1
-                  }}
-                >
-                  Recommandé
-                </Box>
-              )}
               <CardContent sx={{ flexGrow: 1 }}>
-                <Typography variant="h4" component="h2" gutterBottom>
+                <Typography gutterBottom variant="h5" component="h2" textAlign="center">
                   {plan.title}
                 </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 2 }}>
-                  <Typography variant="h3" component="span">
-                    {parseInt(plan.price).toLocaleString()} FCFA
+                <Typography variant="h4" component="p" textAlign="center" color="primary" gutterBottom>
+                  {plan.price}
+                  <Typography variant="subtitle1" component="span" color="text.secondary">
+                    {plan.period}
                   </Typography>
-                  <Typography variant="subtitle1" component="span" ml={1}>
-                    /{plan.period}
-                  </Typography>
-                </Box>
-                <List>
+                </Typography>
+                <Box component="ul" sx={{ pl: 2 }}>
                   {plan.features.map((feature, index) => (
-                    <ListItem key={index} disableGutters>
-                      <ListItemIcon sx={{ minWidth: 40 }}>
-                        <CheckIcon color="primary" />
-                      </ListItemIcon>
-                      <ListItemText primary={feature} />
-                    </ListItem>
+                    <Typography 
+                      key={index} 
+                      component="li" 
+                      variant="body1" 
+                      sx={{ mb: 1 }}
+                    >
+                      {feature}
+                    </Typography>
                   ))}
-                </List>
+                </Box>
               </CardContent>
-              <Box sx={{ p: 2 }}>
+              <CardActions sx={{ justifyContent: 'center', pb: 3 }}>
                 <Button
-                  variant={plan.recommended ? 'contained' : 'outlined'}
-                  color="primary"
+                  variant="contained"
                   size="large"
-                  fullWidth
                   onClick={() => handleSubscribe(plan.id)}
                   disabled={hasActiveSubscription}
                 >
-                  {hasActiveSubscription ? 'Déjà abonné' : 'Choisir ce plan'}
+                  {hasActiveSubscription ? 'Déjà abonné' : 'S\'abonner'}
                 </Button>
-              </Box>
+              </CardActions>
             </Card>
           </Grid>
         ))}
       </Grid>
-
-      <Box sx={{ mt: 8, textAlign: 'center' }}>
-        <Typography variant="body1" color="text.secondary" paragraph>
-          Paiement sécurisé via Orange Money, Wave et cartes bancaires
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          En vous abonnant, vous acceptez nos conditions générales d'utilisation
-        </Typography>
-      </Box>
     </Container>
   );
 };

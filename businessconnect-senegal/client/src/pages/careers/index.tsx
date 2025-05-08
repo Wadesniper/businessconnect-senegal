@@ -3,6 +3,9 @@ import { Row, Col, Card, Typography, Button, Space, Tag, Input, Tabs, Modal, Sta
 import { SearchOutlined, ArrowRightOutlined, EnvironmentOutlined, BookOutlined, TrophyOutlined } from '@ant-design/icons';
 import { Secteur, FicheMetier, Competence } from './types';
 import { formatNumberToCurrency } from '../../utils/format';
+import { useAuth } from '../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
+import { useSubscription } from '../../hooks/useSubscription';
 
 const { Title, Text, Paragraph } = Typography;
 const { Search } = Input;
@@ -4038,8 +4041,21 @@ const secteurs: Secteur[] = [
 ];
 
 const CareersPage: React.FC = () => {
+  const { loading: isLoading } = useAuth();
+  const { hasActiveSubscription, loading: loadingSub } = useSubscription();
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMetier, setSelectedMetier] = useState<FicheMetier | null>(null);
+
+  React.useEffect(() => {
+    if (!isLoading && !loadingSub && !hasActiveSubscription) {
+      navigate('/subscription', { replace: true });
+    }
+  }, [isLoading, loadingSub, hasActiveSubscription, navigate]);
+
+  if (isLoading || loadingSub) {
+    return <div style={{ textAlign: 'center', marginTop: 100 }}>Chargement...</div>;
+  }
 
   const filteredSecteurs = useMemo(() => {
     if (!searchTerm) return secteurs;

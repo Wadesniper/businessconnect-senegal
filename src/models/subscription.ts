@@ -1,56 +1,50 @@
-import { Schema, model, Document } from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
 
 export interface ISubscription extends Document {
-  userId: Schema.Types.ObjectId;
-  planId: string;
-  status: string;
+  userId: string;
+  plan: 'basic' | 'premium' | 'recruteur';
   startDate: Date;
   endDate: Date;
-  cancelledAt?: Date;
-  renewedAt?: Date;
-  paymentId?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  status: 'active' | 'expired' | 'cancelled';
+  paymentId: string;
 }
 
-const subscriptionSchema = new Schema({
+const subscriptionSchema = new Schema<ISubscription>({
   userId: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  },
-  planId: {
     type: String,
-    required: true
+    required: true,
+    ref: 'User'
   },
-  status: {
+  plan: {
     type: String,
-    enum: ['active', 'inactive', 'pending', 'cancelled'],
-    default: 'pending'
+    required: true,
+    enum: ['basic', 'premium', 'recruteur']
   },
   startDate: {
     type: Date,
-    required: true
+    required: true,
+    default: Date.now
   },
   endDate: {
     type: Date,
     required: true
   },
-  cancelledAt: {
-    type: Date
-  },
-  renewedAt: {
-    type: Date
+  status: {
+    type: String,
+    required: true,
+    enum: ['active', 'expired', 'cancelled'],
+    default: 'active'
   },
   paymentId: {
-    type: String
+    type: String,
+    required: true
   }
 }, {
   timestamps: true
 });
 
-// Indexes pour améliorer les performances
+// Index pour améliorer les performances des requêtes
 subscriptionSchema.index({ userId: 1, status: 1 });
-subscriptionSchema.index({ paymentId: 1 });
+subscriptionSchema.index({ endDate: 1 });
 
-export const Subscription = model<ISubscription>('Subscription', subscriptionSchema); 
+export const Subscription = mongoose.model<ISubscription>('Subscription', subscriptionSchema); 

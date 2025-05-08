@@ -1,136 +1,104 @@
-import { User, LoginCredentials, RegisterData } from '../types/user';
-import axios from 'axios';
+import { api } from './api';
+import { message } from 'antd';
+import { subscriptionData, UserSubscription } from '../data/subscriptionData';
+import { User } from '../types/user';
 
-const API_URL = process.env.REACT_APP_API_URL || '';
-
-class AuthService {
-  private async request(endpoint: string, options: any = {}) {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axios({
-        url: `${API_URL}/api/auth/${endpoint}`,
-        ...options,
-        headers: {
-          ...options.headers,
-          ...(token ? { Authorization: `Bearer ${token}` } : {})
-        }
-      });
-      return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 401) {
-        try {
-          await this.refreshToken();
-          const token = localStorage.getItem('token');
-          const retryResponse = await axios({
-            url: `${API_URL}/api/auth/${endpoint}`,
-            ...options,
-            headers: {
-              ...options.headers,
-              Authorization: `Bearer ${token}`
-            }
-          });
-          return retryResponse.data;
-        } catch (refreshError) {
-          this.logout();
-          throw refreshError;
-        }
-      }
-      throw error;
-    }
-  }
-
-  async login(credentials: LoginCredentials): Promise<User> {
-    try {
-      const { user, token, refreshToken } = await this.request('login', {
-        method: 'POST',
-        data: credentials
-      });
-
-      localStorage.setItem('token', token);
-      localStorage.setItem('refreshToken', refreshToken);
-      return user;
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        throw new Error(error.response?.data?.message || 'Erreur lors de la connexion');
-      }
-      throw error;
-    }
-  }
-
-  async register(data: RegisterData): Promise<User> {
-    try {
-      const { user, token, refreshToken } = await this.request('register', {
-        method: 'POST',
-        data
-      });
-
-      localStorage.setItem('token', token);
-      localStorage.setItem('refreshToken', refreshToken);
-      return user;
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        throw new Error(error.response?.data?.message || 'Erreur lors de l\'inscription');
-      }
-      throw error;
-    }
-  }
-
-  async refreshToken(): Promise<void> {
-    try {
-      const refreshToken = localStorage.getItem('refreshToken');
-      if (!refreshToken) {
-        throw new Error('Refresh token manquant');
-      }
-
-      const { token, refreshToken: newRefreshToken } = await axios.post(
-        `${API_URL}/api/auth/refresh`,
-        { refreshToken }
-      ).then(response => response.data);
-
-      localStorage.setItem('token', token);
-      localStorage.setItem('refreshToken', newRefreshToken);
-    } catch (error) {
-      this.logout();
-      throw error;
-    }
-  }
-
-  async logout(): Promise<void> {
-    try {
-      const token = localStorage.getItem('token');
-      if (token) {
-        await this.request('logout', {
-          method: 'POST'
-        });
-      }
-    } catch (error) {
-      console.error('Erreur lors de la déconnexion:', error);
-    } finally {
-      localStorage.removeItem('token');
-      localStorage.removeItem('refreshToken');
-    }
-  }
-
-  async getCurrentUser(): Promise<User | null> {
-    try {
-      const user = await this.request('me');
-      return user;
-    } catch (error) {
-      return null;
-    }
-  }
-
-  isAuthenticated(): boolean {
-    return !!localStorage.getItem('token');
-  }
-
-  async updateUserProfile(userId: string, updates: Partial<User>): Promise<User> {
-    return this.request(`users/${userId}`, {
-      method: 'PATCH',
-      data: updates
-    });
-  }
+export interface LoginCredentials {
+  email: string;
+  password: string;
 }
 
-export const authService = new AuthService();
-export type { RegisterData } from '../types/user'; 
+export interface RegisterData {
+  name: string;
+  email: string;
+  password: string;
+}
+
+export interface AuthResponse {
+  token: string;
+  user: User;
+}
+
+const TOKEN_KEY = 'auth_token';
+
+export const authService = {
+  async login(credentials: LoginCredentials): Promise<AuthResponse> {
+    const response = await api.post<AuthResponse>('/auth/login', credentials);
+    return response.data;
+  },
+
+  async register(data: RegisterData): Promise<AuthResponse> {
+    const response = await api.post<AuthResponse>('/auth/register', data);
+    return response.data;
+  },
+
+  async logout(): Promise<void> {
+    await api.post('/auth/logout');
+  },
+
+  async getCurrentUser(): Promise<User> {
+    const response = await api.get<User>('/auth/me');
+    return response.data;
+  },
+
+  async updateProfile(data: Partial<User>): Promise<User> {
+    const response = await api.patch<User>('/auth/profile', data);
+    return response.data;
+  },
+
+  async resetPassword(email: string): Promise<void> {
+    await api.post('/auth/reset-password', { email });
+  },
+
+  async verifyResetToken(token: string): Promise<void> {
+    await api.post('/auth/verify-reset-token', { token });
+  },
+
+  async setNewPassword(token: string, password: string): Promise<void> {
+    await api.post('/auth/set-new-password', { token, password });
+  },
+
+  setToken(token: string): void {
+    localStorage.setItem(TOKEN_KEY, token);
+  },
+
+  getToken(): string | null {
+    return localStorage.getItem(TOKEN_KEY);
+  },
+
+  removeToken(): void {
+    localStorage.removeItem(TOKEN_KEY);
+  },
+
+  isAuthenticated(): boolean {
+    return !!this.getToken();
+  },
+
+  getCurrentUserSubscription(): UserSubscription | undefined {
+    const user = this.getCurrentUser();
+    if (!user) return undefined;
+    return subscriptionData.find(sub => sub.userId === user.id);
+  },
+
+  setCurrentUserSubscriptionActive(active: boolean) {
+    const user = this.getCurrentUser();
+    if (!user) return;
+    const sub = subscriptionData.find(sub => sub.userId === user.id);
+    if (sub) {
+      sub.isActive = active;
+      if (active) {
+        sub.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString();
+      } else {
+        sub.expiresAt = new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString();
+      }
+    }
+  },
+
+  renewCurrentUserSubscription() {
+    this.setCurrentUserSubscriptionActive(true);
+  },
+
+  expireCurrentUserSubscription() {
+    this.setCurrentUserSubscriptionActive(false);
+  }
+}; 

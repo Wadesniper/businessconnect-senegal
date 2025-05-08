@@ -1,101 +1,117 @@
-import React, { useState } from 'react';
-import { Card, Row, Col, Input, Select, Empty, message } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button, Card, message } from 'antd';
+import Title from 'antd/lib/typography/Title';
+import Paragraph from 'antd/lib/typography/Paragraph';
 import { useAuth } from '../../hooks/useAuth';
-import { FORMATIONS, Formation, DomainType } from '../../types/formation.types';
-import FormationService from '../../services/FormationService';
+import { formations } from './data';
+import type { Formation } from './types';
 import styles from './Formations.module.css';
+import { useSubscription } from '../../hooks/useSubscription';
 
-const { Option } = Select;
+interface User {
+  subscription?: {
+    status: 'active' | 'inactive' | 'expired';
+  };
+}
 
 const FormationsPage: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedDomain, setSelectedDomain] = useState<DomainType | ''>('');
-  const { isAuthenticated, user } = useAuth();
-
-  const filteredFormations = FORMATIONS.filter(formation => {
-    const matchesSearch = formation.titre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         formation.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesDomain = !selectedDomain || formation.id === selectedDomain;
-    return matchesSearch && matchesDomain;
-  });
+  const { user } = useAuth() as { user: User | null };
+  const navigate = useNavigate();
+  const { hasActiveSubscription, loading } = useSubscription();
 
   const handleFormationClick = (formation: Formation) => {
-    if (!isAuthenticated) {
-      message.warning('Veuillez vous connecter pour accéder aux formations');
+    if (!user) {
+      message.info('Veuillez vous connecter pour accéder aux formations');
+      navigate('/auth/login');
       return;
     }
 
-    if (!user?.subscription?.isActive) {
-      message.warning('Cette fonctionnalité nécessite un abonnement actif');
+    if (user.subscription?.status !== 'active') {
+      message.info('Abonnez-vous pour accéder aux formations');
+      navigate('/subscription');
       return;
     }
 
-    FormationService.redirectToCursa(formation.id);
+    window.open(formation.cursaLink, '_blank');
   };
+
+  if (loading) {
+    return <div style={{ textAlign: 'center', marginTop: 100 }}>Chargement...</div>;
+  }
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Catalogue des Formations</h1>
+      <Title level={1} className={styles.title}>
+        Nos Formations Certifiantes
+      </Title>
+      <Paragraph className={styles.subtitle}>
+        Développez vos compétences professionnelles avec nos formations en ligne
+      </Paragraph>
+      
+      {!user && (
+        <div className={styles.warning}>
+          <Paragraph type="warning" className={styles.warningText}>
+            Connectez-vous et abonnez-vous pour accéder à toutes nos formations
+          </Paragraph>
+                      </div>
+                    )}
 
-      <div className={styles.filters}>
-        <Row gutter={16}>
-          <Col xs={24} sm={12}>
-            <Input
-              placeholder="Rechercher une formation..."
-              prefix={<SearchOutlined />}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
-              className={styles.searchInput}
-            />
-          </Col>
-          <Col xs={24} sm={12}>
-            <Select
-              placeholder="Domaine de formation"
-              onChange={(value: DomainType | '') => setSelectedDomain(value)}
-              className={styles.select}
-              allowClear
+      {user && user.subscription?.status !== 'active' && (
+        <div className={styles.warning}>
+          <Paragraph type="warning" className={styles.warningText}>
+            Abonnez-vous pour accéder à toutes nos formations
+            </Paragraph>
+            <Button 
+              type="primary" 
+              onClick={() => navigate('/subscription')}
+            className={styles.subscribeButton}
             >
-              {FORMATIONS.map(formation => (
-                <Option key={formation.id} value={formation.id}>
-                  {formation.titre}
-                </Option>
-              ))}
-            </Select>
-          </Col>
-        </Row>
-      </div>
-
-      {filteredFormations.length === 0 ? (
-        <Empty description="Aucune formation trouvée" />
-      ) : (
-        <Row gutter={[16, 16]}>
-          {filteredFormations.map(formation => (
-            <Col xs={24} sm={12} md={8} lg={6} key={formation.id}>
-              <Card
-                hoverable
-                cover={
-                  <img
-                    alt={formation.titre}
-                    src={formation.imageUrl}
-                    className={styles.formationImage}
-                  />
-                }
-                onClick={() => handleFormationClick(formation)}
-                className={styles.card}
-              >
-                <Card.Meta
-                  title={formation.titre}
-                  description={
-                    <div className={styles.description}>
-                      {formation.description}
-                    </div>
-                  }
-                />
-              </Card>
-            </Col>
-          ))}
-        </Row>
+              S'abonner maintenant
+            </Button>
+          </div>
+        )}
+      
+      {!hasActiveSubscription && (
+        <div style={{ color: 'red', marginBottom: 20 }}>
+          Seuls les abonnés peuvent accéder aux détails des formations et être redirigés vers Cursa.
+        </div>
       )}
+      
+      <div className={styles.grid}>
+        {formations.map((formation) => (
+          <Card
+            key={formation.id}
+            className={styles.card}
+            title={formation.title}
+            hoverable
+          >
+            <Paragraph className={styles.description}>
+              {formation.description}
+            </Paragraph>
+            <div className={styles.cardFooter}>
+              {hasActiveSubscription ? (
+                <Button
+                  type="primary"
+                  onClick={() => handleFormationClick(formation)}
+                  className={styles.accessButton}
+                >
+                  Accéder au cours
+                </Button>
+              ) : (
+                <Button
+                  type="primary"
+                  onClick={() => handleFormationClick(formation)}
+                  className={styles.accessButton}
+                  disabled
+                >
+                  S'abonner pour accéder
+                </Button>
+              )}
+            </div>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 };

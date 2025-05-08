@@ -1,17 +1,16 @@
+// @ts-ignore
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { config } from '../config';
-import { ApiResponse, AuthenticatedRequest } from '../types/global';
-import { UserRole } from '../types/user';
 
 interface JwtPayload {
   id: string;
-  role: UserRole;
+  role: string;
 }
 
 export const authMiddleware = async (
   req: Request,
-  res: Response<ApiResponse>,
+  res: Response,
   next: NextFunction
 ) => {
   try {
@@ -24,8 +23,8 @@ export const authMiddleware = async (
       });
     }
 
-    const decoded = jwt.verify(token, config.jwt.secret) as JwtPayload;
-    (req as AuthenticatedRequest).user = {
+    const decoded = jwt.verify(token, config.JWT_SECRET) as JwtPayload;
+    (req as any).user = {
       id: decoded.id,
       role: decoded.role
     };
@@ -40,12 +39,12 @@ export const authMiddleware = async (
 };
 
 export const isAdmin = async (
-  req: AuthenticatedRequest,
-  res: Response<ApiResponse>,
+  req: any,
+  res: Response,
   next: NextFunction
 ) => {
   try {
-    if (req.user.role !== UserRole.ADMIN) {
+    if (req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
         message: 'Accès non autorisé'

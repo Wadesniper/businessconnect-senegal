@@ -1,6 +1,7 @@
 import React from 'react';
 import { Modal, Form, Input, Select, Button, message, Space } from 'antd';
-import { api } from '../../services/api';
+import { forumService } from '../../services/forumService';
+import { CreateDiscussionDto, ForumCategory } from '../../types/forum';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -19,15 +20,10 @@ const CreateDiscussionModal: React.FC<CreateDiscussionModalProps> = ({
   const [form] = Form.useForm();
   const [loading, setLoading] = React.useState(false);
 
-  const handleSubmit = async (values: {
-    title: string;
-    content: string;
-    category: string;
-  }) => {
+  const handleSubmit = async (values: CreateDiscussionDto) => {
     try {
       setLoading(true);
-      await api.post('/forum/discussions', values);
-      message.success('Discussion créée avec succès !');
+      await forumService.createDiscussion(values);
       form.resetFields();
       onSuccess();
     } catch (error) {
@@ -53,7 +49,11 @@ const CreateDiscussionModal: React.FC<CreateDiscussionModalProps> = ({
         <Form.Item
           name="title"
           label="Titre"
-          rules={[{ required: true, message: 'Veuillez entrer un titre' }]}
+          rules={[
+            { required: true, message: 'Veuillez entrer un titre' },
+            { min: 5, message: 'Le titre doit contenir au moins 5 caractères' },
+            { max: 100, message: 'Le titre ne doit pas dépasser 100 caractères' }
+          ]}
         >
           <Input placeholder="Titre de la discussion" />
         </Form.Item>
@@ -68,17 +68,37 @@ const CreateDiscussionModal: React.FC<CreateDiscussionModalProps> = ({
             <Option value="formation">Formation</Option>
             <Option value="entrepreneuriat">Entrepreneuriat</Option>
             <Option value="conseils">Conseils</Option>
+            <Option value="networking">Networking</Option>
+            <Option value="financement">Financement</Option>
           </Select>
         </Form.Item>
 
         <Form.Item
           name="content"
           label="Contenu"
-          rules={[{ required: true, message: 'Veuillez entrer le contenu de la discussion' }]}
+          rules={[
+            { required: true, message: 'Veuillez entrer le contenu de la discussion' },
+            { min: 20, message: 'Le contenu doit contenir au moins 20 caractères' },
+            { max: 2000, message: 'Le contenu ne doit pas dépasser 2000 caractères' }
+          ]}
         >
           <TextArea
             rows={6}
             placeholder="Décrivez votre discussion..."
+            showCount
+            maxLength={2000}
+          />
+        </Form.Item>
+
+        <Form.Item
+          name="tags"
+          label="Tags"
+          rules={[{ max: 5, type: 'array', message: 'Vous ne pouvez pas ajouter plus de 5 tags' }]}
+        >
+          <Select
+            mode="tags"
+            placeholder="Ajoutez des tags (optionnel)"
+            style={{ width: '100%' }}
           />
         </Form.Item>
 

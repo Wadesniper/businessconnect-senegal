@@ -1,6 +1,6 @@
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { Document, Paragraph, TextRun, HeadingLevel, Packer, SectionType, IStylesOptions, IDefaultStylesOptions } from 'docx';
+import { Document, Paragraph, TextRun, HeadingLevel, Packer, SectionType, IStylesOptions, IDefaultStylesOptions, Table, TableRow, TableCell, WidthType, AlignmentType } from 'docx';
 import { saveAs } from 'file-saver';
 import { CVData, Template, CustomizationOptions } from '../types';
 import { formatDate } from '../../../utils/dateUtils';
@@ -278,26 +278,19 @@ export const exportCV = async (
   data: CVData,
   template: Template,
   customization: CustomizationOptions,
-  containerRef: React.RefObject<HTMLDivElement>,
-  options: Partial<ExportOptions> = {}
+  previewRef: React.RefObject<HTMLDivElement>,
+  format: ExportFormat
 ): Promise<void> => {
-  const finalOptions: ExportOptions = {
-    ...defaultOptions,
-    ...options,
-    filename: options.filename || generateFileName(data)
-  };
-
-  try {
-    if (finalOptions.format === 'pdf') {
-      if (!containerRef.current) {
-        throw new Error('Élément de CV non trouvé');
-      }
-      await exportToPDF(containerRef.current, finalOptions, customization);
-    } else {
-      await exportToWord(data, customization);
-    }
-  } catch (error) {
-    console.error('Erreur lors de l\'export:', error);
-    throw error;
+  if (format === 'pdf') {
+    await exportToPDF(previewRef.current, defaultOptions, customization);
+  } else {
+    await exportToWord(data, customization);
   }
+};
+
+// Utilitaire pour diviser un tableau en groupes de taille n
+const chunk = <T>(arr: T[], size: number): T[][] => {
+  return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
+    arr.slice(i * size, i * size + size)
+  );
 }; 

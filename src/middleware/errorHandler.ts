@@ -1,23 +1,26 @@
 import { Request, Response, NextFunction } from 'express';
-import { AppError } from '../utils/appError';
+import { logger } from '../utils/logger';
 
-export const errorHandler = (
-  err: Error,
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  if (err instanceof AppError) {
-    return res.status(err.statusCode).json({
-      status: err.status,
-      message: err.message
+export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
+  logger.error('Erreur:', err);
+
+  if (err.name === 'ValidationError') {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Erreur de validation',
+      errors: Object.values(err.errors).map((error: any) => error.message)
     });
   }
 
-  console.error('Error:', err);
+  if (err.name === 'MongoError' && err.code === 11000) {
+    return res.status(409).json({
+      status: 'error',
+      message: 'Conflit de données'
+    });
+  }
 
-  return res.status(500).json({
+  res.status(500).json({
     status: 'error',
-    message: 'Une erreur inattendue est survenue'
+    message: 'Erreur interne du serveur'
   });
 }; 

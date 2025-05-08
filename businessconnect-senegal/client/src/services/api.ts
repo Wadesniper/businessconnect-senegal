@@ -1,5 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import { discussionsData, Discussion as ForumDiscussion, Reply as ForumReply } from '../data/forumData';
+import { message } from 'antd';
+import { authService } from './authService';
 
 interface DiscussionData {
   title: string;
@@ -34,19 +36,19 @@ interface Reply extends ReplyData {
   likesCount: number;
 }
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000/api';
 
 export const api = axios.create({
-  baseURL: API_URL,
+  baseURL: BASE_URL,
   headers: {
-    'Content-Type': 'application/json'
-  }
+    'Content-Type': 'application/json',
+  },
 });
 
 // Intercepteur pour ajouter le token d'authentification
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = authService.getToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -60,11 +62,44 @@ api.interceptors.request.use(
 // Intercepteur pour gérer les erreurs
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      window.location.href = '/auth/login';
+  async (error) => {
+    if (error.response) {
+      // Gérer les erreurs d'authentification
+      if (error.response.status === 401) {
+        authService.removeToken();
+        message.error('Session expirée. Veuillez vous reconnecter.');
+        window.location.href = '/auth/login';
+        return Promise.reject(error);
+      }
+
+      // Gérer les erreurs de validation
+      if (error.response.status === 422) {
+        const validationErrors = error.response.data.errors;
+        if (validationErrors) {
+          Object.values(validationErrors).forEach((err: any) => {
+            message.error(err);
+          });
+        }
+        return Promise.reject(error);
+      }
+
+      // Gérer les erreurs serveur
+      if (error.response.status >= 500) {
+        message.error('Une erreur serveur est survenue. Veuillez réessayer plus tard.');
+        return Promise.reject(error);
+      }
+
+      // Gérer les autres erreurs
+      const errorMessage = error.response.data.message || 'Une erreur est survenue';
+      message.error(errorMessage);
+    } else if (error.request) {
+      // La requête a été faite mais pas de réponse reçue
+      message.error('Impossible de contacter le serveur. Veuillez vérifier votre connexion.');
+    } else {
+      // Une erreur s'est produite lors de la configuration de la requête
+      message.error('Une erreur est survenue lors de la configuration de la requête.');
     }
+
     return Promise.reject(error);
   }
 );

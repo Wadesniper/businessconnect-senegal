@@ -1,24 +1,26 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Form, Input, Button, Typography, Card, message } from 'antd';
-import { MailOutlined, LockOutlined } from '@ant-design/icons';
+import { UserOutlined, LockOutlined, EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import { authService } from '../../services/authService';
+import styles from './styles/Auth.module.css';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 interface LoginFormValues {
-  email: string;
+  identifier: string; // Peut être le nom ou l'email
   password: string;
 }
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const onFinish = async (values: LoginFormValues) => {
     try {
       setLoading(true);
-      await authService.login({ email: values.email, password: values.password });
+      await authService.login({ email: values.identifier, password: values.password });
       message.success('Connexion réussie !');
       navigate('/dashboard');
     } catch (error: any) {
@@ -28,37 +30,35 @@ const LoginPage: React.FC = () => {
     }
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
-    <div style={{ 
-      display: 'flex', 
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      minHeight: '100vh',
-      padding: '20px',
-      background: '#f0f2f5'
-    }}>
-      <Card style={{ width: '100%', maxWidth: 400 }}>
-        <Title level={2} style={{ textAlign: 'center', marginBottom: 30 }}>
+    <div className={styles.authContainer}>
+      <Card className={styles.authCard}>
+        <Title level={2} className={styles.title}>
           Connexion
         </Title>
 
-        <Form<LoginFormValues>
+        <Form
           name="login"
           onFinish={onFinish}
           layout="vertical"
           requiredMark={false}
+          className={styles.form}
         >
           <Form.Item
-            name="email"
+            name="identifier"
             rules={[
-              { required: true, message: 'Veuillez saisir votre email' },
-              { type: 'email', message: 'Email invalide' }
+              { required: true, message: 'Veuillez saisir votre nom ou email' }
             ]}
           >
             <Input 
-              prefix={<MailOutlined />} 
-              placeholder="Email"
+              prefix={<UserOutlined className={styles.inputIcon} />}
+              placeholder="Nom ou email"
               size="large"
+              autoComplete="username"
             />
           </Form.Item>
 
@@ -66,30 +66,42 @@ const LoginPage: React.FC = () => {
             name="password"
             rules={[{ required: true, message: 'Veuillez saisir votre mot de passe' }]}
           >
-            <Input.Password 
-              prefix={<LockOutlined />} 
+            <Input
+              prefix={<LockOutlined className={styles.inputIcon} />}
+              type={showPassword ? 'text' : 'password'}
               placeholder="Mot de passe"
               size="large"
+              autoComplete="current-password"
+              className={styles.passwordInput}
+              suffix={
+                <div 
+                  onClick={togglePasswordVisibility}
+                  className={styles.togglePassword}
+                >
+                  {showPassword ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+                </div>
+              }
             />
           </Form.Item>
 
           <Form.Item>
             <Button 
-              type="primary" 
-              htmlType="submit" 
+              type="primary"
+              htmlType="submit"
               loading={loading}
-              style={{ width: '100%' }}
-              size="large"
+              className={styles.submitButton}
             >
               Se connecter
             </Button>
           </Form.Item>
 
-          <div style={{ textAlign: 'center' }}>
+          <div className={styles.linkText}>
             <Link to="/forgot-password">Mot de passe oublié ?</Link>
           </div>
-          <div style={{ textAlign: 'center', marginTop: '10px' }}>
-            Pas encore inscrit ? <Link to="/register">S'inscrire</Link>
+          
+          <div className={styles.linkText}>
+            Pas encore inscrit ?
+            <Link to="/register">S'inscrire</Link>
           </div>
         </Form>
       </Card>

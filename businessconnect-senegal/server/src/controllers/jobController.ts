@@ -1,236 +1,132 @@
 import { Request, Response } from 'express';
-import { validationResult } from 'express-validator';
-import { pool } from '../config/database';
+import Job, { IJob } from '../models/Job';
 import { logger } from '../utils/logger';
 
-interface JobData {
-  title: string;
-  description: string;
-  company: string;
-  location: string;
-  type: 'CDI' | 'CDD' | 'Stage' | 'Freelance';
-  salary_range?: string;
-  requirements?: string[];
-  benefits?: string[];
-}
+// Créer une nouvelle offre
+export const createJob = async (req: Request, res: Response) => {
+  try {
+    const jobData = {
+      ...req.body,
+      employerId: req.user?._id
+    };
 
-interface User {
-  id: string;
-  role: string;
-  company_id?: string;
-}
+    const job = await Job.create(jobData);
+    logger.info(`Nouvelle offre créée: ${job._id}`);
+    
+    res.status(201).json(job);
+  } catch (error) {
+    logger.error('Erreur lors de la création de l\'offre:', error);
+    res.status(500).json({ message: 'Erreur lors de la création de l\'offre' });
+  }
+};
 
-export const jobController = {
-  async getAllJobs(req: Request, res: Response) {
-    try {
-      const result = await pool.query('SELECT * FROM jobs ORDER BY created_at DESC');
-      return res.json(result.rows);
-    } catch (error) {
-      logger.error('Erreur lors de la récupération des emplois:', error);
-      return res.status(500).json({ error: 'Erreur serveur' });
+// Récupérer toutes les offres actives
+export const getJobs = async (req: Request, res: Response) => {
+  try {
+    const { sector, jobType, search } = req.query;
+    
+    const query: any = { isActive: true };
+    
+    if (sector) query.sector = sector;
+    if (jobType) query.jobType = jobType;
+    if (search) {
+      query.$text = { $search: search as string };
     }
-  },
 
-  async getJob(req: Request, res: Response) {
-    try {
-      const { id } = req.params;
-      const result = await pool.query('SELECT * FROM jobs WHERE id = $1', [id]);
-      
-      if (result.rows.length === 0) {
-        return res.status(404).json({ error: 'Emploi non trouvé' });
-      }
+    const jobs = await Job.find(query).sort({ createdAt: -1 });
+    res.json(jobs);
+  } catch (error) {
+    logger.error('Erreur lors de la récupération des offres:', error);
+    res.status(500).json({ message: 'Erreur lors de la récupération des offres' });
+  }
+};
 
-      return res.json(result.rows[0]);
-    } catch (error) {
-      logger.error('Erreur lors de la récupération de l\'emploi:', error);
-      return res.status(500).json({ error: 'Erreur serveur' });
+// Récupérer une offre par son ID
+export const getJobById = async (req: Request, res: Response) => {
+  try {
+    const job = await Job.findById(req.params.id);
+    if (!job) {
+      return res.status(404).json({ message: 'Offre non trouvée' });
     }
-  },
+    res.json(job);
+  } catch (error) {
+    logger.error('Erreur lors de la récupération de l\'offre:', error);
+    res.status(500).json({ message: 'Erreur lors de la récupération de l\'offre' });
+  }
+};
 
-  async createJob(req: Request, res: Response) {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-      }
-
-      const user = req.user as User;
-      const company_id = user?.company_id;
-
-      if (!company_id) {
-        return res.status(403).json({ error: 'Accès non autorisé' });
-      }
-
-      const jobData: JobData = req.body;
-      const result = await pool.query(
-        'INSERT INTO jobs (title, description, company_id, company, location, type, salary_range, requirements, benefits) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *',
-        [
-          jobData.title,
-          jobData.description,
-          company_id,
-          jobData.company,
-          jobData.location,
-          jobData.type,
-          jobData.salary_range,
-          jobData.requirements,
-          jobData.benefits,
-        ]
-      );
-
-      return res.status(201).json(result.rows[0]);
-    } catch (error) {
-      logger.error('Erreur lors de la création de l\'emploi:', error);
-      return res.status(500).json({ error: 'Erreur serveur' });
+// Mettre à jour une offre
+export const updateJob = async (req: Request, res: Response) => {
+  try {
+    const job = await Job.findById(req.params.id);
+    
+    if (!job) {
+      return res.status(404).json({ message: 'Offre non trouvée' });
     }
-  },
 
-  async updateJob(req: Request, res: Response) {
-    try {
-      const { id } = req.params;
-      const user = req.user as User;
-      const company_id = user?.company_id;
-
-      if (!company_id) {
-        return res.status(403).json({ error: 'Accès non autorisé' });
-      }
-
-      const jobData: Partial<JobData> = req.body;
-      const result = await pool.query(
-        'UPDATE jobs SET title = $1, description = $2, location = $3, type = $4, salary_range = $5, requirements = $6, benefits = $7 WHERE id = $8 AND company_id = $9 RETURNING *',
-        [
-          jobData.title,
-          jobData.description,
-          jobData.location,
-          jobData.type,
-          jobData.salary_range,
-          jobData.requirements,
-          jobData.benefits,
-          id,
-          company_id,
-        ]
-      );
-
-      if (result.rows.length === 0) {
-        return res.status(404).json({ error: 'Emploi non trouvé ou accès non autorisé' });
-      }
-
-      return res.json(result.rows[0]);
-    } catch (error) {
-      logger.error('Erreur lors de la mise à jour de l\'emploi:', error);
-      return res.status(500).json({ error: 'Erreur serveur' });
+    // Vérifier si l'utilisateur est autorisé à modifier l'offre
+    if (job.employerId?.toString() !== req.user?._id.toString() && req.user?.role !== 'admin') {
+      return res.status(403).json({ message: 'Non autorisé à modifier cette offre' });
     }
-  },
 
-  async deleteJob(req: Request, res: Response) {
-    try {
-      const { id } = req.params;
-      const user = req.user as User;
-      const company_id = user?.company_id;
+    const updatedJob = await Job.findByIdAndUpdate(
+      req.params.id,
+      { ...req.body },
+      { new: true, runValidators: true }
+    );
 
-      if (!company_id) {
-        return res.status(403).json({ error: 'Accès non autorisé' });
-      }
+    logger.info(`Offre mise à jour: ${req.params.id}`);
+    res.json(updatedJob);
+  } catch (error) {
+    logger.error('Erreur lors de la mise à jour de l\'offre:', error);
+    res.status(500).json({ message: 'Erreur lors de la mise à jour de l\'offre' });
+  }
+};
 
-      const result = await pool.query(
-        'DELETE FROM jobs WHERE id = $1 AND company_id = $2 RETURNING *',
-        [id, company_id]
-      );
-
-      if (result.rows.length === 0) {
-        return res.status(404).json({ error: 'Emploi non trouvé ou accès non autorisé' });
-      }
-
-      return res.json({ message: 'Emploi supprimé avec succès' });
-    } catch (error) {
-      logger.error('Erreur lors de la suppression de l\'emploi:', error);
-      return res.status(500).json({ error: 'Erreur serveur' });
+// Supprimer une offre
+export const deleteJob = async (req: Request, res: Response) => {
+  try {
+    const job = await Job.findById(req.params.id);
+    
+    if (!job) {
+      return res.status(404).json({ message: 'Offre non trouvée' });
     }
-  },
 
-  async getCategories(_req: Request, res: Response) {
-    try {
-      const categories = [
-        'Développement',
-        'Design',
-        'Marketing',
-        'Ventes',
-        'Finance',
-        'Ressources Humaines',
-        'Support Client',
-        'Gestion de Projet',
-        'Autre'
-      ];
-      return res.json(categories);
-    } catch (error) {
-      logger.error('Erreur lors de la récupération des catégories:', error);
-      return res.status(500).json({ error: 'Erreur serveur' });
+    // Vérifier si l'utilisateur est autorisé à supprimer l'offre
+    if (job.employerId?.toString() !== req.user?._id.toString() && req.user?.role !== 'admin') {
+      return res.status(403).json({ message: 'Non autorisé à supprimer cette offre' });
     }
-  },
 
-  async applyToJob(req: Request, res: Response) {
-    try {
-      const { id: job_id } = req.params;
-      const user = req.user as User;
-      const { cv_url, cover_letter } = req.body;
+    await job.remove();
+    logger.info(`Offre supprimée: ${req.params.id}`);
+    res.json({ message: 'Offre supprimée avec succès' });
+  } catch (error) {
+    logger.error('Erreur lors de la suppression de l\'offre:', error);
+    res.status(500).json({ message: 'Erreur lors de la suppression de l\'offre' });
+  }
+};
 
-      const result = await pool.query(
-        'INSERT INTO job_applications (job_id, user_id, cv_url, cover_letter) VALUES ($1, $2, $3, $4) RETURNING *',
-        [job_id, user.id, cv_url, cover_letter]
-      );
-
-      return res.status(201).json(result.rows[0]);
-    } catch (error) {
-      logger.error('Erreur lors de la candidature:', error);
-      return res.status(500).json({ error: 'Erreur serveur' });
+// Désactiver une offre
+export const deactivateJob = async (req: Request, res: Response) => {
+  try {
+    const job = await Job.findById(req.params.id);
+    
+    if (!job) {
+      return res.status(404).json({ message: 'Offre non trouvée' });
     }
-  },
 
-  async getJobApplications(req: Request, res: Response) {
-    try {
-      const { jobId } = req.params;
-      const user = req.user as User;
-      const company_id = user?.company_id;
-
-      if (!company_id) {
-        return res.status(403).json({ error: 'Accès non autorisé' });
-      }
-
-      const result = await pool.query(
-        'SELECT ja.*, u.name, u.email FROM job_applications ja INNER JOIN users u ON ja.user_id = u.id WHERE ja.job_id = $1 AND jobs.company_id = $2',
-        [jobId, company_id]
-      );
-
-      return res.json(result.rows);
-    } catch (error) {
-      logger.error('Erreur lors de la récupération des candidatures:', error);
-      return res.status(500).json({ error: 'Erreur serveur' });
+    // Vérifier si l'utilisateur est autorisé à désactiver l'offre
+    if (job.employerId?.toString() !== req.user?._id.toString() && req.user?.role !== 'admin') {
+      return res.status(403).json({ message: 'Non autorisé à désactiver cette offre' });
     }
-  },
 
-  async updateApplicationStatus(req: Request, res: Response) {
-    try {
-      const { applicationId } = req.params;
-      const { status } = req.body;
-      const user = req.user as User;
-      const company_id = user?.company_id;
-
-      if (!company_id) {
-        return res.status(403).json({ error: 'Accès non autorisé' });
-      }
-
-      const result = await pool.query(
-        'UPDATE job_applications SET status = $1 WHERE id = $2 AND job_id IN (SELECT id FROM jobs WHERE company_id = $3) RETURNING *',
-        [status, applicationId, company_id]
-      );
-
-      if (result.rows.length === 0) {
-        return res.status(404).json({ error: 'Candidature non trouvée ou accès non autorisé' });
-      }
-
-      return res.json(result.rows[0]);
-    } catch (error) {
-      logger.error('Erreur lors de la mise à jour du statut de la candidature:', error);
-      return res.status(500).json({ error: 'Erreur serveur' });
-    }
+    job.isActive = false;
+    await job.save();
+    
+    logger.info(`Offre désactivée: ${req.params.id}`);
+    res.json({ message: 'Offre désactivée avec succès' });
+  } catch (error) {
+    logger.error('Erreur lors de la désactivation de l\'offre:', error);
+    res.status(500).json({ message: 'Erreur lors de la désactivation de l\'offre' });
   }
 }; 

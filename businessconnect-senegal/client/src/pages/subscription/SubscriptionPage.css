@@ -1,0 +1,24 @@
+.subscription-page-bg {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+}
+
+.subscription-card {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.subscription-card:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 8px 32px rgba(24, 144, 255, 0.12), 0 1.5px 6px rgba(0,0,0,0.04);
+}
+
+.subscription-card .ant-typography {
+  margin-bottom: 0 !important;
+}
+
+.subscription-card .ant-tag {
+  font-size: 15px;
+  padding: 4px 12px;
+  border-radius: 8px;
+  margin-right: 6px;
+} 

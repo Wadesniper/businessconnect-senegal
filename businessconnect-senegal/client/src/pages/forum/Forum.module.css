@@ -1,0 +1,98 @@
+.container {
+  padding: 24px;
+  min-height: calc(100vh - 64px);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.searchBar {
+  max-width: 500px;
+}
+
+.categoryTabs {
+  margin-bottom: 0;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.emptyState {
+  margin: 48px 0;
+}
+
+.discussionCard {
+  transition: all 0.3s ease;
+}
+
+.discussionCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.discussionContent {
+  color: rgba(0, 0, 0, 0.65);
+  margin-bottom: 8px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.discussionMeta {
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.date {
+  font-size: 12px;
+}
+
+.liked {
+  color: #1890ff;
+}
+
+.pagination {
+  margin-top: 24px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+
+  .header {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .searchBar {
+    max-width: 100%;
+  }
+
+  .discussionCard {
+    margin-bottom: 16px;
+  }
+} 

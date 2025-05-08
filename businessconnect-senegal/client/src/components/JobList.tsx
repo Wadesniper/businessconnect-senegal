@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Button, Tag, Space, Input, Select, message, Modal, Typography, Divider } from 'antd';
 import { SearchOutlined, EyeOutlined, SendOutlined } from '@ant-design/icons';
-import { jobService } from '../services/jobService';
+import { JobService } from '../services/jobService';
 import { authService } from '../services/authService';
-import { JobData } from '../types/job';
+import { Job } from '../types/job';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -28,12 +28,12 @@ const contractTypes = [
 ];
 
 export const JobList: React.FC = () => {
-  const [jobs, setJobs] = useState<JobData[]>([]);
+  const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedSector, setSelectedSector] = useState<string>();
   const [selectedType, setSelectedType] = useState<string>();
   const [searchText, setSearchText] = useState('');
-  const [selectedJob, setSelectedJob] = useState<JobData | null>(null);
+  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
@@ -43,19 +43,15 @@ export const JobList: React.FC = () => {
   const fetchJobs = async () => {
     setLoading(true);
     try {
-      const jobs = await jobService.getJobOffers({
-        sector: selectedSector,
-        type: selectedType,
-        search: searchText
-      });
-      setJobs(jobs);
+      const jobs = await JobService.getJobs();
+      setJobs(jobs as Job[]);
     } catch (error) {
       message.error('Erreur lors de la récupération des offres');
     }
     setLoading(false);
   };
 
-  const handleViewDetails = (job: JobData) => {
+  const handleViewDetails = (job: Job) => {
     setSelectedJob(job);
     setIsModalVisible(true);
   };
@@ -112,7 +108,7 @@ export const JobList: React.FC = () => {
             style={{ marginBottom: 16 }}
           >
             <p><strong>Lieu:</strong> {job.location}</p>
-            <p><strong>Type:</strong> <Tag>{job.type}</Tag></p>
+            <p><strong>Type:</strong> <Tag>{job.jobType}</Tag></p>
             <p><strong>Secteur:</strong> <Tag color="green">{job.sector}</Tag></p>
             <p>{job.description.substring(0, 150)}...</p>
             <div style={{ marginTop: 16 }}>
@@ -163,14 +159,8 @@ export const JobList: React.FC = () => {
               <strong>Lieu:</strong> {selectedJob.location}
             </Paragraph>
             <Paragraph>
-              <strong>Type:</strong> {selectedJob.type}
+              <strong>Type:</strong> {selectedJob.jobType}
             </Paragraph>
-            {selectedJob.salary && (
-              <Paragraph>
-                <strong>Salaire:</strong> {typeof selectedJob.salary === 'object' ? `${selectedJob.salary.min} - ${selectedJob.salary.max} ${selectedJob.salary.currency}` : selectedJob.salary}
-              </Paragraph>
-            )}
-            <Divider />
             <Title level={5}>Description</Title>
             <Paragraph>{selectedJob.description}</Paragraph>
             <Title level={5}>Prérequis</Title>

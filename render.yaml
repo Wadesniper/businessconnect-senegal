@@ -1,84 +1,41 @@
 services:
   - type: web
-    name: businessconnect-senegal-api
+    name: businessconnect-api
     env: node
     region: frankfurt
-    plan: starter
-    rootDir: businessconnect-senegal/server
-    buildCommand: |
-      cd businessconnect-senegal/server && 
-      yarn install --frozen-lockfile &&
-      yarn tsc --project tsconfig.json &&
-      yarn build
-    startCommand: cd businessconnect-senegal/server && NODE_ENV=production yarn start
+    buildCommand: npm install && npm run build
+    startCommand: npm start
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
-      - key: TS_NODE_TRANSPILE_ONLY
-        value: "true"
-      - key: SKIP_PREFLIGHT_CHECK
-        value: "true"
-      - key: DISABLE_ESLINT_PLUGIN
-        value: "true"
-      - key: TSC_COMPILE_ON_ERROR
-        value: "true"
       - key: PORT
-        value: 3000
+        value: 5000
       - key: MONGODB_URI
         value: mongodb+srv://businessconnect:tlIQzehUEZnFPwoa@cluster0.gtehtk.mongodb.net/businessconnect?retryWrites=true&w=majority
       - key: JWT_SECRET
-        value: fc5c01210b133afeb2c293bfd28c59df3bb9d3b272999be0eb838c930b1419fd
+        sync: false
       - key: JWT_EXPIRES_IN
         value: 7d
-      - key: SMTP_HOST
-        value: smtp-relay.brevo.com
-      - key: SMTP_PORT
-        value: 587
-      - key: SMTP_SECURE
-        value: false
-      - key: SMTP_USER
-        value: 88ccee002@smtp-brevo.com
-      - key: SMTP_PASSWORD
-        value: myFchwr5H6AYtJdq
-      - key: SMTP_FROM
-        value: 88ccee002@smtp-brevo.com
-      - key: PAYTECH_API_KEY
-        value: be2b2e9b3a0ed01d69d30dff8a21f05199e2e71968788b4890690d7af56ba32b
-      - key: PAYTECH_WEBHOOK_SECRET
-        value: 6860a504cc73992c2e8dc623c7b31d948ef5a4ec2507a0a4771e62755cca9277
-      - key: PAYTECH_BASE_URL
-        value: https://paytech.sn
-    autoDeploy: true
+      - key: CLIENT_URL
+        value: https://app.businessconnectsenegal.com
+      - key: API_URL
+        value: https://api.businessconnectsenegal.com
 
   - type: web
-    name: businessconnect-senegal-client
+    name: businessconnect-client
     env: node
     region: frankfurt
-    plan: starter
-    rootDir: businessconnect-senegal/client
-    buildCommand: |
-      cd businessconnect-senegal/client && 
-      yarn install --frozen-lockfile &&
-      yarn tsc --project tsconfig.json &&
-      SKIP_PREFLIGHT_CHECK=true DISABLE_ESLINT_PLUGIN=true yarn build
-    startCommand: cd businessconnect-senegal/client && NODE_ENV=production yarn start
+    buildCommand: cd businessconnect-senegal/client && npm install && npm run build
+    startCommand: cd businessconnect-senegal/client && npm start
+    healthCheckPath: /
     envVars:
       - key: NODE_ENV
         value: production
-      - key: TS_NODE_TRANSPILE_ONLY
-        value: "true"
-      - key: SKIP_PREFLIGHT_CHECK
-        value: "true"
-      - key: DISABLE_ESLINT_PLUGIN
-        value: "true"
-      - key: NEXT_PUBLIC_API_URL
-        value: https://businessconnect-senegal-api.onrender.com
-      - key: NEXT_PUBLIC_CURSA_API_URL
-        value: https://api.cursa.app/v1
-    autoDeploy: true
+      - key: REACT_APP_API_URL
+        value: https://api.businessconnectsenegal.com
 
 databases:
-  - name: businessconnect-db
-    plan: starter
-    region: frankfurt 
+  - name: businessconnect-mongodb
+    type: mongodb
+    ipAllowList: [] 

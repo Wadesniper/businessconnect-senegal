@@ -116,4 +116,87 @@ export interface JobAlert {
   active: boolean;
   createdAt: string;
   updatedAt: string;
-} 
+}
+
+export interface Job {
+  id: string;
+  title: string;
+  company?: string;
+  location: string;
+  jobType: string;
+  sector: string;
+  description: string;
+  missions?: string[];
+  requirements: string[];
+  contactEmail?: string;
+  contactPhone?: string;
+  keywords: string[];
+  createdAt: string;
+  updatedAt: string;
+  employerId?: string;
+  isActive: boolean;
+}
+
+export interface JobApplication {
+  id: string;
+  userId: string;
+  jobId: string;
+  jobTitle: string;
+  company?: string;
+  status: 'pending' | 'accepted' | 'rejected';
+  cvUrl?: string;
+  coverLetter?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SavedJob {
+  id: string;
+  userId: string;
+  jobId: string;
+  job: Job;
+  savedAt: string;
+}
+
+export interface JobAlert {
+  id: string;
+  userId: string;
+  keywords: string[];
+  locations: string[];
+  jobTypes: string[];
+  salary?: {
+    min: number;
+    max: number;
+    currency: string;
+  };
+  frequency: 'daily' | 'weekly';
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const JOB_TYPES = [
+  'CDI',
+  'CDD',
+  'Stage',
+  'Freelance',
+  'Alternance',
+  'Temps partiel'
+] as const;
+
+export const JOB_SECTORS = [
+  'Ressources Humaines',
+  'Informatique',
+  'Marketing',
+  'Finance',
+  'Commercial',
+  'Communication',
+  'Administration',
+  'Logistique',
+  'Production',
+  'Juridique',
+  'Autre'
+] as const;
+
+export type JobType = typeof JOB_TYPES[number];
+export type JobSector = typeof JOB_SECTORS[number]; 

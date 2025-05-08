@@ -9,7 +9,6 @@ import {
   Select,
   Button,
   Space,
-  Typography,
   Slider,
   Modal,
   Form,
@@ -26,10 +25,8 @@ import {
 } from '@ant-design/icons';
 import { marketplaceService, MarketplaceItem } from '../../services/marketplaceService';
 import { authService } from '../../services/authService';
-
-const { Title, Text } = Typography;
-const { Option } = Select;
-const { Content } = Layout;
+import { useSubscription } from '../../hooks/useSubscription';
+import { useAuth } from '../../hooks/useAuth';
 
 const categories = [
   'Informatique',
@@ -48,15 +45,19 @@ const MarketplacePage: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
   const [filters, setFilters] = useState({
-    category: undefined,
+    category: undefined as string | undefined,
     minPrice: 0,
     maxPrice: 10000,
     search: '',
     location: ''
   });
+  const [subscription, setSubscription] = useState(authService.getCurrentUserSubscription());
+  const { user } = useAuth();
+  const { hasActiveSubscription, loading: loadingSub, subscription: userSubscription } = useSubscription();
 
   useEffect(() => {
     fetchItems();
+    // eslint-disable-next-line
   }, [filters]);
 
   const fetchItems = async () => {
@@ -77,41 +78,63 @@ const MarketplacePage: React.FC = () => {
         message.error('Veuillez vous connecter pour créer une annonce');
         return;
       }
-
       const itemData = {
         ...values,
         userId: user.id,
-        images: values.images?.fileList.map((file: any) => file.url) || []
+        images: values.images?.fileList?.map((file: any) => file.url || file.thumbUrl) || []
       };
-
       await marketplaceService.createItem(itemData);
       message.success('Annonce créée avec succès');
       setIsModalVisible(false);
       form.resetFields();
       fetchItems();
-    } catch (error) {
-      message.error('Erreur lors de la création de l\'annonce');
+    } catch (error: any) {
+      message.error(error.message || 'Erreur lors de la création de l\'annonce');
     }
   };
 
-  const handleImageUpload = async (file: File) => {
-    try {
-      const url = await marketplaceService.uploadImage(file);
-      return url;
-    } catch (error) {
-      message.error('Erreur lors du téléchargement de l\'image');
-      return '';
-    }
+  // customRequest pour mocker l'upload
+  const customUpload = async ({ file, onSuccess }: any) => {
+    const url = await marketplaceService.uploadImage(file as File);
+    onSuccess({ url }, file);
+  };
+
+  const refreshSubscription = () => {
+    setSubscription(authService.getCurrentUserSubscription());
+    fetchItems();
+  };
+
+  const handleRenew = () => {
+    authService.renewCurrentUserSubscription();
+    message.success('Abonnement renouvelé !');
+    refreshSubscription();
+  };
+
+  const handleExpire = () => {
+    authService.expireCurrentUserSubscription();
+    message.warning('Abonnement expiré !');
+    refreshSubscription();
   };
 
   return (
     <Layout style={{ padding: '24px' }}>
-      <Content>
+      <Layout.Content>
         <Row gutter={[24, 24]}>
           <Col span={24}>
             <Card>
               <Space direction="vertical" style={{ width: '100%' }}>
-                <Title level={2}>Marketplace</Title>
+                <h2 style={{ marginBottom: 0 }}>Marketplace</h2>
+                {subscription && (
+                  <Space>
+                    <span style={{ fontWeight: 'bold' }}>Abonnement : </span>
+                    <span style={{ color: subscription.isActive && new Date(subscription.expiresAt) > new Date() ? 'green' : 'red', fontWeight: 'bold' }}>
+                      {subscription.isActive && new Date(subscription.expiresAt) > new Date() ? 'Actif' : 'Expiré'}
+                    </span>
+                    <span>(Expire le : {new Date(subscription.expiresAt).toLocaleDateString()})</span>
+                    <Button onClick={handleRenew}>Renouveler</Button>
+                    <Button danger onClick={handleExpire}>Expirer</Button>
+                  </Space>
+                )}
                 <Row gutter={[16, 16]}>
                   <Col span={6}>
                     <Select
@@ -119,31 +142,41 @@ const MarketplacePage: React.FC = () => {
                       placeholder="Catégorie"
                       onChange={(value) => setFilters({ ...filters, category: value })}
                       allowClear
+                      value={filters.category}
                     >
                       {categories.map(category => (
-                        <Option key={category} value={category}>{category}</Option>
+                        <Select.Option key={category} value={category}>{category}</Select.Option>
                       ))}
                     </Select>
                   </Col>
                   <Col span={6}>
                     <Input
                       placeholder="Localisation"
-                      prefix={<EnvironmentOutlined />}
+                      prefix={<EnvironmentOutlined style={{ color: '#1890ff' }} />}
                       onChange={(e) => setFilters({ ...filters, location: e.target.value })}
+                      value={filters.location}
                     />
                   </Col>
                   <Col span={6}>
                     <Input
                       placeholder="Rechercher..."
-                      prefix={<SearchOutlined />}
+                      prefix={<SearchOutlined style={{ color: '#1890ff' }} />}
                       onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                      value={filters.search}
                     />
                   </Col>
                   <Col span={6}>
                     <Button
                       type="primary"
                       icon={<PlusOutlined />}
-                      onClick={() => setIsModalVisible(true)}
+                      onClick={() => {
+                        if (loadingSub) return;
+                        if (!hasActiveSubscription || !userSubscription || userSubscription.type !== 'annonceur') {
+                          message.error('Seuls les annonceurs abonnés peuvent publier une annonce.');
+                          return;
+                        }
+                        setIsModalVisible(true);
+                      }}
                     >
                       Créer une annonce
                     </Button>
@@ -151,13 +184,13 @@ const MarketplacePage: React.FC = () => {
                 </Row>
                 <Row>
                   <Col span={24}>
-                    <Text>Prix :</Text>
+                    <span style={{ fontWeight: 'bold' }}>Prix :</span>
                     <Slider
                       range
                       min={0}
                       max={10000}
                       defaultValue={[0, 10000]}
-                      onChange={(value) => setFilters({
+                      onChange={(value: any) => setFilters({
                         ...filters,
                         minPrice: value[0],
                         maxPrice: value[1]
@@ -184,22 +217,18 @@ const MarketplacePage: React.FC = () => {
                 }
                 onClick={() => navigate(`/marketplace/${item.id}`)}
               >
-                <Card.Meta
-                  title={item.title}
-                  description={
-                    <Space direction="vertical">
-                      <Text>{item.description.substring(0, 100)}...</Text>
-                      <Space>
-                        <EuroOutlined />
-                        <Text strong>{item.price}</Text>
-                      </Space>
-                      <Space>
-                        <EnvironmentOutlined />
-                        <Text>{item.location}</Text>
-                      </Space>
-                    </Space>
-                  }
-                />
+                <div style={{ minHeight: 120 }}>
+                  <div style={{ fontWeight: 'bold', fontSize: 16 }}>{item.title}</div>
+                  <div style={{ margin: '8px 0' }}>{item.description.substring(0, 100)}...</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span>{<EuroOutlined style={{ color: '#1890ff' }} />}</span>
+                    <span style={{ fontWeight: 'bold' }}>{item.price}</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span>{<EnvironmentOutlined style={{ color: '#1890ff' }} />}</span>
+                    <span>{item.location}</span>
+                  </div>
+                </div>
               </Card>
             </Col>
           ))}
@@ -207,7 +236,7 @@ const MarketplacePage: React.FC = () => {
 
         <Modal
           title="Créer une nouvelle annonce"
-          visible={isModalVisible}
+          open={isModalVisible}
           onCancel={() => setIsModalVisible(false)}
           footer={null}
         >
@@ -229,7 +258,7 @@ const MarketplacePage: React.FC = () => {
               label="Description"
               rules={[{ required: true, message: 'Veuillez saisir une description' }]}
             >
-              <Input.TextArea rows={4} placeholder="Description détaillée" />
+              <textarea rows={4} placeholder="Description détaillée" style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #d9d9d9' }} />
             </Form.Item>
 
             <Form.Item
@@ -239,7 +268,7 @@ const MarketplacePage: React.FC = () => {
             >
               <Select placeholder="Sélectionnez une catégorie">
                 {categories.map(category => (
-                  <Option key={category} value={category}>{category}</Option>
+                  <Select.Option key={category} value={category}>{category}</Select.Option>
                 ))}
               </Select>
             </Form.Item>
@@ -249,7 +278,7 @@ const MarketplacePage: React.FC = () => {
               label="Prix"
               rules={[{ required: true, message: 'Veuillez saisir un prix' }]}
             >
-              <Input type="number" prefix={<EuroOutlined />} />
+              <Input type="number" prefix={<EuroOutlined style={{ color: '#1890ff' }} />} />
             </Form.Item>
 
             <Form.Item
@@ -257,28 +286,24 @@ const MarketplacePage: React.FC = () => {
               label="Localisation"
               rules={[{ required: true, message: 'Veuillez saisir une localisation' }]}
             >
-              <Input prefix={<EnvironmentOutlined />} />
+              <Input prefix={<EnvironmentOutlined style={{ color: '#1890ff' }} />} />
             </Form.Item>
 
             <Form.Item
-              name="contactInfo"
-              label="Informations de contact"
-              rules={[{ required: true, message: 'Veuillez saisir les informations de contact' }]}
+              name="contactInfo.email"
+              label="Email"
+              rules={[
+                { required: true, message: 'Veuillez saisir un email' },
+                { type: 'email', message: 'Email invalide' }
+              ]}
             >
-              <Input.Group>
-                <Form.Item
-                  name={['contactInfo', 'email']}
-                  rules={[
-                    { required: true, message: 'Veuillez saisir un email' },
-                    { type: 'email', message: 'Email invalide' }
-                  ]}
-                >
-                  <Input placeholder="Email" />
-                </Form.Item>
-                <Form.Item name={['contactInfo', 'phone']}>
-                  <Input placeholder="Téléphone (optionnel)" />
-                </Form.Item>
-              </Input.Group>
+              <Input placeholder="Email" />
+            </Form.Item>
+            <Form.Item
+              name="contactInfo.phone"
+              label="Téléphone (optionnel)"
+            >
+              <Input placeholder="Téléphone (optionnel)" />
             </Form.Item>
 
             <Form.Item
@@ -294,11 +319,12 @@ const MarketplacePage: React.FC = () => {
             >
               <Upload
                 listType="picture-card"
-                beforeUpload={handleImageUpload}
+                customRequest={customUpload}
                 maxCount={5}
+                showUploadList={{ showPreviewIcon: false }}
               >
                 <div>
-                  <UploadOutlined />
+                  <span>{<UploadOutlined />}</span>
                   <div style={{ marginTop: 8 }}>Upload</div>
                 </div>
               </Upload>
@@ -311,7 +337,7 @@ const MarketplacePage: React.FC = () => {
             </Form.Item>
           </Form>
         </Modal>
-      </Content>
+      </Layout.Content>
     </Layout>
   );
 };

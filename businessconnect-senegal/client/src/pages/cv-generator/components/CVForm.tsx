@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Form,
   Input,
@@ -10,23 +10,27 @@ import {
   Divider,
   Typography,
   Row,
-  Col
+  Col,
+  InputNumber,
+  Upload,
+  message
 } from 'antd';
-import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { CV } from '../../../services/cvService';
+import { MinusCircleOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
+import { CVData } from '../types';
+import dayjs from 'dayjs';
 import moment from 'moment';
 import 'moment/locale/fr';
+import { processProfileImage } from '../services/imageService';
 
 moment.locale('fr');
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 const { TextArea } = Input;
 const { RangePicker } = DatePicker;
 
 interface CVFormProps {
-  initialValues?: Partial<CV>;
-  onSubmit: (values: any) => void;
-  loading: boolean;
+  data: CVData | null;
+  onChange: (data: CVData) => void;
 }
 
 const languageLevels = [
@@ -43,161 +47,173 @@ const skillCategories = [
   { label: 'Outils', value: 'tools' }
 ];
 
-const CVForm: React.FC<CVFormProps> = ({ initialValues, onSubmit, loading }) => {
+const CVForm: React.FC<CVFormProps> = ({ data, onChange }) => {
   const [form] = Form.useForm();
+  const [uploadLoading, setUploadLoading] = useState(false);
 
-  const handleSubmit = (values: any) => {
-    // Formatage des dates avant envoi
-    const formattedValues = {
-      ...values,
-      education: values.education?.map((edu: any) => ({
-        ...edu,
-        startDate: edu.period[0].format('YYYY-MM-DD'),
-        endDate: edu.period[1].format('YYYY-MM-DD')
-      })),
+  const handleImageUpload = async (file: File) => {
+    try {
+      setUploadLoading(true);
+      const imageUrl = await processProfileImage(file);
+      form.setFieldValue(['personalInfo', 'photo'], imageUrl);
+      form.submit();
+      return false; // Empêche l'upload par défaut d'Ant Design
+    } catch (error) {
+      message.error((error as Error).message);
+      return false;
+    } finally {
+      setUploadLoading(false);
+    }
+  };
+
+  const onFinish = (values: any) => {
+    const formattedData: CVData = {
+      personalInfo: {
+        ...values.personalInfo,
+        summary: values.summary
+      },
       experience: values.experience?.map((exp: any) => ({
         ...exp,
-        startDate: exp.period[0].format('YYYY-MM-DD'),
-        endDate: exp.current ? null : exp.period[1].format('YYYY-MM-DD')
-      })),
-      certifications: values.certifications?.map((cert: any) => ({
-        ...cert,
-        date: cert.date.format('YYYY-MM-DD')
-      }))
+        startDate: exp.period?.[0]?.format('YYYY-MM'),
+        endDate: exp.current ? null : exp.period?.[1]?.format('YYYY-MM'),
+      })) || [],
+      education: values.education?.map((edu: any) => ({
+        ...edu,
+        startDate: edu.period?.[0]?.format('YYYY-MM'),
+        endDate: edu.period?.[1]?.format('YYYY-MM'),
+      })) || [],
+      skills: values.skills || [],
+      languages: values.languages || [],
+      certifications: values.certifications || [],
+      projects: values.projects?.map((proj: any) => ({
+        ...proj,
+        startDate: proj.period?.[0]?.format('YYYY-MM'),
+        endDate: proj.period?.[1]?.format('YYYY-MM'),
+      })) || [],
+      interests: values.interests || [],
     };
-
-    onSubmit(formattedValues);
+    onChange(formattedData);
   };
+
+  React.useEffect(() => {
+    if (data) {
+      const formattedData = {
+        ...data,
+        experience: data.experience?.map(exp => ({
+          ...exp,
+          period: [
+            dayjs(exp.startDate),
+            exp.current ? null : dayjs(exp.endDate),
+          ],
+        })),
+        education: data.education?.map(edu => ({
+          ...edu,
+          period: [dayjs(edu.startDate), dayjs(edu.endDate)],
+        })),
+        projects: data.projects?.map(proj => ({
+          ...proj,
+          period: [
+            dayjs(proj.startDate),
+            proj.endDate ? dayjs(proj.endDate) : null,
+          ],
+        })),
+      };
+      form.setFieldsValue(formattedData);
+    }
+  }, [data, form]);
 
   return (
     <Form
       form={form}
       layout="vertical"
-      onFinish={handleSubmit}
-      initialValues={{
-        ...initialValues,
-        education: initialValues?.education?.map(edu => ({
-          ...edu,
-          period: [moment(edu.startDate), moment(edu.endDate)]
-        })),
-        experience: initialValues?.experience?.map(exp => ({
-          ...exp,
-          period: [moment(exp.startDate), exp.endDate ? moment(exp.endDate) : null]
-        })),
-        certifications: initialValues?.certifications?.map(cert => ({
-          ...cert,
-          date: moment(cert.date)
-        }))
-      }}
+      onFinish={onFinish}
+      onValuesChange={() => form.submit()}
+      initialValues={data || undefined}
     >
       {/* Informations personnelles */}
       <Title level={3}>Informations personnelles</Title>
-      <Row gutter={16}>
-        <Col span={12}>
       <Form.Item
-            name={['personalInfo', 'fullName']}
-            label="Nom complet"
-            rules={[{ required: true, message: 'Le nom est requis' }]}
+        name={['personalInfo', 'photo']}
+        label="Photo de profil"
+      >
+        <Upload
+          accept="image/*"
+          maxCount={1}
+          listType="picture"
+          beforeUpload={handleImageUpload}
+          showUploadList={{ showPreviewIcon: true, showRemoveIcon: true }}
+        >
+          <Button icon={<UploadOutlined />} loading={uploadLoading}>
+            {uploadLoading ? 'Traitement...' : 'Télécharger une photo'}
+          </Button>
+        </Upload>
+      </Form.Item>
+
+      <Space direction="horizontal" size={16} style={{ display: 'flex' }}>
+        <Form.Item
+          name={['personalInfo', 'firstName']}
+          label="Prénom"
+          rules={[{ required: true }]}
+          style={{ flex: 1 }}
         >
           <Input />
         </Form.Item>
-        </Col>
-        <Col span={12}>
+
+        <Form.Item
+          name={['personalInfo', 'lastName']}
+          label="Nom"
+          rules={[{ required: true }]}
+          style={{ flex: 1 }}
+        >
+          <Input />
+        </Form.Item>
+      </Space>
+
+      <Form.Item
+        name={['personalInfo', 'title']}
+        label="Titre professionnel"
+        rules={[{ required: true }]}
+      >
+        <Input />
+      </Form.Item>
+
+      <Space direction="horizontal" size={16} style={{ display: 'flex' }}>
       <Form.Item
         name={['personalInfo', 'email']}
         label="Email"
-        rules={[
-              { required: true, message: 'L\'email est requis' },
-              { type: 'email', message: 'Email invalide' }
-        ]}
+          rules={[{ required: true, type: 'email' }]}
+          style={{ flex: 1 }}
       >
         <Input />
       </Form.Item>
-        </Col>
-      </Row>
 
-      <Row gutter={16}>
-        <Col span={12}>
       <Form.Item
         name={['personalInfo', 'phone']}
         label="Téléphone"
-            rules={[{ required: true, message: 'Le téléphone est requis' }]}
+          rules={[{ required: true }]}
+          style={{ flex: 1 }}
       >
         <Input />
       </Form.Item>
-        </Col>
-        <Col span={12}>
+      </Space>
+
       <Form.Item
         name={['personalInfo', 'address']}
         label="Adresse"
       >
         <Input />
       </Form.Item>
-        </Col>
-      </Row>
 
-      <Row gutter={16}>
-        <Col span={12}>
-        <Form.Item
-          name={['personalInfo', 'linkedin']}
-          label="LinkedIn"
-        >
-          <Input />
-        </Form.Item>
-        </Col>
-        <Col span={12}>
-        <Form.Item
-            name={['personalInfo', 'website']}
-            label="Site web"
-        >
-          <Input />
-        </Form.Item>
-        </Col>
-      </Row>
-
-      <Divider />
-
-      {/* Formation */}
-      <Title level={3}>Formation</Title>
-      <Form.List name="education">
-        {(fields, { add, remove }) => (
-          <>
-            {fields.map(({ key, name, ...restField }) => (
-              <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
-                <Form.Item
-                  {...restField}
-                  name={[name, 'school']}
-                  rules={[{ required: true, message: 'L\'école est requise' }]}
-                >
-                  <Input placeholder="École" />
-                </Form.Item>
-                <Form.Item
-                  {...restField}
-                  name={[name, 'degree']}
-                  rules={[{ required: true, message: 'Le diplôme est requis' }]}
-                >
-                  <Input placeholder="Diplôme" />
-                </Form.Item>
-                <Form.Item
-                  {...restField}
-                  name={[name, 'period']}
-                  rules={[{ required: true, message: 'La période est requise' }]}
-                >
-                  <RangePicker />
-                </Form.Item>
-                <MinusCircleOutlined onClick={() => remove(name)} />
-              </Space>
-            ))}
-            <Form.Item>
-              <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                Ajouter une formation
-              </Button>
-            </Form.Item>
-          </>
-        )}
-      </Form.List>
-
-      <Divider />
+      <Form.Item
+        name="summary"
+        label="Résumé professionnel"
+        rules={[{ required: true, message: 'Veuillez saisir votre résumé professionnel' }]}
+      >
+        <TextArea 
+          rows={4} 
+          placeholder="Décrivez brièvement votre profil, vos compétences clés et vos objectifs professionnels"
+        />
+      </Form.Item>
 
       {/* Expérience professionnelle */}
       <Title level={3}>Expérience professionnelle</Title>
@@ -205,37 +221,87 @@ const CVForm: React.FC<CVFormProps> = ({ initialValues, onSubmit, loading }) => 
         {(fields, { add, remove }) => (
           <>
             {fields.map(({ key, name, ...restField }) => (
-              <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
+              <Space key={key} direction="vertical" style={{ display: 'flex', marginBottom: 8 }} align="baseline">
+                <Form.Item
+                  {...restField}
+                  name={[name, 'title']}
+                  rules={[{ required: true }]}
+                >
+                  <Input placeholder="Titre du poste" />
+                </Form.Item>
+
                 <Form.Item
                   {...restField}
                   name={[name, 'company']}
-                  rules={[{ required: true, message: 'L\'entreprise est requise' }]}
+                  rules={[{ required: true }]}
                 >
                   <Input placeholder="Entreprise" />
                 </Form.Item>
+
                 <Form.Item
                   {...restField}
-                  name={[name, 'position']}
-                  rules={[{ required: true, message: 'Le poste est requis' }]}
+                  name={[name, 'location']}
                 >
-                  <Input placeholder="Poste" />
+                  <Input placeholder="Localisation" />
                 </Form.Item>
-                <Form.Item
-                  {...restField}
-                  name={[name, 'period']}
-                  rules={[{ required: true, message: 'La période est requise' }]}
-                >
-                  <RangePicker />
-                </Form.Item>
+
+                <Space>
+                  <Form.Item
+                    {...restField}
+                    name={[name, 'period']}
+                    rules={[{ required: true }]}
+                  >
+                    <RangePicker picker="month" />
+                  </Form.Item>
+
+                  <Form.Item
+                    {...restField}
+                    name={[name, 'current']}
+                    valuePropName="checked"
+                  >
+                    <Select placeholder="En cours ?">
+                      <Select.Option value={true}>Oui</Select.Option>
+                      <Select.Option value={false}>Non</Select.Option>
+                    </Select>
+                  </Form.Item>
+                </Space>
+
                 <Form.Item
                   {...restField}
                   name={[name, 'description']}
+                  rules={[{ required: true }]}
                 >
-                  <TextArea placeholder="Description" />
+                  <TextArea rows={4} placeholder="Description du poste" />
                 </Form.Item>
-                <MinusCircleOutlined onClick={() => remove(name)} />
+
+                <Form.List name={[name, 'achievements']}>
+                  {(subFields, subOpt) => (
+                    <>
+                      {subFields.map((subField) => (
+                        <Space key={subField.key}>
+                          <Form.Item
+                            {...subField}
+                            validateTrigger={['onChange', 'onBlur']}
+                            rules={[{ required: true }]}
+                          >
+                            <Input placeholder="Réalisation" />
+                          </Form.Item>
+                          <MinusCircleOutlined onClick={() => subOpt.remove(subField.name)} />
+                        </Space>
+                      ))}
+                      <Button type="dashed" onClick={() => subOpt.add()} block icon={<PlusOutlined />}>
+                        Ajouter une réalisation
+                      </Button>
+                    </>
+                  )}
+                </Form.List>
+
+                <Button type="text" danger onClick={() => remove(name)} icon={<MinusCircleOutlined />}>
+                  Supprimer cette expérience
+                </Button>
               </Space>
             ))}
+
             <Form.Item>
               <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
                 Ajouter une expérience
@@ -245,7 +311,86 @@ const CVForm: React.FC<CVFormProps> = ({ initialValues, onSubmit, loading }) => 
         )}
       </Form.List>
 
-      <Divider />
+      {/* Formation */}
+      <Title level={3}>Formation</Title>
+      <Form.List name="education">
+        {(fields, { add, remove }) => (
+          <>
+            {fields.map(({ key, name, ...restField }) => (
+              <Space key={key} direction="vertical" style={{ display: 'flex', marginBottom: 8 }} align="baseline">
+                <Form.Item
+                  {...restField}
+                  name={[name, 'degree']}
+                  rules={[{ required: true }]}
+                >
+                  <Input placeholder="Diplôme" />
+                </Form.Item>
+
+                <Form.Item
+                  {...restField}
+                  name={[name, 'institution']}
+                  rules={[{ required: true }]}
+                >
+                  <Input placeholder="Établissement" />
+                </Form.Item>
+
+                <Form.Item
+                  {...restField}
+                  name={[name, 'location']}
+                >
+                  <Input placeholder="Localisation" />
+                </Form.Item>
+
+                <Form.Item
+                  {...restField}
+                  name={[name, 'period']}
+                  rules={[{ required: true }]}
+                >
+                  <RangePicker picker="month" />
+                </Form.Item>
+
+                <Form.Item
+                  {...restField}
+                  name={[name, 'description']}
+                >
+                  <TextArea rows={4} placeholder="Description de la formation" />
+                </Form.Item>
+
+                <Form.List name={[name, 'achievements']}>
+                  {(subFields, subOpt) => (
+                    <>
+                      {subFields.map((subField) => (
+                        <Space key={subField.key}>
+                          <Form.Item
+                            {...subField}
+                            validateTrigger={['onChange', 'onBlur']}
+                          >
+                            <Input placeholder="Réalisation académique" />
+                          </Form.Item>
+                          <MinusCircleOutlined onClick={() => subOpt.remove(subField.name)} />
+                        </Space>
+                      ))}
+                      <Button type="dashed" onClick={() => subOpt.add()} block icon={<PlusOutlined />}>
+                        Ajouter une réalisation
+                      </Button>
+                    </>
+                  )}
+                </Form.List>
+
+                <Button type="text" danger onClick={() => remove(name)} icon={<MinusCircleOutlined />}>
+                  Supprimer cette formation
+                </Button>
+              </Space>
+            ))}
+
+            <Form.Item>
+              <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                Ajouter une formation
+              </Button>
+            </Form.Item>
+          </>
+        )}
+      </Form.List>
 
       {/* Compétences */}
       <Title level={3}>Compétences</Title>
@@ -253,31 +398,34 @@ const CVForm: React.FC<CVFormProps> = ({ initialValues, onSubmit, loading }) => 
         {(fields, { add, remove }) => (
           <>
             {fields.map(({ key, name, ...restField }) => (
-              <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
+              <Space key={key} align="baseline">
                 <Form.Item
                   {...restField}
                   name={[name, 'name']}
-                  rules={[{ required: true, message: 'La compétence est requise' }]}
+                  rules={[{ required: true }]}
                 >
                   <Input placeholder="Compétence" />
                 </Form.Item>
-                <Form.Item
-                  {...restField}
-                  name={[name, 'category']}
-                  rules={[{ required: true, message: 'La catégorie est requise' }]}
-                >
-                  <Select options={skillCategories} placeholder="Catégorie" />
-                </Form.Item>
+
                 <Form.Item
                   {...restField}
                   name={[name, 'level']}
-                  rules={[{ required: true, message: 'Le niveau est requis' }]}
+                  rules={[{ required: true }]}
                 >
-                  <Rate />
+                  <InputNumber min={1} max={5} placeholder="Niveau" />
                 </Form.Item>
+
+                <Form.Item
+                  {...restField}
+                  name={[name, 'category']}
+                >
+                  <Input placeholder="Catégorie" />
+                </Form.Item>
+
                 <MinusCircleOutlined onClick={() => remove(name)} />
               </Space>
             ))}
+
             <Form.Item>
               <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
                 Ajouter une compétence
@@ -287,32 +435,39 @@ const CVForm: React.FC<CVFormProps> = ({ initialValues, onSubmit, loading }) => 
         )}
       </Form.List>
 
-      <Divider />
-
       {/* Langues */}
       <Title level={3}>Langues</Title>
       <Form.List name="languages">
         {(fields, { add, remove }) => (
           <>
             {fields.map(({ key, name, ...restField }) => (
-              <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
+              <Space key={key} align="baseline">
                 <Form.Item
                   {...restField}
                   name={[name, 'name']}
-                  rules={[{ required: true, message: 'La langue est requise' }]}
+                  rules={[{ required: true }]}
                 >
                   <Input placeholder="Langue" />
                 </Form.Item>
+
                 <Form.Item
                   {...restField}
                   name={[name, 'level']}
-                  rules={[{ required: true, message: 'Le niveau est requis' }]}
+                  rules={[{ required: true }]}
                 >
-                  <Select options={languageLevels} placeholder="Niveau" />
+                  <Select style={{ width: 200 }}>
+                    <Select.Option value="Débutant">Débutant</Select.Option>
+                    <Select.Option value="Intermédiaire">Intermédiaire</Select.Option>
+                    <Select.Option value="Avancé">Avancé</Select.Option>
+                    <Select.Option value="Bilingue">Bilingue</Select.Option>
+                    <Select.Option value="Langue maternelle">Langue maternelle</Select.Option>
+                  </Select>
                 </Form.Item>
+
                 <MinusCircleOutlined onClick={() => remove(name)} />
               </Space>
             ))}
+
             <Form.Item>
               <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
                 Ajouter une langue
@@ -322,11 +477,167 @@ const CVForm: React.FC<CVFormProps> = ({ initialValues, onSubmit, loading }) => 
         )}
       </Form.List>
 
+      {/* Certifications */}
+      <Title level={3}>Certifications</Title>
+      <Form.List name="certifications">
+        {(fields, { add, remove }) => (
+          <>
+            {fields.map(({ key, name, ...restField }) => (
+              <Space key={key} direction="vertical" style={{ display: 'flex', marginBottom: 8 }} align="baseline">
+                <Form.Item
+                  {...restField}
+                  name={[name, 'name']}
+                  rules={[{ required: true }]}
+                >
+                  <Input placeholder="Nom de la certification" />
+                </Form.Item>
+
+                <Form.Item
+                  {...restField}
+                  name={[name, 'issuer']}
+                  rules={[{ required: true }]}
+                >
+                  <Input placeholder="Organisme certificateur" />
+                </Form.Item>
+
+                <Form.Item
+                  {...restField}
+                  name={[name, 'date']}
+                  rules={[{ required: true }]}
+                >
+                  <DatePicker picker="month" />
+                </Form.Item>
+
+                <Form.Item
+                  {...restField}
+                  name={[name, 'description']}
+                >
+                  <TextArea rows={2} placeholder="Description de la certification" />
+                </Form.Item>
+
+                <Button type="text" danger onClick={() => remove(name)} icon={<MinusCircleOutlined />}>
+                  Supprimer cette certification
+                </Button>
+              </Space>
+            ))}
+
+            <Form.Item>
+              <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                Ajouter une certification
+              </Button>
+            </Form.Item>
+          </>
+        )}
+      </Form.List>
+
+      {/* Projets */}
+      <Title level={3}>Projets</Title>
+      <Form.List name="projects">
+        {(fields, { add, remove }) => (
+          <>
+            {fields.map(({ key, name, ...restField }) => (
+              <Space key={key} direction="vertical" style={{ display: 'flex', marginBottom: 8 }} align="baseline">
+                <Form.Item
+                  {...restField}
+                  name={[name, 'name']}
+                  rules={[{ required: true }]}
+                >
+                  <Input placeholder="Nom du projet" />
+                </Form.Item>
+
+                <Form.Item
+                  {...restField}
+                  name={[name, 'description']}
+                  rules={[{ required: true }]}
+                >
+                  <TextArea rows={3} placeholder="Description du projet" />
+                </Form.Item>
+
+                <Form.Item
+                  {...restField}
+                  name={[name, 'url']}
+                >
+                  <Input placeholder="URL du projet" />
+                </Form.Item>
+
+                <Form.Item
+                  {...restField}
+                  name={[name, 'period']}
+                  rules={[{ required: true }]}
+                >
+                  <RangePicker picker="month" />
+                </Form.Item>
+
+                <Form.List name={[name, 'technologies']}>
+                  {(subFields, subOpt) => (
+                    <>
+                      {subFields.map((subField) => (
+                        <Space key={subField.key}>
+                          <Form.Item
+                            {...subField}
+                            validateTrigger={['onChange', 'onBlur']}
+                          >
+                            <Input placeholder="Technologie utilisée" />
+                          </Form.Item>
+                          <MinusCircleOutlined onClick={() => subOpt.remove(subField.name)} />
+                        </Space>
+                      ))}
+                      <Button type="dashed" onClick={() => subOpt.add()} block icon={<PlusOutlined />}>
+                        Ajouter une technologie
+                      </Button>
+                    </>
+                  )}
+                </Form.List>
+
+                <Button type="text" danger onClick={() => remove(name)} icon={<MinusCircleOutlined />}>
+                  Supprimer ce projet
+                </Button>
+              </Space>
+            ))}
+
+            <Form.Item>
+              <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                Ajouter un projet
+              </Button>
+            </Form.Item>
+          </>
+        )}
+      </Form.List>
+
+      {/* Centres d'intérêt */}
+      <Title level={3}>Centres d'intérêt</Title>
+      <Form.List name="interests">
+        {(fields, { add, remove }) => (
+          <>
+            {fields.map(({ key, name, ...restField }) => (
+              <Space key={key} align="baseline">
+                <Form.Item
+                  {...restField}
+                  name={[name, 'name']}
+                  rules={[{ required: true }]}
+                >
+                  <Input placeholder="Centre d'intérêt" />
+                </Form.Item>
+
+                <Form.Item
+                  {...restField}
+                  name={[name, 'description']}
+                >
+                  <Input placeholder="Description (optionnelle)" />
+                </Form.Item>
+
+                <MinusCircleOutlined onClick={() => remove(name)} />
+              </Space>
+            ))}
+
       <Form.Item>
-        <Button type="primary" htmlType="submit" loading={loading}>
-          Enregistrer
+              <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                Ajouter un centre d'intérêt
         </Button>
       </Form.Item>
+          </>
+        )}
+      </Form.List>
     </Form>
   );
 };
