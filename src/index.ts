@@ -56,21 +56,27 @@ const startServer = async () => {
 
     // Connexion MongoDB avec les options recommandées
     await mongoose.connect(mongoUri, {
-      serverSelectionTimeoutMS: 5000, // Timeout après 5 secondes
+      serverSelectionTimeoutMS: 10000, // Timeout après 10 secondes
       socketTimeoutMS: 45000, // Timeout socket après 45 secondes
+      retryWrites: true,
+      w: 'majority',
+      maxPoolSize: 10
     });
     logger.info('Connecté à MongoDB');
 
     // Démarrage du serveur avec gestion des erreurs de port
-    const port = process.env.PORT || 5000;
-    const server = app.listen(port, () => {
+    const port = parseInt(process.env.PORT || '4000', 10);
+    const server = app.listen(port, '0.0.0.0', () => {
       logger.info(`Serveur démarré sur le port ${port}`);
     });
 
     server.on('error', (error: any) => {
       if (error.code === 'EADDRINUSE') {
-        logger.error(`Le port ${port} est déjà utilisé. Arrêt du serveur.`);
-        process.exit(1);
+        logger.error(`Le port ${port} est déjà utilisé. Tentative avec un autre port...`);
+        setTimeout(() => {
+          server.close();
+          server.listen(0, '0.0.0.0');
+        }, 1000);
       } else {
         logger.error('Erreur lors du démarrage du serveur:', error);
         process.exit(1);
