@@ -10,14 +10,23 @@
     "postinstall": "yarn --cwd businessconnect-senegal/server install && yarn --cwd businessconnect-senegal/client install"
   },
   "dependencies": {
+    "@types/node": "^22.15.17",
     "antd": "^5.25.1",
     "axios": "^1.6.7",
+    "bcryptjs": "^3.0.2",
+    "compression": "^1.8.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.14.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^7.6.0"
+    "react-router-dom": "^7.6.0",
+    "react-spring": "^9.7.5",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
-    "@types/axios": "^0.14.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "@vitejs/plugin-react": "^4.0.0",

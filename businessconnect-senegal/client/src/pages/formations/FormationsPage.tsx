@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Layout, Card, Row, Col, Input, Select, Slider, Tag, Rate, Button, Empty, Spin, message } from 'antd';
-import { SearchOutlined, FilterOutlined, BookOutlined, ClockCircleOutlined, UserOutlined } from '@ant-design/icons';
+import { SearchOutlined, FilterOutlined, BookOutlined, ClockCircleOutlined, UserOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { useSubscription } from '../../hooks/useSubscription';
 import FormationService from '../../services/formationService';
 import { Formation, FormationFilters, NiveauFormation, CategorieFormation } from './types';
-import styles from './Formations.module.css';
 
 const { Content } = Layout;
 const { Search } = Input;
@@ -16,6 +16,7 @@ const ITEMS_PER_PAGE = 12;
 const FormationsPage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { hasActiveSubscription } = useSubscription();
   const [formations, setFormations] = useState<Formation[]>([]);
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
@@ -88,18 +89,54 @@ const FormationsPage: React.FC = () => {
   };
 
   const handleFormationClick = (formation: Formation) => {
-    navigate(`/formations/${formation.id}`);
+    let url = '';
+    switch (formation.category) {
+      case 'Informatique':
+        url = 'https://cursa.app/cours-online-linformatique-gratuits';
+        break;
+      case 'Langues':
+      case 'Langues et communication':
+        url = 'https://cursa.app/cours-online-langues-et-communication-gratuits';
+        break;
+      case 'Business':
+      case 'Gestion et affaires':
+        url = 'https://cursa.app/cours-online-gestion-et-affaires-gratuits';
+        break;
+      case 'Professionnalisation':
+        url = 'https://cursa.app/cours-online-professionnaliser-gratuits';
+        break;
+      case 'Design':
+      case 'Art et désign':
+        url = 'https://cursa.app/cours-online-art-et-design-gratuits';
+        break;
+      case 'Éducation de base':
+        url = 'https://cursa.app/cours-online-education-de-base-gratuits';
+        break;
+      case 'Esthétique':
+        url = 'https://cursa.app/cours-online-esthetique-gratuits';
+        break;
+      case 'Santé':
+        url = 'https://cursa.app/cours-online-sante-gratuits';
+        break;
+      default:
+        url = 'https://cursa.app/cours-online-autres-gratuits';
+    }
+    if (hasActiveSubscription) {
+      window.open(url, '_blank');
+    } else {
+      window.location.href = '/subscription';
+    }
   };
 
   return (
-    <Layout className={styles.container}>
+    <Layout>
       <Content>
-        <div className={styles.header}>
+        <div className="header">
           <h1>Formations</h1>
           <p>Développez vos compétences avec nos formations de qualité</p>
         </div>
 
-        <div className={styles.filters}>
+        <div className="filters">
           <Row gutter={[16, 16]} align="middle">
             <Col xs={24} sm={24} md={8} lg={8}>
               <Search
@@ -132,20 +169,6 @@ const FormationsPage: React.FC = () => {
             </Col>
             <Col xs={24} sm={12} md={4} lg={4}>
               <Select
-                placeholder="Niveau"
-                style={{ width: '100%' }}
-                onChange={handleNiveauChange}
-                value={filters.niveau}
-              >
-                <Option value="">Tous les niveaux</Option>
-                <Option value="Débutant">Débutant</Option>
-                <Option value="Intermédiaire">Intermédiaire</Option>
-                <Option value="Avancé">Avancé</Option>
-                <Option value="Expert">Expert</Option>
-              </Select>
-            </Col>
-            <Col xs={24} sm={12} md={4} lg={4}>
-              <Select
                 placeholder="Trier par"
                 style={{ width: '100%' }}
                 onChange={handleTriChange}
@@ -153,13 +176,11 @@ const FormationsPage: React.FC = () => {
               >
                 <Option value="popularite">Popularité</Option>
                 <Option value="recent">Plus récent</Option>
-                <Option value="prix-asc">Prix croissant</Option>
-                <Option value="prix-desc">Prix décroissant</Option>
                 <Option value="note">Meilleures notes</Option>
               </Select>
             </Col>
             <Col xs={24} sm={12} md={4} lg={4}>
-              <div className={styles.priceFilter}>
+              <div className="priceFilter">
                 <span>Prix (FCFA)</span>
                 <Slider
                   range
@@ -175,67 +196,49 @@ const FormationsPage: React.FC = () => {
         </div>
 
         {loading ? (
-          <div className={styles.loading}>
+          <div className="loading">
             <Spin size="large" />
           </div>
         ) : formations.length === 0 ? (
           <Empty
             description="Aucune formation trouvée"
-            className={styles.empty}
+            className="empty"
           />
         ) : (
-          <Row gutter={[24, 24]} className={styles.formationGrid}>
-            {formations.map(formation => (
-              <Col xs={24} sm={12} md={8} lg={6} key={formation.id}>
-                <Card
-                  hoverable
-                  cover={
-                    <img
-                      alt={formation.title}
-                      src={formation.image}
-                      className={styles.formationImage}
+          <Row gutter={[24, 24]} className="formationGrid">
+            {formations.map(formation => {
+              const f = formation as any;
+              return (
+                <Col xs={24} sm={12} md={8} lg={6} key={f.id}>
+                  <Card
+                    hoverable
+                    style={{ borderRadius: 18, boxShadow: '0 4px 24px #e3e8f7', border: 'none', minHeight: 280, background: '#fff', marginBottom: 24, transition: 'transform 0.2s', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
+                    cover={<img alt={f.title} src={f.thumbnail ? f.thumbnail : '/images/default-formation.jpg'} style={{ borderRadius: '18px 18px 0 0', objectFit: 'cover', height: 140, width: '100%' }} />}
+                  >
+                    <Card.Meta
+                      title={<span style={{ color: '#1d3557', fontWeight: 600 }}>{f.title}</span>}
+                      description={
+                        <div>
+                          <p style={{ color: '#333', marginBottom: 12 }}>{f.description.length > 120 ? f.description.slice(0, 120) + '…' : f.description}</p>
+                          <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+                            <Tag color="blue">{f.category}</Tag>
+                            {f.featured ? <Tag color="gold">À la une</Tag> : null}
+                          </div>
+                          <Button
+                            type="primary"
+                            icon={hasActiveSubscription ? <ArrowRightOutlined /> : <span role="img" aria-label="lock">🔒</span>}
+                            style={{ borderRadius: 20, fontWeight: 600, background: hasActiveSubscription ? '#1890ff' : '#aaa', border: 'none' }}
+                            onClick={() => hasActiveSubscription && f.cursaUrl ? window.open(f.cursaUrl, '_blank') : navigate('/subscription')}
+                          >
+                            Accéder
+                          </Button>
+                        </div>
+                      }
                     />
-                  }
-                  onClick={() => handleFormationClick(formation)}
-                  className={styles.formationCard}
-                >
-                  <Card.Meta
-                    title={formation.title}
-                    description={
-                      <div className={styles.formationMeta}>
-                        <p className={styles.description}>{formation.description}</p>
-                        <div className={styles.tags}>
-                          <Tag color="blue">{formation.category}</Tag>
-                          <Tag color="green">{formation.level}</Tag>
-                          {formation.isCertified && (
-                            <Tag color="gold">Certifiant</Tag>
-                          )}
-                        </div>
-                        <div className={styles.stats}>
-                          <span>
-                            <ClockCircleOutlined /> {formation.duration}
-                          </span>
-                          <span>
-                            <UserOutlined /> {formation.enrolledCount} inscrits
-                          </span>
-                        </div>
-                        <div className={styles.rating}>
-                          <Rate disabled defaultValue={formation.rating} />
-                          <span>({formation.rating})</span>
-                        </div>
-                        <div className={styles.price}>
-                          {formation.price === 0 ? (
-                            <Tag color="green">Gratuit</Tag>
-                          ) : (
-                            <span>{formation.price.toLocaleString()} FCFA</span>
-                          )}
-                        </div>
-                      </div>
-                    }
-                  />
-                </Card>
-              </Col>
-            ))}
+                  </Card>
+                </Col>
+              );
+            })}
           </Row>
         )}
       </Content>

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import './Navbar.css';
 
 const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
@@ -9,7 +8,7 @@ const Navbar: React.FC = () => {
 
   const handleLogout = async () => {
     try {
-      await logout();
+    await logout();
       navigate('/auth/login');
     } catch (error) {
       console.error('Erreur lors de la déconnexion:', error);
@@ -22,11 +21,11 @@ const Navbar: React.FC = () => {
         <Link to="/">BusinessConnect Sénégal</Link>
       </div>
       <div className="navbar-menu">
-        <Link to="/jobs">Emplois</Link>
+          <Link to="/jobs">Emplois</Link>
         <Link to="/formations">Formations</Link>
         <Link to="/cv-generator">CV Builder</Link>
-        <Link to="/forum">Forum</Link>
-        <Link to="/marketplace">Marketplace</Link>
+          <Link to="/forum">Forum</Link>
+          <Link to="/marketplace">Marketplace</Link>
       </div>
       <div className="navbar-end">
         {user ? (

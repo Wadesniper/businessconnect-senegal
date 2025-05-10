@@ -85,14 +85,19 @@ const GreenSpan = styled.span`
 `;
 
 const images = [
-  '/images/engineer.jpg',      // Ingénieur avec casque
-  '/images/mechanic.jpg',      // Mécanicienne
-  '/images/developer.jpg',     // Développeur
-  '/images/agronomist.jpg',    // Agronome
-  '/images/construction.jpg',  // Construction
-  '/images/scientist.jpg',     // Scientifique
-  '/images/doctor.jpg',        // Médecin
-  '/images/executive.jpg'      // Cadre
+  { src: '/images/1-ingenieur.jpg', desc: 'Concevez le monde de demain' },
+  { src: '/images/2-construction.jpg', desc: "Construisez l'avenir" },
+  { src: '/images/3-techno-securite.jpg', desc: 'Sécurisez le numérique' },
+  { src: '/images/4-agriculture.jpg', desc: 'Cultivez la réussite' },
+  { src: '/images/5-datacenter.jpg', desc: 'Gérez les données en toute sécurité' },
+  { src: '/images/6-mecanicienne.jpg', desc: 'Réparez, innovez' },
+  { src: '/images/7-reunion-pro.jpg', desc: 'Collaborez efficacement' },
+  { src: '/images/8-developpeur.jpg', desc: "Développez des solutions d'avenir" },
+  { src: '/images/9-immeuble.jpg', desc: "L'urbanisme au service du progrès" },
+  { src: '/images/10-pompier.jpg', desc: 'Protégez les vies' },
+  { src: '/images/11-science.jpg', desc: 'Expérimentez, découvrez' },
+  { src: '/images/12-medical.jpg', desc: 'Soignez avec passion' },
+  { src: '/images/13-business.jpg', desc: 'Entreprenez au Sénégal' },
 ];
 
 const slideVariants = {
@@ -112,7 +117,11 @@ const slideVariants = {
   })
 };
 
-const Hero: React.FC = () => {
+interface HeroProps {
+  onDiscoverClick?: () => void;
+}
+
+const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
   const [[page, direction], setPage] = useState([0, 0]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -146,7 +155,7 @@ const Hero: React.FC = () => {
               Découvrez les meilleurs talents et opportunités dans tous les secteurs d'activité. 
               Une plateforme unique pour les professionnels qui façonnent l'avenir du Sénégal.
             </Paragraph>
-            <StyledButton type="primary" size="large">
+            <StyledButton type="primary" size="large" onClick={onDiscoverClick}>
               Découvrir nos services
               <ArrowRightOutlined />
             </StyledButton>
@@ -157,7 +166,7 @@ const Hero: React.FC = () => {
           <AnimatePresence initial={false} custom={direction}>
             <SlideImage
               key={page}
-              $imageUrl={images[currentImageIndex]}
+              $imageUrl={images[currentImageIndex].src}
               custom={direction}
               variants={slideVariants}
               initial="enter"
@@ -167,7 +176,25 @@ const Hero: React.FC = () => {
                 x: { type: "spring", stiffness: 300, damping: 30 },
                 opacity: { duration: 0.2 }
               }}
-            />
+            >
+              <div style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                width: '100%',
+                background: 'rgba(0,0,0,0.45)',
+                color: '#fff',
+                padding: '18px 28px',
+                fontSize: 22,
+                fontWeight: 600,
+                borderRadius: '0 0 20px 20px',
+                letterSpacing: 1,
+                textShadow: '0 2px 8px #0007',
+                zIndex: 2
+              }}>
+                {images[currentImageIndex].desc}
+              </div>
+            </SlideImage>
           </AnimatePresence>
         </ImageSlider>
       </ContentWrapper>
