@@ -18,6 +18,6 @@ export const requireActiveSubscription = async (req: any, res: Response, next: N
     }
     next();
   } catch (error) {
-    return res.status(500).json({ message: 'Erreur lors de la vérification de l\'abonnement.' });
+    return res.status(500).json({ message: 'Erreur de vérification de l\'abonnement.' });
   }
 }; 

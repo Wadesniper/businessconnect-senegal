@@ -1,5 +1,0 @@
-{"level":"info","message":"Connecté à MongoDB","timestamp":"2025-05-09T03:51:03.558Z"}
-{"level":"info","message":"Serveur démarré sur le port 5000","timestamp":"2025-05-09T03:51:03.563Z"}
-{"level":"info","message":"Connecté à MongoDB","timestamp":"2025-05-09T03:56:29.246Z"}
-{"level":"error","message":"Le port 5000 est déjà utilisé. Tentative avec un autre port...","timestamp":"2025-05-09T03:56:29.252Z"}
-{"level":"info","message":"Serveur démarré sur le port 5000","timestamp":"2025-05-09T03:56:30.268Z"}
