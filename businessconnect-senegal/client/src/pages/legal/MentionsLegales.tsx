@@ -19,9 +19,6 @@ const MentionsLegales: React.FC = () => {
               <Text strong>Propriétaire :</Text> KHALIFA BUSINESS GROUP
             </Paragraph>
             <Paragraph>
-              <Text strong>Forme juridique :</Text> Société à responsabilité limitée (SARL)
-            </Paragraph>
-            <Paragraph>
               <Text strong>Adresse du siège social :</Text> Dakar, Sénégal
             </Paragraph>
             <Paragraph>

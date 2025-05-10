@@ -14,6 +14,10 @@ import LockIcon from '@mui/icons-material/Lock';
 import { useNavigate } from 'react-router-dom';
 import { formatDistance } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import WorkIcon from '@mui/icons-material/Work';
+import BusinessIcon from '@mui/icons-material/Business';
+import SchoolIcon from '@mui/icons-material/School';
+import ComputerIcon from '@mui/icons-material/Computer';
 
 interface JobCardProps {
   job: {
@@ -65,12 +69,35 @@ const JobCard: React.FC<JobCardProps> = ({ job, isSubscribed }) => {
     }
   };
 
+  const sectorIcons: Record<string, JSX.Element> = {
+    Informatique: <ComputerIcon fontSize="large" color="primary" />,
+    Business: <BusinessIcon fontSize="large" color="primary" />,
+    Formation: <SchoolIcon fontSize="large" color="primary" />,
+    default: <WorkIcon fontSize="large" color="primary" />,
+  };
+
   return (
-    <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Card 
+      sx={{ 
+        height: '100%', 
+        display: 'flex', 
+        flexDirection: 'column',
+        transition: 'box-shadow 0.3s, transform 0.3s',
+        boxShadow: 2,
+        borderRadius: 3,
+        '&:hover': {
+          boxShadow: 8,
+          transform: 'translateY(-4px) scale(1.02)',
+        },
+      }}
+    >
       <CardContent sx={{ flexGrow: 1 }}>
-        <Typography variant="h6" gutterBottom>
-          {job.title}
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+          {sectorIcons[job.sector] || sectorIcons.default}
+          <Typography variant="h6" gutterBottom sx={{ ml: 2 }}>
+            {job.title}
+          </Typography>
+        </Box>
         {job.company && (
           <Typography variant="subtitle1" color="text.secondary" gutterBottom>
             {job.company}

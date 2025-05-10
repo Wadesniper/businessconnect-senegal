@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { GA_ID } from './config/monitoring';
+import 'antd/dist/reset.css';
 
 // Google Analytics (gtag.js)
 declare global {

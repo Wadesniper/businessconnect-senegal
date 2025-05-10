@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { CVData, Template, CustomizationOptions } from '../types';
+import { CVData, Template, CustomizationOptions } from '../../../types/cv';
 import { CV_TEMPLATES } from '../data/templates';
 import { validateCVData } from '../services/cvService';
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Steps, Button, message } from 'antd';
 import TemplateSelection from './components/TemplateSelection';
 import CVForm from './components/CVForm';
-import { CVData, Template, CustomizationOptions } from './types';
+import { CVData, Template, CustomizationOptions } from '../../types/cv';
 
 const { Step } = Steps;
 

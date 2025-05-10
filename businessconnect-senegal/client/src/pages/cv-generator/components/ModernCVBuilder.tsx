@@ -42,6 +42,7 @@ const defaultCustomization: CustomizationOptions = {
 
 interface CVBuilderData extends Omit<CVData, 'template'> {
   template: Template;
+  sections: Section[];
 }
 
 interface PreviewData extends CVData {

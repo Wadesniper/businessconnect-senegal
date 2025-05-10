@@ -16,27 +16,34 @@ export interface Template {
 }
 
 export interface PersonalInfo {
-  fullName: string;
+  fullName?: string;
+  firstName?: string;
+  lastName?: string;
   title: string;
   email: string;
   phone: string;
-  location: string;
+  address?: string;
+  summary?: string;
   photo?: string;
   linkedin?: string;
   portfolio?: string;
 }
 
 export interface Experience {
+  id?: string;
+  title?: string;
   company: string;
-  position: string;
+  position?: string;
   startDate: string;
   endDate?: string;
   current?: boolean;
   description: string;
   achievements?: string[];
+  location?: string;
 }
 
 export interface Education {
+  id?: string;
   institution: string;
   degree: string;
   field: string;
@@ -44,23 +51,30 @@ export interface Education {
   endDate?: string;
   current?: boolean;
   description?: string;
+  location?: string;
+  achievements?: string[];
 }
 
 export interface Skill {
+  id?: string;
   name: string;
-  level: 'Débutant' | 'Intermédiaire' | 'Avancé' | 'Expert';
+  level: number | 'Débutant' | 'Intermédiaire' | 'Avancé' | 'Expert';
   category?: string;
 }
 
 export interface Language {
+  id?: string;
   name: string;
   level: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
 }
 
 export interface Project {
-  id: string;
-  title: string;
+  id?: string;
+  name?: string;
+  title?: string;
   description: string;
+  startDate?: string;
+  endDate?: string;
   technologies?: string[];
   url?: string;
 }
@@ -72,10 +86,11 @@ export interface Interest {
 }
 
 export interface Certification {
-  id: string;
+  id?: string;
   name: string;
   issuer: string;
   date: string;
+  description?: string;
 }
 
 export interface Section {
@@ -91,8 +106,9 @@ export interface CVData {
   education: Education[];
   skills: Skill[];
   languages: Language[];
-  certifications?: string[];
-  interests?: string[];
+  certifications?: (string | Certification)[];
+  interests?: (string | Interest)[];
+  projects?: Project[];
   references?: string[];
 }
 
@@ -107,8 +123,6 @@ export interface CustomizationOptions {
 export interface CVTemplateData extends CVData {
   template: Template;
 }
-
-export type Template = 'modern' | 'classic' | 'creative' | 'tech';
 
 export interface CV {
   id: string;

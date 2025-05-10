@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { Typography, Card, Row, Col, Tag, Divider, Rate, Progress, Button, Space, message } from 'antd';
 import { DownloadOutlined, FilePdfOutlined, FileWordOutlined } from '@ant-design/icons';
-import { CVData, Template, CustomizationOptions } from '../types';
+import { CVData, Template, CustomizationOptions, Interest } from '../../../types/cv';
 import { exportCV } from '../services/documentExport';
 
 const { Title, Text, Paragraph } = Typography;
@@ -141,7 +141,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
                   <Text strong>{exp.company}</Text>
                   <br />
                   <Text type="secondary">
-                    {exp.location} • {exp.startDate} - {exp.current ? 'Présent' : exp.endDate}
+                    {exp.location} • {exp.startDate ? (typeof exp.startDate === 'string' ? exp.startDate : new Date(exp.startDate).toLocaleDateString('fr-FR', { year: 'numeric', month: 'short' })) : ''} - {exp.current ? 'Présent' : (exp.endDate ? (typeof exp.endDate === 'string' ? exp.endDate : new Date(exp.endDate).toLocaleDateString('fr-FR', { year: 'numeric', month: 'short' })) : '')}
                   </Text>
                   <Paragraph style={{ marginTop: '8px' }}>
                     {exp.description}
@@ -172,7 +172,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
                   <Text strong>{edu.institution}</Text>
                   <br />
                   <Text type="secondary">
-                    {edu.location} • {edu.startDate} - {edu.endDate}
+                    {edu.location} • {edu.startDate ? (typeof edu.startDate === 'string' ? edu.startDate : new Date(edu.startDate).toLocaleDateString('fr-FR', { year: 'numeric', month: 'short' })) : ''} - {edu.endDate ? (typeof edu.endDate === 'string' ? edu.endDate : new Date(edu.endDate).toLocaleDateString('fr-FR', { year: 'numeric', month: 'short' })) : 'Présent'}
                   </Text>
                   {edu.description && (
                     <Paragraph style={{ marginTop: '8px' }}>
@@ -203,7 +203,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
                     <div>
                       <Text strong>{skill.name}</Text>
                       <Progress
-                        percent={skill.level * 25}
+                        percent={typeof skill.level === 'number' ? skill.level * 25 : skill.level === 'Débutant' ? 25 : skill.level === 'Intermédiaire' ? 50 : skill.level === 'Avancé' ? 75 : skill.level === 'Expert' ? 100 : 0}
                         strokeColor={customization.secondaryColor}
                         showInfo={false}
                       />
@@ -221,8 +221,8 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
                 Langues
               </Title>
               <Row gutter={[16, 16]}>
-                {data.languages.map((lang) => (
-                  <Col key={lang.id} span={12}>
+                {data.languages.map((lang, index) => (
+                  <Col key={lang.id || index} span={12}>
                     <Space>
                       <Text strong>{lang.name}</Text>
                       <Tag color={customization.secondaryColor}>
@@ -241,8 +241,16 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
               <Title level={4} style={{ color: customization.primaryColor }}>
                 Certifications
               </Title>
-              {data.certifications.map((cert) => (
-                <div key={cert.id} style={{ marginBottom: '16px' }}>
+              {data.certifications.map((cert, index) => {
+                if (typeof cert === 'string') {
+                  return (
+                    <div key={index} style={{ marginBottom: '16px' }}>
+                      <Text strong>{cert}</Text>
+                    </div>
+                  );
+                } else {
+                  return (
+                    <div key={cert.id || index} style={{ marginBottom: '16px' }}>
                   <Title level={5} style={{ marginBottom: '4px' }}>
                     {cert.name}
                   </Title>
@@ -255,7 +263,9 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
                     </Paragraph>
                   )}
                 </div>
-              ))}
+                  );
+                }
+              })}
             </div>
           )}
 
@@ -303,16 +313,26 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
               <Title level={4} style={{ color: customization.primaryColor }}>
                 Centres d'intérêt
               </Title>
-              {data.interests.map((interest) => (
-                <div key={interest.id} style={{ marginBottom: '16px' }}>
-                  <Text strong>{interest.name}</Text>
-                  {interest.description && (
-                    <Paragraph style={{ marginTop: '4px' }}>
-                      {interest.description}
-                    </Paragraph>
-                  )}
-                </div>
-              ))}
+              {data.interests.map((interest, index) => {
+                if (typeof interest === 'string') {
+                  return (
+                    <div key={index} style={{ marginBottom: '16px' }}>
+                      <Text strong>{interest}</Text>
+                    </div>
+                  );
+                } else {
+                  return (
+                    <div key={interest.id || index} style={{ marginBottom: '16px' }}>
+                      <Text strong>{interest.name}</Text>
+                      {interest.description && (
+                        <Paragraph style={{ marginTop: '4px' }}>
+                          {interest.description}
+                        </Paragraph>
+                      )}
+                    </div>
+                  );
+                }
+              })}
             </div>
           )}
         </div>

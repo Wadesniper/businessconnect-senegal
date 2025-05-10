@@ -1,7 +1,7 @@
 import React from 'react';
 import { Avatar, Progress, Tag, Typography, Space, Rate } from 'antd';
 import { GithubOutlined, LinkedinOutlined, GlobalOutlined, MailOutlined, PhoneOutlined, EnvironmentOutlined } from '@ant-design/icons';
-import { CVData } from '../../types';
+import { CVData } from '../../../../types/cv';
 import { formatDate } from '../../../../utils/dateUtils';
 
 const { Title, Text, Paragraph } = Typography;
@@ -69,7 +69,7 @@ const TechModernTemplate: React.FC<TechModernTemplateProps> = ({ data }) => {
                 {skill.name}
               </Text>
               <Progress
-                percent={skill.level * 20}
+                percent={typeof skill.level === 'number' ? skill.level * 20 : skill.level === 'Débutant' ? 20 : skill.level === 'Intermédiaire' ? 40 : skill.level === 'Avancé' ? 60 : skill.level === 'Expert' ? 80 : skill.level === 'Maître' ? 100 : 0}
                 showInfo={false}
                 strokeColor="var(--secondary-color)"
                 trailColor="rgba(255, 255, 255, 0.2)"
@@ -108,9 +108,7 @@ const TechModernTemplate: React.FC<TechModernTemplateProps> = ({ data }) => {
                 {formatDate(exp.startDate)} - {exp.current ? 'Présent' : formatDate(exp.endDate || '')}
               </Text>
               <ul style={{ marginTop: '10px' }}>
-                {exp.description.map((desc, index) => (
-                  <li key={index}>{desc}</li>
-                ))}
+                {exp.description && <li>{exp.description}</li>}
               </ul>
               {exp.achievements && exp.achievements.length > 0 && (
                 <>
@@ -132,12 +130,21 @@ const TechModernTemplate: React.FC<TechModernTemplateProps> = ({ data }) => {
             <div key={edu.id} style={{ marginBottom: '20px' }}>
               <Title level={5} style={{ marginBottom: '5px' }}>
                 {edu.degree}
-                {edu.field && <span> en {edu.field}</span>}
               </Title>
-              <Text strong>{edu.school}</Text>
+              <Text strong>{edu.institution}</Text>
               <br />
               <Text type="secondary">
-                {formatDate(edu.startDate)} - {formatDate(edu.endDate)}
+                {typeof edu.startDate === 'string'
+                  ? formatDate(edu.startDate)
+                  : edu.startDate
+                    ? formatDate(String(edu.startDate))
+                    : ''}
+                {' - '}
+                {typeof edu.endDate === 'string'
+                  ? formatDate(edu.endDate)
+                  : edu.endDate
+                    ? formatDate(String(edu.endDate))
+                    : ''}
               </Text>
               {edu.description && (
                 <p style={{ marginTop: '10px' }}>{edu.description}</p>
@@ -159,13 +166,26 @@ const TechModernTemplate: React.FC<TechModernTemplateProps> = ({ data }) => {
         {data.certifications.length > 0 && (
           <div style={{ marginBottom: '30px' }}>
             <Title level={4}>Certifications</Title>
-            {data.certifications.map(cert => (
-              <div key={cert.id} style={{ marginBottom: '10px' }}>
-                <Text strong>{cert.name}</Text>
-                <br />
-                <Text type="secondary">{cert.issuer} - {new Date(cert.date).toLocaleDateString()}</Text>
-              </div>
-            ))}
+            {data.certifications.map((cert, index) => {
+              if (typeof cert === 'string') {
+                return (
+                  <div key={index} style={{ marginBottom: '10px' }}>
+                    <Text strong>{cert}</Text>
+                  </div>
+                );
+              } else {
+                return (
+                  <div key={cert.id || index} style={{ marginBottom: '10px' }}>
+                    <Text strong>{cert.name}</Text>
+                    <br />
+                    <Text type="secondary">{cert.issuer} - {cert.date}</Text>
+                    {cert.description && (
+                      <Paragraph style={{ marginTop: '8px' }}>{cert.description}</Paragraph>
+                    )}
+                  </div>
+                );
+              }
+            })}
           </div>
         )}
 
@@ -195,9 +215,13 @@ const TechModernTemplate: React.FC<TechModernTemplateProps> = ({ data }) => {
           <div>
             <Title level={4}>Centres d'intérêt</Title>
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-              {data.interests.map((interest, index) => (
-                <Tag key={index}>{interest}</Tag>
-              ))}
+              {data.interests.map((interest, index) => {
+                if (typeof interest === 'string') {
+                  return <Tag key={index}>{interest}</Tag>;
+                } else {
+                  return <Tag key={interest.id || index}>{interest.name}</Tag>;
+                }
+              })}
             </div>
           </div>
         )}

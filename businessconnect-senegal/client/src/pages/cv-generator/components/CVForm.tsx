@@ -16,7 +16,7 @@ import {
   message
 } from 'antd';
 import { MinusCircleOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
-import { CVData } from '../types';
+import { CVData } from '../../../types/cv';
 import dayjs from 'dayjs';
 import moment from 'moment';
 import 'moment/locale/fr';
@@ -70,8 +70,8 @@ const CVForm: React.FC<CVFormProps> = ({ data, onChange }) => {
     const formattedData: CVData = {
       personalInfo: {
         ...values.personalInfo,
-        summary: values.summary
       },
+      summary: values.personalInfo.summary,
       experience: values.experience?.map((exp: any) => ({
         ...exp,
         startDate: exp.period?.[0]?.format('YYYY-MM'),
@@ -205,7 +205,7 @@ const CVForm: React.FC<CVFormProps> = ({ data, onChange }) => {
       </Form.Item>
 
       <Form.Item
-        name="summary"
+        name={['personalInfo', 'summary']}
         label="Résumé professionnel"
         rules={[{ required: true, message: 'Veuillez saisir votre résumé professionnel' }]}
       >

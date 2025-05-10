@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Typography, Row, Col, Avatar, Tag, Divider } from 'antd';
-import { CVTemplateModel, CVData } from './types';
+import { CVTemplateModel, CVData } from '../../types/cv';
 
 interface CVPreviewProps {
   data: CVData;
@@ -34,7 +34,10 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template }) => {
           <Typography.Title level={4}>Expériences professionnelles</Typography.Title>
           {experience && experience.length > 0 ? experience.map((exp, idx) => (
             <div key={idx} style={{ marginBottom: 12 }}>
-              <Typography.Text strong>{exp.position}</Typography.Text> chez <Typography.Text>{exp.company}</Typography.Text> ({exp.startDate ? new Date(exp.startDate).toLocaleDateString('fr-FR', { year: 'numeric', month: 'short' }) : ''} - {exp.endDate ? new Date(exp.endDate).toLocaleDateString('fr-FR', { year: 'numeric', month: 'short' }) : 'Présent'})<br />
+              <Typography.Text strong>{exp.position}</Typography.Text> chez <Typography.Text>{exp.company}</Typography.Text>
+              <Typography.Text type="secondary">
+                {exp.location} • {exp.startDate ? (typeof exp.startDate === 'string' ? exp.startDate : new Date(exp.startDate).toLocaleDateString('fr-FR', { year: 'numeric', month: 'short' })) : ''} - {exp.current ? 'Présent' : (exp.endDate ? (typeof exp.endDate === 'string' ? exp.endDate : new Date(exp.endDate).toLocaleDateString('fr-FR', { year: 'numeric', month: 'short' })) : '')}
+              </Typography.Text>
               <Typography.Text>{exp.description}</Typography.Text>
             </div>
           )) : <Typography.Text type="secondary">Aucune expérience renseignée</Typography.Text>}
@@ -42,7 +45,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template }) => {
           <Typography.Title level={4}>Formation</Typography.Title>
           {education && education.length > 0 ? education.map((edu, idx) => (
             <div key={idx} style={{ marginBottom: 12 }}>
-              <Typography.Text strong>{edu.degree}</Typography.Text> à <Typography.Text>{edu.school}</Typography.Text> ({edu.startDate ? new Date(edu.startDate).toLocaleDateString('fr-FR', { year: 'numeric', month: 'short' }) : ''} - {edu.endDate ? new Date(edu.endDate).toLocaleDateString('fr-FR', { year: 'numeric', month: 'short' }) : 'Présent'})<br />
+              <Typography.Text strong>{edu.degree}</Typography.Text> à <Typography.Text>{edu.school}</Typography.Text> ({edu.startDate ? (typeof edu.startDate === 'string' ? edu.startDate : new Date(edu.startDate).toLocaleDateString('fr-FR', { year: 'numeric', month: 'short' })) : ''} - {edu.endDate ? (typeof edu.endDate === 'string' ? edu.endDate : new Date(edu.endDate).toLocaleDateString('fr-FR', { year: 'numeric', month: 'short' })) : 'Présent'})<br />
               <Typography.Text>{edu.description}</Typography.Text>
             </div>
           )) : <Typography.Text type="secondary">Aucune formation renseignée</Typography.Text>}

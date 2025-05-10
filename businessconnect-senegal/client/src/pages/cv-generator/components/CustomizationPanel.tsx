@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form, Select, ColorPicker, Typography } from 'antd';
-import { CustomizationOptions } from '../types';
+import { CustomizationOptions } from '../../../types/cv';
 
 const { Title } = Typography;
 

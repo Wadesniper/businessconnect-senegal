@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Card, Typography, Row, Col, Button, Empty, List, Modal } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, DownloadOutlined, ShareAltOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { CV_TEMPLATES, CVTemplateModel } from './types';
+import { Template } from '../../types/cv';
+import { CV_TEMPLATES } from './data/templates';
 
 const { Title } = Typography;
 
@@ -32,7 +33,7 @@ const exampleCVs = [
 ];
 
 const CVGeneratorPage: React.FC = () => {
-  const [selectedTemplate, setSelectedTemplate] = useState<CVTemplateModel | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
   const [myCVs, setMyCVs] = useState(exampleCVs);
   const navigate = useNavigate();
 

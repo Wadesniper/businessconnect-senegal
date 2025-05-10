@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form, Select, Space, Typography, ColorPicker, Divider, message } from 'antd';
 import type { Color } from 'antd/es/color-picker';
-import { CustomizationOptions } from '../types';
+import { CustomizationOptions } from '../../../types/cv';
 
 const { Title } = Typography;
 

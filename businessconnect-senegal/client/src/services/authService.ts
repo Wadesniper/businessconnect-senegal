@@ -1,39 +1,54 @@
 import { api } from './api';
 import { message } from 'antd';
 import { subscriptionData, UserSubscription } from '../data/subscriptionData';
-import { User } from '../types/user';
-
-export interface LoginCredentials {
-  email: string;
-  password: string;
-}
-
-export interface RegisterData {
-  name: string;
-  email: string;
-  password: string;
-}
+import { User, UserRole, UserRegistrationData, LoginCredentials } from '../types/user';
 
 export interface AuthResponse {
-  token: string;
-  user: User;
+  success: boolean;
+  message: string;
+  data: {
+    token: string;
+    user: User;
+  };
 }
 
 const TOKEN_KEY = 'auth_token';
 
 export const authService = {
-  async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    const response = await api.post<AuthResponse>('/auth/login', credentials);
-    return response.data;
+  async login(credentials: LoginCredentials): Promise<AuthResponse['data']> {
+    try {
+      const response = await api.post<AuthResponse>('/auth/login', credentials);
+      if (response.data.success) {
+        localStorage.setItem('token', response.data.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.data.user));
+      }
+      return response.data.data;
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'Erreur lors de la connexion';
+      message.error(errorMessage);
+      throw error;
+    }
   },
 
-  async register(data: RegisterData): Promise<AuthResponse> {
-    const response = await api.post<AuthResponse>('/auth/register', data);
-    return response.data;
+  async register(data: UserRegistrationData): Promise<AuthResponse> {
+    try {
+      const response = await api.post<AuthResponse>('/auth/register', data);
+      if (response.data.success) {
+        localStorage.setItem('token', response.data.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.data.user));
+      }
+      return response.data;
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'Erreur lors de l\'inscription';
+      message.error(errorMessage);
+      throw error;
+    }
   },
 
-  async logout(): Promise<void> {
-    await api.post('/auth/logout');
+  logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = '/auth/login';
   },
 
   async getCurrentUser(): Promise<User> {
@@ -46,8 +61,8 @@ export const authService = {
     return response.data;
   },
 
-  async resetPassword(email: string): Promise<void> {
-    await api.post('/auth/reset-password', { email });
+  async resetPassword(phoneNumber: string): Promise<void> {
+    await api.post('/auth/reset-password', { phoneNumber });
   },
 
   async verifyResetToken(token: string): Promise<void> {
@@ -56,6 +71,25 @@ export const authService = {
 
   async setNewPassword(token: string, password: string): Promise<void> {
     await api.post('/auth/set-new-password', { token, password });
+  },
+
+  async verifyPhoneNumber(token: string): Promise<void> {
+    await api.post('/auth/verify-phone', { token });
+  },
+
+  async updateSubscription(status: 'active' | 'cancelled'): Promise<User> {
+    const response = await api.patch<User>('/auth/subscription', { status });
+    return response.data;
+  },
+
+  async updateCompanyInfo(companyData: Partial<User['company']>): Promise<User> {
+    const response = await api.patch<User>('/auth/company', companyData);
+    return response.data;
+  },
+
+  async updateProfileInfo(profileData: Partial<User['profile']>): Promise<User> {
+    const response = await api.patch<User>('/auth/profile-details', profileData);
+    return response.data;
   },
 
   setToken(token: string): void {
@@ -72,6 +106,27 @@ export const authService = {
 
   isAuthenticated(): boolean {
     return !!this.getToken();
+  },
+
+  getUserRole(): UserRole | null {
+    const user = this.getCurrentUser();
+    return user ? user.role : null;
+  },
+
+  isAdmin(): boolean {
+    return this.getUserRole() === 'admin';
+  },
+
+  isEtudiant(): boolean {
+    return this.getUserRole() === 'etudiant';
+  },
+
+  isAnnonceur(): boolean {
+    return this.getUserRole() === 'annonceur';
+  },
+
+  isEmployeur(): boolean {
+    return this.getUserRole() === 'employeur';
   },
 
   getCurrentUserSubscription(): UserSubscription | undefined {

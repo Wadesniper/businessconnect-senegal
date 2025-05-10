@@ -9,7 +9,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { useSubscription } from './hooks/useSubscription';
 // Lazy load des pages principales
 const Home = lazy(() => import('./pages/Home'));
-const Dashboard = lazy(() => import('./components/Dashboard'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
 const LoginForm = lazy(() => import('./components/LoginForm'));
 const RegisterForm = lazy(() => import('./components/RegisterForm'));
 const SubscriptionPage = lazy(() => import('./pages/subscription'));

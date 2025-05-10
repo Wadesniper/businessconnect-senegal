@@ -1,17 +1,31 @@
 import type { Config } from '@jest/types';
-import baseConfig from './jest.config';
 
 const config: Config.InitialOptions = {
-  ...baseConfig,
-  testMatch: ['**/__tests__/**/*.test.ts'],
-  testPathIgnorePatterns: ['/node_modules/', '.*\\.integration\\.test\\.ts$'],
+  preset: 'ts-jest',
+  testEnvironment: 'node',
+  roots: ['<rootDir>/businessconnect-senegal/server/src'],
+  testMatch: [
+    '**/__tests__/**/*.unit.+(ts|tsx)',
+    '**/?(*.)+(spec|test).unit.+(ts|tsx)'
+  ],
+  transform: {
+    '^.+\\.(ts|tsx)$': 'ts-jest'
+  },
+  moduleFileExtensions: ['ts', 'js', 'json', 'node'],
+  coverageDirectory: 'coverage',
+  coverageReporters: ['text', 'lcov', 'clover'],
   collectCoverageFrom: [
-    'src/**/*.ts',
-    '!src/**/*.d.ts',
-    '!src/**/*.integration.test.ts',
-    '!src/**/__tests__/**',
-    '!src/**/types/**'
-  ]
+    'businessconnect-senegal/server/src/**/*.ts',
+    '!**/*.d.ts',
+    '!**/node_modules/**'
+  ],
+  verbose: true,
+  testTimeout: 10000,
+  globals: {
+    'ts-jest': {
+      tsconfig: 'tsconfig.json'
+    }
+  }
 };
 
 export default config; 

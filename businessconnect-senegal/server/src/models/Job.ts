@@ -14,7 +14,7 @@ export interface IJob extends Document {
   keywords: string[];
   createdAt: Date;
   updatedAt: Date;
-  employerId?: string;
+  employerId?: mongoose.Types.ObjectId;
   isActive: boolean;
 }
 

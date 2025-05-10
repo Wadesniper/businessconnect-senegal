@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Row, Col, Typography, Radio, message } from 'antd';
-import { Template } from '../types';
+import { Template } from '../../../types/cv';
 import { CV_TEMPLATES } from '../data/templates';
 
 const { Title } = Typography;

@@ -20,8 +20,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-const authRoutes = require('./routes/auth');
+const authRoutes = require('./routes/authApi').default;
+const jobsRoutes = require('./routes/jobs').default;
 app.use('/api/auth', authRoutes);
+app.use('/api/jobs', jobsRoutes);
 
 // Middleware d'erreur
 app.use(errorHandler);

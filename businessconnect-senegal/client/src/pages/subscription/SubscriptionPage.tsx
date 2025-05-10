@@ -9,16 +9,17 @@ const { Title, Paragraph } = Typography;
 const offers = [
   {
     key: 'student',
-    title: "Étudiant / Demandeur d'emploi",
+    title: "Étudiant / Chercheur d'emploi",
     price: 1000,
     color: '#1890ff',
     icon: <UserOutlined style={{ fontSize: 40, color: '#1890ff' }} />,
     features: [
-      'Accès illimité aux fiches métiers',
-      'Consulter et postuler aux offres d'emploi',
-      'Accès au générateur de CV',
-      'Accès au forum et à la communauté',
-      'Support prioritaire',
+      "Accès aux offres d'emploi",
+      'Espace CV',
+      'Forum',
+      'Fiches métiers',
+      'Formations',
+      'Support standard'
     ],
   },
   {
@@ -28,26 +29,29 @@ const offers = [
     color: '#52c41a',
     icon: <ShopOutlined style={{ fontSize: 40, color: '#52c41a' }} />,
     features: [
-      'Publier des offres d'emploi',
-      'Accès à la CVthèque',
-      'Gestion des candidatures',
-      'Statistiques avancées',
-      'Support premium',
+      "Publication d'offres",
+      'Visibilité plateforme',
+      'Statistiques de vues',
+      'Support prioritaire',
+      'Badge "Annonceur Vérifié"',
+      'Outils de promotion'
     ],
   },
   {
     key: 'employeur',
-    title: 'Employeur',
+    title: 'Recruteur',
     price: 9000,
-    color: '#fa8c16',
-    icon: <TeamOutlined style={{ fontSize: 40, color: '#fa8c16' }} />,
+    color: '#faad14',
+    icon: <TeamOutlined style={{ fontSize: 40, color: '#faad14' }} />,
     features: [
-      'Toutes les fonctionnalités annonceur',
-      'Accès illimité à la CVthèque',
-      'Gestion avancée des équipes',
-      'Outils de présélection',
-      'Accompagnement RH personnalisé',
+      'Accès CVthèque complète',
+      'Contact direct candidats',
+      'Publication offres illimitées',
+      'Statistiques avancées',
+      'Support dédié 24/7',
+      'Outils de filtrage premium'
     ],
+    popular: true
   },
 ];
 
@@ -100,6 +104,7 @@ const SubscriptionPage: React.FC = () => {
                   <div>
                     <span style={{ fontSize: 36, fontWeight: 700, color: offer.color }}>{offer.price.toLocaleString()} FCFA</span>
                     <span style={{ fontSize: 18, color: '#888', marginLeft: 4 }}>/mois</span>
+                    {offer.popular && <Tag color="gold" style={{ marginLeft: 8 }}>Populaire</Tag>}
                   </div>
                   <div style={{ margin: '16px 0' }}>
                     {offer.features.map((feature, idx) => (
@@ -109,7 +114,7 @@ const SubscriptionPage: React.FC = () => {
                   <Button
                     type="primary"
                     size="large"
-                    style={{ background: offer.color, border: 'none', borderRadius: 8, width: '100%' }}
+                    style={{ background: offer.color, border: 'none', borderRadius: 25, width: '100%' }}
                     onClick={() => handleSubscribe(offer.key)}
                   >
                     S'abonner

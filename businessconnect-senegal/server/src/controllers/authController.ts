@@ -1,54 +1,96 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt, { Secret } from 'jsonwebtoken';
-import { User } from '../models/User';
+import { User } from '../models/UserModel';
 import { config } from '../config';
 import { logger } from '../utils/logger';
+import { sendVerificationEmail, sendPasswordResetEmail } from '../services/emailService';
 
 const secret: Secret = config.JWT_SECRET;
+const ALLOWED_ROLES = ['admin', 'etudiant', 'annonceur', 'employeur'];
 
 export class AuthController {
   constructor() {}
 
   register = async (req: Request, res: Response) => {
     try {
-      const { firstName, lastName, email, password } = req.body;
+      const {
+        fullName,
+        email,
+        password,
+        phoneNumber,
+        company
+      } = req.body;
 
-      // Vérifier si l'utilisateur existe déjà
-      const existingUser = await User.findOne({ email });
-      if (existingUser) {
+      // Validation des champs obligatoires
+      if (!fullName || !phoneNumber || !password) {
         return res.status(400).json({
           success: false,
-          message: 'Cet email est déjà utilisé'
+          message: 'Nom complet, téléphone et mot de passe sont obligatoires.'
         });
       }
 
-      // Hasher le mot de passe
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
+      // Vérification de l'unicité du téléphone ou de l'email
+      const existingUser = await User.findOne({
+        $or: [
+          { phoneNumber },
+          ...(email ? [{ email }] : [])
+        ]
+      });
+      if (existingUser) {
+        return res.status(400).json({
+          success: false,
+          message: 'Ce téléphone ou cet email est déjà utilisé'
+        });
+      }
 
-      // Créer le nouvel utilisateur
+      // Création de l'utilisateur
       const user = new User({
-        firstName,
-        lastName,
+        fullName,
         email,
-        password: hashedPassword
+        password,
+        phoneNumber,
+        role: 'utilisateur', // Rôle par défaut
+        company,
+        isVerified: true,
+        settings: {
+          notifications: true,
+          newsletter: true,
+          language: 'fr',
+          theme: 'light'
+        }
       });
 
       await user.save();
 
-      // Générer le token de vérification
-      const verificationToken = jwt.sign(
-        { id: (user as any)._id },
+      // Création du token d'authentification
+      const authToken = jwt.sign(
+        {
+          id: user._id,
+          email: user.email,
+          role: user.role,
+          isVerified: user.isVerified
+        },
         secret,
-        { expiresIn: '24h' }
+        { expiresIn: '7d' }
       );
-
-      // Ici tu peux envoyer un email de vérification si tu veux, sinon tu peux ignorer
 
       res.status(201).json({
         success: true,
-        message: 'Inscription réussie. Veuillez vérifier votre email.'
+        message: 'Inscription réussie',
+        data: {
+          token: authToken,
+          user: {
+            id: user._id,
+            email: user.email,
+            fullName: user.fullName,
+            role: user.role,
+            isVerified: user.isVerified,
+            phoneNumber: user.phoneNumber,
+            company: user.company,
+            settings: user.settings
+          }
+        }
       });
     } catch (error) {
       logger.error('Erreur lors de l\'inscription:', error);
@@ -59,83 +101,25 @@ export class AuthController {
     }
   };
 
-  login = async (req: Request, res: Response) => {
-    try {
-      const { email, password } = req.body;
-
-      // Vérifier si l'utilisateur existe
-      const user = await User.findOne({ email }).select('+password');
-      if (!user) {
-        return res.status(401).json({
-          success: false,
-          message: 'Email ou mot de passe incorrect'
-        });
-      }
-
-      // Vérifier le mot de passe
-      const isMatch = await bcrypt.compare(password, (user as any).password);
-      if (!isMatch) {
-        return res.status(401).json({
-          success: false,
-          message: 'Email ou mot de passe incorrect'
-        });
-      }
-
-      // Vérifier si l'email est vérifié
-      if (!(user as any).isVerified) {
-        return res.status(401).json({
-          success: false,
-          message: 'Veuillez vérifier votre email avant de vous connecter'
-        });
-      }
-
-      // Générer le token JWT
-      const token = jwt.sign(
-        { id: (user as any)._id },
-        secret,
-        { expiresIn: config.JWT_EXPIRES_IN }
-      );
-
-      res.status(200).json({
-        success: true,
-        token,
-        user: {
-          id: (user as any)._id,
-          firstName: (user as any).firstName,
-          lastName: (user as any).lastName,
-          email: (user as any).email,
-          role: (user as any).role
-        }
-      });
-    } catch (error) {
-      logger.error('Erreur lors de la connexion:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Une erreur est survenue lors de la connexion'
-      });
-    }
-  };
-
   verifyEmail = async (req: Request, res: Response) => {
     try {
-      const { token } = req.params;
+      const { token } = req.body;
 
-      // Vérifier le token
-      const decoded = jwt.verify(token, config.JWT_SECRET) as { id: string };
-      const user = await User.findById(decoded.id);
+      const decoded = jwt.verify(token, secret) as { email: string };
+      const user = await User.findOne({ email: decoded.email, verificationToken: token });
 
       if (!user) {
         return res.status(400).json({
           success: false,
-          message: 'Token invalide'
+          message: 'Token de vérification invalide ou expiré'
         });
       }
 
-      // Mettre à jour le statut de vérification
-      (user as any).isVerified = true;
+      user.isVerified = true;
+      user.verificationToken = undefined;
       await user.save();
 
-      res.status(200).json({
+      res.json({
         success: true,
         message: 'Email vérifié avec succès'
       });
@@ -143,7 +127,84 @@ export class AuthController {
       logger.error('Erreur lors de la vérification de l\'email:', error);
       res.status(400).json({
         success: false,
-        message: 'Token invalide ou expiré'
+        message: 'Token de vérification invalide ou expiré'
+      });
+    }
+  };
+
+  login = async (req: Request, res: Response) => {
+    try {
+      const { identifier, password } = req.body;
+
+      if (!identifier || !password) {
+        return res.status(400).json({
+          success: false,
+          message: 'Identifiant (téléphone ou nom complet) et mot de passe sont obligatoires'
+        });
+      }
+
+      // Recherche de l'utilisateur par numéro de téléphone ou nom complet
+      const user = await User.findOne({
+        $or: [
+          { phoneNumber: identifier },
+          { fullName: identifier }
+        ]
+      }).select('+password');
+
+      if (!user) {
+        return res.status(400).json({
+          success: false,
+          message: 'Identifiant ou mot de passe incorrect'
+        });
+      }
+
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(400).json({
+          success: false,
+          message: 'Identifiant ou mot de passe incorrect'
+        });
+      }
+
+      // Mise à jour de la dernière connexion
+      user.lastLogin = new Date();
+      await user.save();
+
+      const token = jwt.sign(
+        {
+          id: user._id,
+          phoneNumber: user.phoneNumber,
+          role: user.role,
+          isVerified: user.isVerified
+        },
+        secret,
+        { expiresIn: '7d' }
+      );
+
+      res.status(200).json({
+        success: true,
+        message: 'Connexion réussie',
+        data: {
+          token,
+          user: {
+            id: user._id,
+            phoneNumber: user.phoneNumber,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            fullName: user.fullName,
+            role: user.role,
+            isVerified: user.isVerified,
+            company: user.company,
+            settings: user.settings,
+            lastLogin: user.lastLogin
+          }
+        }
+      });
+    } catch (error) {
+      logger.error('Erreur lors de la connexion:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Une erreur est survenue lors de la connexion'
       });
     }
   };
@@ -162,39 +223,45 @@ export class AuthController {
 
       // Générer le token de réinitialisation
       const resetToken = jwt.sign(
-        { id: (user as any)._id },
+        { id: user._id },
         secret,
         { expiresIn: '1h' }
       );
 
       // Sauvegarder le token
-      (user as any).resetPasswordToken = resetToken;
-      (user as any).resetPasswordExpires = new Date(Date.now() + 3600000); // 1 heure
+      user.resetPasswordToken = resetToken;
+      user.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 heure
       await user.save();
 
       // Envoyer l'email de réinitialisation
-      // Ici tu peux envoyer un email de réinitialisation si tu veux, sinon tu peux ignorer
+      await sendPasswordResetEmail(email, resetToken);
 
-      res.status(200).json({
+      res.json({
         success: true,
-        message: 'Email de réinitialisation envoyé'
+        message: 'Un email de réinitialisation a été envoyé'
       });
     } catch (error) {
       logger.error('Erreur lors de la demande de réinitialisation:', error);
       res.status(500).json({
         success: false,
-        message: 'Une erreur est survenue'
+        message: 'Une erreur est survenue lors de la demande de réinitialisation'
       });
     }
   };
 
   resetPassword = async (req: Request, res: Response) => {
     try {
-      const { token } = req.params;
-      const { password } = req.body;
+      const { token, password } = req.body;
+
+      if (!token || !password) {
+        return res.status(400).json({
+          success: false,
+          message: 'Token et nouveau mot de passe sont requis'
+        });
+      }
 
       // Vérifier le token
-      const decoded = jwt.verify(token, config.JWT_SECRET) as { id: string };
+      const decoded = jwt.verify(token, secret) as { id: string };
       const user = await User.findOne({
         _id: decoded.id,
         resetPasswordToken: token,
@@ -208,25 +275,21 @@ export class AuthController {
         });
       }
 
-      // Hasher le nouveau mot de passe
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
-
       // Mettre à jour le mot de passe
-      (user as any).password = hashedPassword;
-      (user as any).resetPasswordToken = undefined;
-      (user as any).resetPasswordExpires = undefined;
+      user.password = password;
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpires = undefined;
       await user.save();
 
-      res.status(200).json({
+      res.json({
         success: true,
         message: 'Mot de passe réinitialisé avec succès'
       });
     } catch (error) {
       logger.error('Erreur lors de la réinitialisation du mot de passe:', error);
-      res.status(400).json({
+      res.status(500).json({
         success: false,
-        message: 'Token invalide ou expiré'
+        message: 'Une erreur est survenue lors de la réinitialisation du mot de passe'
       });
     }
   };

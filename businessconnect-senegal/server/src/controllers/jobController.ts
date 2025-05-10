@@ -1,9 +1,9 @@
-import { Request, Response } from 'express';
+import { Request as ExpressRequest, Response } from 'express';
 import Job, { IJob } from '../models/Job';
 import { logger } from '../utils/logger';
 
 // Créer une nouvelle offre
-export const createJob = async (req: Request, res: Response) => {
+export const createJob = async (req: ExpressRequest & { user?: any }, res: Response) => {
   try {
     const jobData = {
       ...req.body,
@@ -21,7 +21,7 @@ export const createJob = async (req: Request, res: Response) => {
 };
 
 // Récupérer toutes les offres actives
-export const getJobs = async (req: Request, res: Response) => {
+export const getJobs = async (req: ExpressRequest, res: Response) => {
   try {
     const { sector, jobType, search } = req.query;
     
@@ -42,7 +42,7 @@ export const getJobs = async (req: Request, res: Response) => {
 };
 
 // Récupérer une offre par son ID
-export const getJobById = async (req: Request, res: Response) => {
+export const getJobById = async (req: ExpressRequest, res: Response) => {
   try {
     const job = await Job.findById(req.params.id);
     if (!job) {
@@ -56,7 +56,7 @@ export const getJobById = async (req: Request, res: Response) => {
 };
 
 // Mettre à jour une offre
-export const updateJob = async (req: Request, res: Response) => {
+export const updateJob = async (req: ExpressRequest & { user?: any }, res: Response) => {
   try {
     const job = await Job.findById(req.params.id);
     
@@ -84,7 +84,7 @@ export const updateJob = async (req: Request, res: Response) => {
 };
 
 // Supprimer une offre
-export const deleteJob = async (req: Request, res: Response) => {
+export const deleteJob = async (req: ExpressRequest & { user?: any }, res: Response) => {
   try {
     const job = await Job.findById(req.params.id);
     
@@ -97,7 +97,7 @@ export const deleteJob = async (req: Request, res: Response) => {
       return res.status(403).json({ message: 'Non autorisé à supprimer cette offre' });
     }
 
-    await job.remove();
+    await job.deleteOne();
     logger.info(`Offre supprimée: ${req.params.id}`);
     res.json({ message: 'Offre supprimée avec succès' });
   } catch (error) {
@@ -107,7 +107,7 @@ export const deleteJob = async (req: Request, res: Response) => {
 };
 
 // Désactiver une offre
-export const deactivateJob = async (req: Request, res: Response) => {
+export const deactivateJob = async (req: ExpressRequest & { user?: any }, res: Response) => {
   try {
     const job = await Job.findById(req.params.id);
     

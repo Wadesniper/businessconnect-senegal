@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, Radio, Space, Tag, Image, Empty } from 'antd';
 import { CrownOutlined } from '@ant-design/icons';
-import { Template } from '../types';
+import { Template } from '../../../types/cv';
 
 interface TemplateSelectorProps {
   onSelect: (template: Template) => void;
