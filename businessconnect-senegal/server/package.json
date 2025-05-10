@@ -9,7 +9,6 @@
     "build:dev": "tsc --project tsconfig.dev.json",
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "postinstall": "yarn build:dev",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
