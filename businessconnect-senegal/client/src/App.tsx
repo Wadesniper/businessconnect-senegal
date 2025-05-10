@@ -26,10 +26,8 @@ const CGV = lazy(() => import('./pages/legal/CGV'));
 const CGU = lazy(() => import('./pages/legal/CGU'));
 const Privacy = lazy(() => import('./pages/legal/Privacy'));
 const Cookies = lazy(() => import('./pages/legal/Cookies'));
-const JobsPage = lazy(() => import('./pages/jobs'));
-const JobDetail = lazy(() => import('./pages/jobs/JobDetail'));
-const FormationsPage = lazy(() => import('./pages/formations'));
-const FormationDetail = lazy(() => import('./pages/formations/FormationDetail'));
+const JobsPage = lazy(() => import('./pages/jobs/JobsPage'));
+const FormationsPage = lazy(() => import('./pages/formations/FormationsPage'));
 const ProfilePage = lazy(() => import('./pages/profile/ProfilePage'));
 const NotFoundPage = lazy(() => import('./pages/404'));
 const CVGenerator = lazy(() => import('./pages/cv-generator'));
@@ -50,13 +48,11 @@ const App: React.FC = () => {
               {/* Pages publiques */}
               <Route path="/" element={<Home />} />
               <Route path="/jobs" element={<JobsPage />} />
-              <Route path="/jobs/:id" element={<JobDetail />} />
               <Route path="/marketplace" element={<MarketplacePage />} />
               <Route path="/marketplace/:id" element={<MarketplaceItemPage />} />
               <Route path="/forum" element={<ForumPage />} />
               <Route path="/forum/:id" element={<DiscussionDetail />} />
               <Route path="/formations" element={<FormationsPage />} />
-              <Route path="/formations/:id" element={<FormationDetail />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/cv-generator" element={<CVGenerator isSubscribed={hasActiveSubscription} />} />
 
