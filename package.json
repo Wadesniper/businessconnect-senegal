@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "postinstall": "cd businessconnect-senegal/server && yarn install && cd ../../client && yarn install && cd ../.."
+    "postinstall": "yarn --cwd businessconnect-senegal/server install && yarn --cwd businessconnect-senegal/client install"
   },
   "dependencies": {
     "antd": "^5.25.1",
