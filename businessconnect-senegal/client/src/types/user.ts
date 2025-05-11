@@ -111,7 +111,7 @@ export interface UserUpdateData {
 export interface Subscription {
   id: string;
   userId: string;
-  type: 'free' | 'premium' | 'enterprise';
+  type: 'etudiant' | 'annonceur' | 'employeur';
   status: 'active' | 'expired' | 'cancelled';
   startDate: string;
   endDate: string;

@@ -14,7 +14,7 @@ interface PaymentRequest {
   customerId: string;
   customerEmail: string;
   customerFullName: string;
-  subscriptionType: 'premium' | 'enterprise';
+  subscriptionType: 'etudiant' | 'annonceur' | 'employeur';
 }
 
 // URLs de PayTech configurées
@@ -112,10 +112,11 @@ class PaymentService {
     }
   }
 
-  getSubscriptionAmount(type: 'premium' | 'enterprise'): number {
+  getSubscriptionAmount(type: 'etudiant' | 'annonceur' | 'employeur'): number {
     const prices = {
-      premium: 15000,
-      enterprise: 50000
+      etudiant: 1000,
+      annonceur: 5000,
+      employeur: 9000
     };
     return prices[type];
   }

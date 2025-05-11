@@ -24,7 +24,7 @@ const SubscriptionSuccess: React.FC = () => {
         // Récupérer le token de paiement depuis l'URL
         const params = new URLSearchParams(location.search);
         const token = params.get('token');
-        const type = params.get('type') as 'premium' | 'enterprise';
+        const type = params.get('type') as 'etudiant' | 'annonceur' | 'employeur';
 
         if (!token || !type) {
           setError('Informations de paiement manquantes');

@@ -1,27 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Typography, Row, Col, Button, Empty, List, Modal } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, DownloadOutlined, ShareAltOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { Template } from '../../types/cv';
-import { CV_TEMPLATES } from './data/templates';
+import { CV_TEMPLATES } from './components/data/templates';
+import { useAuth } from '../../hooks/useAuth';
 
 const { Title } = Typography;
-
-// Exemples statiques de templates
-const templates = [
-  {
-    id: 'modern',
-    name: 'Moderne',
-    description: 'Un template moderne et épuré',
-    preview: '/images/cv-templates/modern-preview.png'
-  },
-  {
-    id: 'classic',
-    name: 'Classique',
-    description: 'Un template classique et professionnel',
-    preview: '/images/cv-templates/classic-preview.png'
-  }
-];
 
 // Exemples statiques de CVs (à remplacer par un formulaire local si besoin)
 const exampleCVs = [
@@ -33,9 +18,16 @@ const exampleCVs = [
 ];
 
 const CVGeneratorPage: React.FC = () => {
+  const { user } = useAuth();
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
   const [myCVs, setMyCVs] = useState(exampleCVs);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user && user.subscription?.type !== 'etudiant') {
+      navigate('/subscription');
+    }
+  }, [user, navigate]);
 
   const handleStartCV = () => {
     if (selectedTemplate) {
@@ -75,15 +67,20 @@ const CVGeneratorPage: React.FC = () => {
           <Col xs={24} sm={12} md={8} lg={6} key={template.id}>
             <Card
               hoverable
-              cover={<img alt={template.name} src={template.photo} style={{ width: '100%', height: 220, objectFit: 'cover' }} />}
-              onClick={() => setSelectedTemplate(template)}
+              cover={<img alt={template.name} src={template.thumbnail} style={{ width: '100%', height: 220, objectFit: 'cover' }} />}
+              onClick={() => setSelectedTemplate(template as Template)}
               style={{ border: selectedTemplate?.id === template.id ? '2px solid #1890ff' : undefined }}
             >
               <Card.Meta
-                title={template.name + ' (' + template.style.charAt(0).toUpperCase() + template.style.slice(1) + ')'}
+                title={template.name + (template.category ? ' (' + template.category + ')' : '')}
                 description={<>
-                  <div><b>Secteur :</b> {template.sector}</div>
+                  <div><b>Secteur :</b> {template.category}</div>
                   <div style={{ marginTop: 8 }}>{template.description}</div>
+                  {template.features && (
+                    <ul style={{ margin: 0, paddingLeft: 16 }}>
+                      {template.features.map((f, i) => <li key={i}>{f}</li>)}
+                    </ul>
+                  )}
                 </>}
               />
             </Card>

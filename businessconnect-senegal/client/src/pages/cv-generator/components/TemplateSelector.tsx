@@ -2,62 +2,12 @@ import React, { useState } from 'react';
 import { Card, Radio, Space, Tag, Image, Empty } from 'antd';
 import { CrownOutlined } from '@ant-design/icons';
 import { Template } from '../../../types/cv';
+import { CV_TEMPLATES } from './data/templates';
 
 interface TemplateSelectorProps {
   onSelect: (template: Template) => void;
   selectedTemplate: Template | null;
 }
-
-const templates: Template[] = [
-  {
-    id: 'tech-1',
-    name: 'Tech Modern',
-    category: 'Tech',
-    thumbnail: '/templates/tech-modern.png',
-    premium: true,
-    layout: 'modern'
-  },
-  {
-    id: 'tech-2',
-    name: 'Developer Classic',
-    category: 'Tech',
-    thumbnail: '/templates/tech-classic.png',
-    premium: false,
-    layout: 'classic'
-  },
-  {
-    id: 'finance-1',
-    name: 'Finance Pro',
-    category: 'Finance',
-    thumbnail: '/templates/finance-pro.png',
-    premium: true,
-    layout: 'classic'
-  },
-  {
-    id: 'marketing-1',
-    name: 'Creative Marketing',
-    category: 'Marketing',
-    thumbnail: '/templates/marketing-creative.png',
-    premium: true,
-    layout: 'creative'
-  },
-  {
-    id: 'health-1',
-    name: 'Medical Professional',
-    category: 'Santé',
-    thumbnail: '/templates/health-pro.png',
-    premium: true,
-    layout: 'classic'
-  },
-  {
-    id: 'education-1',
-    name: 'Teacher Classic',
-    category: 'Education',
-    thumbnail: '/templates/education-classic.png',
-    premium: false,
-    layout: 'classic'
-  }
-];
 
 const TemplateSelector: React.FC<TemplateSelectorProps> = ({
   onSelect,
@@ -67,16 +17,10 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
 
   const categories = [
     { value: 'all', label: 'Tous les modèles' },
-    { value: 'Tech', label: 'Tech / IT' },
-    { value: 'Finance', label: 'Finance / Banque' },
-    { value: 'Marketing', label: 'Marketing / Communication' },
-    { value: 'Santé', label: 'Santé' },
-    { value: 'Education', label: 'Education' },
-    { value: 'Commerce', label: 'Commerce / Vente' },
-    { value: 'Administration', label: 'Administration / RH' }
+    ...Array.from(new Set(CV_TEMPLATES.map(t => t.category))).map(cat => ({ value: cat, label: cat }))
   ];
 
-  const filteredTemplates = templates.filter(
+  const filteredTemplates = CV_TEMPLATES.filter(
     template => selectedCategory === 'all' || template.category === selectedCategory
   );
 
@@ -115,10 +59,9 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
               onClick={() => onSelect(template)}
               cover={
                 <div style={{ position: 'relative' }}>
-                  <Image
+                  <img
                     alt={template.name}
                     src={template.thumbnail}
-                    preview={false}
                     style={{ height: 320, objectFit: 'cover' }}
                   />
                   {template.premium && (
@@ -140,9 +83,11 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
               <Card.Meta
                 title={template.name}
                 description={
-                  <Space>
+                  <Space direction="vertical">
                     <Tag color="blue">{template.category}</Tag>
-                    <Tag color="cyan">{template.layout}</Tag>
+                    {template.features && template.features.map((f, i) => (
+                      <Tag key={i} color="cyan">{f}</Tag>
+                    ))}
                   </Space>
                 }
               />

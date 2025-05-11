@@ -31,6 +31,7 @@ const FormationsPage = lazy(() => import('./pages/formations/FormationsPage'));
 const ProfilePage = lazy(() => import('./pages/profile/ProfilePage'));
 const NotFoundPage = lazy(() => import('./pages/404'));
 const CVGenerator = lazy(() => import('./pages/cv-generator'));
+import JobDetailsPage from './pages/jobs/JobDetailsPage';
 
 const App: React.FC = () => {
   const { hasActiveSubscription } = useSubscription();
@@ -48,6 +49,7 @@ const App: React.FC = () => {
               {/* Pages publiques */}
               <Route path="/" element={<Home />} />
               <Route path="/jobs" element={<JobsPage />} />
+              <Route path="/jobs/:id" element={<JobDetailsPage />} />
               <Route path="/marketplace" element={<MarketplacePage />} />
               <Route path="/marketplace/:id" element={<MarketplaceItemPage />} />
               <Route path="/forum" element={<ForumPage />} />

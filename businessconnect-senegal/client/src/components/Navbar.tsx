@@ -21,10 +21,10 @@ const Navbar: React.FC = () => {
         <Link to="/">BusinessConnect Sénégal</Link>
       </div>
       <div className="navbar-menu">
-          <Link to="/jobs">Emplois</Link>
+          {/* <Link to="/jobs">Emplois</Link> */}
         <Link to="/formations">Formations</Link>
         <Link to="/cv-generator">CV Builder</Link>
-          <Link to="/forum">Forum</Link>
+          {/* <Link to="/forum">Forum</Link> */}
           <Link to="/marketplace">Marketplace</Link>
       </div>
       <div className="navbar-end">

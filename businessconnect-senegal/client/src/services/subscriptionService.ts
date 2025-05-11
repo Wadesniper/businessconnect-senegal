@@ -6,22 +6,22 @@ class SubscriptionService {
     return localStorageService.getUserSubscription(userId);
   }
 
-  async subscribe(userId: string, plan: 'free' | 'premium' | 'enterprise'): Promise<Subscription> {
+  async subscribe(userId: string, plan: 'etudiant' | 'annonceur' | 'employeur'): Promise<Subscription> {
     const planDetails = {
-      free: {
+      etudiant: {
         duration: 30, // jours
-        price: 0,
-        features: ['basic_search', 'cv_creation'],
+        price: 1000,
+        features: ['cv', 'offres_emploi', 'candidatures', 'forum', 'formations'],
       },
-      premium: {
+      annonceur: {
         duration: 30,
-        price: 15000,
-        features: ['advanced_search', 'cv_creation', 'job_alerts', 'priority_support'],
+        price: 5000,
+        features: ['publication_annonces', 'promotion', 'statistiques', 'support_prioritaire'],
       },
-      enterprise: {
+      employeur: {
         duration: 30,
-        price: 50000,
-        features: ['unlimited_search', 'cv_creation', 'job_alerts', 'priority_support', 'api_access', 'custom_branding'],
+        price: 9000,
+        features: ['publication_illimitee', 'cvtheque', 'gestion_candidatures', 'outils_rh'],
       }
     };
 

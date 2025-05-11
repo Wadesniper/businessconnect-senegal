@@ -13,6 +13,8 @@ export interface Template {
     education: string[];
     skills: string[];
   };
+  premium: boolean;
+  component?: React.ComponentType<any>;
 }
 
 export interface PersonalInfo {
