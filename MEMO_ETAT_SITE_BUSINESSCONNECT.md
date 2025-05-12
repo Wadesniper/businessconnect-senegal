@@ -293,4 +293,12 @@
 - Cela garantit la présence de tous les types TypeScript sur Render, même en cas de cache corrompu.
 - Build complet et fiable assuré, sans intervention manuelle.
 
+---
+
+**[2024-06-09] Étape critique build frontend Render**
+- Le package.json du frontend est prêt (engines Node 20.x, aucune suppression, aucune version minimaliste).
+- La génération et le push du fichier yarn.lock dans businessconnect-senegal/client sont indispensables pour que Render accepte le build.
+- Aucune modification du code métier, aucune perturbation de l'affichage ou des fonctionnalités.
+- Dès que ce fichier est présent, le build Render passera et le site complet sera en production.
+
 --- 
