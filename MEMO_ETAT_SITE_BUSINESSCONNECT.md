@@ -56,6 +56,101 @@
 
 *(Mise à jour automatique par l'IA lors de chaque ajout de template)*
 
+## 2024-06-XX
+
+### Intégration des templates CV sectoriels
+- **Centralisation de la configuration des templates dans un fichier unique (`components/data/templates.ts`)**.
+- **Harmonisation de tous les composants du générateur de CV pour utiliser cette source unique**.
+- **Correction et extension du typage (`Template`) pour inclure tous les champs nécessaires (premium, features, component, etc.)**.
+- **Affichage dynamique, sélection, aperçu, personnalisation et export testés et validés pour tous les modèles sectoriels**.
+- **Aucune anomalie bloquante, UI/UX robuste et professionnelle**.
+
+### Prochaines étapes
+- Tests finaux d'UX et d'export PDF.
+- Documentation continue.
+
+## 2024-06-XX — Mise à jour du flux de candidature offres d'emploi
+
+### Nouveau process (juin 2024)
+- **Page de détails d'offre dédiée (/jobs/:id)** :
+  - Accessible uniquement pour les utilisateurs abonnés (étudiant, annonceur, employeur).
+  - Affiche tous les détails de l'offre (titre, entreprise, lieu, type, secteur, description, prérequis, etc.).
+  - **Coordonnées de contact** (email et/ou téléphone) affichées en clair, facilement copiables.
+  - **Email** :
+    - Cliquable (mailto:), ouvre le client mail avec objet et corps pré-remplis (sans mention de businessconnectsenegal).
+    - Objet et corps du mail affichés pour copie rapide.
+  - **Téléphone** :
+    - Cliquable (tel:), ouvre le client d'appel du téléphone.
+    - Numéro affiché en clair et copiable.
+  - Si les deux sont présents, les deux options sont proposées.
+- **Bouton "Postuler" sur la page des offres** :
+  - Si non abonné : redirige vers la page d'abonnement.
+  - Si abonné : redirige vers la page de détails de l'offre (/jobs/:id).
+- **Expérience utilisateur** :
+  - Processus fluide, intuitif, sans friction, adapté mobile et desktop.
+  - Plus de modale pour la candidature, tout passe par la page dédiée.
+
+### À jour
+- Routeur mis à jour pour inclure la page /jobs/:id.
+- Tests réalisés :
+  - Affichage d'une offre unique OK.
+  - Publication d'une nouvelle offre par admin/employeur : visible instantanément pour tous.
+  - Accès aux coordonnées et actions de contact testés et validés.
+
 ---
 
-**Dernière MAJ : 2024-06-XX** 
+**Dernière MAJ : 2024-06-XX**
+
+# État des abonnements BusinessConnect Sénégal (mise à jour)
+
+## Types d'abonnement réels (production)
+
+- **Étudiant / Demandeur d'emploi** : 1000 FCFA / mois
+  - Accès : Générateur de CV, consultation d'offres, candidatures, fonctionnalités adaptées à la recherche d'emploi.
+- **Annonceur** : 5000 FCFA / mois
+  - Accès : Publication d'annonces, gestion de visibilité, outils de promotion.
+- **Employeur / Recruteur** : 9000 FCFA / mois
+  - Accès : Publication illimitée d'offres, accès à la CVthèque, gestion des candidatures, outils RH avancés.
+
+## Règle d'accès
+- Après abonnement, chaque utilisateur accède uniquement aux fonctionnalités correspondant à son type d'abonnement.
+- Les anciens types ('free', 'premium', 'enterprise') sont remplacés par ces 3 types réels.
+
+## Paiement
+- Le bouton "S'abonner" doit rediriger automatiquement vers l'interface CinetPay avec les clés de production.
+- Les clés CinetPay sont valides et en production.
+
+## À faire
+- Vérifier que le bouton "S'abonner" fonctionne et redirige bien vers CinetPay.
+- Adapter toute la logique d'abonnement et d'affichage selon ces 3 types uniquement.
+
+# État de validation des pages BusinessConnect Sénégal
+
+## ✅ Accueil (Home)
+- Affichage, navigation, responsive, données dynamiques : validés
+- Tous les tests unitaires passent
+- Aucun bug, aucun warning
+
+## ✅ Offres d'emploi (Jobs)
+- Affichage dynamique des offres depuis la BDD (MongoDB via API)
+- Filtres interactifs (secteur, type, localisation)
+- Test automatique complet (affichage, filtrage, navigation)
+- Aucune donnée sensible affichée (salaire, expérience)
+- Aucun bug, aucun warning
+
+## ✅ Formations
+- Liste statique des domaines, aucune dépendance à la BDD
+- Description claire pour chaque domaine
+- Bouton "Accéder" : redirection vers l'URL du domaine si abonné, sinon vers /subscription
+- Aucun affichage du mot "Cursa"
+- Test automatique : affichage, redirection abonné, redirection non abonné
+- Beauté et structure respectées (cards, responsive, design cohérent)
+- Aucun bug, aucun warning
+
+---
+
+**Prochaine étape : Marketplace**
+
+---
+
+*Dernière mise à jour : [date et heure de la modification]* 
