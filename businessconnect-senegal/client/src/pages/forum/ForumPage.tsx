@@ -5,5 +5,5 @@
 // };
 // export default ForumPage;
 
-const ForumPage = () => <div>Page Forum temporairement désactivée pour build autonome.</div>;
-export default ForumPage; 
+// Page forum supprimée définitivement (désactivation totale)
+export default function ForumPage() { return null; } 

@@ -269,4 +269,13 @@
 
 ---
 
-*Dernière mise à jour : 2024-06-XX* 
+*Dernière mise à jour : 2024-06-XX*
+
+---
+
+**[2024-06-09] Suppression définitive du forum**
+- La page forum a été supprimée du front (plus de code, plus d'export).
+- Les liens vers le forum ont été retirés de la navbar et du footer.
+- Décision prise pour garantir un risque zéro côté base de données et sécurité.
+
+--- 
