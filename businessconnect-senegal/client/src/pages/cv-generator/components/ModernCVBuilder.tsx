@@ -534,24 +534,18 @@ const ModernCVBuilder: React.FC<ModernCVBuilderProps> = ({
                   <Button type="primary" htmlType="submit">
                     Sauvegarder
                   </Button>
-                  <Tooltip title={!isSubscribed ? "Fonctionnalité premium" : ""}>
-                    <Button 
-                      onClick={() => handleExport('pdf')}
-                      icon={<DownloadOutlined />}
-                      disabled={!isSubscribed}
-                    >
-                      PDF
-                    </Button>
-                  </Tooltip>
-                  <Tooltip title={!isSubscribed ? "Fonctionnalité premium" : ""}>
-                    <Button
-                      onClick={() => handleExport('docx')}
-                      icon={<DownloadOutlined />}
-                      disabled={!isSubscribed}
-                    >
-                      Word
-                    </Button>
-                  </Tooltip>
+                  <Button 
+                    onClick={() => handleExport('pdf')}
+                    icon={<DownloadOutlined />}
+                  >
+                    PDF
+                  </Button>
+                  <Button
+                    onClick={() => handleExport('docx')}
+                    icon={<DownloadOutlined />}
+                  >
+                    Word
+                  </Button>
                 </Space>
               </Form>
             </DragDropContext>
