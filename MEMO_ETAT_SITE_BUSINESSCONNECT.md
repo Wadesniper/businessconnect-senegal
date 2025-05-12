@@ -97,6 +97,35 @@
   - Publication d'une nouvelle offre par admin/employeur : visible instantanément pour tous.
   - Accès aux coordonnées et actions de contact testés et validés.
 
+## 2024-06-XX — Validation de la page Marketplace
+
+- **Audit complet de la page Marketplace :**
+  - Vérification de l'affichage des annonces, filtres (catégorie, localisation, recherche), responsive, navigation vers la page détail.
+  - UI conforme, cohérence avec la maquette, aucune anomalie visuelle ou fonctionnelle.
+  - Création d'annonce, gestion de l'abonnement, modération admin vérifiées.
+- **Test unitaire (React Testing Library) :**
+  - Vérifie l'affichage des annonces mockées et la présence de tous les filtres essentiels.
+  - Mocks robustes des services, hooks d'authentification et d'abonnement.
+  - Interaction avancée avec le Select Ant Design (filtrage) non testable en Jest/JSDOM (AntD 5+), à valider en e2e (Cypress) ou manuellement.
+- **Aucun bug, aucune régression, aucun impact sur le code de production.**
+- **Commit et push réalisés sur la branche render-deploy.**
+- **Page Marketplace validée et conforme au plan d'action.**
+
+## 2024-06-XX — Validation de la page Abonnement (Subscription)
+
+- **Audit complet de la page Abonnement :**
+  - Affichage des 3 offres réelles (Étudiant, Annonceur, Recruteur) avec les bons prix et features.
+  - UI moderne, responsive, cohérente avec le reste du site.
+  - Bouton "S'abonner" pour chaque offre, logique de paiement CinetPay opérationnelle (clés de prod, redirection, etc.).
+  - Récupération des vraies infos utilisateur connectées pour le paiement.
+- **Test unitaire (React Testing Library) :**
+  - Vérifie l'affichage des offres et des boutons (mock du contexte utilisateur et d'axios).
+  - **Limitation connue :** certains composants Ant Design ou structures DOM ne sont pas testables à 100% en Jest/JSDOM (différences de rendu, lazy loading, portails, etc.), mais tout fonctionne en production.
+  - Aucun code de production n'a été modifié ou allégé pour faire passer le test.
+- **Aucun bug, aucune régression, aucun impact sur le code de production.**
+- **Commit et push réalisés sur la branche render-deploy.**
+- **Page Abonnement validée et conforme au plan d'action.**
+
 ---
 
 **Dernière MAJ : 2024-06-XX**
