@@ -278,4 +278,12 @@
 - Les liens vers le forum ont été retirés de la navbar et du footer.
 - Décision prise pour garantir un risque zéro côté base de données et sécurité.
 
+---
+
+**[2024-06-09] Correction critique Render**
+- Suppression du script build du package.json à la racine du repo.
+- Objectif : éviter que Render exécute un build global (vite build) lors du déploiement du backend.
+- Le build est désormais géré uniquement dans les sous-dossiers client (front) et server (back).
+- Aucun impact sur le fonctionnement ou l'affichage du site, tout reste complet et fonctionnel.
+
 --- 
