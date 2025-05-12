@@ -80,7 +80,7 @@ const StyledButton = styled(Button)`
 `;
 
 const GreenSpan = styled.span`
-  color: #52c41a;
+  color: #1ec773;
   font-weight: bold;
 `;
 
