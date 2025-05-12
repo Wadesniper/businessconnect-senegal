@@ -118,6 +118,7 @@
   - UI moderne, responsive, cohérente avec le reste du site.
   - Bouton "S'abonner" pour chaque offre, logique de paiement CinetPay opérationnelle (clés de prod, redirection, etc.).
   - Récupération des vraies infos utilisateur connectées pour le paiement.
+  - **Le paiement est intégré à la page Abonnement : il n'existe pas de page "paiement" séparée.**
 - **Test unitaire (React Testing Library) :**
   - Vérifie l'affichage des offres et des boutons (mock du contexte utilisateur et d'axios).
   - **Limitation connue :** certains composants Ant Design ou structures DOM ne sont pas testables à 100% en Jest/JSDOM (différences de rendu, lazy loading, portails, etc.), mais tout fonctionne en production.
@@ -125,6 +126,20 @@
 - **Aucun bug, aucune régression, aucun impact sur le code de production.**
 - **Commit et push réalisés sur la branche render-deploy.**
 - **Page Abonnement validée et conforme au plan d'action.**
+
+## 2024-06-XX — Validation de la page Profil utilisateur
+
+- **Audit complet de la page Profil :**
+  - Affichage dynamique des infos utilisateur (avatar, nom, email/téléphone, rôle).
+  - UI centrée, carte Ant Design, responsive, design cohérent.
+  - Bouton de déconnexion fonctionnel.
+  - Message d'invitation à se connecter si non authentifié.
+- **Test unitaire (React Testing Library) :**
+  - Vérifie l'affichage des infos utilisateur, du bouton de déconnexion, et du message si non connecté (mock du contexte d'authentification).
+  - Aucun code de production n'a été modifié ou allégé pour faire passer le test.
+- **Aucun bug, aucune régression, aucun impact sur le code de production.**
+- **Commit et push réalisés sur la branche render-deploy.**
+- **Page Profil validée et conforme au plan d'action.**
 
 ---
 
@@ -176,10 +191,10 @@
 - Beauté et structure respectées (cards, responsive, design cohérent)
 - Aucun bug, aucun warning
 
+## ✅ Abonnement (Subscription)
+- Affichage, paiement intégré, tests unitaires, tout validé
+- Aucun bug, aucun warning
+
 ---
 
-**Prochaine étape : Marketplace**
-
----
-
-*Dernière mise à jour : [date et heure de la modification]* 
+*Dernière mise à jour : 2024-06-XX* 
