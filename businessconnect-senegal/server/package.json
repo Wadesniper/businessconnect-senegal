@@ -87,5 +87,8 @@
   },
   "engines": {
     "node": "20.x"
+  },
+  "resolutions": {
+    "@types/express": "4.17.21"
   }
 }
