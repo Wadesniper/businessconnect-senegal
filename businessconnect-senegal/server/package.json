@@ -17,7 +17,8 @@
     "migrate:down": "node-pg-migrate -j ts down",
     "migrate:create": "node-pg-migrate -j ts create",
     "lint": "eslint src --ext .ts",
-    "lint:fix": "eslint src --ext .ts --fix"
+    "lint:fix": "eslint src --ext .ts --fix",
+    "prebuild": "yarn install --check-files --force"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

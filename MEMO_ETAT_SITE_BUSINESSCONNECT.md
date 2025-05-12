@@ -286,4 +286,11 @@
 - Remise en place de la contrainte Node.js 20.x dans le package.json backend.
 - Build complet garanti sur Render.
 
+---
+
+**[2024-06-09] Ajout script prebuild backend Render**
+- Ajout d'un script `prebuild` dans le package.json backend pour forcer l'installation complète des dépendances à chaque build.
+- Cela garantit la présence de tous les types TypeScript sur Render, même en cas de cache corrompu.
+- Build complet et fiable assuré, sans intervention manuelle.
+
 --- 
