@@ -3,6 +3,7 @@ import { Card, Row, Col, Typography, Button, Space, Tag } from 'antd';
 import { UserOutlined, ShopOutlined, TeamOutlined } from '@ant-design/icons';
 import './SubscriptionPage.css';
 import axios from 'axios';
+import { useAuth } from '../../hooks/useAuth';
 
 const { Title, Paragraph } = Typography;
 
@@ -56,15 +57,19 @@ const offers = [
 ];
 
 const SubscriptionPage: React.FC = () => {
+  const { user } = useAuth();
   const handleSubscribe = async (offerKey: string) => {
     try {
       let type = offerKey;
       if (type === 'student') type = 'etudiant';
-      // À adapter : ici, tu peux récupérer les infos utilisateur connectées
-      const customer_name = 'Nom';
-      const customer_surname = 'Prénom';
-      const customer_email = 'email@exemple.com';
-      const customer_phone_number = '221771234567';
+      if (!user) {
+        alert("Veuillez vous connecter pour vous abonner.");
+        return;
+      }
+      const customer_name = user.firstName || '';
+      const customer_surname = user.lastName || '';
+      const customer_email = user.email || '';
+      const customer_phone_number = user.phoneNumber || '';
       const res = await axios.post('/api/payment/init', {
         type,
         customer_name,

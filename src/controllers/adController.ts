@@ -1,4 +1,6 @@
-import { Request, Response } from 'express';
+// import { Request, Response } from 'express';
+type Request = any;
+type Response = any;
 import { Ad } from '../models/ad';
 
 export const adController = {

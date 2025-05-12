@@ -16,6 +16,7 @@ import {
   message
 } from 'antd';
 import { MinusCircleOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
+import type { RcFile } from 'antd/es/upload';
 import { CVData } from '../../../types/cv';
 import dayjs from 'dayjs';
 import moment from 'moment';
@@ -51,16 +52,47 @@ const CVForm: React.FC<CVFormProps> = ({ data, onChange }) => {
   const [form] = Form.useForm();
   const [uploadLoading, setUploadLoading] = useState(false);
 
-  const handleImageUpload = async (file: File) => {
+  const handleImageUpload = async (file: RcFile) => {
     try {
       setUploadLoading(true);
-      const imageUrl = await processProfileImage(file);
-      form.setFieldValue(['personalInfo', 'photo'], imageUrl);
-      form.submit();
-      return false; // Empêche l'upload par défaut d'Ant Design
-    } catch (error) {
-      message.error((error as Error).message);
+      
+      // Vérification de la taille
+      if (file.size > 5 * 1024 * 1024) {
+        message.error('La taille de l\'image ne doit pas dépasser 5 MB');
+        return Upload.LIST_IGNORE;
+      }
+
+      // Vérification du type
+      if (!['image/jpeg', 'image/png'].includes(file.type)) {
+        message.error('Seuls les formats JPG et PNG sont acceptés');
+        return Upload.LIST_IGNORE;
+      }
+
+      // Vérification des dimensions
+      const img = new Image();
+      const imgPromise = new Promise<HTMLImageElement>((resolve, reject) => {
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error('Erreur de chargement de l\'image'));
+        img.src = URL.createObjectURL(file);
+      });
+
+      const loadedImg = await imgPromise;
+      if (loadedImg.width > 1000 || loadedImg.height > 1000) {
+        message.error('Les dimensions de l\'image ne doivent pas dépasser 1000x1000 pixels');
+        return Upload.LIST_IGNORE;
+      }
+
+      // Si tout est OK, on continue avec l'upload
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        form.setFieldValue(['personalInfo', 'photo'], reader.result);
+      };
+      
       return false;
+    } catch (error) {
+      message.error('Une erreur est survenue lors du traitement de l\'image');
+      return Upload.LIST_IGNORE;
     } finally {
       setUploadLoading(false);
     }

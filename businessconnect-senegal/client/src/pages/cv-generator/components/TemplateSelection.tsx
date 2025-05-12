@@ -1,76 +1,172 @@
-import React from 'react';
-import { Card, Row, Col, Typography, Radio, message } from 'antd';
+import React, { useState, useMemo } from 'react';
+import { Card, Typography, Row, Col, Select, Input, Empty, Tag, Tooltip, Button } from 'antd';
+import { LockOutlined, StarOutlined } from '@ant-design/icons';
 import { Template } from '../../../types/cv';
-import { CV_TEMPLATES } from './data/templates';
+import { CV_TEMPLATES } from '../components/data/templates';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
+const { Search } = Input;
+const { Option } = Select;
 
 interface TemplateSelectionProps {
   selected: Template | null;
   onSelect: (template: Template) => void;
+  isSubscribed?: boolean;
 }
 
-const TemplateSelection: React.FC<TemplateSelectionProps> = ({ selected, onSelect }) => {
-  const handleTemplateSelect = (templateId: string) => {
-    const template = CV_TEMPLATES.find(t => t.id === templateId);
-    if (template) {
-      onSelect(template);
-      message.success(`Template "${template.name}" sélectionné avec succès !`);
-    } else {
-      message.error('Erreur lors de la sélection du template. Veuillez réessayer.');
-    }
-  };
+const TemplateSelection: React.FC<TemplateSelectionProps> = ({
+  selected,
+  onSelect,
+  isSubscribed = false
+}) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [showPremiumOnly, setShowPremiumOnly] = useState(false);
+
+  // Extraction des catégories uniques
+  const categories = useMemo(() => {
+    const cats = new Set(CV_TEMPLATES.map(t => t.category));
+    return ['all', ...Array.from(cats)] as string[];
+  }, []);
+
+  // Filtrage des templates
+  const filteredTemplates = useMemo(() => {
+    return CV_TEMPLATES.filter(template => {
+      const matchesSearch = template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        template.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        template.category.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesCategory = selectedCategory === 'all' || template.category === selectedCategory;
+      
+      const matchesPremium = !showPremiumOnly || template.premium;
+
+      return matchesSearch && matchesCategory && matchesPremium;
+    });
+  }, [searchTerm, selectedCategory, showPremiumOnly]);
 
   return (
     <div>
       <Title level={3}>Choisissez votre modèle de CV</Title>
-      <Radio.Group 
-        value={selected?.id} 
-        onChange={(e) => handleTemplateSelect(e.target.value)}
-        style={{ width: '100%' }}
-      >
+      <Text>Sélectionnez un modèle professionnel adapté à votre secteur. Un abonnement est requis pour utiliser le générateur de CV.</Text>
+
+      <div style={{ 
+        marginTop: 24,
+        marginBottom: 24,
+        display: 'flex',
+        gap: 16,
+        alignItems: 'center',
+        flexWrap: 'wrap'
+      }}>
+        <Search
+          placeholder="Rechercher un modèle..."
+          style={{ width: 300 }}
+          onChange={e => setSearchTerm(e.target.value)}
+        />
+        <Select
+          value={selectedCategory}
+          onChange={setSelectedCategory}
+          style={{ width: 200 }}
+        >
+          {categories.map(cat => (
+            <Option key={cat} value={cat}>
+              {cat === 'all' ? 'Tous les secteurs' : cat}
+            </Option>
+          ))}
+        </Select>
+        <Button
+          type={showPremiumOnly ? 'primary' : 'default'}
+          icon={<StarOutlined />}
+          onClick={() => setShowPremiumOnly(!showPremiumOnly)}
+          style={{ display: 'none' }}
+        >
+          Premium uniquement
+        </Button>
+      </div>
+
+      {filteredTemplates.length === 0 ? (
+        <Empty
+          description="Aucun modèle ne correspond à vos critères"
+          style={{ margin: '40px 0' }}
+        />
+      ) : (
         <Row gutter={[16, 16]}>
-          {CV_TEMPLATES.map((template) => (
+          {filteredTemplates.map(template => (
             <Col xs={24} sm={12} md={8} lg={6} key={template.id}>
-              <Radio.Button value={template.id} style={{ width: '100%', height: '100%', padding: 0 }}>
-                <Card
-                  hoverable
-                  cover={
+              <Card
+                hoverable
+                cover={
+                  <div style={{ position: 'relative' }}>
                     <img
                       alt={template.name}
                       src={template.thumbnail}
-                      style={{ height: 200, objectFit: 'cover' }}
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = '/images/cv-templates/default-template.png';
-                        message.warning('Image du template non disponible');
+                      style={{
+                        width: '100%',
+                        height: 220,
+                        objectFit: 'cover'
                       }}
                     />
+                    {template.premium && !isSubscribed && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        background: 'rgba(0,0,0,0.7)',
+                        padding: '8px 16px',
+                        borderRadius: '4px',
+                        color: 'white',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px'
+                      }}>
+                        <LockOutlined />
+                        Premium
+                      </div>
+                    )}
+                  </div>
+                }
+                onClick={() => {
+                  if (!template.premium || isSubscribed) {
+                    onSelect(template);
                   }
-                  style={{ 
-                    border: selected?.id === template.id ? '2px solid #1890ff' : 'none',
-                    height: '100%'
-                  }}
-                >
-                  <Card.Meta
-                    title={template.name}
-                    description={
-                      <>
-                        <div>{template.description}</div>
-                        {template.premium && (
-                          <div style={{ color: '#faad14', marginTop: 8 }}>
-                            Premium ⭐
-                          </div>
-                        )}
-                      </>
-                    }
-                  />
-                </Card>
-              </Radio.Button>
+                }}
+                style={{
+                  border: selected?.id === template.id ? '2px solid #1890ff' : undefined,
+                  cursor: template.premium && !isSubscribed ? 'not-allowed' : 'pointer'
+                }}
+              >
+                <Card.Meta
+                  title={
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      {template.name}
+                      {template.premium && (
+                        <Tooltip title="Template Premium">
+                          <StarOutlined style={{ color: '#ffd700' }} />
+                        </Tooltip>
+                      )}
+                    </div>
+                  }
+                  description={
+                    <>
+                      <div><b>Secteur :</b> {template.category}</div>
+                      <div style={{ marginTop: 8 }}>{template.description}</div>
+                      {template.features && (
+                        <div style={{ marginTop: 8 }}>
+                          {template.features.map((feature, index) => (
+                            <Tag key={index} color="blue" style={{ margin: '4px' }}>
+                              {feature}
+                            </Tag>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  }
+                />
+              </Card>
             </Col>
           ))}
         </Row>
-      </Radio.Group>
+      )}
     </div>
   );
 };

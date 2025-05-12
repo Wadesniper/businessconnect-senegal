@@ -1,20 +1,15 @@
 export interface Template {
   id: string;
   name: string;
-  thumbnail: string;
-  previewImage: string;
+  component: React.ComponentType<any>;
   description: string;
-  category: string;
-  features: string[];
-  profileImage: string;
-  sampleData: {
-    title: string;
-    experience: string[];
-    education: string[];
-    skills: string[];
-  };
   premium: boolean;
-  component?: React.ComponentType<any>;
+  category: string;
+  thumbnail: string;
+  previewImage?: string;
+  features?: string[];
+  profileImage?: string;
+  sampleData?: any;
 }
 
 export interface PersonalInfo {
@@ -102,16 +97,60 @@ export interface Section {
 }
 
 export interface CVData {
-  personalInfo: PersonalInfo;
-  summary?: string;
-  experience: Experience[];
-  education: Education[];
-  skills: Skill[];
-  languages: Language[];
-  certifications?: (string | Certification)[];
-  interests?: (string | Interest)[];
-  projects?: Project[];
-  references?: string[];
+  personalInfo: {
+    firstName: string;
+    lastName: string;
+    title: string;
+    email: string;
+    phone: string;
+    address?: string;
+    photo?: string;
+    summary?: string;
+  };
+  experience: Array<{
+    title: string;
+    company: string;
+    location?: string;
+    startDate: string;
+    endDate?: string;
+    current?: boolean;
+    description: string;
+    achievements?: string[];
+  }>;
+  education: Array<{
+    degree: string;
+    field?: string;
+    institution: string;
+    location?: string;
+    startDate: string;
+    endDate?: string;
+    description?: string;
+    achievements?: string[];
+  }>;
+  skills: Array<{
+    name: string;
+    level?: number | 'Débutant' | 'Intermédiaire' | 'Avancé' | 'Expert';
+    category?: string;
+  }>;
+  languages?: Array<{
+    name: string;
+    level: string;
+  }>;
+  certifications?: Array<{
+    name: string;
+    issuer: string;
+    date: string;
+    description?: string;
+  } | string>;
+  projects?: Array<{
+    name: string;
+    description: string;
+    url?: string;
+    technologies?: string[];
+    startDate?: string;
+    endDate?: string;
+  }>;
+  interests?: string[];
 }
 
 export interface CustomizationOptions {
@@ -119,7 +158,7 @@ export interface CustomizationOptions {
   secondaryColor: string;
   fontFamily: string;
   fontSize: string;
-  spacing: 'compact' | 'comfortable' | 'spacious';
+  spacing: 'comfortable' | 'compact' | 'wide';
 }
 
 export interface CVTemplateData extends CVData {

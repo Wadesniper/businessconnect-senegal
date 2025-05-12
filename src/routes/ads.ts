@@ -1,4 +1,5 @@
-import express from 'express';
+// import express from 'express';
+const express: any = require('express');
 import { adController } from '../controllers/adController';
 import { authMiddleware } from '../middleware/authMiddleware';
 

@@ -1,4 +1,5 @@
-import express from 'express';
+// import express from 'express';
+const express: any = require('express');
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';

@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
-    "dev": "ts-node-dev --project tsconfig.dev.json --respawn src/index.ts",
+    "dev": "ts-node-dev --project tsconfig.json --respawn src/index.ts",
     "build:dev": "tsc --project tsconfig.dev.json",
     "build": "tsc",
     "typecheck": "tsc --noEmit",

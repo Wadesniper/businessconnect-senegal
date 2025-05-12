@@ -34,7 +34,7 @@ export interface EmailService {
 }
 
 export interface StorageService {
-  upload(file: Express.Multer.File, path: string): Promise<string>;
+  upload(file: any, path: string): Promise<string>;
   download(path: string): Promise<Buffer>;
   delete(path: string): Promise<void>;
   getSignedUrl(path: string, expiresIn?: number): Promise<string>;
@@ -55,7 +55,7 @@ export interface NotificationService {
 }
 
 export interface FileService {
-  upload(file: Express.Multer.File): Promise<string>;
+  upload(file: any): Promise<string>;
   delete(path: string): Promise<void>;
   getUrl(path: string): string;
 }

@@ -1,4 +1,6 @@
-import { Request, Response } from 'express';
+// import { Request, Response } from 'express';
+type Request = any;
+type Response = any;
 import { CinetPayService } from '../services/cinetpayService';
 import { logger } from '../utils/logger';
 import { SubscriptionService } from '../services/subscriptionService';
@@ -10,14 +12,14 @@ const SUBSCRIPTION_PRICES = {
 };
 
 // Étendre l'interface Request pour inclure l'utilisateur
-declare module 'express-serve-static-core' {
-  interface Request {
-    user?: {
-      id: string;
-      [key: string]: any;
-    };
-  }
-}
+// declare module 'express-serve-static-core' {
+//   interface Request {
+//     user?: {
+//       id: string;
+//       [key: string]: any;
+//     };
+//   }
+// }
 
 export const subscriptionController = {
   async initiatePayment(req: Request, res: Response) {

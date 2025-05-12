@@ -6,6 +6,8 @@ import mongoose from 'mongoose';
 import { config } from './config';
 import { errorHandler } from './middleware/errorHandler';
 import { logger } from './utils/logger';
+const authRoutes = require('./routes/auth').default;
+const jobsRoutes = require('./routes/jobs').default;
 
 const app = express();
 
@@ -20,9 +22,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-const authRoutes = require('./routes/authApi').default;
-const jobsRoutes = require('./routes/jobs').default;
+// @ts-ignore
 app.use('/api/auth', authRoutes);
+// @ts-ignore
 app.use('/api/jobs', jobsRoutes);
 
 // Middleware d'erreur

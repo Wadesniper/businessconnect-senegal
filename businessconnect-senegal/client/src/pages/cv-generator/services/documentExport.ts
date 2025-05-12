@@ -4,27 +4,20 @@ import { Document, Paragraph, TextRun, HeadingLevel, Packer, SectionType, IStyle
 import { saveAs } from 'file-saver';
 import { CVData, Template, CustomizationOptions } from '../types';
 import { formatDate } from '../../../utils/dateUtils';
+import { message } from 'antd';
 
 export type ExportFormat = 'pdf' | 'docx';
 
 export interface ExportOptions {
-  format: ExportFormat;
-  filename?: string;
-  paperFormat?: 'a4' | 'letter';
-  orientation?: 'portrait' | 'landscape';
-  margin?: number;
+  format?: 'pdf' | 'docx';
   quality?: number;
-  scale?: number;
+  filename?: string;
 }
 
 const defaultOptions: ExportOptions = {
   format: 'pdf',
   filename: 'cv',
-  paperFormat: 'a4',
-  orientation: 'portrait',
-  margin: 10,
-  quality: 1,
-  scale: 2
+  quality: 2
 };
 
 const getWordStyles = (customization: CustomizationOptions): IDefaultStylesOptions => ({
@@ -56,40 +49,88 @@ export const exportToPDF = async (
   customization: CustomizationOptions
 ): Promise<void> => {
   try {
+    const {
+      format = 'pdf',
+      quality = 2,
+      filename = `CV_${customization.personalInfo.firstName}_${customization.personalInfo.lastName}`.replace(/\s+/g, '_')
+    } = options;
+
     const canvas = await html2canvas(element, {
-      scale: options.scale || 2,
+      scale: quality,
       useCORS: true,
+      allowTaint: true,
       logging: false,
       backgroundColor: '#ffffff',
-      windowWidth: element.scrollWidth,
-      windowHeight: element.scrollHeight
+      windowWidth: element.scrollWidth * quality,
+      windowHeight: element.scrollHeight * quality
     });
 
-    const pdf = new jsPDF({
-      format: options.paperFormat,
-      orientation: options.orientation,
-      unit: 'mm',
-      compress: true
-    });
+    if (format === 'pdf') {
+      const imgWidth = 210; // A4 width in mm
+      const pageHeight = 297; // A4 height in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      
+      const pdf = new jsPDF({
+        orientation: imgHeight > pageHeight ? 'portrait' : 'landscape',
+        unit: 'mm',
+        format: 'a4',
+      });
 
-    const imgWidth = pdf.internal.pageSize.getWidth() - (options.margin || 0) * 2;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      pdf.setProperties({
+        title: `CV de ${customization.personalInfo.firstName} ${customization.personalInfo.lastName}`,
+        subject: customization.personalInfo.title,
+        author: `${customization.personalInfo.firstName} ${customization.personalInfo.lastName}`,
+        keywords: `cv, ${customization.template.name}, ${customization.personalInfo.title}`,
+        creator: 'BusinessConnect Sénégal'
+      });
 
-    pdf.addImage(
-      canvas.toDataURL('image/jpeg', options.quality || 1.0),
-      'JPEG',
-      options.margin || 0,
-      options.margin || 0,
-      imgWidth,
-      imgHeight,
-      undefined,
-      'FAST'
-    );
+      if (imgHeight > pageHeight) {
+        let heightLeft = imgHeight;
+        let position = 0;
+        
+        pdf.addImage(
+          canvas.toDataURL('image/jpeg', 1.0),
+          'JPEG',
+          0,
+          position,
+          imgWidth,
+          imgHeight
+        );
+        heightLeft -= pageHeight;
+        
+        while (heightLeft >= 0) {
+          position = heightLeft - imgHeight;
+          pdf.addPage();
+          pdf.addImage(
+            canvas.toDataURL('image/jpeg', 1.0),
+            'JPEG',
+            0,
+            position,
+            imgWidth,
+            imgHeight
+          );
+          heightLeft -= pageHeight;
+        }
+      } else {
+        pdf.addImage(
+          canvas.toDataURL('image/jpeg', 1.0),
+          'JPEG',
+          0,
+          0,
+          imgWidth,
+          imgHeight
+        );
+      }
 
-    pdf.save(`${options.filename}.pdf`);
+      pdf.save(`${filename}.pdf`);
+      message.success('CV exporté avec succès en PDF');
+    } else if (format === 'docx') {
+      message.info('Export Word bientôt disponible');
+    }
   } catch (error) {
-    console.error('Erreur lors de l\'export en PDF:', error);
-    throw new Error('Impossible d\'exporter le CV en PDF. Veuillez réessayer.');
+    console.error('Erreur lors de l\'export :', error);
+    message.error('Une erreur est survenue lors de l\'export du CV');
+    throw error;
   }
 };
 
@@ -275,16 +316,18 @@ export const generateFileName = (data: CVData): string => {
 };
 
 export const exportCV = async (
+  element: HTMLElement,
   data: CVData,
   template: Template,
   customization: CustomizationOptions,
-  previewRef: React.RefObject<HTMLDivElement>,
-  format: ExportFormat
-): Promise<void> => {
-  if (format === 'pdf') {
-    await exportToPDF(previewRef.current, defaultOptions, customization);
-  } else {
-    await exportToWord(data, customization);
+  options: ExportOptions = {}
+) => {
+  try {
+    await exportToPDF(element, options, customization);
+  } catch (error) {
+    console.error('Erreur lors de l\'export :', error);
+    message.error('Une erreur est survenue lors de l\'export du CV');
+    throw error;
   }
 };
 
