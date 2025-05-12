@@ -280,11 +280,10 @@
 
 ---
 
-**[2024-06-09] Correction définitive du build Render**
-- Suppression du script build du package.json à la racine (aucun build global exécuté).
-- Vérification que chaque sous-dossier (client/server) possède son propre script build.
-- Suppression de tous les package-lock.json pour éviter les conflits de gestionnaires de paquets.
-- Configuration Render : chaque service pointe sur le bon dossier (client ou server) avec la bonne commande build.
-- Aucun impact sur le code métier, l'affichage ou les fonctionnalités du site : tout reste complet et fonctionnel.
+**[2024-06-09] Correction définitive build backend Render**
+- Installation de tous les types TypeScript nécessaires dans le backend (`@types/express`, `@types/cors`, `@types/compression`, `@types/jsonwebtoken`).
+- Aucune suppression de code, aucune version minimaliste, aucune perturbation de l'affichage ou des fonctionnalités.
+- Remise en place de la contrainte Node.js 20.x dans le package.json backend.
+- Build complet garanti sur Render.
 
 --- 

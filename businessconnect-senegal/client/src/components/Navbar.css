@@ -124,6 +124,9 @@
   .navbar-menu {
     display: none;
   }
+  .navbar-burger {
+    display: block;
+  }
   .navbar-end {
     gap: 8px;
   }
@@ -135,5 +138,15 @@
   .navbar-brand {
     font-size: 18px;
     padding: 8px 0;
+  }
+}
+
+.navbar-burger {
+  display: none;
+  margin-left: 12px;
+}
+@media (max-width: 700px) {
+  .navbar-burger {
+    display: block;
   }
 } 
