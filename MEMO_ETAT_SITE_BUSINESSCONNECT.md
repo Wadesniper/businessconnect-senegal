@@ -280,10 +280,11 @@
 
 ---
 
-**[2024-06-09] Correction critique Render**
-- Suppression du script build du package.json à la racine du repo.
-- Objectif : éviter que Render exécute un build global (vite build) lors du déploiement du backend.
-- Le build est désormais géré uniquement dans les sous-dossiers client (front) et server (back).
-- Aucun impact sur le fonctionnement ou l'affichage du site, tout reste complet et fonctionnel.
+**[2024-06-09] Correction définitive du build Render**
+- Suppression du script build du package.json à la racine (aucun build global exécuté).
+- Vérification que chaque sous-dossier (client/server) possède son propre script build.
+- Suppression de tous les package-lock.json pour éviter les conflits de gestionnaires de paquets.
+- Configuration Render : chaque service pointe sur le bon dossier (client ou server) avec la bonne commande build.
+- Aucun impact sur le code métier, l'affichage ou les fonctionnalités du site : tout reste complet et fonctionnel.
 
 --- 
