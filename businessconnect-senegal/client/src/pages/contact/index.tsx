@@ -98,28 +98,6 @@ const ContactPage: React.FC = () => {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px', marginBottom: 40 }}>
           <InfoCard>
             <Space direction="vertical" size="middle" style={{ width: '100%', textAlign: 'center' }}>
-              <EnvironmentOutlined style={{ fontSize: 32, color: '#1890ff' }} />
-              <Title level={4}>Adresse</Title>
-              <Text>
-                Dakar, Sénégal<br />
-                Plateau, Avenue Hassan II
-              </Text>
-            </Space>
-          </InfoCard>
-
-          <InfoCard>
-            <Space direction="vertical" size="middle" style={{ width: '100%', textAlign: 'center' }}>
-              <PhoneOutlined style={{ fontSize: 32, color: '#52c41a' }} />
-              <Title level={4}>Téléphone</Title>
-              <Text>
-                <a href="tel:+221338238383">+221 33 823 83 83</a><br />
-                <a href="tel:+221776543210">+221 77 654 32 10</a>
-              </Text>
-            </Space>
-          </InfoCard>
-
-          <InfoCard>
-            <Space direction="vertical" size="middle" style={{ width: '100%', textAlign: 'center' }}>
               <MailOutlined style={{ fontSize: 32, color: '#faad14' }} />
               <Title level={4}>Email</Title>
               <Text>

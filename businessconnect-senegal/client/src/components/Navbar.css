@@ -1,0 +1,139 @@
+/* Barre de navigation moderne BusinessConnect Sénégal */
+
+.navbar {
+  width: 100%;
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  min-height: 64px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  gap: 8px;
+}
+
+.navbar-menu {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.navbar-link {
+  color: #222;
+  font-weight: 500;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  transition: background 0.18s, color 0.18s;
+  text-decoration: none;
+}
+
+.navbar-link:hover, .navbar-link.active {
+  background: #f0f5ff;
+  color: #1890ff;
+}
+
+.navbar-end {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.auth-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.subscribe-button {
+  background: #1890ff;
+  color: #fff !important;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 8px 18px;
+  transition: background 0.18s;
+  text-decoration: none;
+}
+.subscribe-button:hover {
+  background: #1765ad;
+  color: #fff !important;
+}
+
+.login-button, .register-button {
+  background: none;
+  color: #1890ff;
+  border: 1px solid #1890ff;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-weight: 500;
+  transition: background 0.18s, color 0.18s;
+  text-decoration: none;
+}
+.login-button:hover, .register-button:hover {
+  background: #e6f7ff;
+  color: #1765ad;
+}
+
+.logout-button {
+  background: none;
+  color: #ff4d4f;
+  border: 1px solid #ff4d4f;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.logout-button:hover {
+  background: #fff1f0;
+  color: #a8071a;
+}
+
+@media (max-width: 900px) {
+  .navbar-menu {
+    gap: 10px;
+  }
+  .navbar {
+    padding: 0 10px;
+  }
+}
+
+@media (max-width: 700px) {
+  .navbar-menu {
+    display: none;
+  }
+  .navbar-end {
+    gap: 8px;
+  }
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    min-height: 56px;
+  }
+  .navbar-brand {
+    font-size: 18px;
+    padding: 8px 0;
+  }
+} 

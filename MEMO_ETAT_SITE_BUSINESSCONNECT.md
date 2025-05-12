@@ -195,6 +195,16 @@
    - Partage de CV
    - Suggestions automatiques
 
+## 2024-06-XX — Finalisation export PDF/Word Générateur de CV
+
+- **Export PDF et Word finalisés et testés sur tous les templates sectoriels.**
+- **Accessible uniquement aux abonnés (contrôle d'accès dès la sélection du template).**
+- **Boutons d'export toujours actifs à l'étape d'export, sans tooltip ni blocage inutile.**
+- **PDF fidèle à l'aperçu, multi-pages, métadonnées complètes.**
+- **Export Word fonctionnel (structure principale du CV, message d'info si partiel).**
+- **Messages de succès/erreur clairs pour l'utilisateur.**
+- **Aucune anomalie constatée, UX validée.**
+
 ---
 
 **Dernière MAJ : 2024-06-XX**
