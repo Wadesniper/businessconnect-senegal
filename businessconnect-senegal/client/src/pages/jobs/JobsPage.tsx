@@ -7,12 +7,12 @@ import JobCard from './components/JobCard';
 import { useAuth } from '../../hooks/useAuth';
 import { JobType } from '../../types/job';
 import { useNavigate } from 'react-router-dom';
+import { JobService } from '../../services/jobService';
 
 const JobsPage: React.FC = () => {
   const { user } = useAuth();
   const isSubscribed = user?.subscription?.status === 'active';
   const navigate = useNavigate();
-  // const jobs = useJobs();
 
   // États des filtres
   const [selectedSector, setSelectedSector] = React.useState<string | null>(null);
@@ -22,10 +22,27 @@ const JobsPage: React.FC = () => {
   const [experienceLevel, setExperienceLevel] = React.useState<string | null>(null);
   const [workLocation, setWorkLocation] = React.useState<string | null>(null);
 
-  // TODO: Remettre la logique jobs et sectors ici
-  const jobs: any[] = [];
-  const sectors: string[] = [];
-  const isLoading = false;
+  // Récupération des offres et secteurs
+  const [jobs, setJobs] = React.useState<any[]>([]);
+  const [sectors, setSectors] = React.useState<string[]>([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    setIsLoading(true);
+    JobService.getJobs()
+      .then(jobs => {
+        setJobs(jobs || []);
+        // Extraire les secteurs uniques
+        const uniqueSectors = Array.from(new Set((jobs || []).map((j: any) => j.sector).filter(Boolean)));
+        setSectors(uniqueSectors);
+        setIsLoading(false);
+      })
+      .catch(() => {
+        setError("Erreur lors du chargement des offres d'emploi");
+        setIsLoading(false);
+      });
+  }, []);
 
   const filteredJobs = React.useMemo(() => {
     return jobs.filter(job => {
@@ -55,7 +72,7 @@ const JobsPage: React.FC = () => {
       <JobAdviceBanner />
       <RedirectBanners />
       <Grid container spacing={4}>
-        <Grid item size={{ xs: 12, md: 3 }}>
+        <Grid item xs={12} md={3}>
           <JobFilters
             sectors={sectors}
             selectedSector={selectedSector}
@@ -72,9 +89,18 @@ const JobsPage: React.FC = () => {
             onWorkLocationChange={setWorkLocation}
           />
         </Grid>
-        <Grid item size={{ xs: 12, md: 9 }}>
+        <Grid item xs={12} md={9}>
           {isLoading ? (
             <Typography>Chargement des offres...</Typography>
+          ) : error ? (
+            <Box sx={{ textAlign: 'center', py: 4 }}>
+              <Typography variant="h6" gutterBottom>
+                {error}
+              </Typography>
+              <Typography color="text.secondary">
+                Essayez de rafraîchir la page.
+              </Typography>
+            </Box>
           ) : filteredJobs.length === 0 ? (
             <Box sx={{ textAlign: 'center', py: 4 }}>
               <Typography variant="h6" gutterBottom>

@@ -24,6 +24,19 @@ if (GA_ID) {
   window.gtag('config', GA_ID);
 }
 
+if (typeof window !== 'undefined' && !window.matchMedia) {
+  window.matchMedia = function() {
+    return {
+      matches: false,
+      addListener: function() {},
+      removeListener: function() {},
+      addEventListener: function() {},
+      removeEventListener: function() {},
+      dispatchEvent: function() { return false; }
+    };
+  };
+}
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );

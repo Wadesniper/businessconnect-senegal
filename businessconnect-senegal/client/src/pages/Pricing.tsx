@@ -174,6 +174,7 @@ const Pricing: React.FC = () => {
                     position: 'relative'
                   }}
                   hoverable
+                  variant="outlined"
                 >
                   <div
                     style={{

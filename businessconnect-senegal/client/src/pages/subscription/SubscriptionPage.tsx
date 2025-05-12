@@ -94,7 +94,7 @@ const SubscriptionPage: React.FC = () => {
             <Col xs={24} sm={12} md={8} key={offer.key}>
               <Card
                 className="subscription-card"
-                bordered={false}
+                variant="outlined"
                 style={{ borderRadius: 16, boxShadow: '0 4px 24px rgba(0,0,0,0.08)', textAlign: 'center', background: '#fff' }}
                 hoverable
               >

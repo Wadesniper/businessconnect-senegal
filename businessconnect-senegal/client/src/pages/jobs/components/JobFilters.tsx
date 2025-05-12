@@ -16,9 +16,72 @@ interface JobFiltersProps {
   onWorkLocationChange: (location: string | null) => void;
 }
 
-const JobFilters: React.FC<JobFiltersProps> = () => {
+const JobFilters: React.FC<JobFiltersProps> = ({
+  sectors,
+  selectedSector,
+  onSectorChange,
+  selectedType,
+  onTypeChange,
+  selectedLocation,
+  onLocationChange,
+  workLocation,
+  onWorkLocationChange
+}) => {
   return (
-    <div>JobFilters (à compléter)</div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+      <label>
+        <span style={{ fontWeight: 600 }}>Secteur</span>
+        <select
+          value={selectedSector || ''}
+          onChange={e => onSectorChange(e.target.value || null)}
+          style={{ width: '100%', padding: 8, borderRadius: 8, marginTop: 4 }}
+        >
+          <option value="">Tous secteurs</option>
+          {sectors.map((s) => (
+            <option key={s} value={s}>{s}</option>
+          ))}
+        </select>
+      </label>
+      <label>
+        <span style={{ fontWeight: 600 }}>Type de contrat</span>
+        <select
+          value={selectedType || ''}
+          onChange={e => onTypeChange(e.target.value || null)}
+          style={{ width: '100%', padding: 8, borderRadius: 8, marginTop: 4 }}
+        >
+          <option value="">Tous types</option>
+          <option value="CDI">CDI</option>
+          <option value="CDD">CDD</option>
+          <option value="Stage">Stage</option>
+          <option value="Freelance">Freelance</option>
+          <option value="Alternance">Alternance</option>
+          <option value="Temps partiel">Temps partiel</option>
+        </select>
+      </label>
+      <label>
+        <span style={{ fontWeight: 600 }}>Localisation</span>
+        <input
+          type="text"
+          value={selectedLocation || ''}
+          onChange={e => onLocationChange(e.target.value || null)}
+          placeholder="Ville, région..."
+          style={{ width: '100%', padding: 8, borderRadius: 8, marginTop: 4 }}
+        />
+      </label>
+      <label>
+        <span style={{ fontWeight: 600 }}>Mode de travail</span>
+        <select
+          value={workLocation || ''}
+          onChange={e => onWorkLocationChange(e.target.value || null)}
+          style={{ width: '100%', padding: 8, borderRadius: 8, marginTop: 4 }}
+        >
+          <option value="">Tous modes</option>
+          <option value="onsite">Présentiel</option>
+          <option value="remote">Télétravail</option>
+          <option value="hybrid">Hybride</option>
+        </select>
+      </label>
+    </div>
   );
 };
 

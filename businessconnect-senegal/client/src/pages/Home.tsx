@@ -46,7 +46,9 @@ const AnimatedStatistic = ({ value, ...props }: { value: number; [key: string]: 
     number: value,
     config: { duration: 1200, easing: t => t * (2 - t) },
   });
-  return <animated.span>{number.to(n => Math.floor(n))}+</animated.span>;
+  return (
+    <animated.span children={number.to((n: number) => `${Math.floor(n)}+`)} />
+  );
 };
 
 // Section Témoignages
@@ -151,6 +153,7 @@ const Home: React.FC = () => {
                 <Col xs={24} sm={12} md={8} key={job.id}>
                   <Card
                     hoverable
+                    data-testid="job-preview"
                     style={{ borderRadius: 18, boxShadow: '0 4px 24px #e3e8f7', border: 'none', minHeight: 180, background: '#fff' }}
                     onClick={() => navigate('/jobs')}
                   >
@@ -158,7 +161,7 @@ const Home: React.FC = () => {
                       <Typography.Title level={4} style={{ margin: 0, color: '#457b9d' }}>{job.title}</Typography.Title>
                       <Typography.Text strong style={{ color: '#1d3557' }}>{job.company}</Typography.Text>
                       <Typography.Text type="secondary">{job.location}</Typography.Text>
-                      <Button type="primary" ghost style={{ marginTop: 8, alignSelf: 'flex-start' }} onClick={e => { e.stopPropagation(); navigate('/jobs'); }}>Voir toutes les offres</Button>
+                      <Button type="primary" ghost style={{ marginTop: 8, alignSelf: 'flex-start' }} aria-label="Voir toutes les offres d'emploi" onClick={e => { e.stopPropagation(); navigate('/jobs'); }}>Voir toutes les offres</Button>
                     </Space>
                   </Card>
                 </Col>
@@ -225,7 +228,7 @@ const Home: React.FC = () => {
                   </Card>
                 </Col>
             <Col xs={24} sm={12} md={8} lg={8}>
-              <Card bordered hoverable>
+              <Card variant="outlined" hoverable>
                 <Space direction="vertical" size="middle">
                   <UserOutlined style={{ fontSize: 32, color: '#1890ff' }} />
                   <Title level={3} style={{ margin: 0 }}>Forum</Title>
@@ -249,7 +252,7 @@ const Home: React.FC = () => {
               <li>✔️ Exportation en format PDF de haute qualité</li>
               <li>✔️ Conseils professionnels pour chaque section</li>
             </ul>
-            <Button type="primary" size="large" style={{ borderRadius: 24, fontWeight: 600, transition: 'transform 0.2s, box-shadow 0.2s' }} onMouseOver={e => { e.currentTarget.style.transform = 'scale(1.07)'; e.currentTarget.style.boxShadow = '0 8px 32px #b7e4c7'; }} onMouseOut={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = 'none'; }} onClick={() => navigate('/cv-generator')}>
+            <Button type="primary" size="large" style={{ borderRadius: 24, fontWeight: 600, transition: 'transform 0.2s, box-shadow 0.2s' }} aria-label="Créer mon CV professionnel" onMouseOver={e => { e.currentTarget.style.transform = 'scale(1.07)'; e.currentTarget.style.boxShadow = '0 8px 32px #b7e4c7'; }} onMouseOut={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = 'none'; }} onClick={() => navigate('/cv-generator')}>
               Créer mon CV maintenant
             </Button>
           </div>
@@ -273,13 +276,13 @@ const Home: React.FC = () => {
         {/* Section Secteurs */}
         <div style={{ maxWidth: 1200, margin: '60px auto', padding: '0 16px' }}>
           <Title level={2} style={{ color: '#1890ff', marginBottom: 32, textAlign: 'center' }}>Secteurs d'activité</Title>
-          <Carousel autoplay autoplaySpeed={2500} dots slidesToShow={3} speed={900} easing="ease-in-out" responsive={[{ breakpoint: 900, settings: { slidesToShow: 2 } }, { breakpoint: 600, settings: { slidesToShow: 1 } }]} style={{ width: '100%', padding: '0 0 32px 0' }}>
+          <Carousel autoplay autoplaySpeed={2500} dots slidesToShow={3} speed={900} easing="ease-in-out" responsive={[{ breakpoint: 900, settings: { slidesToShow: 2 } }, { breakpoint: 600, settings: { slidesToShow: 1 } }]} style={{ width: '100%', padding: '0 0 32px 0' }} data-testid="sector-carousel">
             {SECTEURS.map((secteur) => (
               <div key={secteur.id} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 260 }}>
                   <Card 
                     hoverable 
                   style={{ width: 320, minHeight: 220, borderRadius: 20, boxShadow: '0 4px 24px #e3e8f7', border: 'none', background: secteur.couleur, color: '#fff', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', transition: 'transform 0.2s, box-shadow 0.2s' }}
-                  bodyStyle={{ padding: 24 }}
+                  styles={{ body: { padding: 24 } }}
                 >
                   <div style={{ fontSize: 48, marginBottom: 12 }}>{secteur.icone}</div>
                   <Title level={4} style={{ color: '#fff', margin: 0 }}>{secteur.nom}</Title>
@@ -294,22 +297,22 @@ const Home: React.FC = () => {
           <Title level={2} style={{ color: '#1d3557', marginBottom: 32, textAlign: 'center' }}>BusinessConnect en chiffres</Title>
           <Row gutter={[32, 32]} justify="center">
             <Col xs={24} sm={12} md={6}>
-              <Card style={{ borderRadius: 20, boxShadow: '0 4px 24px #e3e8f7', textAlign: 'center', background: '#e0f7fa' }}>
+              <Card style={{ borderRadius: 20, boxShadow: '0 4px 24px #e3e8f7', textAlign: 'center', background: '#e0f7fa' }} data-testid="stat-card" variant="outlined">
                 <Statistic title="Entreprises" valueRender={() => <AnimatedStatistic value={500} />} value={500} valueStyle={{ color: '#1890ff', fontWeight: 700, fontSize: 36 }} suffix="+" />
               </Card>
             </Col>
             <Col xs={24} sm={12} md={6}>
-              <Card style={{ borderRadius: 20, boxShadow: '0 4px 24px #e3e8f7', textAlign: 'center', background: '#fce4ec' }}>
+              <Card style={{ borderRadius: 20, boxShadow: '0 4px 24px #e3e8f7', textAlign: 'center', background: '#fce4ec' }} data-testid="stat-card" variant="outlined">
                 <Statistic title="Offres d'emploi" valueRender={() => <AnimatedStatistic value={1200} />} value={1200} valueStyle={{ color: '#e91e63', fontWeight: 700, fontSize: 36 }} suffix="+" />
               </Card>
             </Col>
             <Col xs={24} sm={12} md={6}>
-              <Card style={{ borderRadius: 20, boxShadow: '0 4px 24px #e3e8f7', textAlign: 'center', background: '#e8f5e9' }}>
+              <Card style={{ borderRadius: 20, boxShadow: '0 4px 24px #e3e8f7', textAlign: 'center', background: '#e8f5e9' }} data-testid="stat-card" variant="outlined">
                 <Statistic title="Membres" valueRender={() => <AnimatedStatistic value={8000} />} value={8000} valueStyle={{ color: '#43a047', fontWeight: 700, fontSize: 36 }} suffix="+" />
                   </Card>
               </Col>
             <Col xs={24} sm={12} md={6}>
-              <Card style={{ borderRadius: 20, boxShadow: '0 4px 24px #e3e8f7', textAlign: 'center', background: '#fff3e0' }}>
+              <Card style={{ borderRadius: 20, boxShadow: '0 4px 24px #e3e8f7', textAlign: 'center', background: '#fff3e0' }} data-testid="stat-card" variant="outlined">
                 <Statistic title="Secteurs" valueRender={() => <AnimatedStatistic value={SECTEURS.length} />} value={SECTEURS.length} valueStyle={{ color: '#ff9800', fontWeight: 700, fontSize: 36 }} suffix="+" />
                   </Card>
               </Col>
@@ -323,7 +326,7 @@ const Home: React.FC = () => {
               <Col xs={24} sm={12} md={12} lg={6} key={idx}>
                 <Card
                   style={{ borderRadius: 20, boxShadow: '0 4px 24px #e3e8f7', border: 'none', textAlign: 'center', padding: 0 }}
-                  bodyStyle={{ padding: 32 }}
+                  styles={{ body: { padding: 32 } }}
                 >
                   <img src={t.img} alt={t.name} style={{ width: 90, height: 90, borderRadius: '50%', objectFit: 'cover', marginBottom: 18, border: '4px solid #e0e7ff' }} />
                   <Title level={4} style={{ margin: 0, color: '#2563eb' }}>{t.name}</Title>

@@ -64,7 +64,7 @@ const CommerceTemplate: React.FC<CommerceTemplateProps> = ({ data }) => {
         <Row gutter={[16, 16]}>
           {data.skills.map((skill, idx) => (
             <Col xs={24} sm={12} md={8} key={idx}>
-              <Card style={{ background: '#fff1f0', border: '1px solid #ffa39e' }}>
+              <Card style={{ background: '#fff1f0', border: '1px solid #ffd6e7' }}>
                 <Text strong>{skill.name}</Text>
                 <Rate disabled defaultValue={typeof skill.level === 'number' ? skill.level : skill.level === 'Débutant' ? 1 : skill.level === 'Intermédiaire' ? 2 : skill.level === 'Avancé' ? 3 : skill.level === 'Expert' ? 4 : 0} />
               </Card>
@@ -79,7 +79,7 @@ const CommerceTemplate: React.FC<CommerceTemplateProps> = ({ data }) => {
         <Timeline>
           {data.education.map((edu, idx) => (
             <Timeline.Item key={idx} color="#ff4d4f">
-              <Card style={{ background: '#fff1f0', border: '1px solid #ffa39e' }}>
+              <Card style={{ background: '#fff1f0', border: '1px solid #ffd6e7' }}>
                 <Title level={5}>{edu.degree} en {edu.field}</Title>
                 <Text strong>{edu.institution}</Text> <Text type="secondary">{edu.startDate} - {edu.endDate}</Text>
                 <Paragraph>{edu.description}</Paragraph>
@@ -98,7 +98,7 @@ const CommerceTemplate: React.FC<CommerceTemplateProps> = ({ data }) => {
               if (typeof cert === 'string') {
                 return (
                   <Col key={idx} xs={24} sm={12} md={8}>
-                    <Card style={{ background: '#fff1f0', border: '1px solid #ffa39e' }}>
+                    <Card style={{ background: '#fff1f0', border: '1px solid #ffd6e7' }}>
                       <Text>{cert}</Text>
                     </Card>
                   </Col>
@@ -106,7 +106,7 @@ const CommerceTemplate: React.FC<CommerceTemplateProps> = ({ data }) => {
               } else {
                 return (
                   <Col key={idx} xs={24} sm={12} md={8}>
-                    <Card style={{ background: '#fff1f0', border: '1px solid #ffa39e' }}>
+                    <Card style={{ background: '#fff1f0', border: '1px solid #ffd6e7' }}>
                       <Text strong>{cert.name}</Text><br/>
                       <Text>{cert.issuer}</Text><br/>
                       <Text type="secondary">{cert.date}</Text>
