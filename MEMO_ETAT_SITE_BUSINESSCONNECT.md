@@ -327,4 +327,12 @@
 - Aucune suppression, aucune perte de fonctionnalité, aucune modification du code métier.
 - Commit et push réalisés sur la branche render-deploy.
 
+---
+
+## 2024-06-XX — Correction encodage caractères spéciaux dans index.html
+
+- Encodage de tous les caractères accentués et spéciaux dans les balises meta, title et description de index.html pour corriger l'erreur URI malformed lors du build Vite.
+- Aucune suppression, aucune perte de fonctionnalité, aucune modification du code métier.
+- Commit et push réalisés sur la branche render-deploy.
+
 --- 
