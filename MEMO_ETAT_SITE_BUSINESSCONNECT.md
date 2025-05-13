@@ -301,4 +301,13 @@
 - Aucune modification du code métier, aucune perturbation de l'affichage ou des fonctionnalités.
 - Dès que ce fichier est présent, le build Render passera et le site complet sera en production.
 
+---
+
+## 2024-06-XX — Synchronisation lockfile pour Render (Node 20.x)
+
+- Synchronisation du yarn.lock avec le package.json sous Node 20.x (exigence Render).
+- Aucune suppression, aucune perte de fonctionnalité, aucune modification du code de production.
+- Objectif : garantir que le site complet, dans sa version de production, passe le build et le déploiement Render sans erreur.
+- Commit et push réalisés sur la branche render-deploy.
+
 --- 
