@@ -335,4 +335,21 @@
 - Aucune suppression, aucune perte de fonctionnalité, aucune modification du code métier.
 - Commit et push réalisés sur la branche render-deploy.
 
+---
+
+## 2024-06-XX — Ajout favicon.ico, logo192.png, logo512.png pour manifest
+
+- Ajout des fichiers favicon.ico, logo192.png, logo512.png dans public/ pour satisfaire les références du manifest.json et du HTML, et corriger l'erreur de build Vite (URI malformed).
+- Aucune suppression, aucune perte de fonctionnalité, aucune modification du code métier.
+- Commit et push réalisés sur la branche render-deploy.
+
+---
+
+## 2024-06-XX — Correction build frontend Vite
+
+- Correction définitive des chemins dans `index.html` : remplacement de `%PUBLIC_URL%` par des chemins absolus `/` pour compatibilité Vite.
+- Plus aucune référence à `%PUBLIC_URL%` (héritage CRA) : tous les assets (favicon, logo, manifest, images, custom.css) sont accessibles et le build passe sans erreur.
+- Aucun code ou élément essentiel supprimé, aucune perturbation de l'affichage ou du fonctionnement du site.
+- Build frontend validé sur Render, prêt pour la mise en production complète.
+
 --- 
