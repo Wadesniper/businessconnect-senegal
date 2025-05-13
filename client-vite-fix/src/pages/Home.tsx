@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Layout, Typography, Card, Row, Col, Button, Space, Avatar, Rate, Tag, Carousel, Statistic } from 'antd';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import Hero from '../components/Hero';
 import type { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
 import {

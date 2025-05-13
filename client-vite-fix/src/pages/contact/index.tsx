@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Typography, Layout, message, Space } from 'antd';
 import { MailOutlined, PhoneOutlined, EnvironmentOutlined, UserOutlined } from '@ant-design/icons';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import axios from 'axios';
 
 const { Title, Text, Paragraph } = Typography;

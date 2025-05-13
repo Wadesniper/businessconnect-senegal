@@ -9,7 +9,7 @@ import {
   SafetyCertificateOutlined,
   CreditCardOutlined
 } from '@ant-design/icons';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { paymentService } from '../services/paymentService';

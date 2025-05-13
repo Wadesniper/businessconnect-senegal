@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Result, Button, Space } from 'antd';
 import { CheckCircleOutlined, HomeOutlined, FileOutlined } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 const StyledResult = styled(Result)`
   padding: 48px 32px;

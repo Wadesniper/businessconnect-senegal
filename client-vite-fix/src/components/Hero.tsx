@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import { Typography, Button } from 'antd';
 import { ArrowRightOutlined } from '@ant-design/icons';
 
