@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+// import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { 
   Layout, 
   Row, 
@@ -24,7 +24,7 @@ import {
   EditOutlined,
   DeleteOutlined
 } from '@ant-design/icons';
-import { CVData, Template, CustomizationOptions, Section } from '../../../types/cv';
+import type { CVData, Template, CustomizationOptions, Section } from '../../../types/cv';
 import './ModernCVBuilder.css';
 import moment from 'moment';
 
@@ -414,23 +414,6 @@ const ModernCVBuilder: React.FC<ModernCVBuilderProps> = ({
     }
   };
 
-  // Gestion du drag and drop
-  const onDragEnd = (result: DropResult) => {
-    if (!result.destination) return;
-
-    const items = Array.from(sections);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-
-    // Mise à jour de l'ordre
-    const updatedSections = items.map((item, index) => ({
-      ...item,
-      order: index
-    }));
-
-    setSections(updatedSections);
-  };
-
   // Sauvegarde du CV
   const handleSave = async (values: Omit<CVData, 'template'>) => {
     try {
@@ -482,73 +465,40 @@ const ModernCVBuilder: React.FC<ModernCVBuilderProps> = ({
                 ))}
               </Select>
             </Form.Item>
-            <DragDropContext onDragEnd={onDragEnd}>
-              <Form
-                form={form}
-                layout="vertical"
-                onFinish={handleSave}
-                initialValues={initialData}
-                className="cv-form"
-              >
-                <Droppable droppableId="cv-sections">
-                  {(provided) => (
-                    <div
-                      {...provided.droppableProps}
-                      ref={provided.innerRef}
-                    >
-                      {sections.map((section, index) => (
-                        <Draggable
-                          key={section.id}
-                          draggableId={section.id}
-                          index={index}
-                        >
-                          {(provided) => (
-                            <div
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              className="section-container"
-                            >
-                              <Card
-                                title={
-                                  <div className="section-header">
-                                    <span {...provided.dragHandleProps}>
-                                      <DragOutlined />
-                                    </span>
-                                    <Text strong>{section.title}</Text>
-                                  </div>
-                                }
-                                className="section-card"
-                              >
-                                {renderSectionContent(section)}
-                              </Card>
-                            </div>
-                          )}
-                        </Draggable>
-                      ))}
-                      {provided.placeholder}
-                    </div>
-                  )}
-                </Droppable>
-
-                <Space className="action-buttons">
-                  <Button type="primary" htmlType="submit">
-                    Sauvegarder
-                  </Button>
-                  <Button 
-                    onClick={() => handleExport('pdf')}
-                    icon={<DownloadOutlined />}
-                  >
-                    PDF
-                  </Button>
-                  <Button
-                    onClick={() => handleExport('docx')}
-                    icon={<DownloadOutlined />}
-                  >
-                    Word
-                  </Button>
-                </Space>
-              </Form>
-            </DragDropContext>
+            {/* Affichage temporaire sans drag & drop pour test CSP */}
+            <Form
+              form={form}
+              layout="vertical"
+              onFinish={handleSave}
+              initialValues={initialData}
+              className="cv-form"
+            >
+              {sections.map((section) => (
+                <Card key={section.id} className="section-card">
+                  <div className="section-header">
+                    <Text strong>{section.title}</Text>
+                  </div>
+                  {renderSectionContent(section)}
+                </Card>
+              ))}
+              <Space className="action-buttons">
+                <Button type="primary" htmlType="submit">
+                  Sauvegarder
+                </Button>
+                <Button 
+                  onClick={() => handleExport('pdf')}
+                  icon={<DownloadOutlined />}
+                >
+                  PDF
+                </Button>
+                <Button
+                  onClick={() => handleExport('docx')}
+                  icon={<DownloadOutlined />}
+                >
+                  Word
+                </Button>
+              </Space>
+            </Form>
           </Card>
         </Col>
 
