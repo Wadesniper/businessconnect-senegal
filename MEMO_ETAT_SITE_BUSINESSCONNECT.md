@@ -352,4 +352,23 @@
 - Aucun code ou élément essentiel supprimé, aucune perturbation de l'affichage ou du fonctionnement du site.
 - Build frontend validé sur Render, prêt pour la mise en production complète.
 
+---
+
+## 2024-06-XX — Correction définitive page blanche Render (CSP)
+
+- Correction du blocage CSP (Content Security Policy) sur Render qui empêchait l'exécution du JavaScript (utilisation de 'eval' interdite).
+- Mise à jour de la configuration Vite : désactivation des sourcemaps, minification forcée avec esbuild pour garantir l'absence de 'eval' dans le bundle de production.
+- Mise à jour des dépendances critiques (vite, antd, styled-components, @vitejs/plugin-react) pour garantir la compatibilité production et la sécurité.
+- Build frontend validé, site complet fonctionnel sans page blanche, aucune perte de fonctionnalité ni suppression de code métier.
+- Commit et push réalisés sur la branche render-deploy.
+
+---
+
+## 2024-06-XX — Diagnostic avancé page blanche (ErrorBoundary + logs)
+
+- Ajout d'un ErrorBoundary global dans App.tsx pour capturer et afficher toute erreur de rendu React (plus de page blanche silencieuse).
+- Ajout de logs dans index.tsx pour vérifier l'exécution du point d'entrée React et du rendu.
+- Aucun code métier supprimé, aucune fonctionnalité allégée, site complet conservé.
+- Objectif : identifier précisément la cause de la page blanche et garantir la stabilité du site en production.
+
 --- 

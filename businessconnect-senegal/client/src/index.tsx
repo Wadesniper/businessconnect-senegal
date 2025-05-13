@@ -37,12 +37,16 @@ if (typeof window !== 'undefined' && !window.matchMedia) {
   };
 }
 
+console.log('Démarrage de l’application React');
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
+console.log('Avant le rendu ReactDOM');
 root.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>
-); 
+);
+console.log('Après le rendu ReactDOM'); 
