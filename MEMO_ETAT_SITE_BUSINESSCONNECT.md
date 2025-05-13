@@ -319,4 +319,12 @@
 - Le favicon reste affiché dans l'onglet du navigateur, et l'aperçu Open Graph fonctionne pour le partage sur les réseaux sociaux.
 - Commit et push réalisés sur la branche render-deploy.
 
+---
+
+## 2024-06-XX — Ajout custom.css vide pour correction build Vite
+
+- Création du dossier public/styles/ et ajout d'un fichier custom.css vide pour satisfaire la référence dans index.html et corriger l'erreur de build Vite (URI malformed).
+- Aucune suppression, aucune perte de fonctionnalité, aucune modification du code métier.
+- Commit et push réalisés sur la branche render-deploy.
+
 --- 
