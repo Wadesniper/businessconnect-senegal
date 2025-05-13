@@ -199,4 +199,6 @@ export const JOB_SECTORS = [
 ] as const;
 
 export type JobType = typeof JOB_TYPES[number];
-export type JobSector = typeof JOB_SECTORS[number]; 
+export type JobSector = typeof JOB_SECTORS[number];
+
+export type { Job, JobApplication, SavedJob, JobAlert, JobType, JobData }; 

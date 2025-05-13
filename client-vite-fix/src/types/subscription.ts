@@ -24,4 +24,16 @@ export interface SubscriptionPricing {
   etudiant: number;
   annonceur: number;
   recruteur: number;
+}
+
+export interface UserSubscription {
+  id: string;
+  userId: string;
+  type: SubscriptionType;
+  status: 'active' | 'inactive' | 'cancelled' | 'expired';
+  startDate: string;
+  endDate: string;
+  autoRenew: boolean;
+  lastPaymentDate: string;
+  nextPaymentDate: string;
 } 
