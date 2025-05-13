@@ -13,17 +13,6 @@ function gtag(...args: any[]) {
   window.dataLayer.push(args);
 }
 
-if (GA_ID) {
-  const script = document.createElement('script');
-  script.async = true;
-  script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
-  document.head.appendChild(script);
-  window.dataLayer = window.dataLayer || [];
-  window.gtag = gtag;
-  window.gtag('js', new Date());
-  window.gtag('config', GA_ID);
-}
-
 if (typeof window !== 'undefined' && !window.matchMedia) {
   window.matchMedia = function() {
     return {
