@@ -14,6 +14,29 @@ const HeroContainer = styled.div`
   background: linear-gradient(135deg, #001529 0%, #003366 100%);
 `;
 
+const HeroBackground = styled.div<{ $imageUrl: string }>`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url(${props => props.$imageUrl});
+  background-size: cover;
+  background-position: center;
+  filter: blur(18px) brightness(0.7);
+  z-index: 0;
+`;
+
+const Overlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #001529cc 40%, #00336699 100%);
+  z-index: 1;
+`;
+
 const GeometricBackground = styled.div`
   position: absolute;
   top: 0;
@@ -54,7 +77,7 @@ const ImageSlider = styled.div`
   flex: 1;
   position: relative;
   height: 0;
-  padding-top: 33.33%; /* Ratio 3/1 ultra horizontal */
+  padding-top: 25%; /* Ratio 4/1 ultra horizontal */
   border-radius: 20px;
   overflow: hidden;
   background: #f7fafc;
@@ -148,6 +171,8 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
 
   return (
     <HeroContainer>
+      <HeroBackground $imageUrl={getImageUrl(images[currentImageIndex].src)} />
+      <Overlay />
       <GeometricBackground />
       <ContentWrapper>
         <TextContent>

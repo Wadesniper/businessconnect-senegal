@@ -70,4 +70,12 @@
 - Passage du carrousel Hero au ratio 3/1 (padding-top: 33.33%) pour un effet bannière ultra horizontal, encore plus large que 21/9.
 - Aucun code ou élément essentiel supprimé, aucune fonctionnalité retirée, aucun impact sur le backend ou le déploiement backend.
 - Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
+- Statut : Prêt pour test d'affichage complet et déploiement en production.
+
+## [Date : Carrousel Hero ratio 4/1 + effet arrière-plan dynamique]
+
+- Passage du carrousel Hero au ratio 4/1 (padding-top: 25%) pour un effet bannière ultra horizontal.
+- Ajout d'un effet d'arrière-plan dynamique : la même image que celle du carrousel, floutée et agrandie, en fond du Hero, avec un overlay dégradé pour la lisibilité.
+- Aucun code ou élément essentiel supprimé, aucune fonctionnalité retirée, aucun impact sur le backend ou le déploiement backend.
+- Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
 - Statut : Prêt pour test d'affichage complet et déploiement en production. 
