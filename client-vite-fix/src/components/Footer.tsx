@@ -8,7 +8,7 @@ const Footer: React.FC = () => {
     <footer className="footer-modern">
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 32px 24px 32px' }}>
         <div style={{ fontWeight: 700, fontSize: 26, marginBottom: 18 }}>
-          <span style={{ color: '#174ea6' }}>BusinessConnect</span><span style={{ color: '#1ec773' }}>Sénégal</span>
+          <span style={{ color: '#1890ff' }}>BusinessConnect</span><span style={{ color: '#1ec773' }}>Sénégal</span>
         </div>
       </div>
       <div className="footer-content">

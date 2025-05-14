@@ -5,8 +5,8 @@ const { Title, Paragraph, Text } = Typography;
 
 const Privacy: React.FC = () => {
   return (
-    <div style={{ maxWidth: 700, margin: '40px 0 40px 40px', padding: '0 12px', textAlign: 'left' }}>
-      <Card>
+    <div style={{ width: '100%', margin: 0, padding: '40px 32px', textAlign: 'left' }}>
+      <Card style={{ maxWidth: 900, margin: '0 auto' }}>
         <Typography>
           <Title level={1}>Politique de Confidentialité</Title>
           

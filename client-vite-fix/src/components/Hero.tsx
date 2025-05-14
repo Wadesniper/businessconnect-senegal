@@ -59,9 +59,8 @@ const GeometricBackground = styled.div`
 
 const ContentWrapper = styled.div`
   position: relative;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
+  width: 100%;
+  padding: 0 32px;
   height: 100%;
   display: flex;
   align-items: center;

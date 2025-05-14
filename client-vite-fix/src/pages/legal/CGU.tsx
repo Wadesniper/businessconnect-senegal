@@ -5,8 +5,8 @@ const { Title, Paragraph, Text } = Typography;
 
 const CGU: React.FC = () => {
   return (
-    <div style={{ maxWidth: 800, margin: '40px auto', padding: '0 20px' }}>
-      <Card>
+    <div style={{ width: '100%', margin: 0, padding: '40px 32px', textAlign: 'left' }}>
+      <Card style={{ maxWidth: 900, margin: '0 auto' }}>
         <Typography>
           <Title level={1}>Conditions Générales d'Utilisation</Title>
           

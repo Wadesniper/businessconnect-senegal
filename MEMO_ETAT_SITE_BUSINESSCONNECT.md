@@ -126,4 +126,20 @@
 - Vérification que le fond coloré s'étend bien sur toute la largeur (gris clair #f7faff ou variantes selon les sections).
 - Aucun code ou fonctionnalité essentielle supprimé, aucun impact sur le backend ou le déploiement backend.
 - Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
+- Statut : Prêt pour test d'affichage complet et déploiement en production.
+
+## [Date : Correction Hero plein écran + bleu logo footer]
+
+- Suppression du max-width et du margin auto sur le Hero (ContentWrapper) pour un affichage vraiment plein écran, sans bande latérale.
+- Correction du footer : le mot 'BusinessConnect' utilise désormais le bleu du logo (#1890ff) pour une cohérence visuelle parfaite.
+- Aucun code ou fonctionnalité essentielle supprimé, aucun impact sur le backend ou le déploiement backend.
+- Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
+- Statut : Prêt pour test d'affichage complet et déploiement en production.
+
+## [Date : Correction affichage pages légales plein écran]
+
+- Les pages légales (Mentions légales, CGU, CGV, Confidentialité, Cookies) prennent désormais toute la largeur de l'écran, sans bande latérale.
+- Le texte reste bien lisible et centré dans une card (max-width 900px, margin auto), avec un padding latéral harmonieux.
+- Aucun code ou fonctionnalité essentielle supprimé, aucun impact sur le backend ou le déploiement backend.
+- Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
 - Statut : Prêt pour test d'affichage complet et déploiement en production. 
