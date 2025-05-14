@@ -93,4 +93,12 @@
 - Suppression de la barre de scroll horizontale : overflow-x: hidden sur le Hero et la navbar, padding/gap ajustés si besoin.
 - Aucun code ou élément essentiel supprimé, aucune fonctionnalité retirée, aucun impact sur le backend ou le déploiement backend.
 - Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
+- Statut : Prêt pour test d'affichage complet et déploiement en production.
+
+## [Date : Amélioration navbar + correction Fiches métiers]
+
+- Amélioration de la navbar : alignement vertical parfait de tous les éléments, espacement harmonieux, boutons à droite uniformes et bien alignés.
+- Correction du lien 'Fiches métiers' : affichage forcé sur une seule ligne (white-space: nowrap), plus de retour à la ligne.
+- Aucun code ou élément essentiel supprimé, aucune fonctionnalité retirée, aucun impact sur le backend ou le déploiement backend.
+- Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
 - Statut : Prêt pour test d'affichage complet et déploiement en production. 
