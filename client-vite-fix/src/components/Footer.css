@@ -1,0 +1,100 @@
+/* Footer moderne BusinessConnect Sénégal */
+
+.footer-modern {
+  width: 100%;
+  background: #001529;
+  color: #fff;
+  padding: 48px 0 0 0;
+  border-top: 1px solid #0a1a2f;
+  margin-top: 60px;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 32px;
+  flex-wrap: wrap;
+  padding: 0 32px;
+}
+
+.footer-section {
+  flex: 1 1 180px;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-section h3 {
+  color: #40a9ff;
+  font-size: 18px;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.footer-section a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 15px;
+  transition: color 0.18s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.footer-section a:hover {
+  color: #40a9ff;
+}
+
+.footer-socials {
+  display: flex;
+  gap: 16px;
+  margin-top: 6px;
+}
+.footer-socials a {
+  font-size: 26px;
+  color: #40a9ff;
+  transition: color 0.18s;
+}
+.footer-socials a:hover {
+  color: #fff;
+}
+
+.footer-bottom {
+  text-align: center;
+  padding: 24px 0 12px 0;
+  color: #b0c4d8;
+  font-size: 15px;
+  background: none;
+  border-top: 1px solid #0a1a2f;
+  margin-top: 32px;
+}
+
+@media (max-width: 900px) {
+  .footer-content {
+    flex-wrap: wrap;
+    gap: 18px;
+    padding: 0 10px;
+  }
+  .footer-section {
+    min-width: 140px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 700px) {
+  .footer-content {
+    flex-direction: column;
+    gap: 24px;
+    padding: 0 8px;
+  }
+  .footer-section {
+    min-width: 0;
+    font-size: 14px;
+  }
+  .footer-bottom {
+    font-size: 13px;
+    padding: 18px 0 8px 0;
+  }
+} 

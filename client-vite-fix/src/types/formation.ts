@@ -1,0 +1,21 @@
+export interface Formation {
+  id: string;
+  title: string;
+  description: string;
+  category: 'développement' | 'business' | 'marketing' | 'design' | 'langues' | 'soft-skills';
+  cursaUrl?: string;
+  thumbnail?: string;
+  featured?: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type DomainType = 
+  | 'informatique'
+  | 'marketing'
+  | 'gestion'
+  | 'langues'
+  | 'softSkills'
+  | 'design'
+  | 'finance'
+  | 'entrepreneuriat'; 

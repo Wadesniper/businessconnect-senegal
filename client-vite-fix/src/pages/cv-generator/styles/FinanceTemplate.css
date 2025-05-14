@@ -1,0 +1,168 @@
+/* Template Finance - Style professionnel pour le secteur financier */
+
+.finance-cv-template {
+  padding: 2rem;
+  background-color: #ffffff;
+  color: #2c3e50;
+  font-family: 'Arial', sans-serif;
+}
+
+.finance-header {
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+  border-radius: 8px;
+  color: white;
+}
+
+.finance-avatar-container {
+  text-align: center;
+}
+
+.finance-avatar {
+  border: 4px solid #ffffff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.finance-header-content {
+  padding: 1rem;
+}
+
+.finance-name {
+  color: #ffffff !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 2.5rem !important;
+}
+
+.finance-title {
+  color: #e2e8f0 !important;
+  margin-bottom: 1rem !important;
+  font-size: 1.8rem !important;
+}
+
+.finance-contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  color: #e2e8f0;
+}
+
+.finance-contact-info a {
+  color: #e2e8f0;
+  text-decoration: none;
+}
+
+.finance-content {
+  padding: 1rem 0;
+}
+
+.finance-section {
+  margin-bottom: 2rem;
+}
+
+.finance-section-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #2c5282;
+  padding-bottom: 0.5rem;
+}
+
+.finance-section-icon {
+  color: #2c5282;
+  font-size: 1.5rem;
+  margin-right: 1rem;
+}
+
+.finance-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.finance-timeline {
+  margin: 2rem 0;
+}
+
+.finance-timeline-dot {
+  width: 16px;
+  height: 16px;
+  background-color: #2c5282;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+}
+
+.finance-experience-title {
+  color: #2c5282 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.finance-company {
+  color: #4a5568;
+  font-size: 1.1rem;
+}
+
+.finance-date {
+  font-size: 0.9rem;
+  margin: 0.5rem 0;
+}
+
+.finance-description-list {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.finance-achievements {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #f7fafc;
+  border-radius: 4px;
+}
+
+.finance-achievements ul {
+  margin-top: 0.5rem;
+  padding-left: 1.5rem;
+}
+
+.finance-education-description {
+  margin-top: 0.5rem;
+  color: #4a5568;
+}
+
+.finance-certification-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.finance-language-tag {
+  font-size: 1rem !important;
+  padding: 0.5rem 1rem !important;
+  margin: 0.25rem !important;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .finance-cv-template {
+    padding: 1rem;
+  }
+
+  .finance-header {
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .finance-name {
+    font-size: 2rem !important;
+  }
+
+  .finance-title {
+    font-size: 1.5rem !important;
+  }
+
+  .finance-contact-info {
+    align-items: center;
+  }
+} 

@@ -1,0 +1,159 @@
+import React, { Suspense, lazy } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ProLayout } from '@ant-design/pro-layout';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import { AuthProvider } from './context/AuthContext';
+import AdminRoute from './components/AdminRoute';
+import ProtectedRoute from './components/ProtectedRoute';
+import { useSubscription } from './hooks/useSubscription';
+// Lazy load des pages principales
+const Home = lazy(() => import('./pages/Home'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const LoginForm = lazy(() => import('./components/LoginForm'));
+const RegisterForm = lazy(() => import('./components/RegisterForm'));
+const SubscriptionPage = lazy(() => import('./pages/subscription/SubscriptionPage'));
+const PaymentSuccess = lazy(() => import('./pages/payment/PaymentSuccess'));
+const PaymentCancel = lazy(() => import('./pages/payment/PaymentCancel'));
+const MarketplacePage = lazy(() => import('./pages/marketplace/MarketplacePage'));
+const MarketplaceItemPage = lazy(() => import('./pages/marketplace/MarketplaceItemPage'));
+const ForumPage = lazy(() => import('./pages/forum/ForumPage'));
+const DiscussionDetail = lazy(() => import('./pages/forum/DiscussionDetail'));
+const ContactPage = lazy(() => import('./pages/contact'));
+const AdminPage = lazy(() => import('./pages/admin'));
+const MentionsLegales = lazy(() => import('./pages/legal/MentionsLegales'));
+const CGV = lazy(() => import('./pages/legal/CGV'));
+const CGU = lazy(() => import('./pages/legal/CGU'));
+const Privacy = lazy(() => import('./pages/legal/Privacy'));
+const Cookies = lazy(() => import('./pages/legal/Cookies'));
+const JobsPage = lazy(() => import('./pages/jobs/JobsPage'));
+const FormationsPage = lazy(() => import('./pages/formations/FormationsPage'));
+const ProfilePage = lazy(() => import('./pages/profile/ProfilePage'));
+const NotFoundPage = lazy(() => import('./pages/404'));
+const CVGenerator = lazy(() => import('./pages/cv-generator'));
+import JobDetailsPage from './pages/jobs/JobDetailsPage';
+
+// ErrorBoundary global
+class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, error: any}> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error: any) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error: any, errorInfo: any) {
+    // Log l'erreur côté client
+    console.error('Erreur capturée par ErrorBoundary:', error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) {
+      return <div style={{color:'red',padding:40}}><h1>Une erreur est survenue</h1><pre>{String(this.state.error)}</pre></div>;
+    }
+    return this.props.children;
+  }
+}
+
+const App: React.FC = () => {
+  const { hasActiveSubscription } = useSubscription();
+  return (
+    <ErrorBoundary>
+      <AuthProvider>
+        <Router>
+          <ProLayout
+            layout="top"
+            navTheme="light"
+            headerRender={() => <Navbar />}
+            footerRender={() => <Footer />}
+          >
+            <Suspense fallback={<div style={{textAlign:'center',marginTop:'3rem',color:'orange'}}>Chargement...<br/>Si rien ne s'affiche, une erreur de chargement est survenue.<br/>Vérifiez la console pour plus de détails.</div>}>
+              <Routes>
+                {/* Pages publiques */}
+                <Route path="/" element={<Home />} />
+                <Route path="/jobs" element={<JobsPage />} />
+                <Route path="/jobs/:id" element={<JobDetailsPage />} />
+                <Route path="/marketplace" element={<MarketplacePage />} />
+                <Route path="/marketplace/:id" element={<MarketplaceItemPage />} />
+                <Route path="/forum" element={<ForumPage />} />
+                <Route path="/forum/:id" element={<DiscussionDetail />} />
+                <Route path="/formations" element={<FormationsPage />} />
+                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/cv-generator" element={<CVGenerator isSubscribed={hasActiveSubscription} />} />
+
+                {/* Pages légales */}
+                <Route path="/legal/mentions-legales" element={<MentionsLegales />} />
+                <Route path="/legal/cgv" element={<CGV />} />
+                <Route path="/legal/cgu" element={<CGU />} />
+                <Route path="/legal/privacy" element={<Privacy />} />
+                <Route path="/legal/cookies" element={<Cookies />} />
+
+                {/* Routes d'authentification */}
+                <Route path="/login" element={<LoginForm />} />
+                <Route path="/register" element={<RegisterForm />} />
+
+                {/* Routes protégées */}
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute element={<ProfilePage />} />
+                  }
+                />
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute element={<Dashboard />} />
+                  }
+                />
+                <Route
+                  path="/cv-generator/create"
+                  element={
+                    <ProtectedRoute element={<CVGenerator />} />
+                  }
+                />
+                <Route
+                  path="/marketplace/create"
+                  element={
+                    <ProtectedRoute element={<MarketplacePage />} />
+                  }
+                />
+                <Route
+                  path="/subscription"
+                  element={
+                    <ProtectedRoute element={<SubscriptionPage />} />
+                  }
+                />
+                <Route
+                  path="/payment/success"
+                  element={
+                    <ProtectedRoute element={<PaymentSuccess />} />
+                  }
+                />
+                <Route
+                  path="/payment/cancel"
+                  element={
+                    <ProtectedRoute element={<PaymentCancel />} />
+                  }
+                />
+
+                {/* Route d'administration */}
+                <Route
+                  path="/admin/*"
+                  element={
+                    <AdminRoute>
+                      <AdminPage />
+                    </AdminRoute>
+                  }
+                />
+
+                {/* Page 404 */}
+                <Route path="*" element={<NotFoundPage />} />
+              </Routes>
+            </Suspense>
+          </ProLayout>
+        </Router>
+      </AuthProvider>
+    </ErrorBoundary>
+  );
+};
+
+export default App; 
