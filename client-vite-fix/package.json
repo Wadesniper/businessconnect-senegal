@@ -8,7 +8,7 @@
     "@ant-design/pro-layout": "^7.22.4",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
-    "@mui/icons-material": "file:./icons-material-7.1.0.tgz",
+    "@mui/icons-material": "^7.1.0",
     "@mui/material": "^7.0.2",
     "@sentry/react": "^9.15.0",
     "@sentry/tracing": "^7.120.3",
