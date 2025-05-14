@@ -23,7 +23,7 @@ describe('PaymentService', () => {
   it('devrait initialiser un paiement avec succès', async () => {
     const mockResponse = {
       success: true,
-      redirect_url: 'https://paytech.sn/payment/test-123'
+      redirect_url: 'https://cinetpay.com/payment/test-123'
     };
 
     (global.fetch as jest.Mock).mockResolvedValueOnce({

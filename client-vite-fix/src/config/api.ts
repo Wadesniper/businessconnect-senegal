@@ -1,5 +1,4 @@
 const API_URL = process.env.REACT_APP_API_URL || 'https://api.businessconnectsenegal.com';
-const PAYTECH_URL = process.env.REACT_APP_PAYTECH_URL || 'https://paytech.sn';
 
 export const endpoints = {
   // Auth
@@ -11,8 +10,8 @@ export const endpoints = {
 
   // Subscriptions
   subscriptions: `${API_URL}/api/subscriptions`,
-  payment: `${PAYTECH_URL}/payment`,
-  paymentCallback: `${API_URL}/api/webhooks/payment`,
+  payment: `${API_URL}/api/payment/init`,
+  paymentCallback: `${API_URL}/api/payment/callback`,
 
   // CV Generator
   cvs: `${API_URL}/api/cvs`,
