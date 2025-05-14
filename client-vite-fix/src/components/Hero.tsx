@@ -10,7 +10,8 @@ const HeroContainer = styled.div`
   position: relative;
   height: 100vh;
   width: 100%;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: hidden;
   background: linear-gradient(135deg, #001529 0%, #003366 100%);
 `;
 
@@ -23,7 +24,8 @@ const HeroBackground = styled.div<{ $imageUrl: string }>`
   background-image: url(${props => props.$imageUrl});
   background-size: cover;
   background-position: center;
-  filter: blur(18px) brightness(0.7);
+  filter: blur(10px) brightness(0.8);
+  transform: scale(1.1);
   z-index: 0;
 `;
 
@@ -33,7 +35,7 @@ const Overlay = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, #001529cc 40%, #00336699 100%);
+  background: linear-gradient(90deg, #001529b3 40%, #00336699 100%);
   z-index: 1;
 `;
 

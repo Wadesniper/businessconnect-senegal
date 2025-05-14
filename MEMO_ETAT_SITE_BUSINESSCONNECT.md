@@ -85,4 +85,12 @@
 - Ajustement du ratio du carrousel Hero à 2.5/1 (padding-top: 40%) pour augmenter la hauteur tout en gardant un effet horizontal, ce qui limite la coupe des images.
 - Aucun code ou élément essentiel supprimé, aucune fonctionnalité retirée, aucun impact sur le backend ou le déploiement backend.
 - Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
+- Statut : Prêt pour test d'affichage complet et déploiement en production.
+
+## [Date : Hero arrière-plan plus visible + suppression scroll horizontal]
+
+- Amélioration de la visibilité de l'arrière-plan dynamique du Hero : flou réduit, zoom accentué, overlay plus transparent pour mieux voir l'image de fond.
+- Suppression de la barre de scroll horizontale : overflow-x: hidden sur le Hero et la navbar, padding/gap ajustés si besoin.
+- Aucun code ou élément essentiel supprimé, aucune fonctionnalité retirée, aucun impact sur le backend ou le déploiement backend.
+- Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
 - Statut : Prêt pour test d'affichage complet et déploiement en production. 
