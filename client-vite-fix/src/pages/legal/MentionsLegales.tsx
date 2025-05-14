@@ -5,7 +5,7 @@ const { Title, Paragraph, Text } = Typography;
 
 const MentionsLegales: React.FC = () => {
   return (
-    <div style={{ maxWidth: 800, margin: '40px auto', padding: '0 20px' }}>
+    <div style={{ maxWidth: 700, margin: '40px 0 40px 40px', padding: '0 12px', textAlign: 'left' }}>
       <Card>
         <Typography>
           <Title level={1}>Mentions Légales</Title>

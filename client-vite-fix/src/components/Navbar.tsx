@@ -22,7 +22,7 @@ const Navbar: React.FC = () => {
   const navLinks = [
     { to: '/', label: 'Accueil', icon: <HomeOutlined /> },
     { to: '/jobs', label: 'Emplois', icon: <FileTextOutlined /> },
-    { to: '/careers', label: 'Fiches métiers', icon: <CrownOutlined /> },
+    { to: '/jobs', label: 'Fiches métiers', icon: <CrownOutlined /> },
     { to: '/formations', label: 'Formations', icon: <BookOutlined /> },
     { to: '/cv-generator', label: 'CV', icon: <UserOutlined /> },
     { to: '/marketplace', label: 'Marketplace', icon: <ShopOutlined /> },
@@ -57,10 +57,10 @@ const Navbar: React.FC = () => {
             </button>
           </div>
         ) : (
-          <div className="auth-buttons">
+          <div className="auth-buttons" style={{gap: '10px', alignItems: 'center', display: 'flex'}}>
             <Link to="/subscription" className="subscribe-button">S'abonner</Link>
-            <Link to="/auth/login" className="login-button"><LoginOutlined /> Connexion</Link>
-            <Link to="/auth/register" className="register-button">Inscription</Link>
+            <Link to="/login" className="login-button"><LoginOutlined /> Connexion</Link>
+            <Link to="/register" className="register-button">Inscription</Link>
           </div>
         )}
       </div>
@@ -90,8 +90,8 @@ const Navbar: React.FC = () => {
             ) : (
               <>
                 <Link to="/subscription" className="subscribe-button" onClick={() => setDrawerOpen(false)}>S'abonner</Link>
-                <Link to="/auth/login" className="login-button" onClick={() => setDrawerOpen(false)}><LoginOutlined /> Connexion</Link>
-                <Link to="/auth/register" className="register-button" onClick={() => setDrawerOpen(false)}>Inscription</Link>
+                <Link to="/login" className="login-button" onClick={() => setDrawerOpen(false)}><LoginOutlined /> Connexion</Link>
+                <Link to="/register" className="register-button" onClick={() => setDrawerOpen(false)}>Inscription</Link>
               </>
             )}
           </div>

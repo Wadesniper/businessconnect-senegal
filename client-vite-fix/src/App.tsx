@@ -32,6 +32,8 @@ const ProfilePage = lazy(() => import('./pages/profile/ProfilePage'));
 const NotFoundPage = lazy(() => import('./pages/404'));
 const CVGenerator = lazy(() => import('./pages/cv-generator'));
 import JobDetailsPage from './pages/jobs/JobDetailsPage';
+const FAQ = lazy(() => import('./pages/help/FAQ'));
+const CareersPage = lazy(() => import('./pages/careers'));
 
 // ErrorBoundary global
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, error: any}> {
@@ -79,6 +81,7 @@ const App: React.FC = () => {
                 <Route path="/formations" element={<FormationsPage />} />
                 <Route path="/contact" element={<ContactPage />} />
                 <Route path="/cv-generator" element={<CVGenerator isSubscribed={hasActiveSubscription} />} />
+                <Route path="/careers" element={<CareersPage />} />
 
                 {/* Pages légales */}
                 <Route path="/legal/mentions-legales" element={<MentionsLegales />} />
@@ -147,6 +150,9 @@ const App: React.FC = () => {
 
                 {/* Page 404 */}
                 <Route path="*" element={<NotFoundPage />} />
+
+                {/* New route */}
+                <Route path="/help/FAQ" element={<FAQ />} />
               </Routes>
             </Suspense>
           </ProLayout>
