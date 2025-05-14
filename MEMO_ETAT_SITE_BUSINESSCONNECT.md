@@ -56,4 +56,11 @@
 - Amélioration de la barre de navigation : boutons à droite plus compacts, alignement vertical parfait, responsive renforcé.
 - Aucun code ou élément essentiel supprimé, aucune fonctionnalité retirée, aucun impact sur le backend ou le déploiement backend.
 - Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
+- Statut : Prêt pour test d'affichage complet et déploiement en production.
+
+## [Date : Carrousel Hero ratio 21/9 ultra horizontal]
+
+- Passage du carrousel Hero au ratio 21/9 (padding-top: 42.85%) pour un rendu très horizontal, moderne et immersif.
+- Aucun code ou élément essentiel supprimé, aucune fonctionnalité retirée, aucun impact sur le backend ou le déploiement backend.
+- Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
 - Statut : Prêt pour test d'affichage complet et déploiement en production. 
