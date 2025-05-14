@@ -13,6 +13,7 @@ import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { paymentService } from '../services/paymentService';
+import axios from 'axios';
 
 const { Title, Paragraph } = Typography;
 
@@ -108,6 +109,12 @@ const plans = [
   }
 ];
 
+const planTypeMap: Record<string, string> = {
+  "étudiant / chercheur d'emploi": 'etudiant',
+  'annonceur': 'annonceur',
+  'recruteur': 'employeur'
+};
+
 const Pricing: React.FC = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
@@ -117,17 +124,22 @@ const Pricing: React.FC = () => {
       navigate('/login', { state: { from: '/pricing' } });
       return;
     }
-
-    const planType = planTitle.toLowerCase().replace(/ /g, '-').replace(/'/g, '');
-    
+    const planType = planTypeMap[planTitle.toLowerCase()] || 'etudiant';
     try {
-      await paymentService.initiatePayment({
-        amount: paymentService.getPaymentAmount(planType),
-        planType,
-        currency: 'XOF'
+      const res = await axios.post('/api/payment/init', {
+        type: planType,
+        customer_name: user?.firstName || '',
+        customer_surname: user?.lastName || '',
+        customer_email: user?.email || '',
+        customer_phone_number: user?.phoneNumber || ''
       });
+      if (res.data && res.data.data && res.data.data.payment_url) {
+        window.location.href = res.data.data.payment_url;
+      } else {
+        alert("Erreur lors de la génération du lien de paiement.");
+      }
     } catch (error) {
-      console.error('Erreur de paiement:', error);
+      alert("Erreur lors de l'initialisation du paiement.");
     }
   };
 

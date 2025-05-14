@@ -8,7 +8,7 @@ describe('PaymentService', () => {
     customerId: 'test-user-123',
     customerEmail: 'test@example.com',
     customerFullName: 'Test User',
-    subscriptionType: 'premium' as const
+    subscriptionType: 'etudiant' as const
   };
 
   beforeEach(() => {
@@ -63,7 +63,7 @@ describe('PaymentService', () => {
   });
 
   it('devrait retourner le bon montant pour chaque type d\'abonnement', () => {
-    expect(paymentService.getSubscriptionAmount('premium')).toBe(15000);
-    expect(paymentService.getSubscriptionAmount('enterprise')).toBe(50000);
+    expect(paymentService.getSubscriptionAmount('etudiant')).toBe(15000);
+    expect(paymentService.getSubscriptionAmount('employeur')).toBe(50000);
   });
 }); 
