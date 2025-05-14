@@ -84,20 +84,22 @@ const GreenSpan = styled.span`
   font-weight: bold;
 `;
 
+const getImageUrl = (src: string) => `${import.meta.env.BASE_URL}images/${src}`;
+
 const images = [
-  { src: '/images/1-ingenieur.jpg', desc: 'Concevez le monde de demain' },
-  { src: '/images/2-construction.jpg', desc: "Construisez l'avenir" },
-  { src: '/images/3-techno-securite.jpg', desc: 'Sécurisez le numérique' },
-  { src: '/images/4-agriculture.jpg', desc: 'Cultivez la réussite' },
-  { src: '/images/5-datacenter.jpg', desc: 'Gérez les données en toute sécurité' },
-  { src: '/images/6-mecanicienne.jpg', desc: 'Réparez, innovez' },
-  { src: '/images/7-reunion-pro.jpg', desc: 'Collaborez efficacement' },
-  { src: '/images/8-developpeur.jpg', desc: "Développez des solutions d'avenir" },
-  { src: '/images/9-immeuble.jpg', desc: "L'urbanisme au service du progrès" },
-  { src: '/images/10-pompier.jpg', desc: 'Protégez les vies' },
-  { src: '/images/11-science.jpg', desc: 'Expérimentez, découvrez' },
-  { src: '/images/12-medical.jpg', desc: 'Soignez avec passion' },
-  { src: '/images/13-business.jpg', desc: 'Entreprenez au Sénégal' },
+  { src: '1-ingenieur.jpg', desc: 'Concevez le monde de demain' },
+  { src: '2-construction.jpg', desc: "Construisez l'avenir" },
+  { src: '3-techno-securite.jpg', desc: 'Sécurisez le numérique' },
+  { src: '4-agriculture.jpg', desc: 'Cultivez la réussite' },
+  { src: '5-datacenter.jpg', desc: 'Gérez les données en toute sécurité' },
+  { src: '6-mecanicienne.jpg', desc: 'Réparez, innovez' },
+  { src: '7-reunion-pro.jpg', desc: 'Collaborez efficacement' },
+  { src: '8-developpeur.jpg', desc: "Développez des solutions d'avenir" },
+  { src: '9-immeuble.jpg', desc: "L'urbanisme au service du progrès" },
+  { src: '10-pompier.jpg', desc: 'Protégez les vies' },
+  { src: '11-science.jpg', desc: 'Expérimentez, découvrez' },
+  { src: '12-medical.jpg', desc: 'Soignez avec passion' },
+  { src: '13-business.jpg', desc: 'Entreprenez au Sénégal' },
 ];
 
 const slideVariants = {
@@ -166,7 +168,7 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
           <AnimatePresence initial={false} custom={direction}>
             <SlideImage
               key={page}
-              $imageUrl={images[currentImageIndex].src}
+              $imageUrl={getImageUrl(images[currentImageIndex].src)}
               custom={direction}
               variants={slideVariants}
               initial="enter"

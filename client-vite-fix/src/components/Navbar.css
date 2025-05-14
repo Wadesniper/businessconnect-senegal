@@ -7,7 +7,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 32px;
+  padding: 0 24px;
   min-height: 64px;
   position: sticky;
   top: 0;
@@ -49,7 +49,7 @@
 .navbar-end {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 10px;
 }
 
 .user-menu {
@@ -113,10 +113,10 @@
 
 @media (max-width: 900px) {
   .navbar-menu {
-    gap: 10px;
+    gap: 8px;
   }
   .navbar {
-    padding: 0 10px;
+    padding: 0 6px;
   }
 }
 
