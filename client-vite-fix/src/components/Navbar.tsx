@@ -22,7 +22,7 @@ const Navbar: React.FC = () => {
   const navLinks = [
     { to: '/', label: 'Accueil', icon: <HomeOutlined /> },
     { to: '/jobs', label: 'Emplois', icon: <FileTextOutlined /> },
-    { to: '/jobs', label: 'Fiches métiers', icon: <CrownOutlined /> },
+    { to: '/careers', label: 'Fiches métiers', icon: <CrownOutlined /> },
     { to: '/formations', label: 'Formations', icon: <BookOutlined /> },
     { to: '/cv-generator', label: 'CV', icon: <UserOutlined /> },
     { to: '/marketplace', label: 'Marketplace', icon: <ShopOutlined /> },

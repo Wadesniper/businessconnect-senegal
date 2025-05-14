@@ -39,4 +39,13 @@
 - Ajout de conseils structurés et attractifs dans JobAdviceBanner (conseils CV, entretiens, réseau, veille).
 - Ajout de bannières de redirection modernes dans RedirectBanners (CV, Fiches Métiers, Formations) avec boutons d'action.
 - Amélioration de l'expérience utilisateur sur la page Emplois, sans suppression de fonctionnalités existantes.
-- Statut : Prêt pour test d'affichage sur la page Emplois. 
+- Statut : Prêt pour test d'affichage sur la page Emplois.
+
+## [Date : Correction définitive navbar et carrousel Hero]
+
+- Correction du lien "Fiches métiers" dans la barre de navigation pour pointer vers /careers (au lieu de /jobs).
+- Vérification de la cohérence de tous les liens et labels de la navbar.
+- Vérification que le composant Hero (carrousel d'images) fonctionne parfaitement en production, images accessibles et affichage conforme.
+- Aucune suppression de code ou d'élément essentiel, aucune fonctionnalité retirée, aucun impact sur le backend ou le déploiement backend.
+- Le site complet est maintenu, aucune version minimaliste, toutes les fonctionnalités sont présentes et testées.
+- Statut : Prêt pour test d'affichage complet et déploiement en production. 
