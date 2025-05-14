@@ -1,5 +1,9 @@
 /* Barre de navigation moderne BusinessConnect Sénégal */
 
+body {
+  background: #f7faff;
+}
+
 .navbar {
   width: 100%;
   background: #fff;
