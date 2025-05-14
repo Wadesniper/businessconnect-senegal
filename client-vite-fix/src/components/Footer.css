@@ -2,10 +2,10 @@
 
 .footer-modern {
   width: 100%;
-  background: #001529;
+  background: #111; /* noir pur classe */
   color: #fff;
   padding: 48px 0 0 0;
-  border-top: 1px solid #0a1a2f;
+  border-top: 1px solid #222;
   margin-top: 60px;
 }
 

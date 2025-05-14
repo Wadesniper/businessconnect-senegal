@@ -20,8 +20,9 @@ import {
 } from '@ant-design/icons';
 import { useNavigate, Link } from 'react-router-dom';
 import { JobService } from '../services/jobService';
-import { Job } from '../types/job';
-import { marketplaceService, MarketplaceItem } from '../services/marketplaceService';
+import type { Job } from '../types/job';
+import { marketplaceService } from '../services/marketplaceService';
+import type { MarketplaceItem } from '../services/marketplaceService';
 import { useSpring, animated } from 'react-spring';
 
 const { Content } = Layout;
@@ -338,6 +339,23 @@ const Home: React.FC = () => {
               </Col>
             ))}
             </Row>
+        </div>
+        {/* Section Appel à l'action */}
+        <div style={{ width: '100%', background: '#2056a8', color: '#fff', padding: '64px 0 56px 0', margin: '0 auto', textAlign: 'center' }}>
+          <Typography.Title level={2} style={{ color: '#fff', marginBottom: 24, fontSize: 36, fontWeight: 700 }}>
+            Prêt à booster votre carrière professionnelle ?
+          </Typography.Title>
+          <Typography.Paragraph style={{ color: '#fff', fontSize: 20, marginBottom: 36, maxWidth: 700, margin: '0 auto' }}>
+            Rejoignez BusinessConnect Sénégal dès aujourd'hui et accédez à toutes nos fonctionnalités pour développer votre réseau professionnel.
+          </Typography.Paragraph>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 24, flexWrap: 'wrap' }}>
+            <Button type="primary" size="large" style={{ background: '#ffa940', borderColor: '#ffa940', color: '#fff', fontWeight: 600, borderRadius: 10, minWidth: 200, fontSize: 18 }} onClick={() => navigate('/register')}>
+              S'inscrire gratuitement
+            </Button>
+            <Button type="default" size="large" style={{ background: '#fff', color: '#2056a8', fontWeight: 600, borderRadius: 10, minWidth: 180, fontSize: 18, border: 'none' }} onClick={() => navigate('/contact')}>
+              Contactez-nous
+            </Button>
+          </div>
         </div>
       </Content>
     </Layout>

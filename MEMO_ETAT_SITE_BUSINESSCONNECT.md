@@ -101,4 +101,19 @@
 - Correction du lien 'Fiches métiers' : affichage forcé sur une seule ligne (white-space: nowrap), plus de retour à la ligne.
 - Aucun code ou élément essentiel supprimé, aucune fonctionnalité retirée, aucun impact sur le backend ou le déploiement backend.
 - Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
+- Statut : Prêt pour test d'affichage complet et déploiement en production.
+
+## [Date : Titre Hero (sénégalais en blanc) + footer gris/noir classe]
+
+- Mise à jour du titre du Hero : le mot 'sénégalais' est désormais en blanc, seuls 'plateforme n°1', 'talents', 'opportunités' restent en vert.
+- Changement de la couleur de fond du footer en gris foncé/noir (#222 ou #111) pour un rendu plus classe et moderne.
+- Aucun code ou élément essentiel supprimé, aucune fonctionnalité retirée, aucun impact sur le backend ou le déploiement backend.
+- Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
+- Statut : Prêt pour test d'affichage complet et déploiement en production.
+
+## [Date : Ajout section appel à l'action avant le footer]
+
+- Ajout d'une section d'appel à l'action (fond bleu, texte blanc, deux boutons : S'inscrire gratuitement et Contactez-nous) entre les témoignages et le footer sur la page d'accueil.
+- Aucun code ou élément essentiel supprimé, aucune fonctionnalité retirée, aucun impact sur le backend ou le déploiement backend.
+- Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
 - Statut : Prêt pour test d'affichage complet et déploiement en production. 

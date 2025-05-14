@@ -184,7 +184,7 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
             transition={{ duration: 0.8 }}
           >
             <Title style={{ color: 'white', fontSize: '48px', marginBottom: '20px' }}>
-              La <GreenSpan>plateforme n°1</GreenSpan> où les <GreenSpan>talents sénégalais</GreenSpan> rencontrent les <GreenSpan>opportunités</GreenSpan>
+              La <GreenSpan>plateforme n°1</GreenSpan> où les <GreenSpan>talents</GreenSpan> <span style={{color:'white', fontWeight:700}}>sénégalais</span> rencontrent les <GreenSpan>opportunités</GreenSpan>
             </Title>
             <Paragraph style={{ color: 'white', fontSize: '18px', marginBottom: '30px' }}>
               Découvrez les meilleurs talents et opportunités dans tous les secteurs d'activité. 
