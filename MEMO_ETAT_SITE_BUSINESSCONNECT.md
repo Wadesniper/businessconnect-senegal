@@ -78,4 +78,11 @@
 - Ajout d'un effet d'arrière-plan dynamique : la même image que celle du carrousel, floutée et agrandie, en fond du Hero, avec un overlay dégradé pour la lisibilité.
 - Aucun code ou élément essentiel supprimé, aucune fonctionnalité retirée, aucun impact sur le backend ou le déploiement backend.
 - Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
+- Statut : Prêt pour test d'affichage complet et déploiement en production.
+
+## [Date : Carrousel Hero ratio 2.5/1 (plus haut, moins coupé)]
+
+- Ajustement du ratio du carrousel Hero à 2.5/1 (padding-top: 40%) pour augmenter la hauteur tout en gardant un effet horizontal, ce qui limite la coupe des images.
+- Aucun code ou élément essentiel supprimé, aucune fonctionnalité retirée, aucun impact sur le backend ou le déploiement backend.
+- Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
 - Statut : Prêt pour test d'affichage complet et déploiement en production. 
