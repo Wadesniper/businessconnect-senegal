@@ -116,4 +116,14 @@
 - Ajout d'une section d'appel à l'action (fond bleu, texte blanc, deux boutons : S'inscrire gratuitement et Contactez-nous) entre les témoignages et le footer sur la page d'accueil.
 - Aucun code ou élément essentiel supprimé, aucune fonctionnalité retirée, aucun impact sur le backend ou le déploiement backend.
 - Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
+- Statut : Prêt pour test d'affichage complet et déploiement en production.
+
+## [Date : Suppression définitive des bandes latérales, mode plein écran coloré]
+
+- Suppression de tous les `max-width` sur les conteneurs principaux du frontend (App.css, Home, Contact, Subscription, CV, etc.).
+- Application du mode "plein écran coloré" sur toute la largeur, sans aucune bande blanche latérale, même sur très grand écran.
+- Ajout ou maintien d'un padding latéral suffisant (ex : 24px) pour la lisibilité sur toutes les pages.
+- Vérification que le fond coloré s'étend bien sur toute la largeur (gris clair #f7faff ou variantes selon les sections).
+- Aucun code ou fonctionnalité essentielle supprimé, aucun impact sur le backend ou le déploiement backend.
+- Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
 - Statut : Prêt pour test d'affichage complet et déploiement en production. 

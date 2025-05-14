@@ -17,11 +17,11 @@ const StyledLayout = styled(Layout)`
 `;
 
 const Container = styled.div`
-  max-width: 700px;
-  margin: 0 0 0 40px;
+  width: 100%;
+  margin: 0;
+  padding: 0 24px;
   @media (max-width: 900px) {
-    margin: 0 0 0 12px;
-    max-width: 98vw;
+    max-width: 100vw;
   }
   @media (max-width: 600px) {
     margin: 0 auto;

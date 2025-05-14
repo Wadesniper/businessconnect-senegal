@@ -88,8 +88,8 @@ const SubscriptionPage: React.FC = () => {
   };
 
   return (
-    <div className="subscription-page-bg" style={{ minHeight: '100vh', padding: '40px 0', background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)' }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+    <div className="subscription-page-bg" style={{ minHeight: '100vh', padding: '40px 0', background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)', width: '100%' }}>
+      <div style={{ width: '100%', margin: '0 auto', padding: '0 24px' }}>
         <Title level={1} style={{ textAlign: 'center', marginBottom: 16 }}>Choisissez votre abonnement</Title>
         <Paragraph style={{ textAlign: 'center', fontSize: 18, marginBottom: 40 }}>
           Accédez à toutes les fonctionnalités de BusinessConnect Sénégal selon votre profil. Paiement sécurisé via CinetPay.

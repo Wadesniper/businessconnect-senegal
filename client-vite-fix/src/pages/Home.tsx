@@ -139,8 +139,8 @@ const Home: React.FC = () => {
     <Layout>
       <Hero onDiscoverClick={handleScrollToServices} />
       {/* Section Emploi */}
-      <Content style={{ background: '#f7faff', padding: '40px 0 0 0' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto 40px auto', padding: '0 16px' }}>
+      <Content style={{ background: '#f7faff', padding: '40px 0 0 0', width: '100%' }}>
+        <div style={{ width: '100%', margin: '0 auto 40px auto', padding: '0 24px' }}>
           <Typography.Title level={2} style={{ color: '#1d3557', marginBottom: 24 }}>
             Offres d'emploi récentes
           </Typography.Title>
@@ -170,7 +170,7 @@ const Home: React.FC = () => {
             )}
             </Row>
           </div>
-        <div ref={servicesRef} style={{ marginTop: 60, marginBottom: 40 }}>
+        <div ref={servicesRef} style={{ width: '100%', marginTop: 60, marginBottom: 40, padding: '0 24px' }}>
           <Title level={1} style={{ textAlign: 'center', marginBottom: 16 }}>
             Nos Services <span style={{ color: '#1890ff' }}>Professionnels</span>
           </Title>
@@ -241,7 +241,7 @@ const Home: React.FC = () => {
             </Row>
         </div>
         {/* Section CV Professionnel */}
-        <div style={{ maxWidth: 1200, margin: '60px auto', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', background: 'linear-gradient(90deg, #f7fafc 60%, #e3fcec 100%)', borderRadius: 24, boxShadow: '0 4px 24px #e3e8f7' }}>
+        <div style={{ width: '100%', margin: '60px auto', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', background: 'linear-gradient(90deg, #f7fafc 60%, #e3fcec 100%)', borderRadius: 24, boxShadow: '0 4px 24px #e3e8f7' }}>
           <div style={{ flex: 1, minWidth: 320, padding: '40px 24px 40px 0' }}>
             <Title level={2} style={{ color: '#1d3557', marginBottom: 16 }}>Créez un CV professionnel</Title>
             <Paragraph style={{ fontSize: 18, color: '#333', marginBottom: 24 }}>
@@ -262,7 +262,7 @@ const Home: React.FC = () => {
           </div>
         </div>
         {/* Section Marketplace */}
-        <div style={{ maxWidth: 1200, margin: '60px auto', padding: '0 16px', background: 'linear-gradient(90deg, #f7fafc 60%, #e3e8f7 100%)', borderRadius: 24, boxShadow: '0 4px 24px #e3e8f7' }}>
+        <div style={{ width: '100%', margin: '60px auto', padding: '0 24px', background: 'linear-gradient(90deg, #f7fafc 60%, #e3e8f7 100%)', borderRadius: 24, boxShadow: '0 4px 24px #e3e8f7' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', padding: '32px 0 16px 0' }}>
             <Title level={2} style={{ color: '#7c3aed', margin: 0 }}>Marketplace</Title>
             <div style={{ display: 'flex', gap: 16 }}>
@@ -275,7 +275,7 @@ const Home: React.FC = () => {
           </div>
         </div>
         {/* Section Secteurs */}
-        <div style={{ maxWidth: 1200, margin: '60px auto', padding: '0 16px' }}>
+        <div style={{ width: '100%', margin: '60px auto', padding: '0 24px' }}>
           <Title level={2} style={{ color: '#1890ff', marginBottom: 32, textAlign: 'center' }}>Secteurs d'activité</Title>
           <Carousel autoplay autoplaySpeed={2500} dots slidesToShow={3} speed={900} easing="ease-in-out" responsive={[{ breakpoint: 900, settings: { slidesToShow: 2 } }, { breakpoint: 600, settings: { slidesToShow: 1 } }]} style={{ width: '100%', padding: '0 0 32px 0' }} data-testid="sector-carousel">
             {SECTEURS.map((secteur) => (
@@ -294,7 +294,7 @@ const Home: React.FC = () => {
           </Carousel>
                     </div>
         {/* Section Statistiques */}
-        <div style={{ maxWidth: 1200, margin: '60px auto', padding: '0 16px' }}>
+        <div style={{ width: '100%', margin: '60px auto', padding: '0 24px' }}>
           <Title level={2} style={{ color: '#1d3557', marginBottom: 32, textAlign: 'center' }}>BusinessConnect en chiffres</Title>
           <Row gutter={[32, 32]} justify="center">
             <Col xs={24} sm={12} md={6}>
@@ -320,7 +320,7 @@ const Home: React.FC = () => {
             </Row>
         </div>
         {/* Section Témoignages */}
-        <div style={{ maxWidth: 1200, margin: '60px auto', padding: '0 16px' }}>
+        <div style={{ width: '100%', margin: '60px auto', padding: '0 24px' }}>
           <Title level={2} style={{ color: '#1d3557', marginBottom: 32, textAlign: 'center' }}>Ils nous font confiance</Title>
           <Row gutter={[32, 32]} justify="center">
             {TESTIMONIALS.map((t, idx) => (
