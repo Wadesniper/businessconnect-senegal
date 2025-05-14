@@ -179,6 +179,7 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
                 opacity: { duration: 0.2 }
               }}
             >
+              <img src={getImageUrl(images[currentImageIndex].src)} alt={images[currentImageIndex].desc} style={{width:'100%',height:'100%',objectFit:'cover',borderRadius:20,position:'absolute',top:0,left:0,zIndex:1}} />
               <div style={{
                 position: 'absolute',
                 bottom: 0,

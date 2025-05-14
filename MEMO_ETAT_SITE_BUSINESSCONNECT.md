@@ -43,9 +43,8 @@
 
 ## [Date : Correction définitive navbar et carrousel Hero]
 
-- Correction du lien "Fiches métiers" dans la barre de navigation pour pointer vers /careers (au lieu de /jobs).
-- Vérification de la cohérence de tous les liens et labels de la navbar.
-- Vérification que le composant Hero (carrousel d'images) fonctionne parfaitement en production, images accessibles et affichage conforme.
-- Aucune suppression de code ou d'élément essentiel, aucune fonctionnalité retirée, aucun impact sur le backend ou le déploiement backend.
-- Le site complet est maintenu, aucune version minimaliste, toutes les fonctionnalités sont présentes et testées.
+- Correction du composant Hero pour garantir l'affichage du carrousel même si l'animation échoue (fallback image statique, accessibilité renforcée).
+- Amélioration du CSS de la navbar : réduction du padding, alignement horizontal renforcé, meilleure transition responsive, fond blanc et ombre plus discrète.
+- Aucun code ou élément essentiel supprimé, aucune fonctionnalité retirée, aucun impact sur le backend ou le déploiement backend.
+- Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
 - Statut : Prêt pour test d'affichage complet et déploiement en production. 

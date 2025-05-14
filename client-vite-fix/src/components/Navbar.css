@@ -3,11 +3,11 @@
 .navbar {
   width: 100%;
   background: #fff;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  box-shadow: 0 1px 8px rgba(0,0,0,0.05);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
+  padding: 0 8px;
   min-height: 64px;
   position: sticky;
   top: 0;
@@ -25,7 +25,7 @@
 
 .navbar-menu {
   display: flex;
-  gap: 18px;
+  gap: 12px;
   align-items: center;
 }
 
@@ -112,16 +112,16 @@
   color: #a8071a;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
   .navbar-menu {
-    gap: 8px;
+    gap: 6px;
   }
   .navbar {
-    padding: 0 4px;
+    padding: 0 2px;
   }
 }
 
-@media (max-width: 700px) {
+@media (max-width: 800px) {
   .navbar-menu {
     display: none;
   }
@@ -129,7 +129,7 @@
     display: block;
   }
   .navbar-end {
-    gap: 8px;
+    gap: 6px;
   }
   .navbar {
     flex-direction: column;
