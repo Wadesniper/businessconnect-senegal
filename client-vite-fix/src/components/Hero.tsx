@@ -54,7 +54,7 @@ const ImageSlider = styled.div`
   flex: 1;
   position: relative;
   height: 0;
-  padding-top: 42.85%; /* Ratio 21/9 */
+  padding-top: 33.33%; /* Ratio 3/1 ultra horizontal */
   border-radius: 20px;
   overflow: hidden;
   background: #f7fafc;
