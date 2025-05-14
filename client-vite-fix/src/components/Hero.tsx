@@ -84,7 +84,7 @@ const GreenSpan = styled.span`
   font-weight: bold;
 `;
 
-const getImageUrl = (src: string) => `${import.meta.env.BASE_URL}images/${src}`;
+const getImageUrl = (src: string) => `/images/${src}`;
 
 const images = [
   { src: '1-ingenieur.jpg', desc: 'Concevez le monde de demain' },
