@@ -62,7 +62,7 @@
 .auth-buttons {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
 }
 
 .subscribe-button {
@@ -70,9 +70,15 @@
   color: #fff !important;
   font-weight: 600;
   border-radius: 8px;
-  padding: 8px 18px;
+  padding: 6px 14px;
+  font-size: 15px;
+  height: 38px;
+  min-width: 110px;
   transition: background 0.18s;
   text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .subscribe-button:hover {
   background: #1765ad;
@@ -84,10 +90,16 @@
   color: #1890ff;
   border: 1px solid #1890ff;
   border-radius: 8px;
-  padding: 8px 14px;
+  padding: 6px 12px;
   font-weight: 500;
+  font-size: 15px;
+  height: 38px;
+  min-width: 100px;
   transition: background 0.18s, color 0.18s;
   text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .login-button:hover, .register-button:hover {
   background: #e6f7ff;

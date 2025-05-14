@@ -47,4 +47,13 @@
 - Amélioration du CSS de la navbar : réduction du padding, alignement horizontal renforcé, meilleure transition responsive, fond blanc et ombre plus discrète.
 - Aucun code ou élément essentiel supprimé, aucune fonctionnalité retirée, aucun impact sur le backend ou le déploiement backend.
 - Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
+- Statut : Prêt pour test d'affichage complet et déploiement en production.
+
+## [Date : Harmonisation carrousel (ratio 16/9, intervalle 3s) et navbar compacte]
+
+- Harmonisation du ratio du carrousel Hero (16/9), centrage des images, fond neutre pour éviter les bandes, et synchronisation du texte et de l'image.
+- Intervalle de défilement réduit à 3 secondes pour un carrousel plus dynamique.
+- Amélioration de la barre de navigation : boutons à droite plus compacts, alignement vertical parfait, responsive renforcé.
+- Aucun code ou élément essentiel supprimé, aucune fonctionnalité retirée, aucun impact sur le backend ou le déploiement backend.
+- Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
 - Statut : Prêt pour test d'affichage complet et déploiement en production. 

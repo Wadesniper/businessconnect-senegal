@@ -53,19 +53,25 @@ const TextContent = styled.div`
 const ImageSlider = styled.div`
   flex: 1;
   position: relative;
-  height: 600px;
+  height: 0;
+  padding-top: 56.25%; /* Ratio 16/9 */
   border-radius: 20px;
   overflow: hidden;
+  background: #f7fafc;
 `;
 
 const SlideImage = styled(motion.div)<{ $imageUrl: string }>`
   position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  background-image: url(\${props => props.$imageUrl});
+  background-image: url(${props => props.$imageUrl});
   background-size: cover;
   background-position: center;
   border-radius: 20px;
+  display: flex;
+  align-items: flex-end;
 `;
 
 const StyledButton = styled(Button)`
@@ -135,7 +141,7 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
     const timer = setInterval(() => {
       paginate(1);
       setCurrentImageIndex((prev) => (prev + 1) % images.length);
-    }, 5000);
+    }, 3000);
 
     return () => clearInterval(timer);
   }, []);
@@ -179,7 +185,7 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
                 opacity: { duration: 0.2 }
               }}
             >
-              <img src={getImageUrl(images[currentImageIndex].src)} alt={images[currentImageIndex].desc} style={{width:'100%',height:'100%',objectFit:'cover',borderRadius:20,position:'absolute',top:0,left:0,zIndex:1}} />
+              <img src={getImageUrl(images[currentImageIndex].src)} alt={images[currentImageIndex].desc} style={{width:'100%',height:'100%',objectFit:'cover',borderRadius:20,position:'absolute',top:0,left:0,zIndex:1,background:'#f7fafc'}} />
               <div style={{
                 position: 'absolute',
                 bottom: 0,
