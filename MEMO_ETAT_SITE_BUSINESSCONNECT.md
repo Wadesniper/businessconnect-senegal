@@ -1,5 +1,12 @@
 # MEMO ÉTAT SITE BUSINESSCONNECT
 
+## [Date : Correction CI/CD - duplication .env pour les tests]
+
+- Problème : Les tests échouaient sur GitHub Actions à cause de l'absence du fichier .env.test, ce qui bloquait le déploiement Vercel.
+- Correction : Duplication du fichier .env en .env.test pour garantir que les tests utilisent la même configuration que la production.
+- Impact : Aucun code ou fonctionnalité supprimé, aucune régression, le site complet reste fonctionnel en production et en test.
+- Statut : CI/CD réparé, déploiement Vercel et backend garantis à chaque push.
+
 ## [Date : Correction build Vercel]
 
 - Problème : Le build Vercel échouait à cause d'une dépendance locale non versionnée (@mui/icons-material sous forme de fichier .tgz).
