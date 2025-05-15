@@ -8,9 +8,10 @@ import { UserRegistrationData } from '../types/user';
 interface RegisterFormProps {
   noCard?: boolean;
   noBg?: boolean;
+  hideLoginLink?: boolean;
 }
 
-const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg }) => {
+const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink }) => {
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
@@ -125,9 +126,11 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg }) => {
             S'inscrire
           </Button>
         </Form.Item>
-        <div style={{ textAlign: 'center', marginTop: 8 }}>
-          <a href="/login">Déjà inscrit ? Se connecter</a>
-        </div>
+        {!hideLoginLink && (
+          <div style={{ textAlign: 'center', marginTop: 8 }}>
+            <a href="/login">Déjà inscrit ? Se connecter</a>
+          </div>
+        )}
       </Form>
     );
   }
@@ -238,9 +241,11 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg }) => {
               S'inscrire
             </Button>
           </Form.Item>
-          <div style={{ textAlign: 'center', marginTop: 8 }}>
-            <a href="/login">Déjà inscrit ? Se connecter</a>
-          </div>
+          {!hideLoginLink && (
+            <div style={{ textAlign: 'center', marginTop: 8 }}>
+              <a href="/login">Déjà inscrit ? Se connecter</a>
+            </div>
+          )}
         </Form>
       </div>
     </div>

@@ -42,7 +42,7 @@ const AuthPage: React.FC = () => {
           </div>
         </div>
         {/* Séparateur OU */}
-        <div style={{ display: window.innerWidth < 800 ? 'none' : 'flex', alignItems: 'center', justifyContent: 'center', width: 60 }}>
+        <div style={{ display: window.innerWidth < 800 ? 'none' : 'flex', alignItems: 'flex-start', justifyContent: 'center', width: 60, marginTop: 56 }}>
           <div style={{
             background: '#f0f5ff',
             color: '#1890ff',
@@ -56,7 +56,6 @@ const AuthPage: React.FC = () => {
             fontSize: 18,
             boxShadow: '0 2px 12px #1890ff22',
             border: '2px solid #e6f7ff',
-            marginTop: 80,
           }}>ou</div>
         </div>
         {/* Inscription */}
@@ -95,7 +94,7 @@ const AuthPage: React.FC = () => {
             <span style={{color:'#1890ff'}}>Certaines fonctionnalités nécessitent un abonnement.</span>
           </div>
           <div style={{width:'100%', maxWidth:380}}>
-            <RegisterForm noCard noBg />
+            <RegisterForm noCard noBg hideLoginLink />
           </div>
         </div>
         {/* Séparateur OU mobile */}
