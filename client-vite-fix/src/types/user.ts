@@ -46,7 +46,7 @@ export interface User {
   };
   subscription?: {
     status: 'active' | 'expired' | 'cancelled';
-    expireAt: string | null;
+    expireAt?: string;
   };
   createdAt?: string;
   updatedAt?: string;
