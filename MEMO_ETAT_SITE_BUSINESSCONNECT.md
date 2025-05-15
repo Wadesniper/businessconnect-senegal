@@ -198,4 +198,11 @@
 - Le passage d'une image à l'autre est désormais beaucoup plus agréable visuellement.
 - Aucun code ou fonctionnalité essentielle supprimé, aucun impact sur le backend ou le déploiement backend.
 - Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
+- Statut : Prêt pour validation visuelle finale.
+
+## [Date : Correction centrage logo footer]
+
+- Le logo BusinessConnect Sénégal est désormais centré dans le footer, au-dessus des colonnes, pour un rendu harmonieux et professionnel.
+- Aucun code ou fonctionnalité essentielle supprimé, aucun impact sur le backend ou le déploiement backend.
+- Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
 - Statut : Prêt pour validation visuelle finale. 

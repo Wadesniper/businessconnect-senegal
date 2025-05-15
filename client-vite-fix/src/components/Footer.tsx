@@ -6,8 +6,8 @@ import './Footer.css';
 const Footer: React.FC = () => {
   return (
     <footer className="footer-modern">
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 32px 24px 32px' }}>
-        <div style={{ fontWeight: 700, fontSize: 26, marginBottom: 18 }}>
+      <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 18 }}>
+        <div style={{ fontWeight: 700, fontSize: 26, textAlign: 'center' }}>
           <span style={{ color: '#1890ff' }}>BusinessConnect</span><span style={{ color: '#1ec773' }}>Sénégal</span>
         </div>
       </div>
