@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import { Card, Typography, Row, Col, Select, Input, Empty, Tag, Tooltip, Button } from 'antd';
+import { Card, Typography, Row, Col, Select, Input, Empty, Tag, Tooltip, Button, Modal } from 'antd';
 import { LockOutlined, StarOutlined } from '@ant-design/icons';
-import { Template } from '../../../types/cv';
+import type { Template } from '../../../types/cv';
 import { CV_TEMPLATES } from '../components/data/templates';
+import { useNavigate } from 'react-router-dom';
 
 const { Title, Text } = Typography;
 const { Search } = Input;
@@ -22,6 +23,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [showPremiumOnly, setShowPremiumOnly] = useState(false);
+  const navigate = useNavigate();
 
   // Extraction des catégories uniques
   const categories = useMemo(() => {
@@ -126,9 +128,15 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                   </div>
                 }
                 onClick={() => {
-                  if (!template.premium || isSubscribed) {
-                    onSelect(template);
+                  if (!isSubscribed) {
+                    Modal.info({
+                      title: 'Fonctionnalité réservée',
+                      content: 'Cette fonctionnalité est réservée aux abonnés. Abonnez-vous pour utiliser le générateur de CV.',
+                      onOk: () => navigate('/subscription')
+                    });
+                    return;
                   }
+                  onSelect(template);
                 }}
                 style={{
                   border: selected?.id === template.id ? '2px solid #1890ff' : undefined,

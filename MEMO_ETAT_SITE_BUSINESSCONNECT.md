@@ -142,4 +142,15 @@
 - Le texte reste bien lisible et centré dans une card (max-width 900px, margin auto), avec un padding latéral harmonieux.
 - Aucun code ou fonctionnalité essentielle supprimé, aucun impact sur le backend ou le déploiement backend.
 - Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
+- Statut : Prêt pour test d'affichage complet et déploiement en production.
+
+## [Date : Correction chargement, redirection et bouton S'abonner]
+
+- Amélioration de la gestion du chargement sur les pages CV et Fiches Métiers :
+  - Remplacement du texte 'Chargement...' par un vrai spinner Ant Design pour une UX plus fluide.
+  - Redirection vers /subscription uniquement si l'utilisateur est connecté et non abonné, jamais pendant le chargement.
+  - Plus de blocage ou de flash jaune lors de la navigation.
+- Correction du bouton S'abonner dans la navigation : il mène désormais systématiquement à la page des abonnements (/subscription).
+- Aucun code ou fonctionnalité essentielle supprimé, aucun impact sur le backend ou le déploiement backend.
+- Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
 - Statut : Prêt pour test d'affichage complet et déploiement en production. 

@@ -9,6 +9,7 @@ import { exportCV } from './services/documentExport';
 import { CVGeneratorProps } from '../../types/cv';
 import { useSubscription } from '../../hooks/useSubscription';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
 
 const { Content } = Layout;
 const { Title: AntTitle } = Typography;
@@ -189,21 +190,22 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
 
 const CVGenerator: React.FC<Partial<CVGeneratorProps>> = (props) => {
   const { hasActiveSubscription, loading } = useSubscription();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    if (!loading && !hasActiveSubscription) {
+    if (!loading && user && !hasActiveSubscription) {
       navigate('/subscription', { replace: true });
     }
-  }, [loading, hasActiveSubscription, navigate]);
+  }, [loading, hasActiveSubscription, user, navigate]);
 
   if (loading) {
-    return <div style={{ textAlign: 'center', marginTop: 100 }}>Chargement...</div>;
+    return <div style={{ textAlign: 'center', marginTop: 100 }}><Spin size="large" tip="Chargement..." /></div>;
   }
 
   return (
     <CVProvider>
-      <CVGeneratorContent {...props} />
+      <CVGeneratorContent {...props} isSubscribed={hasActiveSubscription} />
     </CVProvider>
   );
 };

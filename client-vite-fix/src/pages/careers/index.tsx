@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { Row, Col, Card, Typography, Button, Space, Tag, Input, Tabs, Modal, Statistic } from 'antd';
+import { Row, Col, Card, Typography, Button, Space, Tag, Input, Tabs, Modal, Statistic, Spin } from 'antd';
 import { SearchOutlined, ArrowRightOutlined, EnvironmentOutlined, BookOutlined, TrophyOutlined } from '@ant-design/icons';
-import { Secteur, FicheMetier, Competence } from './types';
+import type { Secteur, FicheMetier, Competence } from './types';
 import { formatNumberToCurrency } from '../../utils/format';
 import { useAuth } from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -4041,20 +4041,20 @@ const secteurs: Secteur[] = [
 ];
 
 const CareersPage: React.FC = () => {
-  const { loading: isLoading } = useAuth();
+  const { loading: isLoading, user } = useAuth();
   const { hasActiveSubscription, loading: loadingSub } = useSubscription();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMetier, setSelectedMetier] = useState<FicheMetier | null>(null);
 
   React.useEffect(() => {
-    if (!isLoading && !loadingSub && !hasActiveSubscription) {
+    if (!isLoading && !loadingSub && user && !hasActiveSubscription) {
       navigate('/subscription', { replace: true });
     }
-  }, [isLoading, loadingSub, hasActiveSubscription, navigate]);
+  }, [isLoading, loadingSub, hasActiveSubscription, user, navigate]);
 
   if (isLoading || loadingSub) {
-    return <div style={{ textAlign: 'center', marginTop: 100 }}>Chargement...</div>;
+    return <div style={{ textAlign: 'center', marginTop: 100 }}><Spin size="large" tip="Chargement..." /></div>;
   }
 
   const filteredSecteurs = useMemo(() => {
@@ -4096,6 +4096,14 @@ const CareersPage: React.FC = () => {
   };
 
   const showMetierDetail = (metier: FicheMetier) => {
+    if (!hasActiveSubscription) {
+      Modal.info({
+        title: 'Fonctionnalité réservée',
+        content: 'Cette fonctionnalité est réservée aux abonnés. Abonnez-vous pour consulter le détail des métiers.',
+        onOk: () => navigate('/subscription')
+      });
+      return;
+    }
     setSelectedMetier(metier);
   };
 
