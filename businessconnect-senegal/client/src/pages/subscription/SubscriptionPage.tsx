@@ -133,89 +133,135 @@ const SubscriptionPage: React.FC = () => {
   }
 
   return (
-    <div style={{ padding: '50px 20px' }}>
-      <Title level={2} style={{ textAlign: 'center', marginBottom: 50 }}>
-        Choisissez votre abonnement
-      </Title>
+    <div
+      style={{
+        minHeight: '100vh',
+        width: '100vw',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        background: 'linear-gradient(135deg, #1890ff 0%, #43e97b 100%)',
+        padding: 0,
+      }}
+    >
+      <div style={{ width: '100%', maxWidth: 1200, margin: '0 auto', padding: '40px 0' }}>
+        <Title level={2} style={{ textAlign: 'center', marginBottom: 16, color: '#fff', fontWeight: 700, letterSpacing: 1 }}>
+          Choisissez votre abonnement
+        </Title>
+        <div style={{ textAlign: 'center', color: '#e6f7ff', fontSize: 18, marginBottom: 40 }}>
+          Accédez à toutes les fonctionnalités premium de BusinessConnect Sénégal et boostez votre carrière !
+        </div>
 
-      {currentSubscription && (
-        <Card style={{ marginBottom: 30 }}>
-          <Title level={4}>Votre abonnement actuel</Title>
-          <Text>Type: {currentSubscription.type}</Text>
-          <br />
-          <Text>
-            Statut: <Tag color={currentSubscription.status === 'active' ? 'success' : 'error'}>
-              {currentSubscription.status}
-            </Tag>
-          </Text>
-          <br />
-          <Text>Expire le: {new Date(currentSubscription.endDate).toLocaleDateString()}</Text>
-        </Card>
-      )}
+        {currentSubscription && (
+          <Card style={{ marginBottom: 30, maxWidth: 500, marginLeft: 'auto', marginRight: 'auto', borderRadius: 16, boxShadow: '0 4px 24px 0 rgba(31, 38, 135, 0.10)' }}>
+            <Title level={4}>Votre abonnement actuel</Title>
+            <Text>Type: {currentSubscription.type}</Text>
+            <br />
+            <Text>
+              Statut: <Tag color={currentSubscription.status === 'active' ? 'success' : 'error'}>
+                {currentSubscription.status}
+              </Tag>
+            </Text>
+            <br />
+            <Text>Expire le: {new Date(currentSubscription.endDate).toLocaleDateString()}</Text>
+          </Card>
+        )}
 
-      <Row gutter={[24, 24]} justify="center">
-        {plans.map(plan => (
-          <Col xs={24} sm={24} md={8} key={plan.type}>
-            <Card
-              hoverable
-              style={{ height: '100%' }}
-              title={
-                <Title level={3} style={{ textAlign: 'center' }}>
-                  {plan.name}
-                </Title>
-              }
-            >
-              <div style={{ textAlign: 'center', marginBottom: 20 }}>
-                <Title level={2} style={{ margin: 0 }}>
-                  {plan.price === 0 ? 'Gratuit' : `${plan.price.toLocaleString()} XOF`}
-                </Title>
-                <Text type="secondary">/mois</Text>
-              </div>
-
-              <Text type="secondary" style={{ display: 'block', textAlign: 'center', marginBottom: 20 }}>
-                {plan.description}
-              </Text>
-
-              <List
-                itemLayout="horizontal"
-                dataSource={plan.features}
-                renderItem={item => (
-                  <List.Item>
-                    <List.Item.Meta
-                      avatar={
-                        <CheckCircleOutlined
-                          style={{ color: item.included ? '#52c41a' : '#d9d9d9' }}
-                        />
-                      }
-                      title={
-                        <Text
-                          style={{
-                            color: item.included ? 'inherit' : '#d9d9d9'
-                          }}
-                        >
-                          {item.feature}
-                        </Text>
-                      }
-                    />
-                  </List.Item>
-                )}
-                style={{ marginBottom: 20 }}
-              />
-
-              <Button
-                type={plan.type === 'free' ? 'default' : 'primary'}
-                size="large"
-                block
-                onClick={() => handleSubscribe(plan)}
-                disabled={loading || (currentSubscription?.type === plan.type && currentSubscription?.status === 'active')}
+        <Row gutter={[32, 32]} justify="center" align="middle">
+          {plans.map(plan => (
+            <Col xs={24} sm={24} md={8} key={plan.type}>
+              <Card
+                hoverable
+                style={{
+                  height: '100%',
+                  borderRadius: 20,
+                  boxShadow: plan.type === 'premium'
+                    ? '0 8px 32px 0 rgba(24, 144, 255, 0.18)'
+                    : '0 4px 16px 0 rgba(31, 38, 135, 0.10)',
+                  border: plan.type === 'premium' ? '2px solid #43e97b' : '1px solid #f0f0f0',
+                  background: plan.type === 'premium'
+                    ? 'linear-gradient(135deg, #e0ffe9 0%, #e6f7ff 100%)'
+                    : '#fff',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  paddingBottom: 24,
+                }}
+                title={
+                  <div style={{ textAlign: 'center', position: 'relative' }}>
+                    <Title level={3} style={{ marginBottom: 0, fontWeight: 700, color: plan.type === 'premium' ? '#43e97b' : '#1890ff' }}>
+                      {plan.name}
+                    </Title>
+                    {plan.type === 'premium' && (
+                      <Tag color="#43e97b" style={{ position: 'absolute', top: -8, right: 0, fontWeight: 600, fontSize: 13 }}>
+                        Le plus populaire
+                      </Tag>
+                    )}
+                  </div>
+                }
               >
-                {loading ? <LoadingOutlined /> : null}
-                {plan.type === 'free' ? 'Commencer' : 'S\'abonner'}
-              </Button>
-            </Card>
-          </Col>
-        ))}
-      </Row>
+                <div style={{ textAlign: 'center', marginBottom: 20 }}>
+                  <Title level={2} style={{ margin: 0, color: plan.type === 'premium' ? '#43e97b' : '#1890ff', fontWeight: 800 }}>
+                    {plan.price === 0 ? 'Gratuit' : `${plan.price.toLocaleString()} XOF`}
+                  </Title>
+                  <Text type="secondary">/mois</Text>
+                </div>
+
+                <Text type="secondary" style={{ display: 'block', textAlign: 'center', marginBottom: 20, fontSize: 16 }}>
+                  {plan.description}
+                </Text>
+
+                <List
+                  itemLayout="horizontal"
+                  dataSource={plan.features}
+                  renderItem={item => (
+                    <List.Item style={{ padding: '6px 0' }}>
+                      <List.Item.Meta
+                        avatar={
+                          <CheckCircleOutlined
+                            style={{ color: item.included ? '#43e97b' : '#d9d9d9', fontSize: 18 }}
+                          />
+                        }
+                        title={
+                          <Text
+                            style={{
+                              color: item.included ? '#222' : '#d9d9d9',
+                              fontWeight: item.included ? 500 : 400,
+                              fontSize: 15
+                            }}
+                          >
+                            {item.feature}
+                          </Text>
+                        }
+                      />
+                    </List.Item>
+                  )}
+                />
+                <Button
+                  type={plan.type === 'free' ? 'default' : 'primary'}
+                  size="large"
+                  style={{
+                    width: '100%',
+                    marginTop: 24,
+                    borderRadius: 10,
+                    fontWeight: 600,
+                    fontSize: 17,
+                    height: 52,
+                    background: plan.type === 'premium' ? 'linear-gradient(90deg, #43e97b 0%, #38f9d7 100%)' : undefined,
+                    color: plan.type === 'premium' ? '#222' : undefined,
+                    boxShadow: plan.type === 'premium' ? '0 2px 12px 0 rgba(67, 233, 123, 0.10)' : undefined
+                  }}
+                  loading={loading}
+                  onClick={() => handleSubscribe(plan)}
+                  disabled={plan.type === currentSubscription?.type}
+                >
+                  {plan.type === currentSubscription?.type ? 'Déjà abonné' : 'Choisir'}
+                </Button>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      </div>
     </div>
   );
 };

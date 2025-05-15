@@ -231,4 +231,42 @@
 - Vérification linter sur tout le projet : plus aucune erreur de typage, conformité totale TypeScript.
 - Aucun code ou fonctionnalité essentielle supprimé, aucun impact sur le backend ou le déploiement backend.
 - Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
-- Statut : Prêt pour validation finale et déploiement. 
+- Statut : Prêt pour validation finale et déploiement.
+
+## [DÉPLOIEMENT] Problème de déclenchement Vercel (webhook non créé automatiquement)
+
+### Symptômes
+- Les pushs sur GitHub n'entraînent pas de nouveau déploiement sur Vercel.
+- Aucun webhook Vercel n'apparaît dans GitHub > Settings > Webhooks.
+- La connexion GitHub ↔ Vercel semble correcte, mais rien ne se déclenche.
+
+### Solution de contournement : Deploy Hook manuel
+
+1. **Créer un Deploy Hook sur Vercel**
+   - Aller dans Vercel > Project Settings > Git > Deploy Hooks.
+   - Renseigner un nom (ex : `manual-github-main`) et la branche `main`.
+   - Cliquer sur "Create Hook" et copier l'URL générée.
+
+2. **Ajouter un webhook sur GitHub**
+   - Aller dans GitHub > Settings > Webhooks > Add webhook.
+   - Coller l'URL du Deploy Hook dans "Payload URL".
+   - Content type : `application/json`.
+   - Secret : laisser vide.
+   - SSL verification : activée.
+   - Événement : "Just the push event".
+   - Sauvegarder.
+
+3. **Tester le déclenchement**
+   - Faire un commit/push sur `main`.
+   - Si le déploiement ne se déclenche pas, tester un POST manuel :
+     ```bash
+     curl -X POST -H "Content-Type: application/json" "URL_DU_DEPLOY_HOOK"
+     ```
+   - Si le déploiement se lance, le hook fonctionne.
+
+4. **Remarque**
+   - Si le webhook GitHub ne déclenche pas le déploiement, c'est que le payload envoyé n'est pas celui attendu par Vercel. Dans ce cas, utiliser un script ou une GitHub Action pour faire un POST vide sur l'URL du Deploy Hook à chaque push.
+
+### Pour automatiser (optionnel)
+- Créer une GitHub Action qui fait un POST vide sur l'URL du Deploy Hook à chaque push sur `main`.
+- Voir l'assistant pour le script si besoin. 
