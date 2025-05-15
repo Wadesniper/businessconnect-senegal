@@ -153,11 +153,6 @@ const ContactPage: React.FC = () => {
                 </a>
               </Text>
             </InfoCard>
-            <InfoCard style={{ background: 'linear-gradient(90deg, #e6fff2 0%, #f0f5ff 100%)', boxShadow: '0 2px 8px #1ec77311' }}>
-              <PhoneOutlined style={{ fontSize: 20, color: '#1ec773', marginBottom: 2 }} />
-              <Title level={5} style={{ margin: 0, fontSize: 17 }}>Téléphone</Title>
-              <Text style={{ color: '#1ec773', fontWeight: 600, fontSize: 15 }}>+221 77 000 00 00</Text>
-            </InfoCard>
             <InfoCard style={{ background: 'linear-gradient(90deg, #f0f5ff 0%, #e6fff2 100%)', boxShadow: '0 2px 8px #1890ff11' }}>
               <EnvironmentOutlined style={{ fontSize: 20, color: '#1890ff', marginBottom: 2 }} />
               <Title level={5} style={{ margin: 0, fontSize: 17 }}>Adresse</Title>
