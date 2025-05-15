@@ -1,3 +1,4 @@
+// Forçage de build Vercel - commit technique
 import React, { useEffect, useState } from 'react';
 import { Layout, Typography, Card, Row, Col, Button, Space, Avatar, Rate, Tag, Carousel, Statistic } from 'antd';
 import { motion, useScroll, useTransform } from 'framer-motion';
