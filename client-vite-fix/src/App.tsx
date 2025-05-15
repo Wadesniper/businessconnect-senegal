@@ -34,6 +34,7 @@ const CVGenerator = lazy(() => import('./pages/cv-generator'));
 import JobDetailsPage from './pages/jobs/JobDetailsPage';
 const FAQ = lazy(() => import('./pages/help/FAQ'));
 const CareersPage = lazy(() => import('./pages/careers'));
+import AuthPage from './pages/auth/AuthPage';
 
 // ErrorBoundary global
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, error: any}> {
@@ -91,8 +92,8 @@ const App: React.FC = () => {
                 <Route path="/legal/cookies" element={<Cookies />} />
 
                 {/* Routes d'authentification */}
-                <Route path="/login" element={<LoginForm />} />
-                <Route path="/register" element={<RegisterForm />} />
+                <Route path="/login" element={<AuthPage />} />
+                <Route path="/register" element={<AuthPage />} />
 
                 {/* Routes protégées */}
                 <Route
