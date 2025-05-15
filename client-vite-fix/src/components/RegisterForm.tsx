@@ -4,7 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { UserRegistrationData } from '../types/user';
 
-const RegisterForm: React.FC = () => {
+// Ajout des props
+interface RegisterFormProps {
+  noCard?: boolean;
+  noBg?: boolean;
+}
+
+const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg }) => {
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
@@ -39,6 +45,92 @@ const RegisterForm: React.FC = () => {
       setLoading(false);
     }
   };
+
+  // Si noCard ou noBg, on affiche juste le formulaire sans fond ni card
+  if (noCard || noBg) {
+    return (
+      <Form
+        form={form}
+        name="register"
+        onFinish={onFinish}
+        layout="vertical"
+        requiredMark={false}
+      >
+        <Form.Item
+          name="fullName"
+          label={<span style={{ fontWeight: 500 }}>Nom complet</span>}
+          rules={[
+            { required: true, message: 'Veuillez saisir votre nom complet' },
+            { min: 3, message: 'Le nom doit contenir au moins 3 caractères' },
+            { pattern: /^[a-zA-ZÀ-ÿ\s]+$/, message: 'Le nom ne doit contenir que des lettres' }
+          ]}
+        >
+          <Input size="large" placeholder="Prénom et Nom" style={{ borderRadius: 8 }} />
+        </Form.Item>
+        <Form.Item
+          name="phoneNumber"
+          label={<span style={{ fontWeight: 500 }}>Numéro de téléphone</span>}
+          rules={[
+            { required: true, message: 'Veuillez saisir votre numéro de téléphone' },
+            { pattern: /^\+?[0-9]{8,15}$/, message: 'Numéro de téléphone invalide' }
+          ]}
+        >
+          <Input size="large" placeholder="+221 XX XXX XX XX" style={{ borderRadius: 8 }} />
+        </Form.Item>
+        <Form.Item
+          name="email"
+          label={<span style={{ fontWeight: 500 }}>Email (optionnel)</span>}
+          rules={[
+            { type: 'email', message: 'Email invalide' }
+          ]}
+        >
+          <Input size="large" placeholder="exemple@email.com" style={{ borderRadius: 8 }} />
+        </Form.Item>
+        <Form.Item
+          name="password"
+          label={<span style={{ fontWeight: 500 }}>Mot de passe</span>}
+          rules={[
+            { required: true, message: 'Veuillez saisir un mot de passe' },
+            { min: 8, message: 'Le mot de passe doit contenir au moins 8 caractères' }
+          ]}
+        >
+          <Input.Password size="large" placeholder="Votre mot de passe" style={{ borderRadius: 8 }} />
+        </Form.Item>
+        <Form.Item
+          name="confirmPassword"
+          label={<span style={{ fontWeight: 500 }}>Confirmer le mot de passe</span>}
+          dependencies={['password']}
+          rules={[
+            { required: true, message: 'Veuillez confirmer votre mot de passe' },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || getFieldValue('password') === value) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(new Error('Les mots de passe ne correspondent pas'));
+              },
+            }),
+          ]}
+        >
+          <Input.Password size="large" placeholder="Confirmez votre mot de passe" style={{ borderRadius: 8 }} />
+        </Form.Item>
+        <Form.Item style={{ marginBottom: 8 }}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            size="large"
+            style={{ width: '100%', borderRadius: 8, fontWeight: 600, fontSize: 16, height: 48 }}
+            loading={loading}
+          >
+            S'inscrire
+          </Button>
+        </Form.Item>
+        <div style={{ textAlign: 'center', marginTop: 8 }}>
+          <a href="/login">Déjà inscrit ? Se connecter</a>
+        </div>
+      </Form>
+    );
+  }
 
   return (
     <div style={{

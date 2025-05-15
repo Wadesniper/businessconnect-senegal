@@ -3,7 +3,13 @@ import { Form, Input, Button, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-const LoginForm: React.FC = () => {
+// Ajout des props
+interface LoginFormProps {
+  noCard?: boolean;
+  noBg?: boolean;
+}
+
+const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg }) => {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -20,6 +26,50 @@ const LoginForm: React.FC = () => {
       setLoading(false);
     }
   };
+
+  // Si noCard ou noBg, on affiche juste le formulaire sans fond ni card
+  if (noCard || noBg) {
+    return (
+      <Form
+        name="login"
+        onFinish={onFinish}
+        layout="vertical"
+        requiredMark={false}
+      >
+        <Form.Item
+          name="phoneNumber"
+          label={<span style={{ fontWeight: 500 }}>Numéro de téléphone</span>}
+          rules={[
+            { required: true, message: 'Veuillez saisir votre numéro de téléphone' },
+            { pattern: /^\+?[0-9]{8,15}$/, message: 'Numéro de téléphone invalide' }
+          ]}
+        >
+          <Input size="large" placeholder="+221 XX XXX XX XX" style={{ borderRadius: 8 }} />
+        </Form.Item>
+        <Form.Item
+          name="password"
+          label={<span style={{ fontWeight: 500 }}>Mot de passe</span>}
+          rules={[{ required: true, message: 'Veuillez saisir votre mot de passe' }]}
+        >
+          <Input.Password size="large" placeholder="Votre mot de passe" style={{ borderRadius: 8 }} />
+        </Form.Item>
+        <Form.Item style={{ marginBottom: 8 }}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            size="large"
+            style={{ width: '100%', borderRadius: 8, fontWeight: 600, fontSize: 16, height: 48 }}
+            loading={loading}
+          >
+            Se connecter
+          </Button>
+        </Form.Item>
+        <div style={{ textAlign: 'center', marginTop: 8 }}>
+          <a href="/register">Pas encore inscrit ? Créer un compte</a>
+        </div>
+      </Form>
+    );
+  }
 
   return (
     <div style={{
