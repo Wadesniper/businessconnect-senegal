@@ -1,13 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FacebookFilled, LinkedinFilled, TwitterSquareFilled, YoutubeFilled, MailOutlined } from '@ant-design/icons';
+import { FacebookFilled, LinkedinFilled, TwitterSquareFilled, YoutubeFilled, MailOutlined, AppstoreOutlined } from '@ant-design/icons';
 import './Footer.css';
 
 const Footer: React.FC = () => {
   return (
     <footer className="footer-modern">
       <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 18 }}>
-        <div style={{ fontWeight: 700, fontSize: 26, textAlign: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 26, textAlign: 'center', gap: 8 }}>
+          <AppstoreOutlined style={{ fontSize: 28, color: '#1890ff', marginRight: 8 }} />
           <span style={{ color: '#1890ff' }}>BusinessConnect</span><span style={{ color: '#1ec773' }}>Sénégal</span>
         </div>
       </div>
