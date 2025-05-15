@@ -139,8 +139,67 @@ const Home: React.FC = () => {
   return (
     <Layout>
       <Hero onDiscoverClick={handleScrollToServices} />
-      {/* Section Emploi */}
+      {/* Section Secteurs déplacée ici */}
       <Content style={{ background: '#f7faff', padding: '40px 0 0 0', width: '100%' }}>
+        <div style={{ width: '100%', margin: '60px auto', padding: '0 32px' }}>
+          <Title level={2} style={{ color: '#1890ff', marginBottom: 32, textAlign: 'center' }}>Secteurs d'activité</Title>
+          <Carousel autoplay autoplaySpeed={2500} dots slidesToShow={3} speed={900} easing="ease-in-out" responsive={[{ breakpoint: 900, settings: { slidesToShow: 2 } }, { breakpoint: 600, settings: { slidesToShow: 1 } }]} style={{ width: '100%', padding: '0 0 32px 0' }} data-testid="sector-carousel">
+            {SECTEURS.map((secteur, idx) => (
+              <div key={secteur.id} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 260 }}>
+                <div
+                  style={{
+                    width: 320,
+                    minHeight: 220,
+                    borderRadius: 36,
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 60%, ' + secteur.couleur + '22 100%)',
+                    boxShadow: '0 12px 40px 0 rgba(24,144,255,0.13)',
+                    border: '2px solid #fff',
+                    backdropFilter: 'blur(12px)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    padding: 36,
+                    transition: 'transform 0.28s cubic-bezier(.4,2,.6,1), box-shadow 0.28s, border 0.28s',
+                    cursor: 'pointer',
+                    opacity: 1,
+                    transform: 'none',
+                  }}
+                  onMouseOver={e => {
+                    (e.currentTarget as HTMLDivElement).style.transform = 'scale(1.06)';
+                    (e.currentTarget as HTMLDivElement).style.boxShadow = '0 24px 64px 0 ' + secteur.couleur + '33';
+                    (e.currentTarget as HTMLDivElement).style.border = '2.5px solid ' + secteur.couleur;
+                  }}
+                  onMouseOut={e => {
+                    (e.currentTarget as HTMLDivElement).style.transform = 'scale(1)';
+                    (e.currentTarget as HTMLDivElement).style.boxShadow = '0 12px 40px 0 rgba(24,144,255,0.13)';
+                    (e.currentTarget as HTMLDivElement).style.border = '2px solid #fff';
+                  }}
+                >
+                  <div style={{
+                    width: 78,
+                    height: 78,
+                    borderRadius: '50%',
+                    background: 'linear-gradient(135deg, ' + secteur.couleur + ' 60%, #fff 120%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: 20,
+                    boxShadow: '0 0 0 6px ' + secteur.couleur + '22, 0 8px 32px ' + secteur.couleur + '33',
+                    position: 'relative',
+                  }}>
+                    <span style={{ fontSize: 38, color: '#fff', filter: 'drop-shadow(0 2px 8px ' + secteur.couleur + '88)' }}>{secteur.icone}</span>
+                  </div>
+                  <Title level={4} style={{ color: '#1d3557', margin: 0, fontWeight: 700, fontSize: 25, letterSpacing: 0.5, textShadow: '0 2px 8px #fff8' }}>{secteur.nom}</Title>
+                  <Button type="link" style={{ color: secteur.couleur, fontWeight: 600, fontSize: 16, marginTop: 18, display: 'flex', alignItems: 'center' }} onClick={() => navigate('/careers')}>
+                    Explorer ce secteur <ArrowRightOutlined style={{ marginLeft: 6 }} />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </Carousel>
+        </div>
+        {/* Section Emploi */}
         <div style={{ width: '100%', padding: '0 32px' }}>
           <Typography.Title level={2} style={{ color: '#1d3557', marginBottom: 24 }}>
             Offres d'emploi récentes
@@ -269,65 +328,6 @@ const Home: React.FC = () => {
           <div style={{ minHeight: 180, marginTop: 16 }}>
             <MarketplacePreview />
           </div>
-        </div>
-        {/* Section Secteurs */}
-        <div style={{ width: '100%', margin: '60px auto', padding: '0 32px' }}>
-          <Title level={2} style={{ color: '#1890ff', marginBottom: 32, textAlign: 'center' }}>Secteurs d'activité</Title>
-          <Carousel autoplay autoplaySpeed={2500} dots slidesToShow={3} speed={900} easing="ease-in-out" responsive={[{ breakpoint: 900, settings: { slidesToShow: 2 } }, { breakpoint: 600, settings: { slidesToShow: 1 } }]} style={{ width: '100%', padding: '0 0 32px 0' }} data-testid="sector-carousel">
-            {SECTEURS.map((secteur, idx) => (
-              <div key={secteur.id} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 260 }}>
-                <div
-                  style={{
-                    width: 320,
-                    minHeight: 220,
-                    borderRadius: 36,
-                    background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 60%, ' + secteur.couleur + '22 100%)',
-                    boxShadow: '0 12px 40px 0 rgba(24,144,255,0.13)',
-                    border: '2px solid #fff',
-                    backdropFilter: 'blur(12px)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    padding: 36,
-                    transition: 'transform 0.28s cubic-bezier(.4,2,.6,1), box-shadow 0.28s, border 0.28s',
-                    cursor: 'pointer',
-                    opacity: 1,
-                    transform: 'none',
-                  }}
-                  onMouseOver={e => {
-                    (e.currentTarget as HTMLDivElement).style.transform = 'scale(1.06)';
-                    (e.currentTarget as HTMLDivElement).style.boxShadow = '0 24px 64px 0 ' + secteur.couleur + '33';
-                    (e.currentTarget as HTMLDivElement).style.border = '2.5px solid ' + secteur.couleur;
-                  }}
-                  onMouseOut={e => {
-                    (e.currentTarget as HTMLDivElement).style.transform = 'scale(1)';
-                    (e.currentTarget as HTMLDivElement).style.boxShadow = '0 12px 40px 0 rgba(24,144,255,0.13)';
-                    (e.currentTarget as HTMLDivElement).style.border = '2px solid #fff';
-                  }}
-                >
-                  <div style={{
-                    width: 78,
-                    height: 78,
-                    borderRadius: '50%',
-                    background: 'linear-gradient(135deg, ' + secteur.couleur + ' 60%, #fff 120%)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginBottom: 20,
-                    boxShadow: '0 0 0 6px ' + secteur.couleur + '22, 0 8px 32px ' + secteur.couleur + '33',
-                    position: 'relative',
-                  }}>
-                    <span style={{ fontSize: 38, color: '#fff', filter: 'drop-shadow(0 2px 8px ' + secteur.couleur + '88)' }}>{secteur.icone}</span>
-                  </div>
-                  <Title level={4} style={{ color: '#1d3557', margin: 0, fontWeight: 700, fontSize: 25, letterSpacing: 0.5, textShadow: '0 2px 8px #fff8' }}>{secteur.nom}</Title>
-                  <Button type="link" style={{ color: secteur.couleur, fontWeight: 600, fontSize: 16, marginTop: 18, display: 'flex', alignItems: 'center' }} onClick={() => navigate('/careers')}>
-                    Explorer ce secteur <ArrowRightOutlined style={{ marginLeft: 6 }} />
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </Carousel>
         </div>
         {/* Section Statistiques */}
         <div style={{ width: '100%', margin: '60px auto', padding: '0 32px' }}>
