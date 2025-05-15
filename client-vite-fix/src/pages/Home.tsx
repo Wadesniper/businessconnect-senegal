@@ -248,7 +248,7 @@ const Home: React.FC = () => {
             </Button>
           </div>
           <div style={{ flex: 1, minWidth: 320, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 24 }}>
-            <img src="/images/cv-clipboard.jpg" alt="Créer un CV professionnel" style={{ width: 350, maxWidth: '100%', borderRadius: 18, boxShadow: '0 8px 32px #b7e4c7' }} />
+            <img src="/images/cv-hero.jpg" alt="Créer un CV professionnel" style={{ width: 350, maxWidth: '100%', borderRadius: 18, boxShadow: '0 8px 32px #b7e4c7', objectFit: 'cover', background: '#fff' }} />
           </div>
         </div>
         {/* Section Marketplace */}
