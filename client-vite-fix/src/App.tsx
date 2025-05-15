@@ -122,7 +122,7 @@ const App: React.FC = () => {
                 <Route
                   path="/subscription"
                   element={
-                    <ProtectedRoute element={<SubscriptionPage />} />
+                    <SubscriptionPage />
                   }
                 />
                 <Route
