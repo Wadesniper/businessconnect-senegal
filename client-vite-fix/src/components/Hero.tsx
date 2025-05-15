@@ -214,8 +214,8 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
               animate="center"
               exit="exit"
               transition={{
-                x: { type: "spring", stiffness: 300, damping: 30 },
-                opacity: { duration: 0.2 }
+                x: { type: "tween", duration: 1.4, ease: "easeInOut" },
+                opacity: { duration: 1.2, ease: "easeInOut" }
               }}
             >
               <img src={getImageUrl(images[currentImageIndex].src)} alt={images[currentImageIndex].desc} style={{width:'100%',height:'100%',objectFit:'cover',borderRadius:20,position:'absolute',top:0,left:0,zIndex:1,background:'#f7fafc'}} />

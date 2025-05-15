@@ -190,4 +190,12 @@
 - Le Hero reste bord à bord, mais le texte ne touche plus les bords de l'écran.
 - Aucun code ou fonctionnalité essentielle supprimé, aucun impact sur le backend ou le déploiement backend.
 - Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
+- Statut : Prêt pour validation visuelle finale.
+
+## [Date : Transition douce carrousel Hero]
+
+- Transition du carrousel Hero adoucie : durée augmentée (1.4s), easing 'easeInOut' sur le slide et l'opacité pour un effet premium et fluide.
+- Le passage d'une image à l'autre est désormais beaucoup plus agréable visuellement.
+- Aucun code ou fonctionnalité essentielle supprimé, aucun impact sur le backend ou le déploiement backend.
+- Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
 - Statut : Prêt pour validation visuelle finale. 
