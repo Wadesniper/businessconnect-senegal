@@ -150,19 +150,12 @@ interface HeroProps {
 }
 
 const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
-  const [[page, direction], setPage] = useState([0, 0]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  const paginate = (newDirection: number) => {
-    setPage([page + newDirection, newDirection]);
-  };
 
   useEffect(() => {
     const timer = setInterval(() => {
-      paginate(1);
       setCurrentImageIndex((prev) => (prev + 1) % images.length);
     }, 3000);
-
     return () => clearInterval(timer);
   }, []);
 
@@ -191,21 +184,16 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
             </StyledButton>
           </motion.div>
         </TextContent>
-
         <ImageSlider>
-          <AnimatePresence initial={false} custom={direction}>
+          <AnimatePresence initial={false}>
             <SlideImage
-              key={page}
+              key={currentImageIndex}
               $imageUrl={getImageUrl(images[currentImageIndex].src)}
-              custom={direction}
               variants={slideVariants}
               initial="enter"
               animate="center"
               exit="exit"
-              transition={{
-                x: { type: "tween", duration: 1.4, ease: "easeInOut" },
-                opacity: { duration: 1.2, ease: "easeInOut" }
-              }}
+              transition={{ opacity: { duration: 1.2, ease: "easeInOut" } }}
             >
               <img src={getImageUrl(images[currentImageIndex].src)} alt={images[currentImageIndex].desc} style={{width:'100%',height:'100%',objectFit:'cover',borderRadius:20,position:'absolute',top:0,left:0,zIndex:1,background:'#f7fafc'}} />
               <div style={{
