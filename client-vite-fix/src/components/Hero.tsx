@@ -9,7 +9,7 @@ const { Title, Paragraph } = Typography;
 const HeroContainer = styled.div`
   position: relative;
   height: 100vh;
-  width: 100%;
+  width: 100vw;
   overflow-x: hidden;
   overflow-y: hidden;
   background: linear-gradient(135deg, #001529 0%, #003366 100%);
@@ -59,8 +59,8 @@ const GeometricBackground = styled.div`
 
 const ContentWrapper = styled.div`
   position: relative;
-  width: 100%;
-  padding: 0 32px;
+  width: 100vw;
+  padding: 0;
   height: 100%;
   display: flex;
   align-items: center;

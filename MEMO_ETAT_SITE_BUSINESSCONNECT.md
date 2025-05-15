@@ -162,4 +162,13 @@
   - Suppression définitive des bandes latérales sur toutes les pages (plein écran coloré).
   - UX premium, responsive, navigation fluide, cohérence visuelle sur tout le site.
   - Backend et fonctionnalités métiers intacts.
-- Statut : Prêt pour validation finale et passage en production. 
+- Statut : Prêt pour validation finale et passage en production.
+
+## [Date : Correction Hero bord à bord - suppression totale des bandes latérales]
+
+- Correction du Hero : suppression de tout padding/margin sur le wrapper et passage en 100vw (bord à bord, aucune bande latérale).
+- Reset CSS global (html, body, #root) : suppression de tout padding/margin, width: 100vw, background harmonisé.
+- Le Hero et toutes les sections principales sont désormais vraiment plein écran, sans aucune bande latérale, sur tous les devices.
+- Aucun code ou fonctionnalité essentielle supprimé, aucun impact sur le backend ou le déploiement backend.
+- Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
+- Statut : Prêt pour validation visuelle finale. 
