@@ -41,94 +41,116 @@ const RegisterForm: React.FC = () => {
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: '40px auto', padding: '0 20px' }}>
-      <h2 style={{ textAlign: 'center', marginBottom: 24 }}>Inscription</h2>
-      <Form
-        form={form}
-        name="register"
-        onFinish={onFinish}
-        layout="vertical"
-        requiredMark={false}
-      >
-        <Form.Item
-          name="fullName"
-          label="Nom complet"
-          rules={[
-            { required: true, message: 'Veuillez saisir votre nom complet' },
-            { min: 3, message: 'Le nom doit contenir au moins 3 caractères' },
-            { pattern: /^[a-zA-ZÀ-ÿ\s]+$/, message: 'Le nom ne doit contenir que des lettres' }
-          ]}
-        >
-          <Input size="large" placeholder="Prénom et Nom" />
-        </Form.Item>
-
-        <Form.Item
-          name="phoneNumber"
-          label="Numéro de téléphone"
-          rules={[
-            { required: true, message: 'Veuillez saisir votre numéro de téléphone' },
-            { pattern: /^\+?[0-9]{8,15}$/, message: 'Numéro de téléphone invalide' }
-          ]}
-        >
-          <Input size="large" placeholder="+221 XX XXX XX XX" />
-        </Form.Item>
-
-        <Form.Item
-          name="email"
-          label="Email (optionnel)"
-          rules={[
-            { type: 'email', message: 'Email invalide' }
-          ]}
-        >
-          <Input size="large" placeholder="exemple@email.com" />
-        </Form.Item>
-
-        <Form.Item
-          name="password"
-          label="Mot de passe"
-          rules={[
-            { required: true, message: 'Veuillez saisir un mot de passe' },
-            { min: 8, message: 'Le mot de passe doit contenir au moins 8 caractères' }
-          ]}
-        >
-          <Input.Password size="large" placeholder="Votre mot de passe" />
-        </Form.Item>
-
-        <Form.Item
-          name="confirmPassword"
-          label="Confirmer le mot de passe"
-          dependencies={['password']}
-          rules={[
-            { required: true, message: 'Veuillez confirmer votre mot de passe' },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (!value || getFieldValue('password') === value) {
-                  return Promise.resolve();
-                }
-                return Promise.reject(new Error('Les mots de passe ne correspondent pas'));
-              },
-            }),
-          ]}
-        >
-          <Input.Password size="large" placeholder="Confirmez votre mot de passe" />
-        </Form.Item>
-
-        <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            size="large"
-            block
-            loading={loading}
-          >
-            S'inscrire
-          </Button>
-        </Form.Item>
-
-        <div style={{ textAlign: 'center' }}>
-          <a href="/login">Déjà inscrit ? Se connecter</a>
+    <div style={{
+      minHeight: '100vh',
+      width: '100vw',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      background: 'linear-gradient(135deg, #1890ff 0%, #43e97b 100%)',
+      padding: 0,
+    }}>
+      <div style={{
+        width: '100%',
+        maxWidth: 480,
+        padding: '40px 32px 32px 32px',
+        borderRadius: 18,
+        boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.12)',
+        background: '#fff',
+      }}>
+        <div style={{ textAlign: 'center', marginBottom: 18 }}>
+          <img src="/logo192.png" alt="Logo" style={{ width: 56, marginBottom: 8 }} />
+          <div style={{ fontWeight: 600, fontSize: 20, color: '#1890ff', marginBottom: 2 }}>
+            Bienvenue sur BusinessConnect Sénégal
+          </div>
+          <div style={{ color: '#888', fontSize: 15, marginBottom: 10 }}>
+            Créez votre compte pour rejoindre la communauté
+          </div>
         </div>
-      </Form>
+        <h2 style={{ textAlign: 'center', marginBottom: 24, fontWeight: 700, letterSpacing: 1, fontSize: 28 }}>
+          Inscription
+        </h2>
+        <Form
+          form={form}
+          name="register"
+          onFinish={onFinish}
+          layout="vertical"
+          requiredMark={false}
+        >
+          <Form.Item
+            name="fullName"
+            label={<span style={{ fontWeight: 500 }}>Nom complet</span>}
+            rules={[
+              { required: true, message: 'Veuillez saisir votre nom complet' },
+              { min: 3, message: 'Le nom doit contenir au moins 3 caractères' },
+              { pattern: /^[a-zA-ZÀ-ÿ\s]+$/, message: 'Le nom ne doit contenir que des lettres' }
+            ]}
+          >
+            <Input size="large" placeholder="Prénom et Nom" style={{ borderRadius: 8 }} />
+          </Form.Item>
+          <Form.Item
+            name="phoneNumber"
+            label={<span style={{ fontWeight: 500 }}>Numéro de téléphone</span>}
+            rules={[
+              { required: true, message: 'Veuillez saisir votre numéro de téléphone' },
+              { pattern: /^\+?[0-9]{8,15}$/, message: 'Numéro de téléphone invalide' }
+            ]}
+          >
+            <Input size="large" placeholder="+221 XX XXX XX XX" style={{ borderRadius: 8 }} />
+          </Form.Item>
+          <Form.Item
+            name="email"
+            label={<span style={{ fontWeight: 500 }}>Email (optionnel)</span>}
+            rules={[
+              { type: 'email', message: 'Email invalide' }
+            ]}
+          >
+            <Input size="large" placeholder="exemple@email.com" style={{ borderRadius: 8 }} />
+          </Form.Item>
+          <Form.Item
+            name="password"
+            label={<span style={{ fontWeight: 500 }}>Mot de passe</span>}
+            rules={[
+              { required: true, message: 'Veuillez saisir un mot de passe' },
+              { min: 8, message: 'Le mot de passe doit contenir au moins 8 caractères' }
+            ]}
+          >
+            <Input.Password size="large" placeholder="Votre mot de passe" style={{ borderRadius: 8 }} />
+          </Form.Item>
+          <Form.Item
+            name="confirmPassword"
+            label={<span style={{ fontWeight: 500 }}>Confirmer le mot de passe</span>}
+            dependencies={['password']}
+            rules={[
+              { required: true, message: 'Veuillez confirmer votre mot de passe' },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue('password') === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error('Les mots de passe ne correspondent pas'));
+                },
+              }),
+            ]}
+          >
+            <Input.Password size="large" placeholder="Confirmez votre mot de passe" style={{ borderRadius: 8 }} />
+          </Form.Item>
+          <Form.Item style={{ marginBottom: 8 }}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              size="large"
+              style={{ width: '100%', borderRadius: 8, fontWeight: 600, fontSize: 16, height: 48 }}
+              loading={loading}
+            >
+              S'inscrire
+            </Button>
+          </Form.Item>
+          <div style={{ textAlign: 'center', marginTop: 8 }}>
+            <a href="/login">Déjà inscrit ? Se connecter</a>
+          </div>
+        </Form>
+      </div>
     </div>
   );
 };

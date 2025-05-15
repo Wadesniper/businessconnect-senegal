@@ -93,10 +93,21 @@ const SubscriptionPage: React.FC = () => {
   };
 
   return (
-    <div className="subscription-page-bg" style={{ minHeight: '100vh', padding: '40px 0', background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)', width: '100%' }}>
-      <div style={{ width: '100%', margin: '0 auto', padding: '0 24px' }}>
-        <Title level={1} style={{ textAlign: 'center', marginBottom: 16 }}>Choisissez votre abonnement</Title>
-        <Paragraph style={{ textAlign: 'center', fontSize: 18, marginBottom: 40 }}>
+    <div style={{
+      minHeight: '100vh',
+      width: '100vw',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      background: 'linear-gradient(135deg, #1890ff 0%, #43e97b 100%)',
+      padding: 0,
+    }}>
+      <div style={{ width: '100%', maxWidth: 1200, margin: '0 auto', padding: '40px 0' }}>
+        <Title level={1} style={{ textAlign: 'center', marginBottom: 16, color: '#fff', fontWeight: 700, letterSpacing: 1 }}>
+          Choisissez votre abonnement
+        </Title>
+        <Paragraph style={{ textAlign: 'center', color: '#e6f7ff', fontSize: 18, marginBottom: 40 }}>
           Accédez à toutes les fonctionnalités de BusinessConnect Sénégal selon votre profil. Paiement sécurisé via CinetPay.
         </Paragraph>
         <Row gutter={[32, 32]} justify="center">
@@ -105,16 +116,31 @@ const SubscriptionPage: React.FC = () => {
               <Card
                 className="subscription-card"
                 variant="outlined"
-                style={{ borderRadius: 16, boxShadow: '0 4px 24px rgba(0,0,0,0.08)', textAlign: 'center', background: '#fff' }}
+                style={{
+                  borderRadius: 20,
+                  boxShadow: offer.popular
+                    ? '0 8px 32px 0 rgba(24, 144, 255, 0.18)'
+                    : '0 4px 16px 0 rgba(31, 38, 135, 0.10)',
+                  border: offer.popular ? '2px solid #43e97b' : '1px solid #f0f0f0',
+                  background: offer.popular
+                    ? 'linear-gradient(135deg, #e0ffe9 0%, #e6f7ff 100%)'
+                    : '#fff',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  paddingBottom: 24,
+                  textAlign: 'center',
+                }}
                 hoverable
               >
                 <Space direction="vertical" size="large" style={{ width: '100%' }}>
                   {offer.icon}
-                  <Title level={3} style={{ color: offer.color }}>{offer.title}</Title>
+                  <Title level={3} style={{ color: offer.color, fontWeight: 700, marginBottom: 0 }}>
+                    {offer.title}
+                  </Title>
                   <div>
                     <span style={{ fontSize: 36, fontWeight: 700, color: offer.color }}>{offer.price.toLocaleString()} FCFA</span>
                     <span style={{ fontSize: 18, color: '#888', marginLeft: 4 }}>/mois</span>
-                    {offer.popular && <Tag color="gold" style={{ marginLeft: 8 }}>Populaire</Tag>}
+                    {offer.popular && <Tag color="#43e97b" style={{ marginLeft: 8, fontWeight: 600, fontSize: 13 }}>Populaire</Tag>}
                   </div>
                   <div style={{ margin: '16px 0' }}>
                     {offer.features.map((feature, idx) => (
@@ -124,7 +150,16 @@ const SubscriptionPage: React.FC = () => {
                   <Button
                     type="primary"
                     size="large"
-                    style={{ background: offer.color, border: 'none', borderRadius: 25, width: '100%' }}
+                    style={{
+                      background: offer.color,
+                      border: 'none',
+                      borderRadius: 25,
+                      width: '100%',
+                      fontWeight: 600,
+                      fontSize: 17,
+                      height: 52,
+                      boxShadow: offer.popular ? '0 2px 12px 0 rgba(67, 233, 123, 0.10)' : undefined
+                    }}
                     onClick={() => handleSubscribe(offer.key)}
                   >
                     S'abonner

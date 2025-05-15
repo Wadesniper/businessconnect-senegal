@@ -233,6 +233,14 @@
 - Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
 - Statut : Prêt pour validation finale et déploiement.
 
+## [Date : Correction définitive déploiement Vercel / UI/UX]
+
+- Problème : Les modifications frontend (auth, abonnement) n'étaient pas visibles en production car le dossier déployé sur Vercel était `client-vite-fix` et non `businessconnect-senegal/client`.
+- Correction : Toutes les améliorations UI/UX (connexion, inscription, abonnement) ont été synchronisées et appliquées dans `client-vite-fix` (pages et composants concernés).
+- Précision : Ne plus modifier `businessconnect-senegal/client` pour le frontend public, mais uniquement `client-vite-fix`.
+- Impact : Aucun impact sur le backend, aucune suppression de code ou fonctionnalité essentielle, aucune perturbation du site ou du déploiement backend.
+- Statut : Site complet, moderne, premium, et 100% fonctionnel en production.
+
 ## [DÉPLOIEMENT] Problème de déclenchement Vercel (webhook non créé automatiquement)
 
 ### Symptômes
