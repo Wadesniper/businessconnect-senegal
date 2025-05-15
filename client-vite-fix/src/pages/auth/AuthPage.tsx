@@ -45,7 +45,27 @@ const AuthPage: React.FC = () => {
               Inscription
             </button>
           </div>
-          {activeTab === 'login' ? <LoginForm /> : <RegisterForm />}
+          {activeTab === 'login' ? (
+            <LoginForm />
+          ) : (
+            <>
+              <div style={{
+                background: 'linear-gradient(90deg, #e6fff2 0%, #f0f5ff 100%)',
+                borderRadius: 10,
+                padding: '16px 18px',
+                marginBottom: 18,
+                textAlign: 'center',
+                fontWeight: 500,
+                color: '#1ec773',
+                fontSize: 16,
+                boxShadow: '0 2px 8px #1ec77311',
+              }}>
+                Vous êtes nouveau ? Créez votre compte gratuitement pour découvrir la plateforme.<br/>
+                <span style={{color:'#1890ff'}}>Certaines fonctionnalités nécessitent un abonnement.</span>
+              </div>
+              <RegisterForm />
+            </>
+          )}
         </div>
       </div>
     </div>
