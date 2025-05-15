@@ -4,6 +4,7 @@ import { UserOutlined, ShopOutlined, TeamOutlined } from '@ant-design/icons';
 import './SubscriptionPage.css';
 import axios from 'axios';
 import { useAuth } from '../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 const { Title, Paragraph } = Typography;
 
@@ -58,25 +59,29 @@ const offers = [
 
 const SubscriptionPage: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const handleSubscribe = async (offerKey: string) => {
+    if (!user) {
+      navigate('/login', { state: { from: '/subscription' } });
+      return;
+    }
     try {
       let type = offerKey;
       if (type === 'student') type = 'etudiant';
-      if (!user) {
-        alert("Veuillez vous connecter pour vous abonner.");
-        return;
-      }
       const customer_name = user.firstName || '';
       const customer_surname = user.lastName || '';
       const customer_email = user.email || '';
       const customer_phone_number = user.phoneNumber || '';
-      const res = await axios.post('/api/payment/init', {
-        type,
-        customer_name,
-        customer_surname,
-        customer_email,
-        customer_phone_number
-      });
+      const res = await axios.post<{ data?: { payment_url?: string } }>(
+        '/api/payment/init',
+        {
+          type,
+          customer_name,
+          customer_surname,
+          customer_email,
+          customer_phone_number
+        }
+      );
       if (res.data && res.data.data && res.data.data.payment_url) {
         window.location.href = res.data.data.payment_url;
       } else {
