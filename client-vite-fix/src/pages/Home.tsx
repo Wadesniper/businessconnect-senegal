@@ -326,26 +326,78 @@ const Home: React.FC = () => {
           <Title level={2} style={{ color: '#1d3557', marginBottom: 32, textAlign: 'center' }}>BusinessConnect en chiffres</Title>
           <Row gutter={[32, 32]} justify="center">
             <Col xs={24} sm={12} md={6}>
-              <Card style={{ borderRadius: 20, boxShadow: '0 4px 24px #e3e8f7', textAlign: 'center', background: '#e0f7fa' }} data-testid="stat-card" variant="outlined">
-                <Statistic title="Entreprises" valueRender={() => <AnimatedStatistic value={500} />} value={500} valueStyle={{ color: '#1890ff', fontWeight: 700, fontSize: 36 }} suffix="+" />
-              </Card>
+              <div style={{
+                borderRadius: 36,
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 60%, #e0f7fa 100%)',
+                boxShadow: '0 12px 40px 0 #1890ff22',
+                border: '2px solid #fff',
+                backdropFilter: 'blur(12px)',
+                textAlign: 'center',
+                padding: '38px 18px 32px 18px',
+                minHeight: 140,
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                transition: 'transform 0.25s, box-shadow 0.25s',
+                animation: 'fadeInUp 0.7s 0.1s both',
+              }}>
+                <div style={{ fontSize: 22, color: '#1890ff', marginBottom: 8, fontWeight: 500 }}>Entreprises</div>
+                <div style={{ fontSize: 40, fontWeight: 800, color: '#1890ff', textShadow: '0 2px 12px #1890ff33' }}>500+</div>
+              </div>
             </Col>
             <Col xs={24} sm={12} md={6}>
-              <Card style={{ borderRadius: 20, boxShadow: '0 4px 24px #e3e8f7', textAlign: 'center', background: '#fce4ec' }} data-testid="stat-card" variant="outlined">
-                <Statistic title="Offres d'emploi" valueRender={() => <AnimatedStatistic value={1200} />} value={1200} valueStyle={{ color: '#e91e63', fontWeight: 700, fontSize: 36 }} suffix="+" />
-              </Card>
+              <div style={{
+                borderRadius: 36,
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 60%, #fce4ec 100%)',
+                boxShadow: '0 12px 40px 0 #e91e6333',
+                border: '2px solid #fff',
+                backdropFilter: 'blur(12px)',
+                textAlign: 'center',
+                padding: '38px 18px 32px 18px',
+                minHeight: 140,
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                transition: 'transform 0.25s, box-shadow 0.25s',
+                animation: 'fadeInUp 0.7s 0.2s both',
+              }}>
+                <div style={{ fontSize: 22, color: '#e91e63', marginBottom: 8, fontWeight: 500 }}>Offres d'emploi</div>
+                <div style={{ fontSize: 20, fontWeight: 700, color: '#e91e63', textShadow: '0 2px 8px #e91e633', lineHeight: 1.3 }}>De nouvelles offres<br />publiées chaque jour</div>
+              </div>
             </Col>
             <Col xs={24} sm={12} md={6}>
-              <Card style={{ borderRadius: 20, boxShadow: '0 4px 24px #e3e8f7', textAlign: 'center', background: '#e8f5e9' }} data-testid="stat-card" variant="outlined">
-                <Statistic title="Membres" valueRender={() => <AnimatedStatistic value={8000} />} value={8000} valueStyle={{ color: '#43a047', fontWeight: 700, fontSize: 36 }} suffix="+" />
-                  </Card>
-              </Col>
+              <div style={{
+                borderRadius: 36,
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 60%, #e8f5e9 100%)',
+                boxShadow: '0 12px 40px 0 #43a04733',
+                border: '2px solid #fff',
+                backdropFilter: 'blur(12px)',
+                textAlign: 'center',
+                padding: '38px 18px 32px 18px',
+                minHeight: 140,
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                transition: 'transform 0.25s, box-shadow 0.25s',
+                animation: 'fadeInUp 0.7s 0.3s both',
+              }}>
+                <div style={{ fontSize: 22, color: '#43a047', marginBottom: 8, fontWeight: 500 }}>Membres</div>
+                <div style={{ fontSize: 40, fontWeight: 800, color: '#43a047', textShadow: '0 2px 12px #43a04733' }}>10&nbsp;000+</div>
+              </div>
+            </Col>
             <Col xs={24} sm={12} md={6}>
-              <Card style={{ borderRadius: 20, boxShadow: '0 4px 24px #e3e8f7', textAlign: 'center', background: '#fff3e0' }} data-testid="stat-card" variant="outlined">
-                <Statistic title="Secteurs" valueRender={() => <AnimatedStatistic value={SECTEURS.length} />} value={SECTEURS.length} valueStyle={{ color: '#ff9800', fontWeight: 700, fontSize: 36 }} suffix="+" />
-                  </Card>
-              </Col>
-            </Row>
+              <div style={{
+                borderRadius: 36,
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 60%, #fff3e0 100%)',
+                boxShadow: '0 12px 40px 0 #ff980033',
+                border: '2px solid #fff',
+                backdropFilter: 'blur(12px)',
+                textAlign: 'center',
+                padding: '38px 18px 32px 18px',
+                minHeight: 140,
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                transition: 'transform 0.25s, box-shadow 0.25s',
+                animation: 'fadeInUp 0.7s 0.4s both',
+              }}>
+                <div style={{ fontSize: 22, color: '#ff9800', marginBottom: 8, fontWeight: 500 }}>Secteurs</div>
+                <div style={{ fontSize: 40, fontWeight: 800, color: '#ff9800', textShadow: '0 2px 12px #ff980033' }}>15+</div>
+              </div>
+            </Col>
+          </Row>
         </div>
         {/* Section Témoignages */}
         <div style={{ width: '100%', margin: '60px auto', padding: '0 32px' }}>
