@@ -7,9 +7,10 @@ import { useAuth } from '../context/AuthContext';
 interface LoginFormProps {
   noCard?: boolean;
   noBg?: boolean;
+  hideRegisterLink?: boolean;
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg }) => {
+const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink }) => {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -64,9 +65,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg }) => {
             Se connecter
           </Button>
         </Form.Item>
-        <div style={{ textAlign: 'center', marginTop: 8 }}>
-          <a href="/register">Pas encore inscrit ? Créer un compte</a>
-        </div>
+        {!hideRegisterLink && (
+          <div style={{ textAlign: 'center', marginTop: 8 }}>
+            <a href="/register">Pas encore inscrit ? Créer un compte</a>
+          </div>
+        )}
       </Form>
     );
   }
@@ -135,9 +138,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg }) => {
               Se connecter
             </Button>
           </Form.Item>
-          <div style={{ textAlign: 'center', marginTop: 8 }}>
-            <a href="/register">Pas encore inscrit ? Créer un compte</a>
-          </div>
+          {!hideRegisterLink && (
+            <div style={{ textAlign: 'center', marginTop: 8 }}>
+              <a href="/register">Pas encore inscrit ? Créer un compte</a>
+            </div>
+          )}
         </Form>
       </div>
     </div>

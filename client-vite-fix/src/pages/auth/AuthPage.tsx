@@ -6,13 +6,39 @@ const AuthPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+      {/* Logo et message de bienvenue */}
+      <div style={{ textAlign: 'center', marginBottom: 32 }}>
+        <img src="/logo192.png" alt="Logo" style={{ width: 64, marginBottom: 10 }} />
+        <div style={{ fontWeight: 700, fontSize: 22, color: '#1890ff', marginBottom: 2 }}>
+          Bienvenue sur BusinessConnect Sénégal
+        </div>
+        <div style={{ color: '#888', fontSize: 16 }}>
+          Connectez-vous ou créez un compte pour rejoindre la communauté
+        </div>
+      </div>
       <div style={{ background: '#fff', borderRadius: 24, boxShadow: '0 8px 32px #e3e8f7', padding: 32, maxWidth: 1000, width: '100%', display: 'flex', flexDirection: window.innerWidth < 800 ? 'column' : 'row', gap: 0, position: 'relative' }}>
         {/* Connexion */}
         <div style={{ flex: 1, minWidth: 320, maxWidth: 420, padding: 24, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <h2 style={{ textAlign: 'center', fontWeight: 700, fontSize: 26, marginBottom: 24, color: '#1890ff', letterSpacing: 1 }}>Connexion</h2>
+          <div style={{
+            border: '2px solid #1890ff',
+            borderRadius: 12,
+            background: 'linear-gradient(90deg, #f0f5ff 0%, #fff 100%)',
+            padding: '8px 0',
+            marginBottom: 24,
+            width: '100%',
+            maxWidth: 320,
+            textAlign: 'center',
+            fontWeight: 700,
+            fontSize: 26,
+            color: '#1890ff',
+            letterSpacing: 1,
+            boxShadow: '0 2px 8px #1890ff11',
+          }}>
+            Connexion
+          </div>
           <div style={{width:'100%', maxWidth:380}}>
-            <LoginForm noCard noBg />
+            <LoginForm noCard noBg hideRegisterLink />
           </div>
         </div>
         {/* Séparateur OU */}
@@ -28,13 +54,30 @@ const AuthPage: React.FC = () => {
             justifyContent: 'center',
             fontWeight: 700,
             fontSize: 18,
-            boxShadow: '0 2px 8px #1890ff11',
+            boxShadow: '0 2px 12px #1890ff22',
             border: '2px solid #e6f7ff',
+            marginTop: 80,
           }}>ou</div>
         </div>
         {/* Inscription */}
         <div style={{ flex: 1, minWidth: 320, maxWidth: 420, padding: 24, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <h2 style={{ textAlign: 'center', fontWeight: 700, fontSize: 26, marginBottom: 24, color: '#1ec773', letterSpacing: 1 }}>Inscription</h2>
+          <div style={{
+            border: '2px solid #1ec773',
+            borderRadius: 12,
+            background: 'linear-gradient(90deg, #e6fff2 0%, #fff 100%)',
+            padding: '8px 0',
+            marginBottom: 24,
+            width: '100%',
+            maxWidth: 320,
+            textAlign: 'center',
+            fontWeight: 700,
+            fontSize: 26,
+            color: '#1ec773',
+            letterSpacing: 1,
+            boxShadow: '0 2px 8px #1ec77311',
+          }}>
+            Inscription
+          </div>
           <div style={{
             background: 'linear-gradient(90deg, #e6fff2 0%, #f0f5ff 100%)',
             borderRadius: 10,
@@ -69,7 +112,7 @@ const AuthPage: React.FC = () => {
               justifyContent: 'center',
               fontWeight: 700,
               fontSize: 18,
-              boxShadow: '0 2px 8px #1890ff11',
+              boxShadow: '0 2px 12px #1890ff22',
               border: '2px solid #e6f7ff',
             }}>ou</div>
           </div>
