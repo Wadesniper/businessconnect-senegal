@@ -142,10 +142,10 @@ const Home: React.FC = () => {
       {/* Section Secteurs d'activité */}
       <div style={{ width: '100%', margin: '40px auto 0 auto', padding: '0 32px' }}>
         <div style={{ background: '#fff', borderRadius: 32, boxShadow: '0 8px 32px #e3e8f7', padding: '48px 0', maxWidth: 1400, margin: '0 auto' }}>
-          <Title level={1} style={{ color: '#1890ff', marginBottom: 8, textAlign: 'center', fontWeight: 800, fontSize: 48, letterSpacing: 0.5, lineHeight: 1.1 }}>
-            Secteurs d'activité
+          <Title level={1} style={{ textAlign: 'center', marginBottom: 16, fontWeight: 700, fontSize: 38 }}>
+            Secteurs d'<span style={{ color: '#1890ff' }}>activité</span>
           </Title>
-          <Paragraph style={{ textAlign: 'center', fontSize: 20, color: '#222', marginBottom: 32, opacity: 0.85, fontWeight: 500 }}>
+          <Paragraph style={{ textAlign: 'center', fontSize: 18, color: '#222', marginBottom: 32, opacity: 0.85, fontWeight: 500 }}>
             Découvrez les opportunités professionnelles dans les secteurs les plus dynamiques au Sénégal
           </Paragraph>
           <Carousel autoplay autoplaySpeed={2500} dots slidesToShow={3} speed={900} easing="ease-in-out" responsive={[{ breakpoint: 900, settings: { slidesToShow: 2 } }, { breakpoint: 600, settings: { slidesToShow: 1 } }]} style={{ width: '100%', padding: '0 0 32px 0' }} data-testid="sector-carousel">
