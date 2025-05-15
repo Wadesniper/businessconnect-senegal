@@ -171,4 +171,14 @@
 - Le Hero et toutes les sections principales sont désormais vraiment plein écran, sans aucune bande latérale, sur tous les devices.
 - Aucun code ou fonctionnalité essentielle supprimé, aucun impact sur le backend ou le déploiement backend.
 - Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
+- Statut : Prêt pour validation visuelle finale.
+
+## [Date : Suppression barre de scroll horizontale]
+
+- Suppression définitive de la barre de scroll horizontale sur tout le site.
+- Remplacement de width: 100vw par width: 100% sur html, body, #root, HeroContainer, ContentWrapper.
+- Ajout de overflow-x: hidden sur body pour garantir qu'aucun débordement horizontal ne puisse apparaître.
+- Le Hero et toutes les sections sont désormais bord à bord, sans scroll horizontal, sur tous les écrans.
+- Aucun code ou fonctionnalité essentielle supprimé, aucun impact sur le backend ou le déploiement backend.
+- Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
 - Statut : Prêt pour validation visuelle finale. 
