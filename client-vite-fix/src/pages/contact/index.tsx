@@ -109,102 +109,161 @@ const ContactPage: React.FC = () => {
     }
   };
 
+  // Responsive : deux colonnes sur desktop, une sur mobile
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 900;
+
   return (
     <StyledLayout>
       <Container>
-        <div style={{ textAlign: 'left', marginBottom: 36, maxWidth: 600 }}>
-          <MessageOutlined style={{ fontSize: 48, color: '#1890ff', marginBottom: 8 }} />
-          <Title level={1} style={{ marginBottom: 8 }}>Contactez-nous</Title>
-          <Paragraph style={{ fontSize: '1.1rem', maxWidth: 600, margin: '0 0 0 0' }}>
-            Une question ? Un projet ? N'hésitez pas à nous contacter.<br />Notre équipe vous répondra dans les plus brefs délais.
+        {/* Header visuel premium */}
+        <div style={{ textAlign: 'center', marginBottom: 36 }}>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: 8
+          }}>
+            <MessageOutlined style={{ fontSize: 54, color: '#1890ff', marginBottom: 8, background: 'linear-gradient(135deg, #e6fff2 0%, #1890ff22 100%)', borderRadius: 18, padding: 10 }} />
+          </div>
+          <Title level={1} style={{ marginBottom: 8, fontWeight: 800, color: '#1890ff', letterSpacing: 1, fontSize: 36 }}>Contactez-nous</Title>
+          <Paragraph style={{ fontSize: '1.18rem', color: '#555', maxWidth: 600, margin: '0 auto' }}>
+            Une question, un projet, un besoin&nbsp;? <b>Notre équipe vous répond sous 24h</b>.<br />Nous sommes à votre écoute pour vous accompagner.
           </Paragraph>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '12px', marginBottom: 24 }}>
-          <InfoCard>
-            <MailOutlined style={{ fontSize: 22, color: '#faad14', marginBottom: 2 }} />
-            <Title level={5} style={{ margin: 0, fontSize: 17 }}>Email</Title>
-            <Text>
-              <a href="mailto:contact@businessconnectsenegal.com" style={{ fontWeight: 600, color: '#ad6800', fontSize: 15 }}>
-                contact@businessconnectsenegal.com
-              </a>
-            </Text>
-          </InfoCard>
-        </div>
-        <ContactCard>
-          {sent ? (
-            <div style={{ textAlign: 'center', padding: 32 }}>
-              <CheckCircleTwoTone twoToneColor="#52c41a" style={{ fontSize: 48 }} />
-              <Title level={3} style={{ marginTop: 16 }}>Message envoyé !</Title>
-              <Paragraph>Merci pour votre message, nous vous répondrons rapidement.</Paragraph>
-            </div>
-          ) : (
-            <>
-              <Title level={3} style={{ marginBottom: 18, textAlign: 'center' }}>
-                Envoyez-nous un message
-              </Title>
-              <StyledForm
-                form={form}
-                name="contact"
-                onFinish={onFinish}
-                layout="vertical"
-                requiredMark={false}
-              >
-                <Form.Item
-                  name="name"
-                  rules={[{ required: true, message: 'Veuillez saisir votre nom' }]}
-                >
-                  <Input
-                    prefix={<UserOutlined />}
-                    placeholder="Votre nom complet"
-                    size="large"
-                  />
-                </Form.Item>
-                <Form.Item
-                  name="email"
-                  rules={[
-                    { required: true, message: 'Veuillez saisir votre email' },
-                    { type: 'email', message: 'Email invalide' }
-                  ]}
-                >
-                  <Input
-                    prefix={<MailOutlined />}
-                    placeholder="Votre email"
-                    size="large"
-                  />
-                </Form.Item>
-                <Form.Item
-                  name="subject"
-                  rules={[{ required: true, message: 'Veuillez saisir l\'objet de votre message' }]}
-                >
-                  <Input
-                    placeholder="Objet de votre message"
-                    size="large"
-                  />
-                </Form.Item>
-                <Form.Item
-                  name="message"
-                  rules={[{ required: true, message: 'Veuillez saisir votre message' }]}
-                >
-                  <TextArea
-                    placeholder="Votre message"
-                    rows={5}
-                  />
-                </Form.Item>
-                <Form.Item>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    size="large"
-                    block
-                    loading={loading}
+        {/* Disposition deux colonnes */}
+        <div style={{
+          display: 'flex',
+          flexDirection: isMobile ? 'column' : 'row',
+          gap: isMobile ? 0 : 48,
+          alignItems: 'flex-start',
+          justifyContent: 'center',
+          width: '100%',
+          maxWidth: 1100,
+          margin: '0 auto',
+        }}>
+          {/* Colonne gauche : infos et réassurance */}
+          <div style={{ flex: 1, minWidth: 260, maxWidth: 370, marginBottom: isMobile ? 32 : 0 }}>
+            <InfoCard>
+              <MailOutlined style={{ fontSize: 22, color: '#faad14', marginBottom: 2 }} />
+              <Title level={5} style={{ margin: 0, fontSize: 17 }}>Email</Title>
+              <Text>
+                <a href="mailto:contact@businessconnectsenegal.com" style={{ fontWeight: 600, color: '#ad6800', fontSize: 15 }}>
+                  contact@businessconnectsenegal.com
+                </a>
+              </Text>
+            </InfoCard>
+            <InfoCard style={{ background: 'linear-gradient(90deg, #e6fff2 0%, #f0f5ff 100%)', boxShadow: '0 2px 8px #1ec77311' }}>
+              <PhoneOutlined style={{ fontSize: 20, color: '#1ec773', marginBottom: 2 }} />
+              <Title level={5} style={{ margin: 0, fontSize: 17 }}>Téléphone</Title>
+              <Text style={{ color: '#1ec773', fontWeight: 600, fontSize: 15 }}>+221 77 000 00 00</Text>
+            </InfoCard>
+            <InfoCard style={{ background: 'linear-gradient(90deg, #f0f5ff 0%, #e6fff2 100%)', boxShadow: '0 2px 8px #1890ff11' }}>
+              <EnvironmentOutlined style={{ fontSize: 20, color: '#1890ff', marginBottom: 2 }} />
+              <Title level={5} style={{ margin: 0, fontSize: 17 }}>Adresse</Title>
+              <Text style={{ color: '#1890ff', fontWeight: 600, fontSize: 15 }}>Dakar, Sénégal</Text>
+            </InfoCard>
+            <InfoCard style={{ background: 'linear-gradient(90deg, #e6fff2 0%, #fffbe6 100%)', boxShadow: '0 2px 8px #faad1411' }}>
+              <CheckCircleTwoTone twoToneColor="#1ec773" style={{ fontSize: 20, marginBottom: 2 }} />
+              <Text style={{ color: '#1ec773', fontWeight: 600, fontSize: 15 }}>Réponse sous 24h</Text>
+            </InfoCard>
+            <InfoCard style={{ background: 'linear-gradient(90deg, #f0f5ff 0%, #fffbe6 100%)', boxShadow: '0 2px 8px #faad1411' }}>
+              <UserOutlined style={{ fontSize: 20, color: '#faad14', marginBottom: 2 }} />
+              <Text style={{ color: '#faad14', fontWeight: 600, fontSize: 15 }}>Support humain & personnalisé</Text>
+            </InfoCard>
+            <InfoCard style={{ background: 'linear-gradient(90deg, #e6fff2 0%, #f0f5ff 100%)', boxShadow: '0 2px 8px #1ec77311' }}>
+              <MessageOutlined style={{ fontSize: 20, color: '#1890ff', marginBottom: 2 }} />
+              <Text style={{ color: '#1890ff', fontWeight: 600, fontSize: 15 }}>Vos données sont confidentielles</Text>
+            </InfoCard>
+          </div>
+          {/* Colonne droite : formulaire premium */}
+          <div style={{ flex: 2, minWidth: 320, maxWidth: 600 }}>
+            <ContactCard style={{ boxShadow: '0 8px 32px rgba(24, 144, 255, 0.10)', border: '1.5px solid #e6f7ff', marginTop: 0 }}>
+              {sent ? (
+                <div style={{ textAlign: 'center', padding: 32 }}>
+                  <CheckCircleTwoTone twoToneColor="#1ec773" style={{ fontSize: 54 }} />
+                  <Title level={3} style={{ marginTop: 16, color: '#1ec773' }}>Message envoyé !</Title>
+                  <Paragraph style={{ color: '#555' }}>Merci pour votre message, nous vous répondrons rapidement.</Paragraph>
+                </div>
+              ) : (
+                <>
+                  <Title level={3} style={{ marginBottom: 18, textAlign: 'center', color: '#1890ff', fontWeight: 700 }}>
+                    Envoyez-nous un message
+                  </Title>
+                  <StyledForm
+                    form={form}
+                    name="contact"
+                    onFinish={onFinish}
+                    layout="vertical"
+                    requiredMark={false}
                   >
-                    Envoyer le message
-                  </Button>
-                </Form.Item>
-              </StyledForm>
-            </>
-          )}
-        </ContactCard>
+                    <Form.Item
+                      name="name"
+                      rules={[{ required: true, message: 'Veuillez saisir votre nom' }]}
+                    >
+                      <Input
+                        prefix={<UserOutlined />}
+                        placeholder="Votre nom complet"
+                        size="large"
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name="email"
+                      rules={[
+                        { required: true, message: 'Veuillez saisir votre email' },
+                        { type: 'email', message: 'Email invalide' }
+                      ]}
+                    >
+                      <Input
+                        prefix={<MailOutlined />}
+                        placeholder="Votre email"
+                        size="large"
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name="subject"
+                      rules={[{ required: true, message: 'Veuillez saisir l\'objet de votre message' }]}
+                    >
+                      <Input
+                        placeholder="Objet de votre message"
+                        size="large"
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name="message"
+                      rules={[{ required: true, message: 'Veuillez saisir votre message' }]}
+                    >
+                      <TextArea
+                        placeholder="Votre message"
+                        rows={5}
+                      />
+                    </Form.Item>
+                    <Form.Item>
+                      <Button
+                        type="primary"
+                        htmlType="submit"
+                        size="large"
+                        block
+                        loading={loading}
+                        style={{
+                          background: 'linear-gradient(90deg, #1890ff 0%, #1ec773 100%)',
+                          border: 'none',
+                          borderRadius: 10,
+                          fontWeight: 700,
+                          fontSize: 18,
+                          height: 52,
+                          boxShadow: '0 2px 12px #1890ff22',
+                        }}
+                      >
+                        Envoyer
+                      </Button>
+                    </Form.Item>
+                  </StyledForm>
+                </>
+              )}
+            </ContactCard>
+          </div>
+        </div>
       </Container>
     </StyledLayout>
   );
