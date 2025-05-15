@@ -248,8 +248,13 @@ const Home: React.FC = () => {
               Créer mon CV maintenant
             </Button>
           </div>
-          <div style={{ flex: 1, minWidth: 320, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 24 }}>
-            <img src="/images/cv-hero.jpg" alt="Créer un CV professionnel" style={{ width: 350, maxWidth: '100%', borderRadius: 18, boxShadow: '0 8px 32px #b7e4c7', objectFit: 'cover', background: '#fff' }} />
+          <div style={{ flex: 1, minWidth: 320, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 24, position: 'relative' }}>
+            {/* Carré bleu clair en haut à gauche */}
+            <div style={{ position: 'absolute', top: 18, left: 38, width: 220, height: 180, background: '#e3e8f7', borderRadius: 18, zIndex: 1, boxShadow: '0 4px 24px #e3e8f7', opacity: 0.7 }} />
+            {/* Carré beige clair en bas à droite */}
+            <div style={{ position: 'absolute', bottom: 18, right: 38, width: 220, height: 180, background: '#fdf6e3', borderRadius: 18, zIndex: 1, boxShadow: '0 4px 24px #fdf6e3', opacity: 0.7 }} />
+            {/* Image principale */}
+            <img src="/images/cv-hero.jpg" alt="Créer un CV professionnel" style={{ width: 500, maxWidth: '100%', borderRadius: 28, boxShadow: '0 8px 32px #b7e4c7', objectFit: 'cover', background: '#fff', position: 'relative', zIndex: 2 }} />
           </div>
         </div>
         {/* Section Marketplace */}
@@ -316,7 +321,9 @@ const Home: React.FC = () => {
                     <span style={{ fontSize: 38, color: '#fff', filter: 'drop-shadow(0 2px 8px ' + secteur.couleur + '88)' }}>{secteur.icone}</span>
                   </div>
                   <Title level={4} style={{ color: '#1d3557', margin: 0, fontWeight: 700, fontSize: 25, letterSpacing: 0.5, textShadow: '0 2px 8px #fff8' }}>{secteur.nom}</Title>
-                  <Paragraph style={{ color: '#333', margin: '18px 0 0 0', textAlign: 'center', fontSize: 16, fontWeight: 500, opacity: 0.88, textShadow: '0 1px 4px #fff6' }}>{secteur.description}</Paragraph>
+                  <Button type="link" style={{ color: secteur.couleur, fontWeight: 600, fontSize: 16, marginTop: 18, display: 'flex', alignItems: 'center' }} onClick={() => navigate('/careers')}>
+                    Explorer ce secteur <ArrowRightOutlined style={{ marginLeft: 6 }} />
+                  </Button>
                 </div>
               </div>
             ))}
