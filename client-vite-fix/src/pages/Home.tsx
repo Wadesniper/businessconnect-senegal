@@ -268,21 +268,59 @@ const Home: React.FC = () => {
         <div style={{ width: '100%', margin: '60px auto', padding: '0 32px' }}>
           <Title level={2} style={{ color: '#1890ff', marginBottom: 32, textAlign: 'center' }}>Secteurs d'activité</Title>
           <Carousel autoplay autoplaySpeed={2500} dots slidesToShow={3} speed={900} easing="ease-in-out" responsive={[{ breakpoint: 900, settings: { slidesToShow: 2 } }, { breakpoint: 600, settings: { slidesToShow: 1 } }]} style={{ width: '100%', padding: '0 0 32px 0' }} data-testid="sector-carousel">
-            {SECTEURS.map((secteur) => (
+            {SECTEURS.map((secteur, idx) => (
               <div key={secteur.id} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 260 }}>
-                  <Card 
-                    hoverable 
-                  style={{ width: 320, minHeight: 220, borderRadius: 20, boxShadow: '0 4px 24px #e3e8f7', border: 'none', background: secteur.couleur, color: '#fff', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', transition: 'transform 0.2s, box-shadow 0.2s' }}
-                  styles={{ body: { padding: 24 } }}
+                <div
+                  style={{
+                    width: 320,
+                    minHeight: 220,
+                    borderRadius: 36,
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 60%, ' + secteur.couleur + '22 100%)',
+                    boxShadow: '0 12px 40px 0 rgba(24,144,255,0.13)',
+                    border: '2px solid #fff',
+                    backdropFilter: 'blur(12px)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    padding: 36,
+                    transition: 'transform 0.28s cubic-bezier(.4,2,.6,1), box-shadow 0.28s, border 0.28s',
+                    cursor: 'pointer',
+                    opacity: 1,
+                    transform: 'none',
+                  }}
+                  onMouseOver={e => {
+                    (e.currentTarget as HTMLDivElement).style.transform = 'scale(1.06)';
+                    (e.currentTarget as HTMLDivElement).style.boxShadow = '0 24px 64px 0 ' + secteur.couleur + '33';
+                    (e.currentTarget as HTMLDivElement).style.border = '2.5px solid ' + secteur.couleur;
+                  }}
+                  onMouseOut={e => {
+                    (e.currentTarget as HTMLDivElement).style.transform = 'scale(1)';
+                    (e.currentTarget as HTMLDivElement).style.boxShadow = '0 12px 40px 0 rgba(24,144,255,0.13)';
+                    (e.currentTarget as HTMLDivElement).style.border = '2px solid #fff';
+                  }}
                 >
-                  <div style={{ fontSize: 48, marginBottom: 12 }}>{secteur.icone}</div>
-                  <Title level={4} style={{ color: '#fff', margin: 0 }}>{secteur.nom}</Title>
-                  <Paragraph style={{ color: '#f0f0f0', margin: '12px 0 0 0', textAlign: 'center' }}>{secteur.description}</Paragraph>
-                </Card>
-                    </div>
+                  <div style={{
+                    width: 78,
+                    height: 78,
+                    borderRadius: '50%',
+                    background: 'linear-gradient(135deg, ' + secteur.couleur + ' 60%, #fff 120%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: 20,
+                    boxShadow: '0 0 0 6px ' + secteur.couleur + '22, 0 8px 32px ' + secteur.couleur + '33',
+                    position: 'relative',
+                  }}>
+                    <span style={{ fontSize: 38, color: '#fff', filter: 'drop-shadow(0 2px 8px ' + secteur.couleur + '88)' }}>{secteur.icone}</span>
+                  </div>
+                  <Title level={4} style={{ color: '#1d3557', margin: 0, fontWeight: 700, fontSize: 25, letterSpacing: 0.5, textShadow: '0 2px 8px #fff8' }}>{secteur.nom}</Title>
+                  <Paragraph style={{ color: '#333', margin: '18px 0 0 0', textAlign: 'center', fontSize: 16, fontWeight: 500, opacity: 0.88, textShadow: '0 1px 4px #fff6' }}>{secteur.description}</Paragraph>
+                </div>
+              </div>
             ))}
           </Carousel>
-                    </div>
+        </div>
         {/* Section Statistiques */}
         <div style={{ width: '100%', margin: '60px auto', padding: '0 32px' }}>
           <Title level={2} style={{ color: '#1d3557', marginBottom: 32, textAlign: 'center' }}>BusinessConnect en chiffres</Title>
