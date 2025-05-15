@@ -215,4 +215,13 @@
 - Plus aucun blocage sur le spinner, UX fluide et conforme à la demande.
 - Aucun code ou fonctionnalité essentielle supprimé, aucun impact sur le backend ou le déploiement backend.
 - Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
-- Statut : Prêt pour validation visuelle finale. 
+- Statut : Prêt pour validation visuelle finale.
+
+## [Date : Correction typage strict User.subscription.expireAt + conformité linter]
+
+- Correction du type User.subscription.expireAt : il est désormais strictement `string` ou `undefined` (plus jamais `null`).
+- Nettoyage du hook useAuth pour garantir que expireAt ne soit jamais null, conformément au typage strict attendu par le provider.
+- Vérification linter sur tout le projet : plus aucune erreur de typage, conformité totale TypeScript.
+- Aucun code ou fonctionnalité essentielle supprimé, aucun impact sur le backend ou le déploiement backend.
+- Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
+- Statut : Prêt pour validation finale et déploiement. 
