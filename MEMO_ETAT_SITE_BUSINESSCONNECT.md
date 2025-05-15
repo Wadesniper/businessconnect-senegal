@@ -181,4 +181,13 @@
 - Le Hero et toutes les sections sont désormais bord à bord, sans scroll horizontal, sur tous les écrans.
 - Aucun code ou fonctionnalité essentielle supprimé, aucun impact sur le backend ou le déploiement backend.
 - Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
+- Statut : Prêt pour validation visuelle finale.
+
+## [Date : Lisibilité Hero et effet premium carrousel]
+
+- Ajout d'un padding latéral sur le texte du Hero (48px à gauche, 24px à droite, 16px sur mobile) pour une meilleure lisibilité, sans bande latérale.
+- Accentuation de la bordure du carrousel (border-radius 32px), ajout d'une ombre portée et d'une fine bordure blanche pour un effet premium.
+- Le Hero reste bord à bord, mais le texte ne touche plus les bords de l'écran.
+- Aucun code ou fonctionnalité essentielle supprimé, aucun impact sur le backend ou le déploiement backend.
+- Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
 - Statut : Prêt pour validation visuelle finale. 

@@ -71,7 +71,12 @@ const ContentWrapper = styled.div`
 const TextContent = styled.div`
   flex: 1;
   color: white;
-  padding-right: 50px;
+  padding-left: 48px;
+  padding-right: 24px;
+  @media (max-width: 900px) {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
 `;
 
 const ImageSlider = styled.div`
@@ -79,9 +84,11 @@ const ImageSlider = styled.div`
   position: relative;
   height: 0;
   padding-top: 40%; /* Ratio 2.5/1 large et plus haut */
-  border-radius: 20px;
+  border-radius: 32px;
   overflow: hidden;
   background: #f7fafc;
+  box-shadow: 0 8px 32px #00152933;
+  border: 2px solid #fff;
 `;
 
 const SlideImage = styled(motion.div)<{ $imageUrl: string }>`
@@ -93,7 +100,7 @@ const SlideImage = styled(motion.div)<{ $imageUrl: string }>`
   background-image: url(${props => props.$imageUrl});
   background-size: cover;
   background-position: center;
-  border-radius: 20px;
+  border-radius: 32px;
   display: flex;
   align-items: flex-end;
 `;
