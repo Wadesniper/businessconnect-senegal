@@ -139,9 +139,9 @@ const Home: React.FC = () => {
   return (
     <Layout>
       <Hero onDiscoverClick={handleScrollToServices} />
-      {/* Section Secteurs déplacée ici */}
-      <Content style={{ background: '#f7faff', padding: '40px 0 0 0', width: '100%' }}>
-        <div style={{ width: '100%', margin: '60px auto', padding: '0 32px' }}>
+      {/* Section Secteurs d'activité */}
+      <div style={{ width: '100%', margin: '40px auto 0 auto', padding: '0 32px' }}>
+        <div style={{ background: '#fff', borderRadius: 32, boxShadow: '0 8px 32px #e3e8f7', padding: '48px 0', maxWidth: 1400, margin: '0 auto' }}>
           <Title level={2} style={{ color: '#1890ff', marginBottom: 32, textAlign: 'center' }}>Secteurs d'activité</Title>
           <Carousel autoplay autoplaySpeed={2500} dots slidesToShow={3} speed={900} easing="ease-in-out" responsive={[{ breakpoint: 900, settings: { slidesToShow: 2 } }, { breakpoint: 600, settings: { slidesToShow: 1 } }]} style={{ width: '100%', padding: '0 0 32px 0' }} data-testid="sector-carousel">
             {SECTEURS.map((secteur, idx) => (
@@ -199,8 +199,10 @@ const Home: React.FC = () => {
             ))}
           </Carousel>
         </div>
-        {/* Section Emploi */}
-        <div style={{ width: '100%', padding: '0 32px' }}>
+      </div>
+      {/* Section Emploi */}
+      <div style={{ width: '100%', margin: '40px auto 0 auto', padding: '0 32px' }}>
+        <div style={{ background: '#fff', borderRadius: 32, boxShadow: '0 8px 32px #e3e8f7', padding: '48px 0', maxWidth: 1400, margin: '0 auto' }}>
           <Typography.Title level={2} style={{ color: '#1d3557', marginBottom: 24 }}>
             Offres d'emploi récentes
           </Typography.Title>
@@ -228,15 +230,18 @@ const Home: React.FC = () => {
                 </Col>
               ))
             )}
-            </Row>
-          </div>
-        <div ref={servicesRef} style={{ width: '100%', marginTop: 60, marginBottom: 40, padding: '0 32px' }}>
+          </Row>
+        </div>
+      </div>
+      {/* Section Nos Services Professionnels */}
+      <div style={{ width: '100%', margin: '40px auto 0 auto', padding: '0 32px' }}>
+        <div style={{ background: '#fff', borderRadius: 32, boxShadow: '0 8px 32px #e3e8f7', padding: '48px 0', maxWidth: 1400, margin: '0 auto' }}>
           <Title level={1} style={{ textAlign: 'center', marginBottom: 16 }}>
             Nos Services <span style={{ color: '#1890ff' }}>Professionnels</span>
           </Title>
           <Paragraph style={{ textAlign: 'center', fontSize: 18, marginBottom: 40 }}>
             BusinessConnect Sénégal vous offre une gamme complète de services innovants pour propulser votre carrière professionnelle.
-                  </Paragraph>
+          </Paragraph>
           <Row gutter={[32, 32]} justify="center">
             <Col xs={24} sm={12} md={8} lg={8}>
               <Card bordered hoverable>
@@ -277,7 +282,7 @@ const Home: React.FC = () => {
                   <Button type="link" onClick={() => navigate('/formations')}>Découvrir <ArrowRightOutlined /></Button>
                 </Space>
               </Card>
-              </Col>
+            </Col>
             <Col xs={24} sm={12} md={8} lg={8}>
               <Card bordered hoverable>
                 <Space direction="vertical" size="middle">
@@ -286,51 +291,53 @@ const Home: React.FC = () => {
                   <Paragraph>Achetez et vendez des produits et services professionnels sur notre place de marché.</Paragraph>
                   <Button type="link" onClick={() => navigate('/marketplace')}>Découvrir <ArrowRightOutlined /></Button>
                 </Space>
-                  </Card>
-                </Col>
-            </Row>
+              </Card>
+            </Col>
+          </Row>
         </div>
-        {/* Section CV Professionnel */}
-        <div style={{ width: '100%', margin: '60px auto', padding: '0 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', background: 'linear-gradient(90deg, #f7fafc 60%, #e3fcec 100%)', borderRadius: 24, boxShadow: '0 4px 24px #e3e8f7' }}>
-          <div style={{ flex: 1, minWidth: 320, padding: '40px 24px 40px 0' }}>
-            <Title level={2} style={{ color: '#1d3557', marginBottom: 16 }}>Créez un CV professionnel</Title>
-            <Paragraph style={{ fontSize: 18, color: '#333', marginBottom: 24 }}>
-              Notre générateur de CV vous permet de créer un CV attrayant et professionnel en quelques minutes. Choisissez parmi plusieurs modèles et personnalisez-le selon vos besoins.
-            </Paragraph>
-            <ul style={{ fontSize: 16, color: '#222', marginBottom: 32, paddingLeft: 24 }}>
-              <li>✔️ Modèles professionnels conçus pour le marché sénégalais</li>
-              <li>✔️ Personnalisation simple et intuitive</li>
-              <li>✔️ Exportation en format PDF de haute qualité</li>
-              <li>✔️ Conseils professionnels pour chaque section</li>
-            </ul>
-            <Button type="primary" size="large" style={{ borderRadius: 24, fontWeight: 600, transition: 'transform 0.2s, box-shadow 0.2s' }} aria-label="Créer mon CV professionnel" onMouseOver={e => { e.currentTarget.style.transform = 'scale(1.07)'; e.currentTarget.style.boxShadow = '0 8px 32px #b7e4c7'; }} onMouseOut={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = 'none'; }} onClick={() => navigate('/cv-generator')}>
-              Créer mon CV maintenant
-            </Button>
-          </div>
-          <div style={{ flex: 1, minWidth: 320, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 24, position: 'relative' }}>
-            {/* Carré bleu clair en haut à gauche */}
-            <div style={{ position: 'absolute', top: 18, left: 38, width: 220, height: 180, background: '#e3e8f7', borderRadius: 18, zIndex: 1, boxShadow: '0 4px 24px #e3e8f7', opacity: 0.7 }} />
-            {/* Carré beige clair en bas à droite */}
-            <div style={{ position: 'absolute', bottom: 18, right: 38, width: 220, height: 180, background: '#fdf6e3', borderRadius: 18, zIndex: 1, boxShadow: '0 4px 24px #fdf6e3', opacity: 0.7 }} />
-            {/* Image principale */}
-            <img src="/images/cv-hero.jpg" alt="Créer un CV professionnel" style={{ width: 500, maxWidth: '100%', borderRadius: 28, boxShadow: '0 8px 32px #b7e4c7', objectFit: 'cover', background: '#fff', position: 'relative', zIndex: 2 }} />
-          </div>
+      </div>
+      {/* Section CV Professionnel */}
+      <div style={{ width: '100%', margin: '60px auto', padding: '0 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', background: 'linear-gradient(90deg, #f7fafc 60%, #e3fcec 100%)', borderRadius: 24, boxShadow: '0 4px 24px #e3e8f7' }}>
+        <div style={{ flex: 1, minWidth: 320, padding: '40px 24px 40px 0' }}>
+          <Title level={2} style={{ color: '#1d3557', marginBottom: 16 }}>Créez un CV professionnel</Title>
+          <Paragraph style={{ fontSize: 18, color: '#333', marginBottom: 24 }}>
+            Notre générateur de CV vous permet de créer un CV attrayant et professionnel en quelques minutes. Choisissez parmi plusieurs modèles et personnalisez-le selon vos besoins.
+          </Paragraph>
+          <ul style={{ fontSize: 16, color: '#222', marginBottom: 32, paddingLeft: 24 }}>
+            <li>✔️ Modèles professionnels conçus pour le marché sénégalais</li>
+            <li>✔️ Personnalisation simple et intuitive</li>
+            <li>✔️ Exportation en format PDF de haute qualité</li>
+            <li>✔️ Conseils professionnels pour chaque section</li>
+          </ul>
+          <Button type="primary" size="large" style={{ borderRadius: 24, fontWeight: 600, transition: 'transform 0.2s, box-shadow 0.2s' }} aria-label="Créer mon CV professionnel" onMouseOver={e => { e.currentTarget.style.transform = 'scale(1.07)'; e.currentTarget.style.boxShadow = '0 8px 32px #b7e4c7'; }} onMouseOut={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = 'none'; }} onClick={() => navigate('/cv-generator')}>
+            Créer mon CV maintenant
+          </Button>
         </div>
-        {/* Section Marketplace */}
-        <div style={{ width: '100%', margin: '60px auto', padding: '0 32px', background: 'linear-gradient(90deg, #f7fafc 60%, #e3e8f7 100%)', borderRadius: 24, boxShadow: '0 4px 24px #e3e8f7' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', padding: '32px 0 16px 0' }}>
-            <Title level={2} style={{ color: '#7c3aed', margin: 0 }}>Marketplace</Title>
-            <div style={{ display: 'flex', gap: 16 }}>
-              <Button type="primary" style={{ background: '#f59e42', borderColor: '#f59e42', fontWeight: 600, borderRadius: 20 }} onClick={() => navigate('/marketplace/create')}>Vendre un service</Button>
-              <Button type="primary" style={{ background: '#2563eb', borderColor: '#2563eb', fontWeight: 600, borderRadius: 20 }} onClick={() => navigate('/marketplace')}>Explorer tout</Button>
-            </div>
-          </div>
-          <div style={{ minHeight: 180, marginTop: 16 }}>
-            <MarketplacePreview />
+        <div style={{ flex: 1, minWidth: 320, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 24, position: 'relative' }}>
+          {/* Carré bleu clair en haut à gauche */}
+          <div style={{ position: 'absolute', top: 18, left: 38, width: 220, height: 180, background: '#e3e8f7', borderRadius: 18, zIndex: 1, boxShadow: '0 4px 24px #e3e8f7', opacity: 0.7 }} />
+          {/* Carré beige clair en bas à droite */}
+          <div style={{ position: 'absolute', bottom: 18, right: 38, width: 220, height: 180, background: '#fdf6e3', borderRadius: 18, zIndex: 1, boxShadow: '0 4px 24px #fdf6e3', opacity: 0.7 }} />
+          {/* Image principale */}
+          <img src="/images/cv-hero.jpg" alt="Créer un CV professionnel" style={{ width: 500, maxWidth: '100%', borderRadius: 28, boxShadow: '0 8px 32px #b7e4c7', objectFit: 'cover', background: '#fff', position: 'relative', zIndex: 2 }} />
+        </div>
+      </div>
+      {/* Section Marketplace */}
+      <div style={{ width: '100%', margin: '60px auto', padding: '0 32px', background: 'linear-gradient(90deg, #f7fafc 60%, #e3e8f7 100%)', borderRadius: 24, boxShadow: '0 4px 24px #e3e8f7' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', padding: '32px 0 16px 0' }}>
+          <Title level={2} style={{ color: '#7c3aed', margin: 0 }}>Marketplace</Title>
+          <div style={{ display: 'flex', gap: 16 }}>
+            <Button type="primary" style={{ background: '#f59e42', borderColor: '#f59e42', fontWeight: 600, borderRadius: 20 }} onClick={() => navigate('/marketplace/create')}>Vendre un service</Button>
+            <Button type="primary" style={{ background: '#2563eb', borderColor: '#2563eb', fontWeight: 600, borderRadius: 20 }} onClick={() => navigate('/marketplace')}>Explorer tout</Button>
           </div>
         </div>
-        {/* Section Statistiques */}
-        <div style={{ width: '100%', margin: '60px auto', padding: '0 32px' }}>
+        <div style={{ minHeight: 180, marginTop: 16 }}>
+          <MarketplacePreview />
+        </div>
+      </div>
+      {/* Section BusinessConnect en chiffres */}
+      <div style={{ width: '100%', margin: '40px auto 0 auto', padding: '0 32px' }}>
+        <div style={{ background: '#fff', borderRadius: 32, boxShadow: '0 8px 32px #e3e8f7', padding: '48px 0', maxWidth: 1400, margin: '0 auto' }}>
           <Title level={2} style={{ color: '#1d3557', marginBottom: 32, textAlign: 'center' }}>BusinessConnect en chiffres</Title>
           <Row gutter={[32, 32]} justify="center">
             <Col xs={24} sm={12} md={6}>
@@ -407,8 +414,10 @@ const Home: React.FC = () => {
             </Col>
           </Row>
         </div>
-        {/* Section Témoignages */}
-        <div style={{ width: '100%', margin: '60px auto', padding: '0 32px' }}>
+      </div>
+      {/* Section Ils nous font confiance */}
+      <div style={{ width: '100%', margin: '40px auto 0 auto', padding: '0 32px' }}>
+        <div style={{ background: '#fff', borderRadius: 32, boxShadow: '0 8px 32px #e3e8f7', padding: '48px 0', maxWidth: 1400, margin: '0 auto' }}>
           <Title level={2} style={{ color: '#1d3557', marginBottom: 32, textAlign: 'center' }}>Ils nous font confiance</Title>
           <Row gutter={[32, 32]} justify="center">
             {TESTIMONIALS.map((t, idx) => (
@@ -421,31 +430,31 @@ const Home: React.FC = () => {
                   <Title level={4} style={{ margin: 0, color: '#2563eb' }}>{t.name}</Title>
                   <Text type="secondary" style={{ fontWeight: 600, fontSize: 16 }}>{t.role}</Text>
                   <Paragraph style={{ marginTop: 18, fontSize: 17, color: '#333', fontStyle: 'italic' }}>
-                    “{t.text}”
-                </Paragraph>
+                    "{t.text}"
+                  </Paragraph>
                 </Card>
               </Col>
             ))}
-            </Row>
+          </Row>
         </div>
-        {/* Section Appel à l'action */}
-        <div style={{ width: '100%', background: '#2056a8', color: '#fff', padding: '64px 0 56px 0', margin: '0 auto', textAlign: 'center' }}>
-          <Typography.Title level={2} style={{ color: '#fff', marginBottom: 24, fontSize: 36, fontWeight: 700 }}>
-            Prêt à booster votre carrière professionnelle ?
-          </Typography.Title>
-          <Typography.Paragraph style={{ color: '#fff', fontSize: 20, marginBottom: 36, maxWidth: 700, margin: '0 auto' }}>
-            Rejoignez BusinessConnect Sénégal dès aujourd'hui et accédez à toutes nos fonctionnalités pour développer votre réseau professionnel.
-          </Typography.Paragraph>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 24, flexWrap: 'wrap' }}>
-            <Button type="primary" size="large" style={{ background: '#ffa940', borderColor: '#ffa940', color: '#fff', fontWeight: 600, borderRadius: 10, minWidth: 200, fontSize: 18 }} onClick={() => navigate('/register')}>
-              S'inscrire gratuitement
-            </Button>
-            <Button type="default" size="large" style={{ background: '#fff', color: '#2056a8', fontWeight: 600, borderRadius: 10, minWidth: 180, fontSize: 18, border: 'none' }} onClick={() => navigate('/contact')}>
-              Contactez-nous
-            </Button>
-          </div>
+      </div>
+      {/* Section Appel à l'action */}
+      <div style={{ width: '100%', background: '#2056a8', color: '#fff', padding: '64px 0 56px 0', margin: '0 auto', textAlign: 'center' }}>
+        <Typography.Title level={2} style={{ color: '#fff', marginBottom: 24, fontSize: 36, fontWeight: 700 }}>
+          Prêt à booster votre carrière professionnelle ?
+        </Typography.Title>
+        <Typography.Paragraph style={{ color: '#fff', fontSize: 20, marginBottom: 36, maxWidth: 700, margin: '0 auto' }}>
+          Rejoignez BusinessConnect Sénégal dès aujourd'hui et accédez à toutes nos fonctionnalités pour développer votre réseau professionnel.
+        </Typography.Paragraph>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 24, flexWrap: 'wrap' }}>
+          <Button type="primary" size="large" style={{ background: '#ffa940', borderColor: '#ffa940', color: '#fff', fontWeight: 600, borderRadius: 10, minWidth: 200, fontSize: 18 }} onClick={() => navigate('/register')}>
+            S'inscrire gratuitement
+          </Button>
+          <Button type="default" size="large" style={{ background: '#fff', color: '#2056a8', fontWeight: 600, borderRadius: 10, minWidth: 180, fontSize: 18, border: 'none' }} onClick={() => navigate('/contact')}>
+            Contactez-nous
+          </Button>
         </div>
-      </Content>
+      </div>
     </Layout>
   );
 };
