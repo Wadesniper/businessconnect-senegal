@@ -205,4 +205,14 @@
 - Le logo BusinessConnect Sénégal est désormais centré dans le footer, au-dessus des colonnes, pour un rendu harmonieux et professionnel.
 - Aucun code ou fonctionnalité essentielle supprimé, aucun impact sur le backend ou le déploiement backend.
 - Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
+- Statut : Prêt pour validation visuelle finale.
+
+## [Date : Correction blocage page Fiches Métiers]
+
+- Suppression de la redirection automatique vers /subscription sur la page Fiches Métiers.
+- La page et la liste des métiers sont désormais toujours accessibles à tous (connecté ou non, abonné ou non).
+- Seule la consultation d'une fiche métier déclenche le modal/redirect pour les non-abonnés.
+- Plus aucun blocage sur le spinner, UX fluide et conforme à la demande.
+- Aucun code ou fonctionnalité essentielle supprimé, aucun impact sur le backend ou le déploiement backend.
+- Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
 - Statut : Prêt pour validation visuelle finale. 

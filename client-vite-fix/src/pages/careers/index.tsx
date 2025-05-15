@@ -4048,10 +4048,9 @@ const CareersPage: React.FC = () => {
   const [selectedMetier, setSelectedMetier] = useState<FicheMetier | null>(null);
 
   React.useEffect(() => {
-    if (!isLoading && !loadingSub && user && !hasActiveSubscription) {
-      navigate('/subscription', { replace: true });
-    }
-  }, [isLoading, loadingSub, hasActiveSubscription, user, navigate]);
+    // Suppression de la redirection automatique vers /subscription
+    // Désormais, tout le monde accède à la page, seuls les détails sont protégés
+  }, []);
 
   if (isLoading || loadingSub) {
     return <div style={{ textAlign: 'center', marginTop: 100 }}><Spin size="large" tip="Chargement..." /></div>;
