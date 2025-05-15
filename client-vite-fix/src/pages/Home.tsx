@@ -301,6 +301,72 @@ const Home: React.FC = () => {
           </Row>
         </div>
       </div>
+      {/* Section Abonnements */}
+      <div style={{ width: '100%', margin: '40px auto 0 auto', padding: '0 32px' }}>
+        <div style={{ background: '#fff', borderRadius: 32, boxShadow: '0 8px 32px #e3e8f7', padding: '48px 0', maxWidth: 1400, margin: '0 auto' }}>
+          <Title level={1} style={{ textAlign: 'center', marginBottom: 16, fontWeight: 700, fontSize: 38 }}>
+            Nos <span style={{ color: '#1890ff' }}>Abonnements</span>
+          </Title>
+          <Paragraph style={{ textAlign: 'center', fontSize: 18, marginBottom: 40 }}>
+            Choisissez l'abonnement qui correspond le mieux à vos besoins professionnels
+          </Paragraph>
+          <Row gutter={[32, 32]} justify="center">
+            <Col xs={24} sm={12} md={8}>
+              <Card bordered style={{ borderRadius: 16, border: '2px solid #1890ff', minHeight: 420 }}>
+                <Title level={3} style={{ textAlign: 'center', color: '#222', marginBottom: 0 }}>Étudiant & Chercheur d'emploi</Title>
+                <div style={{ textAlign: 'center', fontWeight: 700, fontSize: 34, color: '#1890ff', margin: '12px 0 0 0' }}>1 000 F CFA<small style={{ fontSize: 16, color: '#888' }}>/mois</small></div>
+                <Paragraph style={{ textAlign: 'center', color: '#888', marginBottom: 18 }}>Idéal pour les étudiants et demandeurs d'emploi</Paragraph>
+                <ul style={{ fontSize: 16, color: '#222', marginBottom: 24, paddingLeft: 0, listStyle: 'none' }}>
+                  <li>✔️ Accès à toutes les offres d'emploi</li>
+                  <li>✔️ Création de CV professionnels</li>
+                  <li>✔️ Accès aux formations en ligne</li>
+                  <li>✔️ Postuler aux offres illimitées</li>
+                  <li style={{ color: '#bbb' }}>✖️ Publication d'annonces</li>
+                  <li style={{ color: '#bbb' }}>✖️ Publication d'offres d'emploi</li>
+                </ul>
+                <Button type="primary" block style={{ borderRadius: 8, fontWeight: 600 }} onClick={() => navigate('/subscription')}>S'abonner maintenant</Button>
+              </Card>
+            </Col>
+            <Col xs={24} sm={12} md={8}>
+              <Card bordered style={{ borderRadius: 16, border: '2px solid #f59e42', minHeight: 420 }}>
+                <Title level={3} style={{ textAlign: 'center', color: '#222', marginBottom: 0 }}>Annonceur Marketplace</Title>
+                <div style={{ textAlign: 'center', fontWeight: 700, fontSize: 34, color: '#f59e42', margin: '12px 0 0 0' }}>5 000 F CFA<small style={{ fontSize: 16, color: '#888' }}>/mois</small></div>
+                <Paragraph style={{ textAlign: 'center', color: '#888', marginBottom: 18 }}>Pour les vendeurs de produits et services</Paragraph>
+                <ul style={{ fontSize: 16, color: '#222', marginBottom: 24, paddingLeft: 0, listStyle: 'none' }}>
+                  <li>✔️ Tous les avantages du forfait Étudiant</li>
+                  <li>✔️ Publication d'annonces sur le marketplace</li>
+                  <li>✔️ Visibilité auprès des entreprises</li>
+                  <li>✔️ Messagerie professionnelle</li>
+                  <li>✔️ Notifications en temps réel</li>
+                  <li style={{ color: '#bbb' }}>✖️ Publication d'offres d'emploi</li>
+                </ul>
+                <Button type="primary" block style={{ borderRadius: 8, fontWeight: 600, background: '#f59e42', borderColor: '#f59e42' }} onClick={() => navigate('/subscription')}>S'abonner maintenant</Button>
+              </Card>
+            </Col>
+            <Col xs={24} sm={12} md={8}>
+              <Card bordered style={{ borderRadius: 16, border: '2px solid #43a047', minHeight: 420 }}>
+                <Title level={3} style={{ textAlign: 'center', color: '#222', marginBottom: 0 }}>Employeur</Title>
+                <div style={{ textAlign: 'center', fontWeight: 700, fontSize: 34, color: '#43a047', margin: '12px 0 0 0' }}>9 000 F CFA<small style={{ fontSize: 16, color: '#888' }}>/mois</small></div>
+                <Paragraph style={{ textAlign: 'center', color: '#888', marginBottom: 18 }}>Pour les entreprises qui recrutent</Paragraph>
+                <ul style={{ fontSize: 16, color: '#222', marginBottom: 24, paddingLeft: 0, listStyle: 'none' }}>
+                  <li>✔️ Tous les avantages du forfait Vendeur</li>
+                  <li>✔️ Publication d'offres d'emploi</li>
+                  <li>✔️ Accès à la base de CV des candidats</li>
+                  <li>✔️ Tableau de bord des candidatures</li>
+                  <li>✔️ Statistiques de vos offres</li>
+                  <li>✔️ Support prioritaire</li>
+                </ul>
+                <Button type="primary" block style={{ borderRadius: 8, fontWeight: 600, background: '#43a047', borderColor: '#43a047' }} onClick={() => navigate('/subscription')}>S'abonner maintenant</Button>
+              </Card>
+            </Col>
+          </Row>
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 32 }}>
+            <Button type="primary" size="large" style={{ background: '#f59e42', borderColor: '#f59e42', borderRadius: 18, fontWeight: 600, minWidth: 260, fontSize: 18 }} onClick={() => navigate('/subscription')}>
+              Voir tous nos abonnements&nbsp;→
+            </Button>
+          </div>
+        </div>
+      </div>
       {/* Section CV Professionnel */}
       <div style={{ width: '100%', margin: '60px auto', padding: '0 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', background: 'linear-gradient(90deg, #f7fafc 60%, #e3fcec 100%)', borderRadius: 24, boxShadow: '0 4px 24px #e3e8f7' }}>
         <div style={{ flex: 1, minWidth: 320, padding: '40px 24px 40px 0' }}>
