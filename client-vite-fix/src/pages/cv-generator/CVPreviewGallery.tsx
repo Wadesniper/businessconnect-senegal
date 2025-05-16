@@ -21,9 +21,20 @@ const DEMO_PROFILES: Record<string, any> = {
       { company: 'Société Générale Sénégal', title: 'Analyste', years: '2021-2023', description: 'Analyse financière et gestion de risques.', achievements: [] }
     ],
     education: [
-      { school: 'UCAD', degree: 'Master Finance', years: '2017-2021' }
+      {
+        degree: 'Master Finance',
+        field: 'Finance',
+        institution: 'UCAD',
+        startDate: '2017',
+        endDate: '2021',
+        description: 'Formation en finance, gestion de portefeuille, analyse financière.'
+      }
     ],
-    skills: ['Gestion', 'Analyse', 'Excel'],
+    skills: [
+      { name: 'Gestion', level: 'Avancé' },
+      { name: 'Analyse', level: 'Avancé' },
+      { name: 'Excel', level: 'Intermédiaire' }
+    ],
     languages: [
       { name: 'Français', level: 'Courant' },
       { name: 'Anglais', level: 'Intermédiaire' }
@@ -45,9 +56,20 @@ const DEMO_PROFILES: Record<string, any> = {
       { company: 'Orange Sénégal', title: 'Community Manager', years: '2020-2023', description: 'Gestion des réseaux sociaux et campagnes.', achievements: [] }
     ],
     education: [
-      { school: 'ISM Dakar', degree: 'Licence Marketing', years: '2016-2019' }
+      {
+        degree: 'Licence Marketing',
+        field: 'Marketing',
+        institution: 'ISM Dakar',
+        startDate: '2016',
+        endDate: '2019',
+        description: 'Formation en marketing digital, communication et stratégie.'
+      }
     ],
-    skills: ['Réseaux sociaux', 'Créativité', 'Stratégie'],
+    skills: [
+      { name: 'Réseaux sociaux', level: 'Avancé' },
+      { name: 'Créativité', level: 'Avancé' },
+      { name: 'Stratégie', level: 'Intermédiaire' }
+    ],
     languages: [
       { name: 'Français', level: 'Courant' },
       { name: 'Anglais', level: 'Débutant' }
@@ -69,9 +91,20 @@ const DEMO_PROFILES: Record<string, any> = {
       { company: 'Hôpital Principal', title: 'Infirmière', years: '2019-2023', description: 'Soins et accompagnement des patients.', achievements: [] }
     ],
     education: [
-      { school: 'ENSP Dakar', degree: 'Diplôme Infirmière', years: '2015-2018' }
+      {
+        degree: 'Diplôme Infirmière',
+        field: 'Santé',
+        institution: 'ENSP Dakar',
+        startDate: '2015',
+        endDate: '2018',
+        description: 'Formation en soins infirmiers et accompagnement des patients.'
+      }
     ],
-    skills: ['Soins', 'Empathie', 'Organisation'],
+    skills: [
+      { name: 'Soins', level: 'Avancé' },
+      { name: 'Empathie', level: 'Avancé' },
+      { name: 'Organisation', level: 'Intermédiaire' }
+    ],
     languages: [
       { name: 'Français', level: 'Courant' }
     ],
@@ -92,9 +125,20 @@ const DEMO_PROFILES: Record<string, any> = {
       { company: 'Lycée Blaise Diagne', title: 'Professeur', years: '2015-2023', description: 'Enseignement des mathématiques.', achievements: [] }
     ],
     education: [
-      { school: 'FASTEF', degree: 'CAPES Mathématiques', years: '2012-2015' }
+      {
+        degree: 'CAPES Mathématiques',
+        field: 'Mathématiques',
+        institution: 'FASTEF',
+        startDate: '2012',
+        endDate: '2015',
+        description: 'Formation en pédagogie et enseignement des mathématiques.'
+      }
     ],
-    skills: ['Pédagogie', 'Mathématiques', 'Patience'],
+    skills: [
+      { name: 'Pédagogie', level: 'Avancé' },
+      { name: 'Mathématiques', level: 'Avancé' },
+      { name: 'Patience', level: 'Avancé' }
+    ],
     languages: [
       { name: 'Français', level: 'Courant' },
       { name: 'Anglais', level: 'Débutant' }
@@ -116,9 +160,20 @@ const DEMO_PROFILES: Record<string, any> = {
       { company: 'CFAO', title: 'Responsable Commerciale', years: '2018-2023', description: 'Développement du portefeuille clients.', achievements: [] }
     ],
     education: [
-      { school: 'Supdeco', degree: 'Master Commerce', years: '2014-2018' }
+      {
+        degree: 'Master Commerce',
+        field: 'Commerce',
+        institution: 'Supdeco',
+        startDate: '2014',
+        endDate: '2018',
+        description: 'Formation en vente, négociation et gestion commerciale.'
+      }
     ],
-    skills: ['Négociation', 'Vente', 'Leadership'],
+    skills: [
+      { name: 'Négociation', level: 'Avancé' },
+      { name: 'Vente', level: 'Avancé' },
+      { name: 'Leadership', level: 'Intermédiaire' }
+    ],
     languages: [
       { name: 'Français', level: 'Courant' }
     ],
@@ -139,9 +194,20 @@ const DEMO_PROFILES: Record<string, any> = {
       { company: 'Senelec', title: 'Assistant RH', years: '2020-2023', description: 'Gestion des dossiers du personnel.', achievements: [] }
     ],
     education: [
-      { school: 'UCAD', degree: 'Licence RH', years: '2016-2019' }
+      {
+        degree: 'Licence RH',
+        field: 'Ressources Humaines',
+        institution: 'UCAD',
+        startDate: '2016',
+        endDate: '2019',
+        description: 'Formation en gestion administrative et ressources humaines.'
+      }
     ],
-    skills: ['RH', 'Organisation', 'Gestion'],
+    skills: [
+      { name: 'RH', level: 'Avancé' },
+      { name: 'Organisation', level: 'Avancé' },
+      { name: 'Gestion', level: 'Intermédiaire' }
+    ],
     languages: [
       { name: 'Français', level: 'Courant' }
     ],
@@ -162,9 +228,20 @@ const DEMO_PROFILES: Record<string, any> = {
       { company: 'Wave', title: 'Développeur', years: '2021-2023', description: "Développement d'applications web.", achievements: [] }
     ],
     education: [
-      { school: 'ESMT', degree: 'Ingénieur Logiciel', years: '2017-2021' }
+      {
+        degree: 'Ingénieur Logiciel',
+        field: 'Informatique',
+        institution: 'ESMT',
+        startDate: '2017',
+        endDate: '2021',
+        description: 'Formation en développement logiciel, web et mobile.'
+      }
     ],
-    skills: ['React', 'Node.js', 'API'],
+    skills: [
+      { name: 'React', level: 'Avancé' },
+      { name: 'Node.js', level: 'Avancé' },
+      { name: 'API', level: 'Intermédiaire' }
+    ],
     languages: [
       { name: 'Français', level: 'Courant' },
       { name: 'Anglais', level: 'Intermédiaire' }
@@ -186,9 +263,20 @@ const DEMO_PROFILES: Record<string, any> = {
       { company: 'DHL Sénégal', title: 'Logisticienne', years: '2019-2023', description: 'Gestion des flux et stocks.', achievements: [] }
     ],
     education: [
-      { school: 'ISM', degree: 'Master Logistique', years: '2015-2019' }
+      {
+        degree: 'Master Logistique',
+        field: 'Logistique',
+        institution: 'ISM',
+        startDate: '2015',
+        endDate: '2019',
+        description: 'Formation en gestion de la chaîne logistique.'
+      }
     ],
-    skills: ['Logistique', 'Gestion', 'Organisation'],
+    skills: [
+      { name: 'Logistique', level: 'Avancé' },
+      { name: 'Gestion', level: 'Avancé' },
+      { name: 'Organisation', level: 'Intermédiaire' }
+    ],
     languages: [
       { name: 'Français', level: 'Courant' }
     ],
@@ -209,9 +297,20 @@ const DEMO_PROFILES: Record<string, any> = {
       { company: 'Eiffage Sénégal', title: 'Ingénieur BTP', years: '2018-2023', description: 'Gestion de projets de construction.', achievements: [] }
     ],
     education: [
-      { school: 'ESP Dakar', degree: 'Ingénieur BTP', years: '2013-2018' }
+      {
+        degree: 'Ingénieur BTP',
+        field: 'BTP',
+        institution: 'ESP Dakar',
+        startDate: '2013',
+        endDate: '2018',
+        description: 'Formation en génie civil et gestion de chantiers.'
+      }
     ],
-    skills: ['Chantiers', 'Gestion', 'Technique'],
+    skills: [
+      { name: 'Chantiers', level: 'Avancé' },
+      { name: 'Gestion', level: 'Avancé' },
+      { name: 'Technique', level: 'Intermédiaire' }
+    ],
     languages: [
       { name: 'Français', level: 'Courant' }
     ],
@@ -232,9 +331,20 @@ const DEMO_PROFILES: Record<string, any> = {
       { company: 'Studio Dakar', title: 'Graphiste', years: '2020-2023', description: 'Création de visuels et illustrations.', achievements: [] }
     ],
     education: [
-      { school: 'Ecole des Arts', degree: 'Licence Design', years: '2016-2019' }
+      {
+        degree: 'Licence Design',
+        field: 'Design',
+        institution: 'Ecole des Arts',
+        startDate: '2016',
+        endDate: '2019',
+        description: 'Formation en design graphique et illustration.'
+      }
     ],
-    skills: ['Design', 'Créativité', 'Illustration'],
+    skills: [
+      { name: 'Design', level: 'Avancé' },
+      { name: 'Créativité', level: 'Avancé' },
+      { name: 'Illustration', level: 'Intermédiaire' }
+    ],
     languages: [
       { name: 'Français', level: 'Courant' }
     ],
@@ -255,9 +365,20 @@ const DEMO_PROFILES: Record<string, any> = {
       { company: 'Radisson Blu Dakar', title: 'Réceptionniste', years: '2019-2023', description: 'Accueil des clients et gestion des réservations.', achievements: [] }
     ],
     education: [
-      { school: 'Ecole Hôtelière', degree: 'BTS Hôtellerie', years: '2016-2019' }
+      {
+        degree: 'BTS Hôtellerie',
+        field: 'Hôtellerie',
+        institution: 'Ecole Hôtelière',
+        startDate: '2016',
+        endDate: '2019',
+        description: 'Formation en accueil, gestion hôtelière et langues.'
+      }
     ],
-    skills: ['Accueil', 'Organisation', 'Langues'],
+    skills: [
+      { name: 'Accueil', level: 'Avancé' },
+      { name: 'Organisation', level: 'Avancé' },
+      { name: 'Langues', level: 'Intermédiaire' }
+    ],
     languages: [
       { name: 'Français', level: 'Courant' },
       { name: 'Anglais', level: 'Débutant' }
@@ -279,9 +400,20 @@ const DEMO_PROFILES: Record<string, any> = {
       { company: 'Cabinet Ba', title: 'Juriste', years: '2017-2023', description: "Conseil et rédaction d'actes juridiques.", achievements: [] }
     ],
     education: [
-      { school: 'UCAD', degree: 'Master Droit', years: '2012-2017' }
+      {
+        degree: 'Master Droit',
+        field: 'Droit',
+        institution: 'UCAD',
+        startDate: '2012',
+        endDate: '2017',
+        description: 'Formation en droit sénégalais, conseil et rédaction d\'actes.'
+      }
     ],
-    skills: ['Droit', 'Rédaction', 'Conseil'],
+    skills: [
+      { name: 'Droit', level: 'Avancé' },
+      { name: 'Rédaction', level: 'Avancé' },
+      { name: 'Conseil', level: 'Intermédiaire' }
+    ],
     languages: [
       { name: 'Français', level: 'Courant' }
     ],
@@ -302,9 +434,20 @@ const DEMO_PROFILES: Record<string, any> = {
       { company: 'RTS', title: 'Journaliste', years: '2018-2023', description: 'Rédaction et présentation de reportages.', achievements: [] }
     ],
     education: [
-      { school: 'CESTI', degree: 'Licence Journalisme', years: '2014-2018' }
+      {
+        degree: 'Licence Journalisme',
+        field: 'Journalisme',
+        institution: 'CESTI',
+        startDate: '2014',
+        endDate: '2018',
+        description: 'Formation en communication, médias et rédaction.'
+      }
     ],
-    skills: ['Communication', 'Rédaction', 'Interview'],
+    skills: [
+      { name: 'Communication', level: 'Avancé' },
+      { name: 'Rédaction', level: 'Avancé' },
+      { name: 'Interview', level: 'Intermédiaire' }
+    ],
     languages: [
       { name: 'Français', level: 'Courant' },
       { name: 'Anglais', level: 'Débutant' }
@@ -326,9 +469,20 @@ const DEMO_PROFILES: Record<string, any> = {
       { company: 'SODEFITEX', title: 'Agronome', years: '2016-2023', description: 'Gestion de projets agricoles.', achievements: [] }
     ],
     education: [
-      { school: 'ENSA Thiès', degree: 'Ingénieur Agronome', years: '2011-2016' }
+      {
+        degree: 'Ingénieur Agronome',
+        field: 'Agriculture',
+        institution: 'ENSA Thiès',
+        startDate: '2011',
+        endDate: '2016',
+        description: 'Formation en agriculture durable et gestion de projets.'
+      }
     ],
-    skills: ['Agriculture', 'Gestion', 'Développement rural'],
+    skills: [
+      { name: 'Agriculture', level: 'Avancé' },
+      { name: 'Gestion', level: 'Avancé' },
+      { name: 'Développement rural', level: 'Intermédiaire' }
+    ],
     languages: [
       { name: 'Français', level: 'Courant' }
     ],
@@ -349,9 +503,20 @@ const DEMO_PROFILES: Record<string, any> = {
       { company: 'Croix-Rouge', title: 'Chargée de Mission', years: '2019-2023', description: 'Coordination de projets humanitaires.', achievements: [] }
     ],
     education: [
-      { school: 'UCAD', degree: 'Master Action Humanitaire', years: '2014-2019' }
+      {
+        degree: 'Master Action Humanitaire',
+        field: 'Action Humanitaire',
+        institution: 'UCAD',
+        startDate: '2014',
+        endDate: '2019',
+        description: 'Formation en gestion de projets humanitaires.'
+      }
     ],
-    skills: ['Humanitaire', 'Gestion', 'Coordination'],
+    skills: [
+      { name: 'Humanitaire', level: 'Avancé' },
+      { name: 'Gestion', level: 'Avancé' },
+      { name: 'Coordination', level: 'Intermédiaire' }
+    ],
     languages: [
       { name: 'Français', level: 'Courant' }
     ],
@@ -372,9 +537,20 @@ const DEMO_PROFILES: Record<string, any> = {
       { company: 'CBAO', title: 'Conseiller Bancaire', years: '2015-2023', description: 'Gestion de portefeuilles clients.', achievements: [] }
     ],
     education: [
-      { school: 'ISM', degree: 'Licence Banque', years: '2011-2015' }
+      {
+        degree: 'Licence Banque',
+        field: 'Banque',
+        institution: 'ISM',
+        startDate: '2011',
+        endDate: '2015',
+        description: 'Formation en gestion bancaire et relation client.'
+      }
     ],
-    skills: ['Banque', 'Conseil', 'Relation client'],
+    skills: [
+      { name: 'Banque', level: 'Avancé' },
+      { name: 'Conseil', level: 'Avancé' },
+      { name: 'Relation client', level: 'Intermédiaire' }
+    ],
     languages: [
       { name: 'Français', level: 'Courant' }
     ],
