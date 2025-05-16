@@ -12,47 +12,88 @@ const DEMO_PROFILES: Record<string, any> = {
     personalInfo: {
       firstName: 'Mamadou',
       lastName: 'Ndiaye',
-      title: 'Analyste Financier',
+      title: 'Analyste Financier Senior',
       email: 'mamadou.ndiaye@email.com',
       phone: '+221 77 123 45 67',
       address: 'Dakar, Sénégal',
       photo: '/images/avatars/man-1.png',
       profileImage: '/images/avatars/man-1.png',
-      linkedin: '',
+      linkedin: 'https://www.linkedin.com/in/mamadoundiaye',
+      portfolio: 'https://portfolio-mamadou.sn',
     },
-    summary: 'Expert en finance et gestion de portefeuille.',
+    summary: 'Analyste financier sénior avec plus de 8 ans d\'expérience dans la gestion de portefeuilles, l\'analyse de risques et l\'optimisation des investissements pour des institutions majeures au Sénégal. Excellente maîtrise des outils financiers, reporting, et pilotage de projets transverses.',
     experience: [
       {
         company: 'Société Générale Sénégal',
-        title: 'Analyste',
-        startDate: '2021',
-        endDate: '2023',
+        title: 'Analyste Financier Senior',
+        startDate: '2019',
+        endDate: '2024',
+        current: true,
+        description: 'Gestion de portefeuilles institutionnels, analyse de risques, reporting avancé, encadrement d\'une équipe de 4 analystes.',
+        achievements: [
+          'Mise en place d\'un nouveau modèle d\'évaluation des risques',
+          'Optimisation des process de reporting (gain de 20% de temps)',
+          'Formation de 10 jeunes analystes',
+        ],
+      },
+      {
+        company: 'CBAO',
+        title: "Charge d'Analyse Crédit",
+        startDate: '2016',
+        endDate: '2019',
         current: false,
-        description: 'Analyse financière et gestion de risques.',
-        achievements: ['Optimisation des processus', 'Réduction des coûts'],
-      }
+        description: 'Analyse des dossiers de crédit entreprises, scoring, suivi des encours.',
+        achievements: [
+          'Réduction du taux de défaut de 15%',
+          'Automatisation du scoring crédit',
+        ],
+      },
+      {
+        company: 'BNP Paribas Dakar',
+        title: 'Assistant Analyste',
+        startDate: '2014',
+        endDate: '2016',
+        current: false,
+        description: 'Support à l\'équipe analyse, préparation de rapports financiers.',
+        achievements: [
+          'Digitalisation des archives financières',
+        ],
+      },
     ],
     education: [
       {
         degree: 'Master',
         field: 'Finance',
         institution: 'UCAD',
-        startDate: '2017',
-        endDate: '2021',
-        description: 'Spécialisation en gestion financière.',
-      }
+        startDate: '2012',
+        endDate: '2014',
+        description: 'Major de promotion, spécialisation en gestion d\'actifs.',
+      },
+      {
+        degree: 'Licence',
+        field: 'Économie',
+        institution: 'UCAD',
+        startDate: '2009',
+        endDate: '2012',
+        description: 'Mention Bien.',
+      },
     ],
     skills: [
-      { name: 'Gestion', level: 3 },
-      { name: 'Analyse', level: 4 },
-      { name: 'Excel', level: 2 }
+      { name: 'Analyse financière', level: 5 },
+      { name: 'Gestion de portefeuille', level: 4 },
+      { name: 'Excel & Power BI', level: 5 },
+      { name: 'Reporting', level: 4 },
+      { name: 'Management', level: 4 },
+      { name: 'Anglais professionnel', level: 3 },
     ],
     certifications: [
-      { name: 'CFA Level 1', issuer: 'CFA Institute', date: '2022' }
+      { name: 'CFA Level 1', issuer: 'CFA Institute', date: '2022' },
+      { name: 'Certification AMF', issuer: 'Autorité des Marchés Financiers', date: '2021' },
     ],
     languages: [
       { name: 'Français', level: 'Courant' },
-      { name: 'Anglais', level: 'Intermédiaire' }
+      { name: 'Anglais', level: 'Professionnel' },
+      { name: 'Wolof', level: 'Notions' },
     ]
   },
   marketing: {
