@@ -117,76 +117,17 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                 hoverable
                 cover={
                   <div style={{ position: 'relative', background: '#f7faff', minHeight: 220, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    {/* Aperçu dynamique du template */}
-                    <div style={{ transform: 'scale(0.32)', transformOrigin: 'top left', width: 900, height: 1270, pointerEvents: 'none', borderRadius: 12, overflow: 'hidden', boxShadow: '0 2px 12px #1890ff22', background: '#fff' }}>
-                      {template.component && (
-                        <template.component data={DEMO_PROFILES[template.id.split('-')[0]] || DEMO_PROFILES['finance']} customization={{}} />
-                      )}
-                    </div>
-                    {/* Overlay premium si non abonné */}
-                    {template.premium && !isSubscribed && (
-                      <div style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        background: 'linear-gradient(135deg, #222 60%, #1890ff99 100%)',
-                        borderRadius: 8,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: 'white',
-                        fontWeight: 700,
-                        fontSize: 18,
-                        zIndex: 2
-                      }}>
-                        <LockOutlined style={{ fontSize: 28, marginBottom: 6 }} />
-                        Premium
-                        <Button
-                          type="primary"
-                          size="small"
-                          style={{
-                            marginTop: 10,
-                            background: 'linear-gradient(90deg, #1890ff 0%, #1ec773 100%)',
-                            border: 'none',
-                            borderRadius: 8,
-                            fontWeight: 700
-                          }}
-                          onClick={e => {
-                            e.stopPropagation();
-                            navigate('/subscription');
-                          }}
-                        >
-                          S'abonner
-                        </Button>
-                      </div>
-                    )}
-                    {/* Bouton Voir en grand en hover */}
-                    <Button
-                      type="default"
-                      size="small"
+                    <img
+                      alt={template.name}
+                      src={template.thumbnail}
                       style={{
-                        position: 'absolute',
-                        bottom: 12,
-                        right: 12,
-                        zIndex: 3,
-                        opacity: 0.92,
-                        borderRadius: 8,
-                        fontWeight: 600,
-                        background: '#fff',
-                        boxShadow: '0 2px 8px #1890ff22',
-                        display: 'none',
+                        width: '100%',
+                        height: 220,
+                        objectFit: 'cover',
+                        borderTopLeftRadius: 8,
+                        borderTopRightRadius: 8
                       }}
-                      className={styles.showOnHover}
-                      onClick={e => {
-                        e.stopPropagation();
-                        navigate(`/cv-preview/${template.id}`);
-                      }}
-                    >
-                      Voir en grand
-                    </Button>
+                    />
                   </div>
                 }
                 onClick={() => {
