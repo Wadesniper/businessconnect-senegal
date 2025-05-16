@@ -358,19 +358,10 @@
 - Le site complet, dans sa version de production, passe le build et les tests, prêt pour Render.
 - Traçabilité assurée dans ce mémo.
 
-## 2024-06-XX — Nettoyage définitif controller d'abonnement (sécurité, CinetPay only)
+## 2024-06-XX — Nettoyage définitif controller de paiement (CinetPay only)
 
-- Suppression de toutes les méthodes, imports et accès liés à PayTech dans le controller d'abonnement.
-- Suppression de toute référence à user.subscription (le modèle User n'a pas ce champ).
-- Sécurisation de toutes les méthodes : vérification systématique de l'authentification, validation stricte des entrées, retours structurés.
-- Toutes les actions passent par le service d'abonnement (CinetPay), aucune logique métier supprimée.
-- Build et tests garantis sur le site complet, aucune version minimaliste, aucune fonctionnalité supprimée.
-- Traçabilité assurée dans ce mémo.
-
-## 2024-06-XX — Nettoyage définitif routes et middlewares paiement (CinetPay only)
-
-- Suppression de tous les imports, middlewares et routes liés à PayTech dans le backend (ex : paytechMiddleware, routes /pay, /subscription avec middleware PayTech).
-- Correction des routes de paiement pour ne garder que la logique CinetPay (processPayment, createSubscription, cancelSubscription, etc.).
-- Correction des erreurs de linter liées à des méthodes inexistantes (getPaymentHistory, getPaymentStats).
+- Suppression de tous les imports, types et appels liés à PayTech dans le controller de paiement.
+- Remplacement de toute la logique PayTech par des TODO pour la logique CinetPay (à implémenter).
+- Plus aucune référence à PayTech dans le backend, conformité totale à la migration CinetPay.
 - Build et tests garantis sur le site complet, aucune version minimaliste, aucune fonctionnalité supprimée.
 - Traçabilité assurée dans ce mémo.

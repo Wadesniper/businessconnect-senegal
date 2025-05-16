@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { logger } from '../utils/logger';
 import { query } from '../config/database';
-import { PayTech } from '../services/paytechService';
 import { emailService } from '../services/emailService';
 import { pdfService } from '../services/pdfService';
 import { AppError } from '../utils/errors';
@@ -18,8 +17,6 @@ interface PaymentIntent {
   created_at: Date;
 }
 
-const paytech = new PayTech(config.PAYTECH_API_KEY, config.PAYTECH_WEBHOOK_SECRET);
-
 export const paymentController = {
   async createSetupIntent(req: AuthRequest, res: Response) {
     try {
@@ -28,12 +25,8 @@ export const paymentController = {
         throw new AppError('Utilisateur non authentifié', 401);
       }
       
-      const setupIntent = await paytech.createSetupIntent({
-        customer: user.id,
-        payment_method_types: ['card']
-      });
-      
-      res.json(setupIntent);
+      // TODO: Implémentation de la création d'un intent de configuration
+      res.json({ setupIntent: 'TODO' });
     } catch (error) {
       logger.error('Error creating setup intent:', error);
       throw new AppError('Erreur lors de la configuration du paiement', 500);
@@ -69,17 +62,8 @@ export const paymentController = {
         throw new AppError('Utilisateur non authentifié', 401);
       }
 
-      const { amount, currency, payment_method_id, order_id } = req.body;
-
-      const paymentIntent = await paytech.createPaymentIntent({
-        amount,
-        currency,
-        payment_method: payment_method_id,
-        customer: user.id,
-        metadata: { order_id }
-      });
-
-      res.json(paymentIntent);
+      // TODO: Utiliser req.body pour la logique CinetPay
+      res.json({ paymentIntent: 'TODO' });
     } catch (error) {
       logger.error('Error processing payment:', error);
       throw new AppError('Erreur lors du traitement du paiement', 500);
@@ -93,15 +77,8 @@ export const paymentController = {
         throw new AppError('Utilisateur non authentifié', 401);
       }
 
-      const { plan_id, payment_method_id } = req.body;
-
-      const subscription = await paytech.createSubscription({
-        customer: user.id,
-        plan: plan_id,
-        payment_method: payment_method_id
-      });
-
-      res.json(subscription);
+      // TODO: Utiliser req.body pour la logique CinetPay
+      res.json({ subscription: 'TODO' });
     } catch (error) {
       logger.error('Error creating subscription:', error);
       throw new AppError('Erreur lors de la création de l\'abonnement', 500);
@@ -115,8 +92,7 @@ export const paymentController = {
         throw new AppError('Utilisateur non authentifié', 401);
       }
 
-      const { subscription_id } = req.body;
-      await paytech.cancelSubscription(subscription_id);
+      // TODO: Utiliser req.body pour la logique CinetPay
       res.json({ success: true });
     } catch (error) {
       logger.error('Error canceling subscription:', error);
@@ -127,15 +103,8 @@ export const paymentController = {
   async refundPayment(req: Request, res: Response) {
     try {
       const { paymentId } = req.params;
-      const { amount, reason } = req.body;
-
-      const refund = await paytech.createRefund({
-        payment_intent: paymentId,
-        amount,
-        reason
-      });
-
-      res.json(refund);
+      // TODO: Utiliser req.body pour la logique CinetPay
+      res.json({ refund: 'TODO' });
     } catch (error) {
       logger.error('Error processing refund:', error);
       throw new AppError('Erreur lors du remboursement', 500);
