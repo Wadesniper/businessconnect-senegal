@@ -277,4 +277,20 @@
 
 ### Pour automatiser (optionnel)
 - Créer une GitHub Action qui fait un POST vide sur l'URL du Deploy Hook à chaque push sur `main`.
-- Voir l'assistant pour le script si besoin. 
+- Voir l'assistant pour le script si besoin.
+
+## [Date : Correction profils de démonstration preview CV]
+
+- Problème : Les pages de preview des modèles de CV plantaient à cause de champs manquants ou mal typés (ex : .map sur undefined).
+- Correction : Tous les profils de démonstration utilisés pour la preview des templates de CV ont désormais systématiquement les champs `experience`, `education` et `skills` présents et typés comme tableaux (même vides si besoin).
+- Impact : Plus aucun crash sur la preview, tous les modèles s'affichent correctement, aucune suppression de fonctionnalité, aucune perturbation du backend ou du site complet.
+- Statut : Correction appliquée, site complet et preview CV 100% fonctionnels.
+
+## [16/05/2025 – Correction affichage global (site réduit)]
+
+- Problème : Après suppression du centrage global sur le body, tout le site restait réduit/centré sur toutes les pages (effet "site minimaliste").
+- Cause : Le composant ProLayout d'Ant Design appliquait un layout "boxed" par défaut, limitant la largeur du site.
+- Correction : Ajout de `contentWidth="Fluid"` et `style={{ width: '100vw', maxWidth: '100vw' }}` sur le composant ProLayout dans `client-vite-fix/src/App.tsx`.
+- Résultat : Le site s'affiche désormais en pleine largeur sur toutes les pages, sans effet réduit.
+- Aucun code essentiel supprimé, aucune perturbation du backend ou du fonctionnement général.
+- À surveiller : Si un effet de bord visuel apparaît sur une page précise, le signaler pour ajustement localisé. 

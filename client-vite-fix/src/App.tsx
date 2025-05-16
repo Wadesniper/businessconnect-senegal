@@ -69,6 +69,8 @@ const App: React.FC = () => {
             navTheme="light"
             headerRender={() => <Navbar />}
             footerRender={() => <Footer />}
+            contentWidth="Fluid"
+            style={{ width: '100vw', maxWidth: '100vw' }}
           >
             <Suspense fallback={<div style={{textAlign:'center',marginTop:'3rem',color:'orange'}}>Chargement...<br/>Si rien ne s'affiche, une erreur de chargement est survenue.<br/>Vérifiez la console pour plus de détails.</div>}>
               <Routes>
