@@ -371,4 +371,13 @@
 - Aucun code métier supprimé, aucune fonctionnalité allégée, site complet conservé.
 - Objectif : identifier précisément la cause de la page blanche et garantir la stabilité du site en production.
 
+---
+
+**[Frontend] Correction du typage de la prop `isSubscribed` dans le générateur de CV**
+- Date : [à compléter]
+- Fichier : `client-vite-fix/src/pages/cv-generator/index.tsx`
+- Problème : Erreur de typage (`boolean | undefined` n'est pas assignable à `boolean`) lors du passage de la prop `isSubscribed` au composant `CVPreview`.
+- Correction : Passage explicite de la prop sous forme booléenne (`!!isSubscribed`) pour garantir la robustesse du build et le bon fonctionnement du site en production.
+- Aucun code ou élément essentiel supprimé, aucune fonctionnalité retirée, site complet maintenu.
+
 --- 
