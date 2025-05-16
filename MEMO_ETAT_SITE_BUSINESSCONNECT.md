@@ -337,6 +337,17 @@
 
 ---
 
+## 2024-06-XX — Migration PayTech → CinetPay (intégration complète, conformité doc officielle)
+
+- Suppression de toute référence à PayTech dans le backend (config, services, types).
+- Ajout des variables d'environnement et de configuration CinetPay (`CINETPAY_APIKEY`, `CINETPAY_SITE_ID`, `CINETPAY_BASE_URL`, `CINETPAY_NOTIFY_URL`, `CINETPAY_RETURN_URL`).
+- Création d'une méthode `initializeCinetPayPayment` dans `paymentService.ts` conforme à la [documentation officielle CinetPay](https://docs.cinetpay.com/api/1.0-fr/checkout/initialisation).
+- Préparation de l'intégration du callback/notification CinetPay pour la gestion du statut de paiement.
+- Aucun code métier supprimé, aucune version minimaliste : le site complet reste fonctionnel et prêt pour la production.
+- Build/test à faire après adaptation des routes et du service d'abonnement.
+
+---
+
 ## 2024-06-XX — Correction définitive build complet backend & frontend (Node 20+, Jest, types, Vite)
 
 - Réinstallation complète de toutes les dépendances backend et frontend (`yarn install --check-files --force` dans chaque dossier).

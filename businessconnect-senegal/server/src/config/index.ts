@@ -25,6 +25,12 @@ export interface Config {
   // URLs de l'application
   CLIENT_URL: string;
   API_URL: string;
+
+  CINETPAY_APIKEY: string;
+  CINETPAY_SITE_ID: string;
+  CINETPAY_BASE_URL: string;
+  CINETPAY_NOTIFY_URL: string;
+  CINETPAY_RETURN_URL: string;
 }
 
 export const config: Config = {
@@ -47,5 +53,11 @@ export const config: Config = {
 
   // URLs de l'application
   CLIENT_URL: process.env.CLIENT_URL || 'https://app.businessconnectsenegal.com',
-  API_URL: process.env.API_URL || 'https://api.businessconnectsenegal.com'
+  API_URL: process.env.API_URL || 'https://api.businessconnectsenegal.com',
+
+  CINETPAY_APIKEY: process.env.CINETPAY_APIKEY || '',
+  CINETPAY_SITE_ID: process.env.CINETPAY_SITE_ID || '',
+  CINETPAY_BASE_URL: process.env.CINETPAY_BASE_URL || 'https://api-checkout.cinetpay.com/v2/payment',
+  CINETPAY_NOTIFY_URL: process.env.CINETPAY_NOTIFY_URL || '',
+  CINETPAY_RETURN_URL: process.env.CINETPAY_RETURN_URL || '',
 }; 

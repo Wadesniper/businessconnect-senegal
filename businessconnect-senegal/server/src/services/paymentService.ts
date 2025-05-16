@@ -76,4 +76,56 @@ export class PaymentService {
       return false;
     }
   }
+
+  async initializeCinetPayPayment(params: {
+    amount: number,
+    description: string,
+    transaction_id: string,
+    customer_name: string,
+    customer_surname: string,
+    customer_email: string,
+    customer_phone_number: string,
+    customer_address: string,
+    customer_city: string,
+    customer_country: string,
+    customer_state: string,
+    customer_zip_code: string,
+    metadata?: string
+  }) {
+    const data = {
+      apikey: config.CINETPAY_APIKEY,
+      site_id: config.CINETPAY_SITE_ID,
+      transaction_id: params.transaction_id,
+      amount: params.amount,
+      currency: 'XOF',
+      description: params.description,
+      customer_name: params.customer_name,
+      customer_surname: params.customer_surname,
+      customer_email: params.customer_email,
+      customer_phone_number: params.customer_phone_number,
+      customer_address: params.customer_address,
+      customer_city: params.customer_city,
+      customer_country: params.customer_country,
+      customer_state: params.customer_state,
+      customer_zip_code: params.customer_zip_code,
+      notify_url: config.CINETPAY_NOTIFY_URL,
+      return_url: config.CINETPAY_RETURN_URL,
+      channels: 'ALL',
+      metadata: params.metadata || '',
+      lang: 'fr'
+    };
+
+    const response = await axios.post(config.CINETPAY_BASE_URL, data, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    if (response.data.code !== '201') {
+      throw new Error(response.data.message || "Erreur lors de l'initialisation du paiement CinetPay");
+    }
+
+    return {
+      payment_url: response.data.data.payment_url,
+      token: response.data.data.token
+    };
+  }
 } 
