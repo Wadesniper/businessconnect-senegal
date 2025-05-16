@@ -18,7 +18,16 @@ const DEMO_PROFILES: Record<string, any> = {
     },
     summary: 'Expert en finance et gestion de portefeuille.',
     experience: [
-      { company: 'Société Générale Sénégal', title: 'Analyste', years: '2021-2023', description: 'Analyse financière et gestion de risques.', achievements: [] }
+      {
+        company: 'Société Générale Sénégal',
+        title: 'Analyste',
+        years: '2021-2023',
+        description: 'Analyse financière et gestion de risques.',
+        achievements: [],
+        startDate: '2021',
+        endDate: '2023',
+        current: false
+      }
     ],
     education: [
       {
@@ -39,7 +48,9 @@ const DEMO_PROFILES: Record<string, any> = {
       { name: 'Français', level: 'Courant' },
       { name: 'Anglais', level: 'Intermédiaire' }
     ],
-    certifications: [],
+    certifications: [
+      { name: 'Certification Finance', issuer: 'UCAD', date: '2021' }
+    ],
   },
   marketing: {
     personalInfo: {
@@ -53,7 +64,16 @@ const DEMO_PROFILES: Record<string, any> = {
     },
     summary: 'Passionnée par le marketing digital et la communication.',
     experience: [
-      { company: 'Orange Sénégal', title: 'Community Manager', years: '2020-2023', description: 'Gestion des réseaux sociaux et campagnes.', achievements: [] }
+      {
+        company: 'Orange Sénégal',
+        title: 'Community Manager',
+        years: '2020-2023',
+        description: 'Gestion des réseaux sociaux et campagnes.',
+        achievements: [],
+        startDate: '2020',
+        endDate: '2023',
+        current: false
+      }
     ],
     education: [
       {
@@ -74,7 +94,9 @@ const DEMO_PROFILES: Record<string, any> = {
       { name: 'Français', level: 'Courant' },
       { name: 'Anglais', level: 'Débutant' }
     ],
-    certifications: [],
+    certifications: [
+      { name: 'Certification Marketing Digital', issuer: 'ISM Dakar', date: '2019' }
+    ],
   },
   health: {
     personalInfo: {
@@ -88,7 +110,16 @@ const DEMO_PROFILES: Record<string, any> = {
     },
     summary: 'Professionnelle de santé expérimentée.',
     experience: [
-      { company: 'Hôpital Principal', title: 'Infirmière', years: '2019-2023', description: 'Soins et accompagnement des patients.', achievements: [] }
+      {
+        company: 'Hôpital Principal',
+        title: 'Infirmière',
+        years: '2019-2023',
+        description: 'Soins et accompagnement des patients.',
+        achievements: [],
+        startDate: '2019',
+        endDate: '2023',
+        current: false
+      }
     ],
     education: [
       {
@@ -108,7 +139,9 @@ const DEMO_PROFILES: Record<string, any> = {
     languages: [
       { name: 'Français', level: 'Courant' }
     ],
-    certifications: [],
+    certifications: [
+      { name: 'Diplôme d’État Infirmière', issuer: 'ENSP Dakar', date: '2018' }
+    ],
   },
   education: {
     personalInfo: {
