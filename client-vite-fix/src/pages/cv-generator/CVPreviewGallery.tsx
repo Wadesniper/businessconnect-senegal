@@ -24,6 +24,10 @@ const DEMO_PROFILES: Record<string, any> = {
       { school: 'UCAD', degree: 'Master Finance', years: '2017-2021' }
     ],
     skills: ['Gestion', 'Analyse', 'Excel'],
+    languages: [
+      { name: 'Français', level: 'Courant' },
+      { name: 'Anglais', level: 'Intermédiaire' }
+    ],
   },
   marketing: {
     personalInfo: {
@@ -43,6 +47,10 @@ const DEMO_PROFILES: Record<string, any> = {
       { school: 'ISM Dakar', degree: 'Licence Marketing', years: '2016-2019' }
     ],
     skills: ['Réseaux sociaux', 'Créativité', 'Stratégie'],
+    languages: [
+      { name: 'Français', level: 'Courant' },
+      { name: 'Anglais', level: 'Débutant' }
+    ],
   },
   health: {
     personalInfo: {
@@ -62,6 +70,9 @@ const DEMO_PROFILES: Record<string, any> = {
       { school: 'ENSP Dakar', degree: 'Diplôme Infirmière', years: '2015-2018' }
     ],
     skills: ['Soins', 'Empathie', 'Organisation'],
+    languages: [
+      { name: 'Français', level: 'Courant' }
+    ],
   },
   education: {
     personalInfo: {
@@ -81,6 +92,10 @@ const DEMO_PROFILES: Record<string, any> = {
       { school: 'FASTEF', degree: 'CAPES Mathématiques', years: '2012-2015' }
     ],
     skills: ['Pédagogie', 'Mathématiques', 'Patience'],
+    languages: [
+      { name: 'Français', level: 'Courant' },
+      { name: 'Anglais', level: 'Débutant' }
+    ],
   },
   commerce: {
     personalInfo: {
@@ -100,6 +115,9 @@ const DEMO_PROFILES: Record<string, any> = {
       { school: 'Supdeco', degree: 'Master Commerce', years: '2014-2018' }
     ],
     skills: ['Négociation', 'Vente', 'Leadership'],
+    languages: [
+      { name: 'Français', level: 'Courant' }
+    ],
   },
   admin: {
     personalInfo: {
@@ -119,6 +137,9 @@ const DEMO_PROFILES: Record<string, any> = {
       { school: 'UCAD', degree: 'Licence RH', years: '2016-2019' }
     ],
     skills: ['RH', 'Organisation', 'Gestion'],
+    languages: [
+      { name: 'Français', level: 'Courant' }
+    ],
   },
   tech: {
     personalInfo: {
@@ -138,6 +159,10 @@ const DEMO_PROFILES: Record<string, any> = {
       { school: 'ESMT', degree: 'Ingénieur Logiciel', years: '2017-2021' }
     ],
     skills: ['React', 'Node.js', 'API'],
+    languages: [
+      { name: 'Français', level: 'Courant' },
+      { name: 'Anglais', level: 'Intermédiaire' }
+    ],
   },
   logistics: {
     personalInfo: {
@@ -157,6 +182,9 @@ const DEMO_PROFILES: Record<string, any> = {
       { school: 'ISM', degree: 'Master Logistique', years: '2015-2019' }
     ],
     skills: ['Logistique', 'Gestion', 'Organisation'],
+    languages: [
+      { name: 'Français', level: 'Courant' }
+    ],
   },
   btp: {
     personalInfo: {
@@ -176,6 +204,9 @@ const DEMO_PROFILES: Record<string, any> = {
       { school: 'ESP Dakar', degree: 'Ingénieur BTP', years: '2013-2018' }
     ],
     skills: ['Chantiers', 'Gestion', 'Technique'],
+    languages: [
+      { name: 'Français', level: 'Courant' }
+    ],
   },
   art: {
     personalInfo: {
@@ -195,6 +226,9 @@ const DEMO_PROFILES: Record<string, any> = {
       { school: 'Ecole des Arts', degree: 'Licence Design', years: '2016-2019' }
     ],
     skills: ['Design', 'Créativité', 'Illustration'],
+    languages: [
+      { name: 'Français', level: 'Courant' }
+    ],
   },
   hotel: {
     personalInfo: {
@@ -214,6 +248,10 @@ const DEMO_PROFILES: Record<string, any> = {
       { school: 'Ecole Hôtelière', degree: 'BTS Hôtellerie', years: '2016-2019' }
     ],
     skills: ['Accueil', 'Organisation', 'Langues'],
+    languages: [
+      { name: 'Français', level: 'Courant' },
+      { name: 'Anglais', level: 'Débutant' }
+    ],
   },
   law: {
     personalInfo: {
@@ -233,6 +271,9 @@ const DEMO_PROFILES: Record<string, any> = {
       { school: 'UCAD', degree: 'Master Droit', years: '2012-2017' }
     ],
     skills: ['Droit', 'Rédaction', 'Conseil'],
+    languages: [
+      { name: 'Français', level: 'Courant' }
+    ],
   },
   com: {
     personalInfo: {
@@ -252,6 +293,10 @@ const DEMO_PROFILES: Record<string, any> = {
       { school: 'CESTI', degree: 'Licence Journalisme', years: '2014-2018' }
     ],
     skills: ['Communication', 'Rédaction', 'Interview'],
+    languages: [
+      { name: 'Français', level: 'Courant' },
+      { name: 'Anglais', level: 'Débutant' }
+    ],
   },
   agro: {
     personalInfo: {
@@ -271,6 +316,9 @@ const DEMO_PROFILES: Record<string, any> = {
       { school: 'ENSA Thiès', degree: 'Ingénieur Agronome', years: '2011-2016' }
     ],
     skills: ['Agriculture', 'Gestion', 'Développement rural'],
+    languages: [
+      { name: 'Français', level: 'Courant' }
+    ],
   },
   human: {
     personalInfo: {
@@ -290,6 +338,9 @@ const DEMO_PROFILES: Record<string, any> = {
       { school: 'UCAD', degree: 'Master Action Humanitaire', years: '2014-2019' }
     ],
     skills: ['Humanitaire', 'Gestion', 'Coordination'],
+    languages: [
+      { name: 'Français', level: 'Courant' }
+    ],
   },
   bank: {
     personalInfo: {
@@ -309,6 +360,9 @@ const DEMO_PROFILES: Record<string, any> = {
       { school: 'ISM', degree: 'Licence Banque', years: '2011-2015' }
     ],
     skills: ['Banque', 'Conseil', 'Relation client'],
+    languages: [
+      { name: 'Français', level: 'Courant' }
+    ],
   },
 };
 
