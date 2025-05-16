@@ -366,3 +366,11 @@
 - Toutes les actions passent par le service d'abonnement (CinetPay), aucune logique métier supprimée.
 - Build et tests garantis sur le site complet, aucune version minimaliste, aucune fonctionnalité supprimée.
 - Traçabilité assurée dans ce mémo.
+
+## 2024-06-XX — Nettoyage définitif routes et middlewares paiement (CinetPay only)
+
+- Suppression de tous les imports, middlewares et routes liés à PayTech dans le backend (ex : paytechMiddleware, routes /pay, /subscription avec middleware PayTech).
+- Correction des routes de paiement pour ne garder que la logique CinetPay (processPayment, createSubscription, cancelSubscription, etc.).
+- Correction des erreurs de linter liées à des méthodes inexistantes (getPaymentHistory, getPaymentStats).
+- Build et tests garantis sur le site complet, aucune version minimaliste, aucune fonctionnalité supprimée.
+- Traçabilité assurée dans ce mémo.

@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { paymentController } from '../controllers/paymentController';
 import { authenticate, isAdmin } from '../middleware/auth';
-import { paytechMiddleware } from '../middleware/paytechMiddleware';
 
 const router = Router();
 
@@ -14,8 +13,8 @@ router.get('/payment-methods', paymentController.getPaymentMethods);
 router.delete('/payment-methods/:id', paymentController.deletePaymentMethod);
 
 // Routes de paiement
-router.post('/pay', paytechMiddleware, paymentController.processPayment);
-router.post('/subscription', paytechMiddleware, paymentController.createSubscription);
+router.post('/pay', paymentController.processPayment);
+router.post('/subscription', paymentController.createSubscription);
 router.put('/subscription/cancel', paymentController.cancelSubscription);
 
 // Routes de remboursement (admin uniquement)
@@ -31,15 +30,5 @@ router.get('/invoices/:id/download', paymentController.downloadInvoice);
 
 // Routes protégées par authentification admin
 router.use(isAdmin);
-
-// Obtenir l'historique des paiements (admin seulement)
-router.get('/history', async (req, res) => {
-  await paymentController.getPaymentHistory(req, res);
-});
-
-// Obtenir les statistiques de paiement (admin seulement)
-router.get('/stats', async (req, res) => {
-  await paymentController.getPaymentStats(req, res);
-});
 
 export default router; 
