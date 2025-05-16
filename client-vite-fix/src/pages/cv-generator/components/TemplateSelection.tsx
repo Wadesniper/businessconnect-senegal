@@ -39,7 +39,6 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
         template.category.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesCategory = selectedCategory === 'all' || template.category === selectedCategory;
-      
       const matchesPremium = !showPremiumOnly || template.premium;
 
       return matchesSearch && matchesCategory && matchesPremium;
@@ -48,11 +47,37 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
 
   return (
     <div>
-      <Title level={3}>Choisissez votre modèle de CV</Title>
-      <Text>Sélectionnez un modèle professionnel adapté à votre secteur. Un abonnement est requis pour utiliser le générateur de CV.</Text>
-
+      {/* Header premium modernisé */}
+      <div style={{ textAlign: 'center', marginBottom: 32, marginTop: 8 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+          <img src="/logo192.png" alt="Logo" style={{ width: 48, marginBottom: 4 }} />
+          <Title level={2} style={{ fontWeight: 800, color: '#1890ff', letterSpacing: 1, marginBottom: 0 }}>
+            Galerie de modèles de CV
+          </Title>
+          <div style={{ color: '#888', fontSize: 17, marginBottom: 8 }}>
+            Explorez tous nos modèles professionnels. <br />
+            <span style={{ color: '#1ec773', fontWeight: 600 }}>Abonnez-vous pour créer et exporter votre CV !</span>
+          </div>
+          {!isSubscribed && (
+            <div style={{
+              background: 'linear-gradient(90deg, #e6fff2 0%, #f0f5ff 100%)',
+              borderRadius: 10,
+              padding: '10px 18px',
+              color: '#1ec773',
+              fontWeight: 600,
+              fontSize: 15,
+              boxShadow: '0 2px 8px #1ec77311',
+              marginBottom: 8,
+              display: 'inline-block'
+            }}>
+              Découvrez tous nos modèles. <span style={{ color: '#1890ff' }}>Abonnez-vous pour créer et exporter votre CV.</span>
+            </div>
+          )}
+        </div>
+      </div>
+      {/* Filtres */}
       <div style={{ 
-        marginTop: 24,
+        marginTop: 8,
         marginBottom: 24,
         display: 'flex',
         gap: 16,
@@ -75,16 +100,8 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
             </Option>
           ))}
         </Select>
-        <Button
-          type={showPremiumOnly ? 'primary' : 'default'}
-          icon={<StarOutlined />}
-          onClick={() => setShowPremiumOnly(!showPremiumOnly)}
-          style={{ display: 'none' }}
-        >
-          Premium uniquement
-        </Button>
       </div>
-
+      {/* Galerie de modèles */}
       {filteredTemplates.length === 0 ? (
         <Empty
           description="Aucun modèle ne correspond à vos critères"
@@ -104,25 +121,50 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                       style={{
                         width: '100%',
                         height: 220,
-                        objectFit: 'cover'
+                        objectFit: 'cover',
+                        borderTopLeftRadius: 8,
+                        borderTopRightRadius: 8,
+                        filter: template.premium && !isSubscribed ? 'grayscale(0.2)' : undefined,
+                        opacity: template.premium && !isSubscribed ? 0.92 : 1
                       }}
                     />
                     {template.premium && !isSubscribed && (
                       <div style={{
                         position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        background: 'rgba(0,0,0,0.7)',
-                        padding: '8px 16px',
-                        borderRadius: '4px',
-                        color: 'white',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        background: 'linear-gradient(135deg, #222 60%, #1890ff99 100%)',
+                        borderRadius: 8,
                         display: 'flex',
+                        flexDirection: 'column',
                         alignItems: 'center',
-                        gap: '8px'
+                        justifyContent: 'center',
+                        color: 'white',
+                        fontWeight: 700,
+                        fontSize: 18,
+                        zIndex: 2
                       }}>
-                        <LockOutlined />
+                        <LockOutlined style={{ fontSize: 28, marginBottom: 6 }} />
                         Premium
+                        <Button
+                          type="primary"
+                          size="small"
+                          style={{
+                            marginTop: 10,
+                            background: 'linear-gradient(90deg, #1890ff 0%, #1ec773 100%)',
+                            border: 'none',
+                            borderRadius: 8,
+                            fontWeight: 700
+                          }}
+                          onClick={e => {
+                            e.stopPropagation();
+                            navigate('/subscription');
+                          }}
+                        >
+                          S'abonner
+                        </Button>
                       </div>
                     )}
                   </div>
@@ -140,12 +182,19 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                 }}
                 style={{
                   border: selected?.id === template.id ? '2px solid #1890ff' : undefined,
-                  cursor: template.premium && !isSubscribed ? 'not-allowed' : 'pointer'
+                  cursor: template.premium && !isSubscribed ? 'not-allowed' : 'pointer',
+                  borderRadius: 10,
+                  boxShadow: '0 4px 18px #1890ff11',
+                  transition: 'box-shadow 0.2s',
+                  overflow: 'hidden',
+                  background: '#fff',
+                  minHeight: 320
                 }}
+                bodyStyle={{ padding: 18 }}
               >
                 <Card.Meta
                   title={
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, fontSize: 18 }}>
                       {template.name}
                       {template.premium && (
                         <Tooltip title="Template Premium">
