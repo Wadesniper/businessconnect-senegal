@@ -347,5 +347,3 @@
 - Tous les types nécessaires sont présents (`@types/*`), Node 20.x respecté, Jest installé, Vite opérationnel.
 - Le site complet, dans sa version de production, passe le build et les tests, prêt pour Render.
 - Traçabilité assurée dans ce mémo.
-
----
