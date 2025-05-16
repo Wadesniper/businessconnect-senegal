@@ -102,25 +102,25 @@ const App: React.FC = () => {
                 <Route
                   path="/profile"
                   element={
-                    <ProtectedRoute element={<ProfilePage />} />
+                    <ProtectedRoute element={<ProfilePage />} requiresSubscription />
                   }
                 />
                 <Route
                   path="/dashboard"
                   element={
-                    <ProtectedRoute element={<Dashboard />} />
+                    <ProtectedRoute element={<Dashboard />} requiresSubscription />
                   }
                 />
                 <Route
                   path="/cv-generator/create"
                   element={
-                    <ProtectedRoute element={<CVGenerator />} />
+                    <ProtectedRoute element={<CVGenerator />} requiresSubscription />
                   }
                 />
                 <Route
                   path="/marketplace/create"
                   element={
-                    <ProtectedRoute element={<MarketplacePage />} />
+                    <ProtectedRoute element={<MarketplacePage />} requiresSubscription />
                   }
                 />
                 <Route
@@ -132,13 +132,13 @@ const App: React.FC = () => {
                 <Route
                   path="/payment/success"
                   element={
-                    <ProtectedRoute element={<PaymentSuccess />} />
+                    <ProtectedRoute element={<PaymentSuccess />} requiresSubscription />
                   }
                 />
                 <Route
                   path="/payment/cancel"
                   element={
-                    <ProtectedRoute element={<PaymentCancel />} />
+                    <ProtectedRoute element={<PaymentCancel />} requiresSubscription />
                   }
                 />
 

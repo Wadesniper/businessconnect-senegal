@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useSubscription } from '../hooks/useSubscription';
 
 interface ProtectedRouteProps {
   element: React.ReactElement;
@@ -9,8 +10,9 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element, requiresSubscription = false }) => {
   const { user, loading } = useAuth();
+  const { hasActiveSubscription, loading: loadingSub } = useSubscription();
 
-  if (loading) {
+  if (loading || (requiresSubscription && loadingSub)) {
     return <div>Chargement...</div>;
   }
 
@@ -18,7 +20,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element, requiresSubscr
     return <Navigate to="/login" replace />;
   }
 
-  if (requiresSubscription && (!user.subscription || user.subscription.status !== 'active')) {
+  if (requiresSubscription && !hasActiveSubscription) {
     return <Navigate to="/subscription" replace />;
   }
 

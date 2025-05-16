@@ -72,8 +72,8 @@ const SubscriptionPage: React.FC = () => {
       const customer_surname = user.lastName || '';
       const customer_email = user.email || '';
       const customer_phone_number = user.phoneNumber || '';
-      const res = await axios.post<{ data?: { payment_url?: string } }>(
-        '/api/payment/init',
+      const res = await axios.post<{ success: boolean, data?: { payment_url?: string } }>(
+        '/api/payment/subscriptions',
         {
           type,
           customer_name,
@@ -82,7 +82,7 @@ const SubscriptionPage: React.FC = () => {
           customer_phone_number
         }
       );
-      if (res.data && res.data.data && res.data.data.payment_url) {
+      if (res.data && res.data.success && res.data.data && res.data.data.payment_url) {
         window.location.href = res.data.data.payment_url;
       } else {
         alert("Erreur lors de la génération du lien de paiement.");

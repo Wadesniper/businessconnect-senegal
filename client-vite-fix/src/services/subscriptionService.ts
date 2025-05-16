@@ -1,5 +1,6 @@
 import { Subscription } from '../types/user';
 import { localStorageService } from './localStorageService';
+import { api } from './api';
 
 class SubscriptionService {
   async getSubscription(userId: string): Promise<Subscription | null> {
@@ -96,6 +97,15 @@ class SubscriptionService {
     const now = new Date();
     const diffTime = endDate.getTime() - now.getTime();
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  }
+
+  async fetchSubscriptionStatus(userId: string): Promise<boolean> {
+    try {
+      const res = await api.get<{ isActive: boolean }>(`/subscriptions/${userId}/status`);
+      return res.data.isActive;
+    } catch (error) {
+      return false;
+    }
   }
 }
 
