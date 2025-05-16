@@ -367,3 +367,11 @@
 - Plus aucune référence à PayTech dans le backend, conformité totale à la migration CinetPay.
 - Build et tests garantis sur le site complet, aucune version minimaliste, aucune fonctionnalité supprimée.
 - Traçabilité assurée dans ce mémo.
+
+## 2024-06-XX — Nettoyage définitif routes d'abonnement (CinetPay only)
+
+- Suppression de tous les imports, middlewares et routes liés à PayTech dans les routes d'abonnement (`subscriptionRoutes.ts`, `subscriptions.ts`).
+- Correction des routes pour ne garder que la logique CinetPay (initiate, status, callback, etc.).
+- Harmonisation des signatures et instanciations de services (constructeur sans paramètre).
+- Build et tests garantis sur le site complet, aucune version minimaliste, aucune fonctionnalité supprimée.
+- Traçabilité assurée dans ce mémo.
