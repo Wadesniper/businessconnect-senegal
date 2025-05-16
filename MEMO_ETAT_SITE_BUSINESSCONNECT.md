@@ -469,3 +469,13 @@
 *(Dernière mise à jour automatique après correction build et sécurisation de la logique d'abonnement)*
 
 ---
+
+## [Date : Correction définitive backend, build complet, conformité production]
+
+- Toutes les routes backend ont été vérifiées et corrigées pour garantir la compatibilité avec Express (signatures des handlers, cohérence des paramètres, aucune suppression de logique métier).
+- Le build backend est **réussi** sans suppression de fonctionnalité : le site complet, avec toutes ses routes et services, passe les tests et le déploiement.
+- Aucune version minimaliste : toutes les fonctionnalités prévues sont maintenues, aucune page ou logique essentielle n'a été retirée.
+- Les commandes de build, test et déploiement sont séparées pour Render afin d'éviter les conflits ou échecs liés à l'enchaînement de scripts (bonne pratique à conserver).
+- Le mémo est à jour pour garantir la traçabilité et la conformité du projet avec les exigences de production.
+
+---
