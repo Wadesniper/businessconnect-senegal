@@ -1,5 +1,3 @@
-// Correction profils de démo CV : version stable, tableaux toujours présents (expérience, éducation, skills) - commit forçage 2024-05-16
-
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { CV_TEMPLATES } from './components/data/templates';
@@ -15,45 +13,17 @@ const DEMO_PROFILES: Record<string, any> = {
       title: 'Analyste Financier',
       email: 'mamadou.ndiaye@email.com',
       phone: '+221 77 123 45 67',
-      address: 'Dakar, Sénégal',
       photo: '/images/avatars/man-1.png',
       profileImage: '/images/avatars/man-1.png',
-      linkedin: '',
     },
     summary: 'Expert en finance et gestion de portefeuille.',
     experience: [
-      {
-        company: 'Société Générale Sénégal',
-        title: 'Analyste',
-        startDate: '2021',
-        endDate: '2023',
-        current: false,
-        description: 'Analyse financière et gestion de risques.',
-        achievements: ['Optimisation des processus', 'Réduction des coûts'],
-      }
+      { company: 'Société Générale Sénégal', title: 'Analyste', years: '2021-2023', description: 'Analyse financière et gestion de risques.' }
     ],
     education: [
-      {
-        degree: 'Master',
-        field: 'Finance',
-        institution: 'UCAD',
-        startDate: '2017',
-        endDate: '2021',
-        description: 'Spécialisation en gestion financière.',
-      }
+      { school: 'UCAD', degree: 'Master Finance', years: '2017-2021' }
     ],
-    skills: [
-      { name: 'Gestion', level: 3 },
-      { name: 'Analyse', level: 4 },
-      { name: 'Excel', level: 2 }
-    ],
-    certifications: [
-      { name: 'CFA Level 1', issuer: 'CFA Institute', date: '2022' }
-    ],
-    languages: [
-      { name: 'Français', level: 'Courant' },
-      { name: 'Anglais', level: 'Intermédiaire' }
-    ]
+    skills: ['Gestion', 'Analyse', 'Excel'],
   },
   marketing: {
     personalInfo: {
