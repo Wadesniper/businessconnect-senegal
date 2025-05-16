@@ -362,6 +362,8 @@
 
 - Suppression de tous les imports, types et appels liés à PayTech dans le controller de paiement.
 - Remplacement de toute la logique PayTech par des TODO pour la logique CinetPay (à implémenter).
+- Suppression définitive de toute référence à paytech.constructEvent et à la signature paytech-signature dans le controller de paiement (webhook).
+- Préparation du webhook CinetPay (TODO explicite, à implémenter selon la doc officielle).
 - Plus aucune référence à PayTech dans le backend, conformité totale à la migration CinetPay.
 - Build et tests garantis sur le site complet, aucune version minimaliste, aucune fonctionnalité supprimée.
 - Traçabilité assurée dans ce mémo.

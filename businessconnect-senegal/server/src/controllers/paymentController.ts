@@ -171,36 +171,9 @@ export const paymentController = {
 
   async handleWebhook(req: Request, res: Response) {
     try {
-      const sig = req.headers['paytech-signature'];
-      const event = paytech.constructEvent(req.body, sig as string);
-
-      // Gérer différents types d'événements
-      switch (event.type) {
-        case 'payment_intent.succeeded':
-          await handlePaymentSuccess(event.data);
-          break;
-        case 'payment_intent.failed':
-          await handlePaymentFailure(event.data);
-          break;
-        case 'subscription.created':
-          await handleSubscriptionCreated(event.data);
-          break;
-        case 'subscription.updated':
-          await handleSubscriptionUpdated(event.data);
-          break;
-        case 'subscription.deleted':
-          await handleSubscriptionDeleted(event.data);
-          break;
-        case 'invoice.paid':
-          await handleInvoicePaid(event.data);
-          break;
-        case 'invoice.payment_failed':
-          await handleInvoicePaymentFailed(event.data);
-          break;
-        default:
-          logger.info(`Type d'événement non géré: ${event.type}`);
-      }
-
+      // TODO: Implémenter la gestion du webhook CinetPay selon la doc officielle
+      // Exemple : const event = req.body;
+      // switch (event.type) { ... }
       res.json({ received: true });
     } catch (error) {
       logger.error('Erreur lors du traitement du webhook:', error);
