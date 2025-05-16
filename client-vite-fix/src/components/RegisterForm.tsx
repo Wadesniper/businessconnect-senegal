@@ -16,6 +16,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
   const { register } = useAuth();
   const navigate = useNavigate();
   const [form] = Form.useForm();
+  const [phoneError, setPhoneError] = useState('');
 
   const onFinish = async (values: {
     fullName: string;
@@ -44,6 +45,15 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
       message.error('Erreur lors de l\'inscription. Veuillez réessayer.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const validatePhone = (value: string) => {
+    const cleaned = value.replace(/[^\d+]/g, '');
+    if (!cleaned.startsWith('+') && !/^7\d{8}$/.test(cleaned)) {
+      setPhoneError("Merci d'entrer votre numéro au format international (ex : +221 771234567 ou +33 612345678).");
+    } else {
+      setPhoneError('');
     }
   };
 
@@ -76,8 +86,14 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
             { pattern: /^\+?[0-9]{8,15}$/, message: 'Numéro de téléphone invalide' }
           ]}
         >
-          <Input size="large" placeholder="+221 XX XXX XX XX" style={{ borderRadius: 8 }} />
+          <Input
+            size="large"
+            placeholder="+221 XX XXX XX XX"
+            style={{ borderRadius: 8 }}
+            onBlur={e => validatePhone(e.target.value)}
+          />
         </Form.Item>
+        {phoneError && <div style={{ color: 'red', marginBottom: 12 }}>{phoneError}</div>}
         <Form.Item
           name="email"
           label={<span style={{ fontWeight: 500 }}>Email (optionnel)</span>}
@@ -191,8 +207,14 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
               { pattern: /^\+?[0-9]{8,15}$/, message: 'Numéro de téléphone invalide' }
             ]}
           >
-            <Input size="large" placeholder="+221 XX XXX XX XX" style={{ borderRadius: 8 }} />
+            <Input
+              size="large"
+              placeholder="+221 XX XXX XX XX"
+              style={{ borderRadius: 8 }}
+              onBlur={e => validatePhone(e.target.value)}
+            />
           </Form.Item>
+          {phoneError && <div style={{ color: 'red', marginBottom: 12 }}>{phoneError}</div>}
           <Form.Item
             name="email"
             label={<span style={{ fontWeight: 500 }}>Email (optionnel)</span>}

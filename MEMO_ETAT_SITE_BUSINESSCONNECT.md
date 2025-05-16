@@ -296,4 +296,32 @@
 - À surveiller : Si un effet de bord visuel apparaît sur une page précise, le signaler pour ajustement localisé.
 
 // Commit technique pour forcer un rebuild Vercel (16/05/2025)
-// Aucun impact sur le code ou le fonctionnement du site. 
+// Aucun impact sur le code ou le fonctionnement du site.
+
+## [Date : Migration authentification par téléphone uniquement + admin script]
+
+- Le modèle User accepte désormais le champ 'phone' (obligatoire, unique) et rend 'email' optionnel (pour compatibilité).
+- L'inscription et la connexion se font uniquement par numéro de téléphone et mot de passe (plus d'obligation d'email).
+- Le schéma Mongoose, l'interface TypeScript et la validation Zod ont été mis à jour pour refléter ce changement.
+- Un script d'administration permet de supprimer tous les anciens comptes admin et d'en créer un nouveau avec uniquement téléphone, mot de passe et nom.
+- Aucun code ou fonctionnalité essentielle supprimé, aucune perturbation du backend ou du frontend, site complet maintenu.
+- Statut : Prêt pour test, déploiement et utilisation en production.
+
+## [Date : Correction définitive logique inscription/connexion par téléphone]
+
+- La logique d'inscription exige désormais : nom complet, numéro de téléphone (unique), mot de passe, confirmation du mot de passe (frontend), email optionnel.
+- La connexion se fait uniquement par numéro de téléphone et mot de passe.
+- Le contrôleur backend a été corrigé pour garantir l'unicité du téléphone, l'email reste optionnel, et l'authentification ne passe plus par l'email.
+- Aucun code ou fonctionnalité essentielle supprimé, aucune perturbation du backend ou du frontend, site complet maintenu.
+- Statut : Prêt pour test, déploiement et utilisation en production.
+
+## [Date : Validation intelligente et aide numéro de téléphone (front + back)]
+
+- Ajout d'une validation intelligente du numéro de téléphone à l'inscription et à la connexion côté frontend :
+  - Accepte les numéros internationaux (commençant par '+').
+  - Accepte les numéros locaux sénégalais (9 chiffres commençant par 7, sans '+').
+  - Affiche un message d'aide explicite si le numéro ne correspond à aucun de ces formats :
+    « Merci d'entrer votre numéro au format international (ex : +221 771234567 ou +33 612345678). »
+- Le backend applique la même logique de normalisation et de validation, garantissant une cohérence totale et une base de données propre.
+- Aucun code ou fonctionnalité essentielle supprimé, aucune perturbation du backend ou du frontend, site complet maintenu.
+- Statut : Prêt pour test, déploiement et utilisation en production. 

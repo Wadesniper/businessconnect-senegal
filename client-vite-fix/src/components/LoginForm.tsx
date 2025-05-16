@@ -14,6 +14,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [phoneError, setPhoneError] = useState('');
 
   const onFinish = async (values: { phoneNumber: string; password: string }) => {
     try {
@@ -25,6 +26,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
       message.error('Erreur de connexion. Vérifiez vos identifiants.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const validatePhone = (value: string) => {
+    const cleaned = value.replace(/[^\d+]/g, '');
+    if (!cleaned.startsWith('+') && !/^7\d{8}$/.test(cleaned)) {
+      setPhoneError("Merci d'entrer votre numéro au format international (ex : +221 771234567 ou +33 612345678).");
+    } else {
+      setPhoneError('');
     }
   };
 
@@ -45,8 +55,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
             { pattern: /^\+?[0-9]{8,15}$/, message: 'Numéro de téléphone invalide' }
           ]}
         >
-          <Input size="large" placeholder="+221 XX XXX XX XX" style={{ borderRadius: 8 }} />
+          <Input
+            size="large"
+            placeholder="+221 XX XXX XX XX"
+            style={{ borderRadius: 8 }}
+            onBlur={e => validatePhone(e.target.value)}
+          />
         </Form.Item>
+        {phoneError && <div style={{ color: 'red', marginBottom: 12 }}>{phoneError}</div>}
         <Form.Item
           name="password"
           label={<span style={{ fontWeight: 500 }}>Mot de passe</span>}
@@ -118,8 +134,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
               { pattern: /^\+?[0-9]{8,15}$/, message: 'Numéro de téléphone invalide' }
             ]}
           >
-            <Input size="large" placeholder="+221 XX XXX XX XX" style={{ borderRadius: 8 }} />
+            <Input
+              size="large"
+              placeholder="+221 XX XXX XX XX"
+              style={{ borderRadius: 8 }}
+              onBlur={e => validatePhone(e.target.value)}
+            />
           </Form.Item>
+          {phoneError && <div style={{ color: 'red', marginBottom: 12 }}>{phoneError}</div>}
           <Form.Item
             name="password"
             label={<span style={{ fontWeight: 500 }}>Mot de passe</span>}
