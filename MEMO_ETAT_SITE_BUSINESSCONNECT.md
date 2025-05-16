@@ -357,3 +357,12 @@
 - Tous les types nécessaires sont présents (`@types/*`), Node 20.x respecté, Jest installé, Vite opérationnel.
 - Le site complet, dans sa version de production, passe le build et les tests, prêt pour Render.
 - Traçabilité assurée dans ce mémo.
+
+## 2024-06-XX — Nettoyage définitif controller d'abonnement (sécurité, CinetPay only)
+
+- Suppression de toutes les méthodes, imports et accès liés à PayTech dans le controller d'abonnement.
+- Suppression de toute référence à user.subscription (le modèle User n'a pas ce champ).
+- Sécurisation de toutes les méthodes : vérification systématique de l'authentification, validation stricte des entrées, retours structurés.
+- Toutes les actions passent par le service d'abonnement (CinetPay), aucune logique métier supprimée.
+- Build et tests garantis sur le site complet, aucune version minimaliste, aucune fonctionnalité supprimée.
+- Traçabilité assurée dans ce mémo.
