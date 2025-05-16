@@ -10,50 +10,67 @@ interface User {
   password: string;
   role: string;
   name: string;
+  phone: string;
   created_at: Date;
   updated_at: Date;
+}
+
+function normalizePhone(phone: string): string | null {
+  // Nettoyer la saisie
+  let cleaned = phone.replace(/[^\d+]/g, '');
+  if (cleaned.startsWith('+')) {
+    return cleaned;
+  }
+  // Numéro local sénégalais : 9 chiffres, commence par 7
+  if (/^7\d{8}$/.test(cleaned)) {
+    return '+221' + cleaned;
+  }
+  // Sinon, on refuse
+  return null;
 }
 
 export const userController = {
   async register(req: Request, res: Response) {
     try {
-      const { email, password, name } = req.body;
-
-      // Vérifier si l'utilisateur existe déjà
-      const existingUser = await query('SELECT * FROM users WHERE email = $1', [email]);
+      const { name, phone, password, email } = req.body;
+      const normalizedPhone = normalizePhone(phone);
+      if (!normalizedPhone) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'Merci d’entrer votre numéro au format international (+221786049485 ou +33612345678).'
+        });
+      }
+      // Vérifier si l'utilisateur existe déjà par téléphone
+      const existingUser = await query('SELECT * FROM users WHERE phone = $1', [normalizedPhone]);
       if (existingUser.rows.length > 0) {
         return res.status(400).json({
           status: 'error',
-          message: 'Un utilisateur avec cet email existe déjà'
+          message: 'Un utilisateur avec ce numéro de téléphone existe déjà'
         });
       }
-
       // Hasher le mot de passe
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
-
       // Créer l'utilisateur
       const result = await query(
-        'INSERT INTO users (email, password, name, role) VALUES ($1, $2, $3, $4) RETURNING id, email, name, role',
-        [email, hashedPassword, name, 'user']
+        'INSERT INTO users (name, phone, password, email, role) VALUES ($1, $2, $3, $4, $5) RETURNING id, name, phone, email, role',
+        [name, normalizedPhone, hashedPassword, email || null, 'user']
       );
-
       const user = result.rows[0];
-
       // Générer le token JWT
       const token = jwt.sign(
         { userId: user.id, role: user.role },
         process.env.JWT_SECRET || 'default_secret',
         { expiresIn: '24h' }
       );
-
       res.status(201).json({
         status: 'success',
         data: {
           user: {
             id: user.id,
-            email: user.email,
             name: user.name,
+            phone: user.phone,
+            email: user.email,
             role: user.role
           },
           token
@@ -70,42 +87,45 @@ export const userController = {
 
   async login(req: Request, res: Response) {
     try {
-      const { email, password } = req.body;
-
-      // Vérifier si l'utilisateur existe
-      const result = await query('SELECT * FROM users WHERE email = $1', [email]);
+      const { phone, password } = req.body;
+      const normalizedPhone = normalizePhone(phone);
+      if (!normalizedPhone) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'Merci d’entrer votre numéro au format international (+221786049485 ou +33612345678).'
+        });
+      }
+      // Vérifier si l'utilisateur existe par téléphone
+      const result = await query('SELECT * FROM users WHERE phone = $1', [normalizedPhone]);
       if (result.rows.length === 0) {
         return res.status(401).json({
           status: 'error',
-          message: 'Email ou mot de passe incorrect'
+          message: 'Numéro de téléphone ou mot de passe incorrect'
         });
       }
-
       const user = result.rows[0] as User;
-
       // Vérifier le mot de passe
       const isValidPassword = await bcrypt.compare(password, user.password);
       if (!isValidPassword) {
         return res.status(401).json({
           status: 'error',
-          message: 'Email ou mot de passe incorrect'
+          message: 'Numéro de téléphone ou mot de passe incorrect'
         });
       }
-
       // Générer le token JWT
       const token = jwt.sign(
         { userId: user.id, role: user.role },
         process.env.JWT_SECRET || 'default_secret',
         { expiresIn: '24h' }
       );
-
       res.json({
         status: 'success',
         data: {
           user: {
             id: user.id,
-            email: user.email,
             name: user.name,
+            phone: user.phone,
+            email: user.email,
             role: user.role
           },
           token
