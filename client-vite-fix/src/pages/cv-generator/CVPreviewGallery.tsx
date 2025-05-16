@@ -1,3 +1,5 @@
+// --- Correction profils de démo CV : version stable, tableaux toujours présents (expérience, éducation, skills) ---
+
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { CV_TEMPLATES } from './components/data/templates';
