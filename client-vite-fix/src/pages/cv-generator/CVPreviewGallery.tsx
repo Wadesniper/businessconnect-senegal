@@ -18,7 +18,7 @@ const DEMO_PROFILES: Record<string, any> = {
     },
     summary: 'Expert en finance et gestion de portefeuille.',
     experience: [
-      { company: 'Société Générale Sénégal', title: 'Analyste', years: '2021-2023', description: 'Analyse financière et gestion de risques.' }
+      { company: 'Société Générale Sénégal', title: 'Analyste', years: '2021-2023', description: 'Analyse financière et gestion de risques.', achievements: [] }
     ],
     education: [
       { school: 'UCAD', degree: 'Master Finance', years: '2017-2021' }
@@ -28,6 +28,7 @@ const DEMO_PROFILES: Record<string, any> = {
       { name: 'Français', level: 'Courant' },
       { name: 'Anglais', level: 'Intermédiaire' }
     ],
+    certifications: [],
   },
   marketing: {
     personalInfo: {
@@ -41,7 +42,7 @@ const DEMO_PROFILES: Record<string, any> = {
     },
     summary: 'Passionnée par le marketing digital et la communication.',
     experience: [
-      { company: 'Orange Sénégal', title: 'Community Manager', years: '2020-2023', description: 'Gestion des réseaux sociaux et campagnes.' }
+      { company: 'Orange Sénégal', title: 'Community Manager', years: '2020-2023', description: 'Gestion des réseaux sociaux et campagnes.', achievements: [] }
     ],
     education: [
       { school: 'ISM Dakar', degree: 'Licence Marketing', years: '2016-2019' }
@@ -51,6 +52,7 @@ const DEMO_PROFILES: Record<string, any> = {
       { name: 'Français', level: 'Courant' },
       { name: 'Anglais', level: 'Débutant' }
     ],
+    certifications: [],
   },
   health: {
     personalInfo: {
@@ -64,7 +66,7 @@ const DEMO_PROFILES: Record<string, any> = {
     },
     summary: 'Professionnelle de santé expérimentée.',
     experience: [
-      { company: 'Hôpital Principal', title: 'Infirmière', years: '2019-2023', description: 'Soins et accompagnement des patients.' }
+      { company: 'Hôpital Principal', title: 'Infirmière', years: '2019-2023', description: 'Soins et accompagnement des patients.', achievements: [] }
     ],
     education: [
       { school: 'ENSP Dakar', degree: 'Diplôme Infirmière', years: '2015-2018' }
@@ -73,6 +75,7 @@ const DEMO_PROFILES: Record<string, any> = {
     languages: [
       { name: 'Français', level: 'Courant' }
     ],
+    certifications: [],
   },
   education: {
     personalInfo: {
@@ -86,7 +89,7 @@ const DEMO_PROFILES: Record<string, any> = {
     },
     summary: 'Enseignant passionné par la pédagogie.',
     experience: [
-      { company: 'Lycée Blaise Diagne', title: 'Professeur', years: '2015-2023', description: 'Enseignement des mathématiques.' }
+      { company: 'Lycée Blaise Diagne', title: 'Professeur', years: '2015-2023', description: 'Enseignement des mathématiques.', achievements: [] }
     ],
     education: [
       { school: 'FASTEF', degree: 'CAPES Mathématiques', years: '2012-2015' }
@@ -96,6 +99,7 @@ const DEMO_PROFILES: Record<string, any> = {
       { name: 'Français', level: 'Courant' },
       { name: 'Anglais', level: 'Débutant' }
     ],
+    certifications: [],
   },
   commerce: {
     personalInfo: {
@@ -109,7 +113,7 @@ const DEMO_PROFILES: Record<string, any> = {
     },
     summary: 'Spécialiste de la vente et négociation.',
     experience: [
-      { company: 'CFAO', title: 'Responsable Commerciale', years: '2018-2023', description: 'Développement du portefeuille clients.' }
+      { company: 'CFAO', title: 'Responsable Commerciale', years: '2018-2023', description: 'Développement du portefeuille clients.', achievements: [] }
     ],
     education: [
       { school: 'Supdeco', degree: 'Master Commerce', years: '2014-2018' }
@@ -118,6 +122,7 @@ const DEMO_PROFILES: Record<string, any> = {
     languages: [
       { name: 'Français', level: 'Courant' }
     ],
+    certifications: [],
   },
   admin: {
     personalInfo: {
@@ -131,7 +136,7 @@ const DEMO_PROFILES: Record<string, any> = {
     },
     summary: 'Gestion administrative et ressources humaines.',
     experience: [
-      { company: 'Senelec', title: 'Assistant RH', years: '2020-2023', description: 'Gestion des dossiers du personnel.' }
+      { company: 'Senelec', title: 'Assistant RH', years: '2020-2023', description: 'Gestion des dossiers du personnel.', achievements: [] }
     ],
     education: [
       { school: 'UCAD', degree: 'Licence RH', years: '2016-2019' }
@@ -140,6 +145,7 @@ const DEMO_PROFILES: Record<string, any> = {
     languages: [
       { name: 'Français', level: 'Courant' }
     ],
+    certifications: [],
   },
   tech: {
     personalInfo: {
@@ -153,7 +159,7 @@ const DEMO_PROFILES: Record<string, any> = {
     },
     summary: 'Développeur passionné par la tech.',
     experience: [
-      { company: 'Wave', title: 'Développeur', years: '2021-2023', description: 'Développement d\'applications web.' }
+      { company: 'Wave', title: 'Développeur', years: '2021-2023', description: "Développement d'applications web.", achievements: [] }
     ],
     education: [
       { school: 'ESMT', degree: 'Ingénieur Logiciel', years: '2017-2021' }
@@ -163,6 +169,7 @@ const DEMO_PROFILES: Record<string, any> = {
       { name: 'Français', level: 'Courant' },
       { name: 'Anglais', level: 'Intermédiaire' }
     ],
+    certifications: [],
   },
   logistics: {
     personalInfo: {
@@ -176,7 +183,7 @@ const DEMO_PROFILES: Record<string, any> = {
     },
     summary: 'Gestion de la chaîne logistique.',
     experience: [
-      { company: 'DHL Sénégal', title: 'Logisticienne', years: '2019-2023', description: 'Gestion des flux et stocks.' }
+      { company: 'DHL Sénégal', title: 'Logisticienne', years: '2019-2023', description: 'Gestion des flux et stocks.', achievements: [] }
     ],
     education: [
       { school: 'ISM', degree: 'Master Logistique', years: '2015-2019' }
@@ -185,6 +192,7 @@ const DEMO_PROFILES: Record<string, any> = {
     languages: [
       { name: 'Français', level: 'Courant' }
     ],
+    certifications: [],
   },
   btp: {
     personalInfo: {
@@ -198,7 +206,7 @@ const DEMO_PROFILES: Record<string, any> = {
     },
     summary: 'Spécialiste en génie civil et chantiers.',
     experience: [
-      { company: 'Eiffage Sénégal', title: 'Ingénieur BTP', years: '2018-2023', description: 'Gestion de projets de construction.' }
+      { company: 'Eiffage Sénégal', title: 'Ingénieur BTP', years: '2018-2023', description: 'Gestion de projets de construction.', achievements: [] }
     ],
     education: [
       { school: 'ESP Dakar', degree: 'Ingénieur BTP', years: '2013-2018' }
@@ -207,6 +215,7 @@ const DEMO_PROFILES: Record<string, any> = {
     languages: [
       { name: 'Français', level: 'Courant' }
     ],
+    certifications: [],
   },
   art: {
     personalInfo: {
@@ -220,7 +229,7 @@ const DEMO_PROFILES: Record<string, any> = {
     },
     summary: 'Créative passionnée par le design.',
     experience: [
-      { company: 'Studio Dakar', title: 'Graphiste', years: '2020-2023', description: 'Création de visuels et illustrations.' }
+      { company: 'Studio Dakar', title: 'Graphiste', years: '2020-2023', description: 'Création de visuels et illustrations.', achievements: [] }
     ],
     education: [
       { school: 'Ecole des Arts', degree: 'Licence Design', years: '2016-2019' }
@@ -229,6 +238,7 @@ const DEMO_PROFILES: Record<string, any> = {
     languages: [
       { name: 'Français', level: 'Courant' }
     ],
+    certifications: [],
   },
   hotel: {
     personalInfo: {
@@ -242,7 +252,7 @@ const DEMO_PROFILES: Record<string, any> = {
     },
     summary: 'Accueil et gestion hôtelière.',
     experience: [
-      { company: 'Radisson Blu Dakar', title: 'Réceptionniste', years: '2019-2023', description: 'Accueil des clients et gestion des réservations.' }
+      { company: 'Radisson Blu Dakar', title: 'Réceptionniste', years: '2019-2023', description: 'Accueil des clients et gestion des réservations.', achievements: [] }
     ],
     education: [
       { school: 'Ecole Hôtelière', degree: 'BTS Hôtellerie', years: '2016-2019' }
@@ -252,6 +262,7 @@ const DEMO_PROFILES: Record<string, any> = {
       { name: 'Français', level: 'Courant' },
       { name: 'Anglais', level: 'Débutant' }
     ],
+    certifications: [],
   },
   law: {
     personalInfo: {
@@ -265,7 +276,7 @@ const DEMO_PROFILES: Record<string, any> = {
     },
     summary: 'Expert en droit sénégalais.',
     experience: [
-      { company: 'Cabinet Ba', title: 'Juriste', years: '2017-2023', description: 'Conseil et rédaction d\'actes juridiques.' }
+      { company: 'Cabinet Ba', title: 'Juriste', years: '2017-2023', description: "Conseil et rédaction d'actes juridiques.", achievements: [] }
     ],
     education: [
       { school: 'UCAD', degree: 'Master Droit', years: '2012-2017' }
@@ -274,6 +285,7 @@ const DEMO_PROFILES: Record<string, any> = {
     languages: [
       { name: 'Français', level: 'Courant' }
     ],
+    certifications: [],
   },
   com: {
     personalInfo: {
@@ -287,7 +299,7 @@ const DEMO_PROFILES: Record<string, any> = {
     },
     summary: 'Passionnée par la communication et les médias.',
     experience: [
-      { company: 'RTS', title: 'Journaliste', years: '2018-2023', description: 'Rédaction et présentation de reportages.' }
+      { company: 'RTS', title: 'Journaliste', years: '2018-2023', description: 'Rédaction et présentation de reportages.', achievements: [] }
     ],
     education: [
       { school: 'CESTI', degree: 'Licence Journalisme', years: '2014-2018' }
@@ -297,6 +309,7 @@ const DEMO_PROFILES: Record<string, any> = {
       { name: 'Français', level: 'Courant' },
       { name: 'Anglais', level: 'Débutant' }
     ],
+    certifications: [],
   },
   agro: {
     personalInfo: {
@@ -310,7 +323,7 @@ const DEMO_PROFILES: Record<string, any> = {
     },
     summary: 'Expert en agriculture durable.',
     experience: [
-      { company: 'SODEFITEX', title: 'Agronome', years: '2016-2023', description: 'Gestion de projets agricoles.' }
+      { company: 'SODEFITEX', title: 'Agronome', years: '2016-2023', description: 'Gestion de projets agricoles.', achievements: [] }
     ],
     education: [
       { school: 'ENSA Thiès', degree: 'Ingénieur Agronome', years: '2011-2016' }
@@ -319,6 +332,7 @@ const DEMO_PROFILES: Record<string, any> = {
     languages: [
       { name: 'Français', level: 'Courant' }
     ],
+    certifications: [],
   },
   human: {
     personalInfo: {
@@ -332,7 +346,7 @@ const DEMO_PROFILES: Record<string, any> = {
     },
     summary: 'Engagée pour l\'aide humanitaire.',
     experience: [
-      { company: 'Croix-Rouge', title: 'Chargée de Mission', years: '2019-2023', description: 'Coordination de projets humanitaires.' }
+      { company: 'Croix-Rouge', title: 'Chargée de Mission', years: '2019-2023', description: 'Coordination de projets humanitaires.', achievements: [] }
     ],
     education: [
       { school: 'UCAD', degree: 'Master Action Humanitaire', years: '2014-2019' }
@@ -341,6 +355,7 @@ const DEMO_PROFILES: Record<string, any> = {
     languages: [
       { name: 'Français', level: 'Courant' }
     ],
+    certifications: [],
   },
   bank: {
     personalInfo: {
@@ -354,7 +369,7 @@ const DEMO_PROFILES: Record<string, any> = {
     },
     summary: 'Conseiller clientèle expérimenté.',
     experience: [
-      { company: 'CBAO', title: 'Conseiller Bancaire', years: '2015-2023', description: 'Gestion de portefeuilles clients.' }
+      { company: 'CBAO', title: 'Conseiller Bancaire', years: '2015-2023', description: 'Gestion de portefeuilles clients.', achievements: [] }
     ],
     education: [
       { school: 'ISM', degree: 'Licence Banque', years: '2011-2015' }
@@ -363,6 +378,7 @@ const DEMO_PROFILES: Record<string, any> = {
     languages: [
       { name: 'Français', level: 'Courant' }
     ],
+    certifications: [],
   },
 };
 
