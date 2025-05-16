@@ -19,14 +19,6 @@ export interface PaymentInitiation {
   paymentId: string;
 }
 
-export interface PayTechCallbackData {
-  customField: string;
-  transactionId: string;
-  status: 'completed' | 'failed' | 'pending';
-  amount: number;
-  paymentId: string;
-}
-
 export interface PaymentData {
   amount: number;
   description: string;

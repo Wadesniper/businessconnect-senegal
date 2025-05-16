@@ -337,14 +337,13 @@
 
 ---
 
-## 2024-06-XX — Migration PayTech → CinetPay (intégration complète, conformité doc officielle)
+## 2024-06-XX — Suppression définitive de PayTech, migration totale CinetPay (backend)
 
-- Suppression de toute référence à PayTech dans le backend (config, services, types).
-- Ajout des variables d'environnement et de configuration CinetPay (`CINETPAY_APIKEY`, `CINETPAY_SITE_ID`, `CINETPAY_BASE_URL`, `CINETPAY_NOTIFY_URL`, `CINETPAY_RETURN_URL`).
-- Création d'une méthode `initializeCinetPayPayment` dans `paymentService.ts` conforme à la [documentation officielle CinetPay](https://docs.cinetpay.com/api/1.0-fr/checkout/initialisation).
-- Préparation de l'intégration du callback/notification CinetPay pour la gestion du statut de paiement.
-- Aucun code métier supprimé, aucune version minimaliste : le site complet reste fonctionnel et prêt pour la production.
-- Build/test à faire après adaptation des routes et du service d'abonnement.
+- Suppression de tous les fichiers, imports, middlewares, services, types et tests liés à PayTech dans tout le backend.
+- Migration complète de la logique de paiement vers CinetPay (service, config, controllers, routes, tests).
+- Harmonisation des types et accès aux propriétés (`id`/`_id`) dans tout le backend.
+- Build et tests garantis sur le site complet, aucune version minimaliste, aucune fonctionnalité supprimée.
+- Traçabilité assurée dans ce mémo.
 
 ---
 
