@@ -293,4 +293,7 @@
 - Correction : Ajout de `contentWidth="Fluid"` et `style={{ width: '100vw', maxWidth: '100vw' }}` sur le composant ProLayout dans `client-vite-fix/src/App.tsx`.
 - Résultat : Le site s'affiche désormais en pleine largeur sur toutes les pages, sans effet réduit.
 - Aucun code essentiel supprimé, aucune perturbation du backend ou du fonctionnement général.
-- À surveiller : Si un effet de bord visuel apparaît sur une page précise, le signaler pour ajustement localisé. 
+- À surveiller : Si un effet de bord visuel apparaît sur une page précise, le signaler pour ajustement localisé.
+
+// Commit technique pour forcer un rebuild Vercel (16/05/2025)
+// Aucun impact sur le code ou le fonctionnement du site. 
