@@ -7,12 +7,16 @@ const { Title } = Typography;
 
 const DEMO_PROFILES: Record<string, any> = {
   finance: {
-    name: 'Mamadou Ndiaye',
-    job: 'Analyste Financier',
-    email: 'mamadou.ndiaye@email.com',
-    phone: '+221 77 123 45 67',
+    personalInfo: {
+      firstName: 'Mamadou',
+      lastName: 'Ndiaye',
+      title: 'Analyste Financier',
+      email: 'mamadou.ndiaye@email.com',
+      phone: '+221 77 123 45 67',
+      photo: '/images/avatars/man-1.png',
+      profileImage: '/images/avatars/man-1.png',
+    },
     summary: 'Expert en finance et gestion de portefeuille.',
-    profileImage: '/images/avatars/man-1.png',
     experience: [
       { company: 'Société Générale Sénégal', title: 'Analyste', years: '2021-2023', description: 'Analyse financière et gestion de risques.' }
     ],
@@ -22,12 +26,16 @@ const DEMO_PROFILES: Record<string, any> = {
     skills: ['Gestion', 'Analyse', 'Excel'],
   },
   marketing: {
-    name: 'Fatou Ba',
-    job: 'Chargée de Communication',
-    email: 'fatou.ba@email.com',
-    phone: '+221 77 234 56 78',
+    personalInfo: {
+      firstName: 'Fatou',
+      lastName: 'Ba',
+      title: 'Chargée de Communication',
+      email: 'fatou.ba@email.com',
+      phone: '+221 77 234 56 78',
+      photo: '/images/avatars/woman-1.png',
+      profileImage: '/images/avatars/woman-1.png',
+    },
     summary: 'Passionnée par le marketing digital et la communication.',
-    profileImage: '/images/avatars/woman-1.png',
     experience: [
       { company: 'Orange Sénégal', title: 'Community Manager', years: '2020-2023', description: 'Gestion des réseaux sociaux et campagnes.' }
     ],
@@ -37,12 +45,16 @@ const DEMO_PROFILES: Record<string, any> = {
     skills: ['Réseaux sociaux', 'Créativité', 'Stratégie'],
   },
   health: {
-    name: 'Awa Diop',
-    job: 'Infirmière',
-    email: 'awa.diop@email.com',
-    phone: '+221 77 345 67 89',
+    personalInfo: {
+      firstName: 'Awa',
+      lastName: 'Diop',
+      title: 'Infirmière',
+      email: 'awa.diop@email.com',
+      phone: '+221 77 345 67 89',
+      photo: '/images/avatars/woman-2.png',
+      profileImage: '/images/avatars/woman-2.png',
+    },
     summary: 'Professionnelle de santé expérimentée.',
-    profileImage: '/images/avatars/woman-2.png',
     experience: [
       { company: 'Hôpital Principal', title: 'Infirmière', years: '2019-2023', description: 'Soins et accompagnement des patients.' }
     ],
@@ -52,12 +64,16 @@ const DEMO_PROFILES: Record<string, any> = {
     skills: ['Soins', 'Empathie', 'Organisation'],
   },
   education: {
-    name: 'Abdoulaye Sarr',
-    job: 'Professeur de Mathématiques',
-    email: 'abdoulaye.sarr@email.com',
-    phone: '+221 77 456 78 90',
+    personalInfo: {
+      firstName: 'Abdoulaye',
+      lastName: 'Sarr',
+      title: 'Professeur de Mathématiques',
+      email: 'abdoulaye.sarr@email.com',
+      phone: '+221 77 456 78 90',
+      photo: '/images/avatars/man-2.png',
+      profileImage: '/images/avatars/man-2.png',
+    },
     summary: 'Enseignant passionné par la pédagogie.',
-    profileImage: '/images/avatars/man-2.png',
     experience: [
       { company: 'Lycée Blaise Diagne', title: 'Professeur', years: '2015-2023', description: 'Enseignement des mathématiques.' }
     ],
@@ -67,12 +83,16 @@ const DEMO_PROFILES: Record<string, any> = {
     skills: ['Pédagogie', 'Mathématiques', 'Patience'],
   },
   commerce: {
-    name: 'Astou Faye',
-    job: 'Responsable Commerciale',
-    email: 'astou.faye@email.com',
-    phone: '+221 77 567 89 01',
+    personalInfo: {
+      firstName: 'Astou',
+      lastName: 'Faye',
+      title: 'Responsable Commerciale',
+      email: 'astou.faye@email.com',
+      phone: '+221 77 567 89 01',
+      photo: '/images/avatars/woman-3.png',
+      profileImage: '/images/avatars/woman-3.png',
+    },
     summary: 'Spécialiste de la vente et négociation.',
-    profileImage: '/images/avatars/woman-3.png',
     experience: [
       { company: 'CFAO', title: 'Responsable Commerciale', years: '2018-2023', description: 'Développement du portefeuille clients.' }
     ],
@@ -82,12 +102,16 @@ const DEMO_PROFILES: Record<string, any> = {
     skills: ['Négociation', 'Vente', 'Leadership'],
   },
   admin: {
-    name: 'Cheikh Fall',
-    job: 'Assistant RH',
-    email: 'cheikh.fall@email.com',
-    phone: '+221 77 678 90 12',
+    personalInfo: {
+      firstName: 'Cheikh',
+      lastName: 'Fall',
+      title: 'Assistant RH',
+      email: 'cheikh.fall@email.com',
+      phone: '+221 77 678 90 12',
+      photo: '/images/avatars/man-3.png',
+      profileImage: '/images/avatars/man-3.png',
+    },
     summary: 'Gestion administrative et ressources humaines.',
-    profileImage: '/images/avatars/man-3.png',
     experience: [
       { company: 'Senelec', title: 'Assistant RH', years: '2020-2023', description: 'Gestion des dossiers du personnel.' }
     ],
@@ -97,12 +121,16 @@ const DEMO_PROFILES: Record<string, any> = {
     skills: ['RH', 'Organisation', 'Gestion'],
   },
   tech: {
-    name: 'Moussa Gaye',
-    job: 'Développeur Web',
-    email: 'moussa.gaye@email.com',
-    phone: '+221 77 789 01 23',
+    personalInfo: {
+      firstName: 'Moussa',
+      lastName: 'Gaye',
+      title: 'Développeur Web',
+      email: 'moussa.gaye@email.com',
+      phone: '+221 77 789 01 23',
+      photo: '/images/avatars/man-4.png',
+      profileImage: '/images/avatars/man-4.png',
+    },
     summary: 'Développeur passionné par la tech.',
-    profileImage: '/images/avatars/man-4.png',
     experience: [
       { company: 'Wave', title: 'Développeur', years: '2021-2023', description: 'Développement d\'applications web.' }
     ],
@@ -112,12 +140,16 @@ const DEMO_PROFILES: Record<string, any> = {
     skills: ['React', 'Node.js', 'API'],
   },
   logistics: {
-    name: 'Khady Sow',
-    job: 'Logisticienne',
-    email: 'khady.sow@email.com',
-    phone: '+221 77 890 12 34',
+    personalInfo: {
+      firstName: 'Khady',
+      lastName: 'Sow',
+      title: 'Logisticienne',
+      email: 'khady.sow@email.com',
+      phone: '+221 77 890 12 34',
+      photo: '/images/avatars/woman-4.png',
+      profileImage: '/images/avatars/woman-4.png',
+    },
     summary: 'Gestion de la chaîne logistique.',
-    profileImage: '/images/avatars/woman-4.png',
     experience: [
       { company: 'DHL Sénégal', title: 'Logisticienne', years: '2019-2023', description: 'Gestion des flux et stocks.' }
     ],
@@ -127,12 +159,16 @@ const DEMO_PROFILES: Record<string, any> = {
     skills: ['Logistique', 'Gestion', 'Organisation'],
   },
   btp: {
-    name: 'Ibrahima Kane',
-    job: 'Ingénieur BTP',
-    email: 'ibrahima.kane@email.com',
-    phone: '+221 77 901 23 45',
+    personalInfo: {
+      firstName: 'Ibrahima',
+      lastName: 'Kane',
+      title: 'Ingénieur BTP',
+      email: 'ibrahima.kane@email.com',
+      phone: '+221 77 901 23 45',
+      photo: '/images/avatars/man-5.png',
+      profileImage: '/images/avatars/man-5.png',
+    },
     summary: 'Spécialiste en génie civil et chantiers.',
-    profileImage: '/images/avatars/man-5.png',
     experience: [
       { company: 'Eiffage Sénégal', title: 'Ingénieur BTP', years: '2018-2023', description: 'Gestion de projets de construction.' }
     ],
@@ -142,12 +178,16 @@ const DEMO_PROFILES: Record<string, any> = {
     skills: ['Chantiers', 'Gestion', 'Technique'],
   },
   art: {
-    name: 'Seynabou Diallo',
-    job: 'Graphiste',
-    email: 'seynabou.diallo@email.com',
-    phone: '+221 77 234 12 34',
+    personalInfo: {
+      firstName: 'Seynabou',
+      lastName: 'Diallo',
+      title: 'Graphiste',
+      email: 'seynabou.diallo@email.com',
+      phone: '+221 77 234 12 34',
+      photo: '/images/avatars/woman-5.png',
+      profileImage: '/images/avatars/woman-5.png',
+    },
     summary: 'Créative passionnée par le design.',
-    profileImage: '/images/avatars/woman-5.png',
     experience: [
       { company: 'Studio Dakar', title: 'Graphiste', years: '2020-2023', description: 'Création de visuels et illustrations.' }
     ],
@@ -157,12 +197,16 @@ const DEMO_PROFILES: Record<string, any> = {
     skills: ['Design', 'Créativité', 'Illustration'],
   },
   hotel: {
-    name: 'Mame Diarra Sy',
-    job: 'Réceptionniste',
-    email: 'mame.diarra@email.com',
-    phone: '+221 77 345 12 34',
+    personalInfo: {
+      firstName: 'Mame Diarra',
+      lastName: 'Sy',
+      title: 'Réceptionniste',
+      email: 'mame.diarra@email.com',
+      phone: '+221 77 345 12 34',
+      photo: '/images/avatars/woman-2.png',
+      profileImage: '/images/avatars/woman-2.png',
+    },
     summary: 'Accueil et gestion hôtelière.',
-    profileImage: '/images/avatars/woman-2.png',
     experience: [
       { company: 'Radisson Blu Dakar', title: 'Réceptionniste', years: '2019-2023', description: 'Accueil des clients et gestion des réservations.' }
     ],
@@ -172,12 +216,16 @@ const DEMO_PROFILES: Record<string, any> = {
     skills: ['Accueil', 'Organisation', 'Langues'],
   },
   law: {
-    name: 'Serigne Mbaye',
-    job: 'Juriste',
-    email: 'serigne.mbaye@email.com',
-    phone: '+221 77 456 12 34',
+    personalInfo: {
+      firstName: 'Serigne',
+      lastName: 'Mbaye',
+      title: 'Juriste',
+      email: 'serigne.mbaye@email.com',
+      phone: '+221 77 456 12 34',
+      photo: '/images/avatars/man-2.png',
+      profileImage: '/images/avatars/man-2.png',
+    },
     summary: 'Expert en droit sénégalais.',
-    profileImage: '/images/avatars/man-2.png',
     experience: [
       { company: 'Cabinet Ba', title: 'Juriste', years: '2017-2023', description: 'Conseil et rédaction d\'actes juridiques.' }
     ],
@@ -187,12 +235,16 @@ const DEMO_PROFILES: Record<string, any> = {
     skills: ['Droit', 'Rédaction', 'Conseil'],
   },
   com: {
-    name: 'Aminata Cissé',
-    job: 'Journaliste',
-    email: 'aminata.cisse@email.com',
-    phone: '+221 77 567 12 34',
+    personalInfo: {
+      firstName: 'Aminata',
+      lastName: 'Cissé',
+      title: 'Journaliste',
+      email: 'aminata.cisse@email.com',
+      phone: '+221 77 567 12 34',
+      photo: '/images/avatars/woman-1.png',
+      profileImage: '/images/avatars/woman-1.png',
+    },
     summary: 'Passionnée par la communication et les médias.',
-    profileImage: '/images/avatars/woman-1.png',
     experience: [
       { company: 'RTS', title: 'Journaliste', years: '2018-2023', description: 'Rédaction et présentation de reportages.' }
     ],
@@ -202,12 +254,16 @@ const DEMO_PROFILES: Record<string, any> = {
     skills: ['Communication', 'Rédaction', 'Interview'],
   },
   agro: {
-    name: 'Modou Sarr',
-    job: 'Agronome',
-    email: 'modou.sarr@email.com',
-    phone: '+221 77 678 12 34',
+    personalInfo: {
+      firstName: 'Modou',
+      lastName: 'Sarr',
+      title: 'Agronome',
+      email: 'modou.sarr@email.com',
+      phone: '+221 77 678 12 34',
+      photo: '/images/avatars/man-1.png',
+      profileImage: '/images/avatars/man-1.png',
+    },
     summary: 'Expert en agriculture durable.',
-    profileImage: '/images/avatars/man-1.png',
     experience: [
       { company: 'SODEFITEX', title: 'Agronome', years: '2016-2023', description: 'Gestion de projets agricoles.' }
     ],
@@ -217,12 +273,16 @@ const DEMO_PROFILES: Record<string, any> = {
     skills: ['Agriculture', 'Gestion', 'Développement rural'],
   },
   human: {
-    name: 'Mariama Diallo',
-    job: 'Chargée de Mission Humanitaire',
-    email: 'mariama.diallo@email.com',
-    phone: '+221 77 789 12 34',
+    personalInfo: {
+      firstName: 'Mariama',
+      lastName: 'Diallo',
+      title: 'Chargée de Mission Humanitaire',
+      email: 'mariama.diallo@email.com',
+      phone: '+221 77 789 12 34',
+      photo: '/images/avatars/woman-5.png',
+      profileImage: '/images/avatars/woman-5.png',
+    },
     summary: 'Engagée pour l\'aide humanitaire.',
-    profileImage: '/images/avatars/woman-5.png',
     experience: [
       { company: 'Croix-Rouge', title: 'Chargée de Mission', years: '2019-2023', description: 'Coordination de projets humanitaires.' }
     ],
@@ -232,12 +292,16 @@ const DEMO_PROFILES: Record<string, any> = {
     skills: ['Humanitaire', 'Gestion', 'Coordination'],
   },
   bank: {
-    name: 'Papa Sow',
-    job: 'Conseiller Bancaire',
-    email: 'papa.sow@email.com',
-    phone: '+221 77 890 23 45',
+    personalInfo: {
+      firstName: 'Papa',
+      lastName: 'Sow',
+      title: 'Conseiller Bancaire',
+      email: 'papa.sow@email.com',
+      phone: '+221 77 890 23 45',
+      photo: '/images/avatars/man-5.png',
+      profileImage: '/images/avatars/man-5.png',
+    },
     summary: 'Conseiller clientèle expérimenté.',
-    profileImage: '/images/avatars/man-5.png',
     experience: [
       { company: 'CBAO', title: 'Conseiller Bancaire', years: '2015-2023', description: 'Gestion de portefeuilles clients.' }
     ],
