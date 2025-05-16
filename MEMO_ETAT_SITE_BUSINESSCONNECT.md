@@ -324,4 +324,28 @@
     « Merci d'entrer votre numéro au format international (ex : +221 771234567 ou +33 612345678). »
 - Le backend applique la même logique de normalisation et de validation, garantissant une cohérence totale et une base de données propre.
 - Aucun code ou fonctionnalité essentielle supprimé, aucune perturbation du backend ou du frontend, site complet maintenu.
-- Statut : Prêt pour test, déploiement et utilisation en production. 
+- Statut : Prêt pour test, déploiement et utilisation en production.
+
+---
+
+**[Frontend] Correction du typage de la prop `isSubscribed` dans le générateur de CV**
+- Date : [à compléter]
+- Fichier : `client-vite-fix/src/pages/cv-generator/index.tsx`
+- Problème : Erreur de typage (`boolean | undefined` n'est pas assignable à `boolean`) lors du passage de la prop `isSubscribed` au composant `CVPreview`.
+- Correction : Passage explicite de la prop sous forme booléenne (`!!isSubscribed`) pour garantir la robustesse du build et le bon fonctionnement du site en production.
+- Aucun code ou élément essentiel supprimé, aucune fonctionnalité retirée, site complet maintenu.
+
+---
+
+## 2024-06-XX — Correction définitive build complet backend & frontend (Node 20+, Jest, types, Vite)
+
+- Réinstallation complète de toutes les dépendances backend et frontend (`yarn install --check-files --force` dans chaque dossier).
+- Installation explicite de Jest côté backend pour garantir l'exécution des tests sans suppression de code ni de tests.
+- Build backend (`yarn build` dans businessconnect-senegal/server) : **OK** (aucune erreur de type, aucun code supprimé).
+- Build frontend (`yarn build` dans client-vite-fix) : **OK** (aucune erreur bloquante, aucun code supprimé, site complet maintenu).
+- Aucun passage en version minimaliste, aucune fonctionnalité retirée, aucune perturbation de l'affichage ou du fonctionnement.
+- Tous les types nécessaires sont présents (`@types/*`), Node 20.x respecté, Jest installé, Vite opérationnel.
+- Le site complet, dans sa version de production, passe le build et les tests, prêt pour Render.
+- Traçabilité assurée dans ce mémo.
+
+---

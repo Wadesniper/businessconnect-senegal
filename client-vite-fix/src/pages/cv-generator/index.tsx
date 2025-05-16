@@ -6,7 +6,6 @@ import CustomizationForm from './components/CustomizationForm';
 import CVPreview from './components/CVPreview';
 import { CVProvider, useCV } from './context/CVContext';
 import { exportCV } from './services/documentExport';
-import { CVGeneratorProps } from '../../types/cv';
 import { useSubscription } from '../../hooks/useSubscription';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
@@ -32,6 +31,8 @@ const steps = [
     description: 'Prévisualisez et exportez'
   }
 ];
+
+type CVGeneratorProps = { isSubscribed?: boolean };
 
 const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
   const {
@@ -74,9 +75,8 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
         message.error('Veuillez remplir correctement tous les champs obligatoires avant l\'export');
         return;
       }
-      
       setIsExporting(true);
-      await exportCV(cvData!, selectedTemplate, customization, previewRef, format);
+      await exportCV(previewRef.current, cvData!, selectedTemplate, customization, { format });
       message.success(`CV exporté avec succès en format ${format.toUpperCase()}`);
     } catch (error) {
       message.error('Erreur lors de l\'export : ' + (error as Error).message);
@@ -94,7 +94,6 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
         </div>
       );
     }
-
     switch (currentStep) {
       case 0:
         return (
@@ -125,7 +124,7 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
                 data={cvData!}
                 template={selectedTemplate!}
                 customization={customization}
-                isSubscribed={isSubscribed}
+                isSubscribed={!!isSubscribed}
               />
             </div>
             <div style={{ marginTop: 20, display: 'flex', gap: 10 }}>
@@ -156,17 +155,14 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
         <AntTitle level={2} style={{ textAlign: 'center', marginBottom: 40 }}>
           Créez votre CV professionnel
         </AntTitle>
-
         <Steps
           current={currentStep}
           items={steps}
           style={{ marginBottom: 40 }}
         />
-
         <div style={{ marginBottom: 40 }}>
           {renderStepContent()}
         </div>
-
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 50 }}>
           {currentStep > 0 && (
             <Button onClick={handlePrev}>
