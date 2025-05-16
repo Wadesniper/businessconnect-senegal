@@ -380,4 +380,17 @@
 - Correction : Passage explicite de la prop sous forme booléenne (`!!isSubscribed`) pour garantir la robustesse du build et le bon fonctionnement du site en production.
 - Aucun code ou élément essentiel supprimé, aucune fonctionnalité retirée, site complet maintenu.
 
+---
+
+## 2024-06-XX — Correction définitive build complet backend & frontend (Node 20+, Jest, types, Vite)
+
+- Réinstallation complète de toutes les dépendances backend et frontend (`yarn install --check-files --force` dans chaque dossier).
+- Installation explicite de Jest côté backend pour garantir l'exécution des tests sans suppression de code ni de tests.
+- Build backend (`yarn build` dans businessconnect-senegal/server) : **OK** (aucune erreur de type, aucun code supprimé).
+- Build frontend (`yarn build` dans client-vite-fix) : **OK** (aucune erreur bloquante, aucun code supprimé, site complet maintenu).
+- Aucun passage en version minimaliste, aucune fonctionnalité retirée, aucune perturbation de l'affichage ou du fonctionnement.
+- Tous les types nécessaires sont présents (`@types/*`), Node 20.x respecté, Jest installé, Vite opérationnel.
+- Le site complet, dans sa version de production, passe le build et les tests, prêt pour Render.
+- Traçabilité assurée dans ce mémo.
+
 --- 
