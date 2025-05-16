@@ -338,4 +338,5 @@ const CVPreviewGallery: React.FC = () => {
   );
 };
 
-export default CVPreviewGallery; 
+export default CVPreviewGallery;
+export { DEMO_PROFILES }; 

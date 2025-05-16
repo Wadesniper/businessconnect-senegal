@@ -4,6 +4,8 @@ import { LockOutlined, StarOutlined } from '@ant-design/icons';
 import type { Template } from '../../../types/cv';
 import { CV_TEMPLATES } from '../components/data/templates';
 import { useNavigate } from 'react-router-dom';
+import { DEMO_PROFILES } from '../CVPreviewGallery';
+import styles from './TemplateSelection.module.css';
 
 const { Title, Text } = Typography;
 const { Search } = Input;
@@ -114,20 +116,14 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
               <Card
                 hoverable
                 cover={
-                  <div style={{ position: 'relative' }}>
-                    <img
-                      alt={template.name}
-                      src={template.thumbnail}
-                      style={{
-                        width: '100%',
-                        height: 220,
-                        objectFit: 'cover',
-                        borderTopLeftRadius: 8,
-                        borderTopRightRadius: 8,
-                        filter: template.premium && !isSubscribed ? 'grayscale(0.2)' : undefined,
-                        opacity: template.premium && !isSubscribed ? 0.92 : 1
-                      }}
-                    />
+                  <div style={{ position: 'relative', background: '#f7faff', minHeight: 220, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {/* Aperçu dynamique du template */}
+                    <div style={{ transform: 'scale(0.32)', transformOrigin: 'top left', width: 900, height: 1270, pointerEvents: 'none', borderRadius: 12, overflow: 'hidden', boxShadow: '0 2px 12px #1890ff22', background: '#fff' }}>
+                      {template.component && (
+                        <template.component data={DEMO_PROFILES[template.id.split('-')[0]] || DEMO_PROFILES['finance']} customization={{}} />
+                      )}
+                    </div>
+                    {/* Overlay premium si non abonné */}
                     {template.premium && !isSubscribed && (
                       <div style={{
                         position: 'absolute',
@@ -167,6 +163,30 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                         </Button>
                       </div>
                     )}
+                    {/* Bouton Voir en grand en hover */}
+                    <Button
+                      type="default"
+                      size="small"
+                      style={{
+                        position: 'absolute',
+                        bottom: 12,
+                        right: 12,
+                        zIndex: 3,
+                        opacity: 0.92,
+                        borderRadius: 8,
+                        fontWeight: 600,
+                        background: '#fff',
+                        boxShadow: '0 2px 8px #1890ff22',
+                        display: 'none',
+                      }}
+                      className={styles.showOnHover}
+                      onClick={e => {
+                        e.stopPropagation();
+                        navigate(`/cv-preview/${template.id}`);
+                      }}
+                    >
+                      Voir en grand
+                    </Button>
                   </div>
                 }
                 onClick={() => {
