@@ -5,9 +5,7 @@ dotenv.config();
 const validateConfig = () => {
   const requiredEnvVars = [
     'MONGODB_URI',
-    'JWT_SECRET',
-    'PAYTECH_API_KEY',
-    'PAYTECH_WEBHOOK_SECRET'
+    'JWT_SECRET'
   ];
 
   const missingVars = requiredEnvVars.filter(
@@ -40,13 +38,6 @@ export const config = {
   SMTP_USER: process.env.SMTP_USER || '',
   SMTP_PASSWORD: process.env.SMTP_PASSWORD || '',
   SMTP_FROM: process.env.SMTP_FROM || 'noreply@businessconnect.sn',
-
-  // Configuration PayTech
-  paytech: {
-    apiKey: process.env.PAYTECH_API_KEY || '',
-    apiSecret: process.env.PAYTECH_API_SECRET || '',
-    apiUrl: process.env.PAYTECH_API_URL || 'https://paytech.sn'
-  },
 
   // URLs de l'application
   CLIENT_URL: process.env.CLIENT_URL || 'http://localhost:3000',
