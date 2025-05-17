@@ -176,8 +176,8 @@ cvSchema.index({ isPublic: 1 });
 // Hooks
 cvSchema.pre('save', function(next) {
   if (this.isModified()) {
-    this.lastGenerated = null;
-    this.pdfUrl = null;
+    this.lastGenerated = undefined;
+    this.pdfUrl = undefined;
   }
   next();
 });
