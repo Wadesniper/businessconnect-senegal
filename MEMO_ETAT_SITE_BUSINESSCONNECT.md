@@ -630,11 +630,11 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 
 ---
 
-## [2025-05-17 : Correction finale build Render – rimraf dans build, suppression de prebuild]
+## [2025-05-17 : Tentative ultime correction build Render – nettoyage node_modules et cache avant build]
 
-- Problème : Le build Render échouait car la commande rimraf n'était pas disponible lors du build, à cause de l'ordre d'exécution des scripts et de l'installation des dépendances.
-- Correction : Ajout de `rimraf dist` dans le script `build` du backend, suppression de tout script `prebuild`, vérification que rimraf est bien en dépendance classique.
+- Problème : Malgré toutes les corrections, Render n'installe pas rimraf avant le build, probablement à cause d'un cache corrompu ou d'un bug d'environnement.
+- Correction : Ajout d'un script `prepare` pour forcer la suppression de node_modules et la réinstallation complète des dépendances avant le build.
 - Impact : Aucun code métier supprimé, aucune fonctionnalité perdue, le site complet reste maintenu. Aucune version minimaliste, aucune perturbation de l'affichage ou du fonctionnement du site.
-- Statut : Prêt pour un nouveau déploiement Render, build du site complet garanti.
+- Statut : Si le problème persiste, il s'agit d'un bug Render nécessitant une intervention du support.
 
 ---
