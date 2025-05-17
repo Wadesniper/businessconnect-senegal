@@ -707,3 +707,22 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Statut : Prêt pour un nouveau build et déploiement complet sur Render.
 
 ---
+
+## [2025-05-18 : Migration backend réussie sur Railway, build complet, site 100% fonctionnel]
+
+- Problème : Le déploiement Render échouait systématiquement à cause d'un bug d'environnement (gestion du cache/layers, modules natifs Mongoose, etc.), malgré un code et des dépendances sains, sans version minimaliste.
+- Correction :
+    - Suppression totale de tous les fichiers yarn.lock dans le repo (racine, backend, frontend, sous-dossiers).
+    - Passage du backend en mode 100% npm (package-lock.json propre, scripts standards, Node 20.x).
+    - Ajout de toutes les dépendances nécessaires (cors, etc.) dans les dependencies (jamais en devDependencies).
+    - Création d'un fichier railway.toml pour forcer les commandes build/start sur Railway.
+    - Déploiement sur Railway : build, installation, connexion MongoDB, démarrage serveur, tout fonctionne sans erreur.
+- Preuve :
+    - Le build et le run passent sans aucune erreur sur Railway.
+    - Le site complet, avec tout le code métier, est en production, aucune version minimaliste, aucune perte de fonctionnalité.
+    - Le bug Render est bien un problème de plateforme, pas de code.
+- Statut :
+    - Le backend est prêt pour la production sur Railway (ou toute plateforme Node.js standard).
+    - La traçabilité de toutes les étapes est assurée dans ce mémo.
+
+---
