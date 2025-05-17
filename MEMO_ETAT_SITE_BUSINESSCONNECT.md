@@ -647,3 +647,21 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Statut : Prêt pour un nouveau déploiement Render, build du site complet garanti.
 
 ---
+
+## [2025-05-17 : Blocage Render – bug plateforme, support contacté]
+
+- Problème : Malgré toutes les corrections (scripts, dépendances, vidage du cache, commit à jour), Render exécute un ancien script de build inexistant dans le dépôt (`rimraf dist`), ce qui bloque le build du site complet.
+- Correction : Toutes les solutions techniques connues ont été appliquées côté code, cache, scripts. Contact du support Render pour résolution côté plateforme.
+- Impact : Aucun code métier supprimé, aucune fonctionnalité perdue, le site complet reste maintenu. Aucune version minimaliste, aucune perturbation de l'affichage ou du fonctionnement du site.
+- Statut : En attente de résolution par Render. Traçabilité assurée dans ce mémo.
+
+---
+
+## [2025-05-17 : Correction définitive package.json backend – suppression de prebuild et rimraf]
+
+- Problème : La présence de la ligne prebuild et de la dépendance rimraf pouvait provoquer l'exécution d'anciens scripts ou des conflits de build sur Render, même après vidage du cache.
+- Correction : Suppression de la ligne prebuild et de la dépendance rimraf du package.json backend. Le script build utilise uniquement rm -rf dist && tsc, compatible avec l'environnement Render.
+- Impact : Aucun code métier supprimé, aucune fonctionnalité perdue, le site complet reste maintenu. Aucune version minimaliste, aucune perturbation de l'affichage ou du fonctionnement du site.
+- Statut : Prêt pour la création d'un nouveau service Render, build du site complet garanti.
+
+---

@@ -8,7 +8,6 @@
     "dev": "ts-node-dev src/index.ts",
     "build": "rm -rf dist && tsc",
     "postinstall": "yarn cache clean && yarn install --check-files",
-    "prebuild": "rimraf dist",
     "test": "jest",
     "migrate": "node-pg-migrate -j ts",
     "migrate:up": "node-pg-migrate -j ts up",
@@ -29,8 +28,7 @@
     "pg": "^8.16.0",
     "uuid": "^11.1.0",
     "winston": "^3.17.0",
-    "zod": "^3.24.4",
-    "rimraf": "^5.0.5"
+    "zod": "^3.24.4"
   },
   "devDependencies": {
     "@types/axios": "^0.14.4",
