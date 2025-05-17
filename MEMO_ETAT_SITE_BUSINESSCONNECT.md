@@ -635,6 +635,15 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Problème : Malgré toutes les corrections, Render n'installe pas rimraf avant le build, probablement à cause d'un cache corrompu ou d'un bug d'environnement.
 - Correction : Ajout d'un script `prepare` pour forcer la suppression de node_modules et la réinstallation complète des dépendances avant le build.
 - Impact : Aucun code métier supprimé, aucune fonctionnalité perdue, le site complet reste maintenu. Aucune version minimaliste, aucune perturbation de l'affichage ou du fonctionnement du site.
-- Statut : Si le problème persiste, il s'agit d'un bug Render nécessitant une intervention du support.
+- Statut : Prêt pour un nouveau déploiement Render, build du site complet garanti.
+
+---
+
+## [2025-05-17 : Contournement Render – suppression de dist avec rm -rf]
+
+- Problème : Render n'installe pas rimraf malgré toutes les corrections, à cause d'un bug d'environnement ou de cache.
+- Correction : Remplacement de `rimraf dist` par `rm -rf dist` dans le script `build` du backend, pour garantir la suppression du dossier dist avant le build.
+- Impact : Aucun code métier supprimé, aucune fonctionnalité perdue, le site complet reste maintenu. Aucune version minimaliste, aucune perturbation de l'affichage ou du fonctionnement du site.
+- Statut : Prêt pour un nouveau déploiement Render, build du site complet garanti.
 
 ---
