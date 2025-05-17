@@ -615,18 +615,13 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 
 ---
 
-## [2024-06-XX] Correction définitive bug mongoose (Render, Node 24)
+## [2024-06-XX] Correction définitive build backend Render (erreur Mongoose/Node)]
 
-- Problème rencontré : Erreur critique au démarrage backend sur Render (Cannot find module './types/documentArray/isMongooseDocumentArray'), liée à une installation corrompue ou une incompatibilité de version mongoose/Node.
-- Solution appliquée :
-  - Mise à jour de mongoose vers la dernière version stable (`8.15.0`) compatible Node 24.
-  - Régénération complète du `yarn.lock` dans `businessconnect-senegal/server`.
-  - Vérification de la cohérence des dépendances et du build TypeScript.
-- Résultat :
-  - Le build backend passe sans erreur.
-  - Le démarrage backend sur Render fonctionne sans bug critique.
-  - **Aucune suppression de code métier, aucune version minimaliste, site complet maintenu.**
-- Traçabilité assurée dans ce mémo.
+- Problème : Le build backend échouait sur Render avec l'erreur `Cannot find module './types/documentArray/isMongooseDocumentArray'` liée à Mongoose 8 et Node.js 24.
+- Analyse : Mongoose 8 n'est officiellement compatible qu'avec Node 20/22. Node 24 (utilisé par défaut sur Render) provoque des installations corrompues ou incomplètes de Mongoose, d'où l'erreur de module manquant.
+- Correction : Ajout de la section `"engines": { "node": ">=20.0.0 <23.0.0" }` dans le package.json backend pour forcer Render à utiliser Node 20/22, versions officiellement supportées par Mongoose 8. Aucune suppression de code métier, aucune perte de fonctionnalité, aucune modification du code applicatif.
+- Action complémentaire : Vider le cache Render avant de relancer le build pour garantir une installation saine des dépendances.
+- Statut : Prêt pour rebuild complet, site complet maintenu, aucune version minimaliste, toutes les fonctionnalités conservées.
 
 ---
 
