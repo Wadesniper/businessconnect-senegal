@@ -11,7 +11,8 @@
     "migrate": "node-pg-migrate -j ts",
     "migrate:up": "node-pg-migrate -j ts up",
     "migrate:down": "node-pg-migrate -j ts down",
-    "migrate:create": "node-pg-migrate -j ts create"
+    "migrate:create": "node-pg-migrate -j ts create",
+    "postinstall": "npm install mongoose@7.6.0"
   },
   "dependencies": {
     "axios": "^1.9.0",

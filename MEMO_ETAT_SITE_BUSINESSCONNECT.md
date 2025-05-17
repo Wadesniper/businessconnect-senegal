@@ -697,3 +697,13 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Statut : Prêt pour un nouveau build, tests et déploiement complet sur Render.
 
 ---
+
+## [2024-05-17 : Ajout postinstall npm pour Mongoose sur Render]
+
+- Problème : Malgré un build et une installation propres, Render chargeait une version corrompue de Mongoose (module manquant) uniquement en production.
+- Correction : Ajout du script `postinstall` (`npm install mongoose@7.6.0`) dans le package.json backend pour forcer l'installation propre de Mongoose après chaque build sur Render.
+- Raison : Render mélange parfois Yarn et npm, ce qui peut corrompre node_modules. Ce postinstall garantit que Mongoose est bien installé, même si le cache Render est défaillant.
+- Impact : Aucun code métier supprimé, aucune fonctionnalité perdue, le site complet reste maintenu. Aucune version minimaliste, aucune perturbation de l'affichage ou du fonctionnement du site.
+- Statut : Prêt pour un nouveau build et déploiement complet sur Render.
+
+---
