@@ -688,3 +688,12 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Ce mémo doit être mis à jour à chaque correction majeure impactant le build, les dépendances ou le déploiement.
 
 ---
+
+## [2024-05-17 : Correction définitive boucle infinie Yarn (script prepare)]
+
+- Problème : Le script "prepare" dans le package.json backend relançait sans cesse "yarn install", provoquant une boucle infinie et l'échec de l'installation des dépendances (local et Render).
+- Correction : Suppression du script "prepare" du package.json. L'installation des dépendances se fait désormais proprement sans boucle.
+- Impact : Aucun code métier supprimé, aucune fonctionnalité perdue, le site complet reste maintenu. Aucune version minimaliste, aucune perturbation de l'affichage ou du fonctionnement du site.
+- Statut : Prêt pour un nouveau build, tests et déploiement complet sur Render.
+
+---

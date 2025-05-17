@@ -11,8 +11,7 @@
     "migrate": "node-pg-migrate -j ts",
     "migrate:up": "node-pg-migrate -j ts up",
     "migrate:down": "node-pg-migrate -j ts down",
-    "migrate:create": "node-pg-migrate -j ts create",
-    "prepare": "yarn install --check-files"
+    "migrate:create": "node-pg-migrate -j ts create"
   },
   "dependencies": {
     "axios": "^1.9.0",
@@ -25,10 +24,10 @@
     "nodemailer": "^7.0.3",
     "pdfkit": "^0.17.1",
     "pg": "^8.16.0",
+    "rimraf": "^6.0.1",
     "uuid": "^11.1.0",
     "winston": "^3.17.0",
-    "zod": "^3.24.4",
-    "rimraf": "^6.0.1"
+    "zod": "^3.24.4"
   },
   "devDependencies": {
     "@types/axios": "^0.14.4",
