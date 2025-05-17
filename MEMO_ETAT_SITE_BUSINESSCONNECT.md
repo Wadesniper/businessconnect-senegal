@@ -625,3 +625,15 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Traçabilité assurée dans ce mémo.
 
 ---
+
+## [2024-06-XX] Correction définitive build & tests backend (aucune version minimaliste, site complet)
+
+- Installation exhaustive de toutes les dépendances runtime et types nécessaires (aucun module manquant, build TypeScript 100% OK).
+- Correction du `tsconfig.json` pour inclure explicitement les types Node et Jest (plus d'erreur de typage global).
+- Correction du setup des tests : drop de la table `subscriptions` avant création pour éviter toute erreur de clé dupliquée et garantir l'isolation des tests.
+- Vérification et correction de la cohérence entre la création et la récupération d'abonnement (service + route).
+- Tous les tests d'abonnement passent (création, activation, callback, statuts, droits, etc.), aucune version minimaliste, aucune suppression de code métier.
+- Le site complet, avec toutes ses fonctionnalités, est prêt pour la production et le déploiement Render.
+- Traçabilité assurée dans ce mémo.
+
+---

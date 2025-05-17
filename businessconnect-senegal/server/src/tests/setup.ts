@@ -27,7 +27,8 @@ beforeAll(async () => {
   }
   await mongoose.connect(mongoUri);
 
-  // Création des tables nécessaires
+  // Drop la table avant de la recréer pour éviter les erreurs de clé dupliquée
+  await pool.query('DROP TABLE IF EXISTS subscriptions CASCADE;');
   await pool.query(`
     CREATE TABLE IF NOT EXISTS subscriptions (
       id UUID PRIMARY KEY,
