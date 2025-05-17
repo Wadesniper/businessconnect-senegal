@@ -20,11 +20,9 @@ router.get('/:userId', authenticate, async (req: Request, res: Response) => {
       return;
     }
     res.json(subscription);
-    return;
   } catch (error) {
     logger.error('Erreur lors de la récupération de l\'abonnement:', error);
     res.status(500).json({ error: 'Erreur serveur lors de la récupération de l\'abonnement' });
-    return;
   }
 });
 
@@ -56,44 +54,40 @@ router.post('/initiate', authenticate, async (req: Request, res: Response) => {
     // Retourner une fausse URL de paiement pour les tests
     const paymentUrl = `http://localhost:3000/fake-payment?userId=${userId}`;
     res.json({ paymentUrl });
-    return;
   } catch (error) {
     logger.error('Erreur lors de l\'initiation de l\'abonnement:', error);
     res.status(500).json({ error: 'Erreur serveur lors de l\'initiation de l\'abonnement' });
-    return;
   }
 });
 
 // Callback de paiement (simulation)
-router.post('/payment-callback', async (req: Request, res: Response) => {
+router.post('/payment-callback', async (req: Request, res: Response): Promise<void> => {
   try {
     const { userId, status } = req.body;
     if (!userId || !status) {
-      return res.status(400).json({ error: 'Paramètres manquants' });
+      res.status(400).json({ error: 'Paramètres manquants' });
+      return;
     }
     // Récupérer l'abonnement le plus récent
     const subscription = await subscriptionService.getSubscription(userId);
     if (!subscription) {
-      return res.status(404).json({ error: 'Abonnement non trouvé' });
+      res.status(404).json({ error: 'Abonnement non trouvé' });
+      return;
     }
     if (status === 'success') {
       const updated = await subscriptionService.updateSubscription(userId, { status: 'active' });
-      if (!updated) {
-        return res.status(500).json({ error: 'Erreur lors de l\'activation de l\'abonnement' });
-      }
-      return res.status(200).json({ message: 'Abonnement activé' });
-    } else if (status === 'failed') {
+      res.status(200).json({ message: 'Abonnement activé', subscription: updated });
+      return;
+    } else if (status === 'expired') {
       const updated = await subscriptionService.updateSubscription(userId, { status: 'expired' });
-      if (!updated) {
-        return res.status(500).json({ error: 'Erreur lors de l\'expiration de l\'abonnement' });
-      }
-      return res.status(400).json({ error: 'Paiement échoué, abonnement expiré' });
+      res.status(200).json({ message: 'Abonnement expiré', subscription: updated });
+      return;
     } else {
-      return res.status(400).json({ error: 'Statut de paiement inconnu' });
+      res.status(400).json({ error: 'Statut de paiement invalide' });
+      return;
     }
   } catch (error) {
-    logger.error('Erreur lors du callback de paiement:', error);
-    res.status(500).json({ error: 'Erreur serveur lors du callback de paiement' });
+    res.status(500).json({ error: 'Erreur serveur', details: (error as Error).message });
     return;
   }
 });
