@@ -90,7 +90,7 @@ beforeAll(async () => {
     await initTestDatabase();
   } catch (error) {
     logger.error('Erreur lors de l\'initialisation de la base de données de test:', error);
-    process.exit(1);
+    throw error;
   }
 });
 
