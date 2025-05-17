@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node dist/index.js",
     "dev": "ts-node-dev src/index.ts",
-    "build": "rimraf dist && tsc",
+    "build": "npx rimraf dist && tsc",
     "test": "jest",
     "migrate": "node-pg-migrate -j ts",
     "migrate:up": "node-pg-migrate -j ts up",
