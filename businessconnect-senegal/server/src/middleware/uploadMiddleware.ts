@@ -5,17 +5,17 @@ import { logger } from '../utils/logger';
 
 // Configuration du stockage
 const storage = multer.diskStorage({
-  destination: (_req: Request, _file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) => {
+  destination: (_req: any, _file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) => {
     cb(null, path.join(__dirname, '../../uploads'));
   },
-  filename: (_req: Request, _file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) => {
+  filename: (_req: any, _file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) => {
     const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1E9)}`;
     cb(null, `${_file.fieldname}-${uniqueSuffix}${path.extname(_file.originalname)}`);
   }
 });
 
 // Filtre des fichiers
-const fileFilter = (_req: Request, _file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+const fileFilter = (_req: any, _file: Express.Multer.File, cb: multer.FileFilterCallback) => {
   const allowedMimes = [
     'image/jpeg',
     'image/png',

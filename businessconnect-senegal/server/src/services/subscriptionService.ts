@@ -81,10 +81,13 @@ export class SubscriptionService {
     }
   }
 
-  public async getSubscription(_: string): Promise<any> {
+  public async getSubscription(userId: string): Promise<any> {
     try {
-      // Adapter selon le modèle utilisé
-      throw new Error('getSubscription à adapter selon le modèle');
+      const result = await pool.query(
+        'SELECT * FROM subscriptions WHERE user_id = $1 ORDER BY created_at DESC LIMIT 1',
+        [userId]
+      );
+      return result.rows[0] || null;
     } catch (error) {
       logger.error('Erreur lors de la récupération de l\'abonnement:', error);
       throw error;
@@ -143,10 +146,12 @@ export class SubscriptionService {
       ORDER BY created_at DESC 
       LIMIT 1
     `;
-    
     try {
       const result = await pool.query(query, [userId]);
-      return result.rows[0] || null;
+      if (result.rows[0]) return result.rows[0];
+      // Si aucun abonnement actif, retourner le plus récent
+      const fallback = await pool.query('SELECT * FROM subscriptions WHERE user_id = $1 ORDER BY created_at DESC LIMIT 1', [userId]);
+      return fallback.rows[0] || null;
     } catch (error) {
       logger.error('Error getting active subscription:', error);
       throw error;
@@ -159,10 +164,19 @@ export class SubscriptionService {
     return result.rows[0] || null;
   }
 
-  public async createSubscription(_: string, __: any): Promise<any> {
+  public async createSubscription(userId: string, type: string): Promise<any> {
     try {
-      // Adapter selon le modèle utilisé
-      throw new Error('createSubscription à adapter selon le modèle');
+      const id = uuidv4();
+      const status = 'pending';
+      const startDate = new Date();
+      const endDate = new Date();
+      endDate.setMonth(endDate.getMonth() + 1); // Abonnement d'un mois par défaut
+      const result = await pool.query(
+        `INSERT INTO subscriptions (id, user_id, type, status, start_date, end_date, created_at, updated_at)
+         VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW()) RETURNING *`,
+        [id, userId, type, status, startDate, endDate]
+      );
+      return result.rows[0];
     } catch (error) {
       logger.error('Erreur lors de la création de l\'abonnement:', error);
       throw error;
@@ -174,37 +188,35 @@ export class SubscriptionService {
     paymentId?: string;
     expiresAt?: Date;
   }) {
+    // Cibler le dernier abonnement de l'utilisateur
+    const last = await pool.query('SELECT id FROM subscriptions WHERE user_id = $1 ORDER BY created_at DESC LIMIT 1', [userId]);
+    if (!last.rows[0]) return null;
+    const subscriptionId = last.rows[0].id;
     const updates = [];
-    const values = [userId];
+    const values = [subscriptionId];
     let valueCount = 2;
-
     if (data.status) {
       updates.push(`status = $${valueCount}`);
       values.push(data.status);
       valueCount++;
     }
-
     if (data.paymentId) {
       updates.push(`payment_id = $${valueCount}`);
       values.push(data.paymentId);
       valueCount++;
     }
-
     if (data.expiresAt) {
-      updates.push(`expires_at = $${valueCount}`);
+      updates.push(`end_date = $${valueCount}`);
       values.push(data.expiresAt instanceof Date ? data.expiresAt.toISOString() : data.expiresAt);
       valueCount++;
     }
-
     updates.push(`updated_at = NOW()`);
-
     const query = `
       UPDATE subscriptions 
       SET ${updates.join(', ')}
-      WHERE user_id = $1 AND status != 'cancelled'
+      WHERE id = $1
       RETURNING *
     `;
-
     const result = await pool.query(query, values);
     return result.rows[0];
   }

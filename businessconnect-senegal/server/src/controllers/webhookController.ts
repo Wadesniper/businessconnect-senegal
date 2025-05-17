@@ -13,9 +13,9 @@ export class WebhookController {
       const { type, data } = req.body;
 
       if (type === 'payment.success') {
-        // TODO: Vérifier le paiement via CinetPay ou autre service ici
-        // const paymentVerification = await ...
-        // if (paymentVerification.status === 'completed') {
+        // Ici, implémenter la vérification du paiement CinetPay selon la documentation officielle
+        // Exemple : const paymentVerification = await cinetpayService.verifyPayment(data.paymentId);
+        // if (paymentVerification.status === 'completed') { ... }
         if (data && data.paymentId) {
           // Extraire les informations de la référence de commande
           const [, , userId] = data.ref_command.split('-');

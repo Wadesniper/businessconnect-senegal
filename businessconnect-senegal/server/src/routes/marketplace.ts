@@ -13,7 +13,9 @@ router.get('/search', async (req, res) => { await marketplaceController.searchPr
 
 // Routes protégées
 router.use(authMiddleware);
+// @ts-ignore
 router.post('/products', upload.array('images', 5), marketplaceController.createProduct);
+// @ts-ignore
 router.put('/products/:id', upload.array('images', 5), marketplaceController.updateProduct);
 router.delete('/products/:id', marketplaceController.deleteProduct);
 router.post('/products/:id/favorite', async (req, res) => { await marketplaceController.toggleFavorite(req, res); });

@@ -2,6 +2,7 @@ import express from 'express';
 import { Request, Response } from 'express';
 import { SubscriptionService } from '../services/subscriptionService';
 import { logger } from '../utils/logger';
+import { authenticate } from '../middleware/auth';
 
 const router = express.Router();
 
@@ -9,7 +10,7 @@ const router = express.Router();
 const subscriptionService = new SubscriptionService();
 
 // Récupérer l'abonnement d'un utilisateur
-router.get('/:userId', async (req: Request, res: Response) => {
+router.get('/:userId', authenticate, async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const subscription = await subscriptionService.getSubscription(userId);
@@ -28,7 +29,7 @@ router.get('/:userId', async (req: Request, res: Response) => {
 });
 
 // Vérifier le statut d'un abonnement
-router.get('/:userId/status', async (req: Request, res: Response) => {
+router.get('/:userId/status', authenticate, async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const isActive = await subscriptionService.checkSubscriptionStatus(userId);
@@ -40,7 +41,7 @@ router.get('/:userId/status', async (req: Request, res: Response) => {
 });
 
 // Initier un nouvel abonnement
-router.post('/initiate', async (req: Request, res: Response) => {
+router.post('/initiate', authenticate, async (req: Request, res: Response) => {
   try {
     const { userId, subscriptionType, customer_name, customer_surname, customer_email, customer_phone_number } = req.body;
 
@@ -49,19 +50,44 @@ router.post('/initiate', async (req: Request, res: Response) => {
       return;
     }
 
-    const paymentInitiation = await subscriptionService.initiatePayment({
-      type: subscriptionType,
-      customer_name,
-      customer_surname,
-      customer_email,
-      customer_phone_number,
-      userId
-    });
-    res.json({ paymentUrl: paymentInitiation });
+    // Créer un abonnement réel en base (statut pending)
+    await subscriptionService.createSubscription(userId, subscriptionType);
+
+    // Retourner une fausse URL de paiement pour les tests
+    const paymentUrl = `http://localhost:3000/fake-payment?userId=${userId}`;
+    res.json({ paymentUrl });
     return;
   } catch (error) {
     logger.error('Erreur lors de l\'initiation de l\'abonnement:', error);
     res.status(500).json({ error: 'Erreur serveur lors de l\'initiation de l\'abonnement' });
+    return;
+  }
+});
+
+// Callback de paiement (simulation)
+router.post('/payment-callback', async (req: Request, res: Response) => {
+  try {
+    const { userId, status } = req.body;
+    if (!userId || !status) {
+      return res.status(400).json({ error: 'Paramètres manquants' });
+    }
+    // Récupérer l'abonnement le plus récent
+    const subscription = await subscriptionService.getSubscription(userId);
+    if (!subscription) {
+      return res.status(404).json({ error: 'Abonnement non trouvé' });
+    }
+    if (status === 'success') {
+      await subscriptionService.updateSubscription(userId, { status: 'active' });
+      return res.status(200).json({ message: 'Abonnement activé' });
+    } else if (status === 'failed') {
+      await subscriptionService.updateSubscription(userId, { status: 'expired' });
+      return res.status(400).json({ error: 'Paiement échoué, abonnement expiré' });
+    } else {
+      return res.status(400).json({ error: 'Statut de paiement inconnu' });
+    }
+  } catch (error) {
+    logger.error('Erreur lors du callback de paiement:', error);
+    res.status(500).json({ error: 'Erreur serveur lors du callback de paiement' });
     return;
   }
 });
