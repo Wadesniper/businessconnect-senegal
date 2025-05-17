@@ -70,11 +70,15 @@ export class SubscriptionService {
     // if (paymentData.status === 'ACCEPTED') { ... }
   }
 
-  public async updateSubscriptionStatus(_: string, __: string): Promise<any> {
+  public async updateSubscriptionStatus(subscriptionId: string, status: string): Promise<any> {
     try {
-      // Adapter selon le modèle utilisé (Mongoose ou SQL)
-      // Ex: await SubscriptionModel.findByIdAndUpdate(...) ou requête SQL
-      throw new Error('updateSubscriptionStatus à adapter selon le modèle');
+      logger.info('[updateSubscriptionStatus] Mise à jour', { subscriptionId, status });
+      const result = await pool.query(
+        'UPDATE subscriptions SET status = $1, updated_at = NOW() WHERE id = $2 RETURNING *',
+        [status, subscriptionId]
+      );
+      logger.info('[updateSubscriptionStatus] Résultat', result.rows[0]);
+      return result.rows[0] || null;
     } catch (error) {
       logger.error('Erreur lors de la mise à jour du statut de l\'abonnement:', error);
       throw error;
@@ -87,6 +91,11 @@ export class SubscriptionService {
         'SELECT * FROM subscriptions WHERE user_id = $1 ORDER BY created_at DESC LIMIT 1',
         [userId]
       );
+      if (result.rows[0]) {
+        logger.info('[getSubscription] Abonnement trouvé', result.rows[0]);
+      } else {
+        logger.warn(`[getSubscription] Aucun abonnement trouvé pour userId=${userId}`);
+      }
       return result.rows[0] || null;
     } catch (error) {
       logger.error('Erreur lors de la récupération de l\'abonnement:', error);
@@ -148,9 +157,17 @@ export class SubscriptionService {
     `;
     try {
       const result = await pool.query(query, [userId]);
-      if (result.rows[0]) return result.rows[0];
+      if (result.rows[0]) {
+        logger.info('[getActiveSubscription] Abonnement actif trouvé', result.rows[0]);
+        return result.rows[0];
+      }
       // Si aucun abonnement actif, retourner le plus récent
       const fallback = await pool.query('SELECT * FROM subscriptions WHERE user_id = $1 ORDER BY created_at DESC LIMIT 1', [userId]);
+      if (fallback.rows[0]) {
+        logger.info('[getActiveSubscription] Aucun actif, retour du plus récent', fallback.rows[0]);
+      } else {
+        logger.warn(`[getActiveSubscription] Aucun abonnement trouvé pour userId=${userId}`);
+      }
       return fallback.rows[0] || null;
     } catch (error) {
       logger.error('Error getting active subscription:', error);
@@ -171,12 +188,18 @@ export class SubscriptionService {
       const startDate = new Date();
       const endDate = new Date();
       endDate.setMonth(endDate.getMonth() + 1); // Abonnement d'un mois par défaut
-      const result = await pool.query(
-        `INSERT INTO subscriptions (id, user_id, type, status, start_date, end_date, created_at, updated_at)
-         VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW()) RETURNING *`,
-        [id, userId, type, status, startDate, endDate]
-      );
-      return result.rows[0];
+      logger.info('[createSubscription] Insertion', { id, userId, type, status, startDate, endDate });
+      const query = `INSERT INTO subscriptions (id, user_id, type, status, start_date, end_date, created_at, updated_at)
+         VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW()) RETURNING *`;
+      const values = [id, userId, type, status, startDate, endDate];
+      try {
+        const result = await pool.query(query, values);
+        logger.info('[createSubscription] Résultat insertion', result.rows[0]);
+        return result.rows[0] || { id, user_id: userId, type, status, start_date: startDate, end_date: endDate };
+      } catch (sqlError) {
+        logger.error('[createSubscription] ERREUR SQL', { query, values, sqlError });
+        throw sqlError;
+      }
     } catch (error) {
       logger.error('Erreur lors de la création de l\'abonnement:', error);
       throw error;
@@ -218,7 +241,7 @@ export class SubscriptionService {
       RETURNING *
     `;
     const result = await pool.query(query, values);
-    return result.rows[0];
+    return result.rows[0] || null;
   }
 
   async checkSubscriptionAccess(userId: string): Promise<boolean> {

@@ -30,11 +30,11 @@ beforeAll(async () => {
   // Création des tables nécessaires
   await pool.query(`
     CREATE TABLE IF NOT EXISTS subscriptions (
-      id VARCHAR(255) PRIMARY KEY,
-      user_id VARCHAR(255) NOT NULL,
+      id UUID PRIMARY KEY,
+      user_id UUID NOT NULL,
       type VARCHAR(50) NOT NULL,
       status VARCHAR(50) NOT NULL,
-      payment_id VARCHAR(255),
+      payment_id UUID,
       start_date TIMESTAMP NOT NULL,
       end_date TIMESTAMP NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -54,11 +54,11 @@ beforeEach(async () => {
   // Création de la table PostgreSQL si elle n'existe pas
   await pool.query(`
     CREATE TABLE IF NOT EXISTS subscriptions (
-      id VARCHAR(255) PRIMARY KEY,
-      user_id VARCHAR(255) NOT NULL,
+      id UUID PRIMARY KEY,
+      user_id UUID NOT NULL,
       type VARCHAR(50) NOT NULL,
       status VARCHAR(50) NOT NULL,
-      payment_id VARCHAR(255),
+      payment_id UUID,
       start_date TIMESTAMP NOT NULL,
       end_date TIMESTAMP NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -87,9 +87,6 @@ jest.mock('../utils/logger', () => ({
     debug: jest.fn()
   }
 }));
-
-// Mock des dépendances externes
-jest.mock('../services/subscriptionService');
 
 // Initialiser la base de données avant tous les tests
 beforeAll(async () => {

@@ -77,10 +77,16 @@ router.post('/payment-callback', async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Abonnement non trouvé' });
     }
     if (status === 'success') {
-      await subscriptionService.updateSubscription(userId, { status: 'active' });
+      const updated = await subscriptionService.updateSubscription(userId, { status: 'active' });
+      if (!updated) {
+        return res.status(500).json({ error: 'Erreur lors de l\'activation de l\'abonnement' });
+      }
       return res.status(200).json({ message: 'Abonnement activé' });
     } else if (status === 'failed') {
-      await subscriptionService.updateSubscription(userId, { status: 'expired' });
+      const updated = await subscriptionService.updateSubscription(userId, { status: 'expired' });
+      if (!updated) {
+        return res.status(500).json({ error: 'Erreur lors de l\'expiration de l\'abonnement' });
+      }
       return res.status(400).json({ error: 'Paiement échoué, abonnement expiré' });
     } else {
       return res.status(400).json({ error: 'Statut de paiement inconnu' });
