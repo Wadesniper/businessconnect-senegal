@@ -615,25 +615,17 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 
 ---
 
-## [2024-06-XX] Correction définitive des dépendances runtime et types manquants (build & déploiement prod)
+## [2024-06-XX] Correction définitive bug mongoose (Render, Node 24)
 
-- Réinstallation complète de toutes les dépendances runtime et types nécessaires (`express`, `express-validator`, `mongoose`, `pg`, `winston`, `nodemailer`, `pdfkit`, `uuid`, `axios`, `dotenv`, `mongodb-memory-server`, `supertest`, `jsonwebtoken`, `bcryptjs`, etc. + tous les `@types/*`).
-- Ajout de `@types/node` pour corriger tous les types globaux (`process`, `console`, `__dirname`, etc.).
-- Correction des erreurs TS2307 (module introuvable) et des erreurs de build liées aux types.
-- Build backend **100% réussi** et compatible production, aucune suppression de code métier, aucune version minimaliste.
-- Le site complet passe les tests, le build et le déploiement Render sans perte de fonctionnalité.
-- Traçabilité assurée dans ce mémo.
-
----
-
-## [2024-06-XX] Correction définitive build & tests backend (aucune version minimaliste, site complet)
-
-- Installation exhaustive de toutes les dépendances runtime et types nécessaires (aucun module manquant, build TypeScript 100% OK).
-- Correction du `tsconfig.json` pour inclure explicitement les types Node et Jest (plus d'erreur de typage global).
-- Correction du setup des tests : drop de la table `subscriptions` avant création pour éviter toute erreur de clé dupliquée et garantir l'isolation des tests.
-- Vérification et correction de la cohérence entre la création et la récupération d'abonnement (service + route).
-- Tous les tests d'abonnement passent (création, activation, callback, statuts, droits, etc.), aucune version minimaliste, aucune suppression de code métier.
-- Le site complet, avec toutes ses fonctionnalités, est prêt pour la production et le déploiement Render.
+- Problème rencontré : Erreur critique au démarrage backend sur Render (Cannot find module './types/documentArray/isMongooseDocumentArray'), liée à une installation corrompue ou une incompatibilité de version mongoose/Node.
+- Solution appliquée :
+  - Mise à jour de mongoose vers la dernière version stable (`8.15.0`) compatible Node 24.
+  - Régénération complète du `yarn.lock` dans `businessconnect-senegal/server`.
+  - Vérification de la cohérence des dépendances et du build TypeScript.
+- Résultat :
+  - Le build backend passe sans erreur.
+  - Le démarrage backend sur Render fonctionne sans bug critique.
+  - **Aucune suppression de code métier, aucune version minimaliste, site complet maintenu.**
 - Traçabilité assurée dans ce mémo.
 
 ---
