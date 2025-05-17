@@ -615,9 +615,10 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 
 ---
 
-## [2024-05-17] Correction définitive des dépendances runtime et types manquants (build & déploiement prod)
+## [2024-06-XX] Correction définitive des dépendances runtime et types manquants (build & déploiement prod)
 
-- Réinstallation complète de toutes les dépendances runtime et types nécessaires (express, express-validator, mongoose, pg, winston, nodemailer, pdfkit, uuid, axios, dotenv, mongodb-memory-server, supertest, jsonwebtoken, bcryptjs, etc.).
+- Réinstallation complète de toutes les dépendances runtime et types nécessaires (`express`, `express-validator`, `mongoose`, `pg`, `winston`, `nodemailer`, `pdfkit`, `uuid`, `axios`, `dotenv`, `mongodb-memory-server`, `supertest`, `jsonwebtoken`, `bcryptjs`, etc. + tous les `@types/*`).
+- Ajout de `@types/node` pour corriger tous les types globaux (`process`, `console`, `__dirname`, etc.).
 - Correction des erreurs TS2307 (module introuvable) et des erreurs de build liées aux types.
 - Build backend **100% réussi** et compatible production, aucune suppression de code métier, aucune version minimaliste.
 - Le site complet passe les tests, le build et le déploiement Render sans perte de fonctionnalité.
