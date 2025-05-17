@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import webhookRoutes from './routes/webhook';
 import healthcheckRoutes from './routes/healthcheck';
+import subscriptionsRoutes from './routes/subscriptions';
 import { errorHandler } from './middleware/errorHandler';
 
 dotenv.config();
@@ -29,19 +30,22 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use('/api/webhooks', webhookRoutes);
 app.use('/api/healthcheck', healthcheckRoutes);
+app.use('/api/subscriptions', subscriptionsRoutes);
 
 // Error handling
 app.use(errorHandler);
 
 // Database connection
-mongoose
-  .connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/businessconnect')
-  .then(() => {
-    console.log('Connected to MongoDB');
-  })
-  .catch((error) => {
-    console.error('MongoDB connection error:', error);
-  });
+if (process.env.NODE_ENV !== 'test') {
+  mongoose
+    .connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/businessconnect')
+    .then(() => {
+      console.log('Connected to MongoDB');
+    })
+    .catch((error) => {
+      console.error('MongoDB connection error:', error);
+    });
+}
 
 // Start server
 const PORT = process.env.PORT || 5000;

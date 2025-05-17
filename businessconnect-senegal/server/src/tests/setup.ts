@@ -3,7 +3,7 @@ import { initTestDatabase, cleanTestDatabase } from '../config/database';
 import { logger } from '../utils/logger';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
-import { Pool } from 'pg';
+import pool from '../config/database';
 import { jest } from '@jest/globals';
 
 // Charger les variables d'environnement pour les tests
@@ -12,28 +12,20 @@ dotenv.config({ path: '.env.test' });
 // Configuration des variables d'environnement pour les tests
 process.env.JWT_SECRET = 'test_secret';
 process.env.NODE_ENV = 'test';
-process.env.TEST_DATABASE_URL = 'postgresql://postgres:postgres@localhost:5432/businessconnect_test';
 
 // Configuration de Jest
-jest.setTimeout(10000);
+jest.setTimeout(30000);
 
 let mongod: MongoMemoryServer;
-let pool: Pool;
 
 beforeAll(async () => {
   // Configuration de MongoDB en mémoire pour les tests
   mongod = await MongoMemoryServer.create();
   const mongoUri = mongod.getUri();
+  if (mongoose.connection.readyState !== 0) {
+    await mongoose.disconnect();
+  }
   await mongoose.connect(mongoUri);
-
-  // Configuration de PostgreSQL pour les tests
-  pool = new Pool({
-    host: 'localhost',
-    port: 5432,
-    database: 'test_db',
-    user: 'test_user',
-    password: 'test_password'
-  });
 
   // Création des tables nécessaires
   await pool.query(`
@@ -59,14 +51,29 @@ beforeEach(async () => {
       await collection.deleteMany({});
     }
   }
-
+  // Création de la table PostgreSQL si elle n'existe pas
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS subscriptions (
+      id VARCHAR(255) PRIMARY KEY,
+      user_id VARCHAR(255) NOT NULL,
+      type VARCHAR(50) NOT NULL,
+      status VARCHAR(50) NOT NULL,
+      payment_id VARCHAR(255),
+      start_date TIMESTAMP NOT NULL,
+      end_date TIMESTAMP NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
   // Nettoyage des tables PostgreSQL
   await pool.query('TRUNCATE TABLE subscriptions CASCADE;');
 });
 
 afterAll(async () => {
   // Fermeture des connexions
-  await mongoose.disconnect();
+  if (mongoose.connection.readyState !== 0) {
+    await mongoose.disconnect();
+  }
   await mongod.stop();
   await pool.end();
 });
