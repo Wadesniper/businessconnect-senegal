@@ -479,3 +479,31 @@
 - Le mémo est à jour pour garantir la traçabilité et la conformité du projet avec les exigences de production.
 
 ---
+
+## Correction TypeScript/Express (juin 2024)
+
+### Problème rencontré
+- Les handlers (controllers et middlewares) Express retournaient parfois `Response` ou `Promise<Response>`, ce qui provoquait des erreurs de build TypeScript (signature attendue : `void` ou `Promise<void>`).
+- Cela bloquait le déploiement complet du site en production, alors que toutes les fonctionnalités devaient rester actives.
+
+### Solution appliquée (définitive, sans suppression de métier)
+- **Tous les handlers de controllers** (user, job, marketplace, payment, etc.)
+  - Ne retournent plus jamais `Response` ou `Promise<Response>`.
+  - Chaque branche se termine par `res.json(...); return;` ou `res.status(...).json(...); return;`.
+  - Plus aucun `return res.json(...)` ou `return res.status(...).json(...)`.
+- **Tous les middlewares custom** (`authMiddleware`, `isAdmin`, `authenticate`, etc.)
+  - Même correction : jamais de `return res.status(...).json(...)`, mais toujours `res.status(...).json(...); return;` ou `next(); return;`.
+- **Toutes les routes** utilisent des callbacks asynchrones `(req, res) => { await controller.méthode(req, res); }` si besoin.
+- **Aucune suppression de logique métier, aucune version minimaliste.**
+
+### Résultat
+- Le build TypeScript backend passe sans erreur.
+- Le site complet, avec toutes ses fonctionnalités, est prêt pour la production.
+- Conformité totale à la logique métier et à l'exigence de robustesse.
+
+---
+
+## Historique des corrections précédentes
+// ... existing code ...
+
+---

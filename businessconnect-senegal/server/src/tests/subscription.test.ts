@@ -16,9 +16,13 @@ describe('Routes d\'abonnement', () => {
 
   beforeAll(() => {
     // Créer un token JWT valide pour les tests
+    const jwtSecret: any = process.env.JWT_SECRET || 'default_secret';
+    const jwtExpire: any = process.env.JWT_EXPIRE || process.env.JWT_EXPIRES_IN || '7d';
+    const options: jwt.SignOptions = { expiresIn: jwtExpire };
     authToken = jwt.sign(
-      { userId, email: 'test@example.com' },
-      process.env.JWT_SECRET || 'test_secret'
+      { id: userId },
+      jwtSecret,
+      options
     );
   });
 
@@ -157,11 +161,7 @@ describe('Routes d\'abonnement', () => {
 describe('Subscription Service', () => {
   test('should create a new subscription', async () => {
     const subscriptionService = new SubscriptionService();
-    const subscription = await subscriptionService.createSubscription({
-      userId: '123e4567-e89b-12d3-a456-426614174000',
-      type: 'etudiant',
-      status: 'pending'
-    });
+    const subscription = await subscriptionService.createSubscription('test-user', 'etudiant');
 
     expect(subscription).toBeDefined();
     expect(subscription.type).toBe('etudiant');

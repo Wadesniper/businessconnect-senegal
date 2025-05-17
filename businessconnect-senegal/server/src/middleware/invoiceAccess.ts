@@ -26,7 +26,7 @@ export const checkInvoiceAccess = async (
     }
 
     // Ajouter les informations de la facture à la requête
-    req.invoice = invoice.rows[0];
+    res.locals.invoice = invoice.rows[0];
     next();
   } catch (error) {
     logger.error('Erreur lors de la vérification de l\'accès à la facture:', error);

@@ -2,19 +2,6 @@ import { Request, Response } from 'express';
 import { logger } from '../utils/logger';
 import { query } from '../config/database';
 
-interface Product {
-  id: string;
-  title: string;
-  description: string;
-  price: number;
-  seller_id: string;
-  category_id: string;
-  images: string[];
-  status: 'active' | 'inactive' | 'sold';
-  created_at: Date;
-  updated_at: Date;
-}
-
 export const marketplaceController = {
   async getAllProducts(req: Request, res: Response) {
     try {
@@ -75,10 +62,11 @@ export const marketplaceController = {
       `, [id]);
 
       if (result.rows.length === 0) {
-        return res.status(404).json({
+        res.status(404).json({
           status: 'error',
           message: 'Produit non trouvé'
         });
+        return;
       }
 
       res.json({
@@ -128,10 +116,11 @@ export const marketplaceController = {
       // Vérifier que le vendeur est propriétaire du produit
       const product = await query('SELECT * FROM products WHERE id = $1', [id]);
       if (product.rows[0].seller_id !== seller_id) {
-        return res.status(403).json({
+        res.status(403).json({
           status: 'error',
           message: 'Non autorisé à modifier ce produit'
         });
+        return;
       }
 
       const newImages = (req.files as Express.Multer.File[])?.map(file => file.path);
@@ -146,10 +135,11 @@ export const marketplaceController = {
       `, [title, description, price, category_id, images, status, id, seller_id]);
 
       if (result.rows.length === 0) {
-        return res.status(404).json({
+        res.status(404).json({
           status: 'error',
           message: 'Produit non trouvé'
         });
+        return;
       }
 
       res.json({
@@ -176,10 +166,11 @@ export const marketplaceController = {
       );
 
       if (result.rows.length === 0) {
-        return res.status(404).json({
+        res.status(404).json({
           status: 'error',
           message: 'Produit non trouvé ou non autorisé'
         });
+        return;
       }
 
       res.json({
@@ -195,7 +186,7 @@ export const marketplaceController = {
     }
   },
 
-  async getCategories(req: Request, res: Response) {
+  async getCategories(_: Request, res: Response) {
     try {
       const result = await query('SELECT * FROM categories ORDER BY name');
       res.json({
@@ -232,12 +223,14 @@ export const marketplaceController = {
         status: 'success',
         data: result.rows
       });
+      return;
     } catch (error) {
       logger.error('Erreur lors de la recherche de produits:', error);
       res.status(500).json({
         status: 'error',
         message: 'Erreur lors de la recherche de produits'
       });
+      return;
     }
   },
 
@@ -256,12 +249,14 @@ export const marketplaceController = {
         status: 'success',
         data: result.rows
       });
+      return;
     } catch (error) {
       logger.error('Erreur lors de la récupération des produits du vendeur:', error);
       res.status(500).json({
         status: 'error',
         message: 'Erreur lors de la récupération des produits'
       });
+      return;
     }
   },
 
@@ -286,6 +281,7 @@ export const marketplaceController = {
           status: 'success',
           message: 'Produit retiré des favoris'
         });
+        return;
       } else {
         // Ajouter aux favoris
         await query(
@@ -296,6 +292,7 @@ export const marketplaceController = {
           status: 'success',
           message: 'Produit ajouté aux favoris'
         });
+        return;
       }
     } catch (error) {
       logger.error('Erreur lors de la gestion des favoris:', error);
@@ -303,6 +300,47 @@ export const marketplaceController = {
         status: 'error',
         message: 'Erreur lors de la gestion des favoris'
       });
+      return;
     }
+  },
+
+  async getSellerOrders(_: Request, res: Response) {
+    res.status(501).json({
+      status: 'error',
+      message: 'Récupération des commandes vendeur non implémentée.'
+    });
+    return;
+  },
+
+  async updateOrderStatus(_: Request, res: Response) {
+    res.status(501).json({
+      status: 'error',
+      message: 'Mise à jour du statut de commande non implémentée.'
+    });
+    return;
+  },
+
+  async createOrder(_: Request, res: Response) {
+    res.status(501).json({
+      status: 'error',
+      message: 'Création de commande non implémentée.'
+    });
+    return;
+  },
+
+  async getBuyerOrders(_: Request, res: Response) {
+    res.status(501).json({
+      status: 'error',
+      message: 'Récupération des commandes acheteur non implémentée.'
+    });
+    return;
+  },
+
+  async getOrder(_: Request, res: Response) {
+    res.status(501).json({
+      status: 'error',
+      message: 'Récupération de la commande non implémentée.'
+    });
+    return;
   }
 }; 

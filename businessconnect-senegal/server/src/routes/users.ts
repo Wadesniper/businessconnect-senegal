@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { userController } from '../controllers/userController';
-import { authMiddleware } from '../middleware/authMiddleware';
+import { authMiddleware, isAdmin } from '../middleware/authMiddleware';
 
 const router = Router();
 
@@ -18,8 +18,8 @@ router.put('/password', userController.updatePassword);
 router.delete('/account', userController.deleteAccount);
 
 // Routes administrateur
-router.get('/admin/users', authMiddleware.isAdmin, userController.getAllUsers);
-router.put('/admin/user/:id', authMiddleware.isAdmin, userController.updateUser);
-router.delete('/admin/user/:id', authMiddleware.isAdmin, userController.deleteUser);
+router.get('/admin/users', isAdmin, userController.getAllUsers);
+router.put('/admin/user/:id', isAdmin, userController.updateUser);
+router.delete('/admin/user/:id', isAdmin, userController.deleteUser);
 
 export default router; 

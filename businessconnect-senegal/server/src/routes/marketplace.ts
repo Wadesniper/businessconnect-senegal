@@ -9,17 +9,17 @@ const router = Router();
 router.get('/products', marketplaceController.getAllProducts);
 router.get('/products/:id', marketplaceController.getProduct);
 router.get('/categories', marketplaceController.getCategories);
-router.get('/search', marketplaceController.searchProducts);
+router.get('/search', async (req, res) => { await marketplaceController.searchProducts(req, res); });
 
 // Routes protégées
 router.use(authMiddleware);
 router.post('/products', upload.array('images', 5), marketplaceController.createProduct);
 router.put('/products/:id', upload.array('images', 5), marketplaceController.updateProduct);
 router.delete('/products/:id', marketplaceController.deleteProduct);
-router.post('/products/:id/favorite', marketplaceController.toggleFavorite);
+router.post('/products/:id/favorite', async (req, res) => { await marketplaceController.toggleFavorite(req, res); });
 
 // Routes vendeur
-router.get('/seller/products', marketplaceController.getSellerProducts);
+router.get('/seller/products', async (req, res) => { await marketplaceController.getSellerProducts(req, res); });
 router.get('/seller/orders', marketplaceController.getSellerOrders);
 router.put('/seller/orders/:id', marketplaceController.updateOrderStatus);
 

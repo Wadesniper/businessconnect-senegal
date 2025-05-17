@@ -6,9 +6,15 @@ import { authMiddleware } from '../middleware/authMiddleware';
 const router = express.Router();
 
 // Routes publiques
-router.get('/', jobController.getAllJobs);
-router.get('/:id', jobController.getJob);
-router.get('/categories', jobController.getCategories);
+router.get('/', async (req, res): Promise<void> => {
+  await jobController.getAllJobs(req, res);
+});
+router.get('/:id', async (req, res): Promise<void> => {
+  await jobController.getJob(req, res);
+});
+router.get('/categories', async (req, res): Promise<void> => {
+  await jobController.getCategories(req, res);
+});
 
 // Routes protégées
 router.post(
@@ -24,12 +30,22 @@ router.post(
   jobController.createJob
 );
 
-router.put('/:id', authMiddleware, jobController.updateJob);
-router.delete('/:id', authMiddleware, jobController.deleteJob);
+router.put('/:id', authMiddleware, async (req, res): Promise<void> => {
+  await jobController.updateJob(req, res);
+});
+router.delete('/:id', authMiddleware, async (req, res): Promise<void> => {
+  await jobController.deleteJob(req, res);
+});
 
 // Routes de candidature
-router.post('/:id/apply', authMiddleware, jobController.applyToJob);
-router.get('/applications/:jobId', authMiddleware, jobController.getJobApplications);
-router.put('/applications/:applicationId', authMiddleware, jobController.updateApplicationStatus);
+router.post('/:id/apply', authMiddleware, async (req, res): Promise<void> => {
+  await jobController.applyToJob(req, res);
+});
+router.get('/applications/:jobId', authMiddleware, async (req, res): Promise<void> => {
+  await jobController.getJobApplications(req, res);
+});
+router.put('/applications/:applicationId', authMiddleware, async (req, res): Promise<void> => {
+  await jobController.updateApplicationStatus(req, res);
+});
 
 export default router; 

@@ -12,31 +12,38 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
     const token = req.headers.authorization?.split(' ')[1];
 
     if (!token) {
-      return res.status(401).json({ error: 'Token d\'authentification manquant' });
+      res.status(401).json({ error: 'Token d\'authentification manquant' });
+      return;
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default_secret') as UserPayload;
     req.user = decoded;
     next();
+    return;
   } catch (error) {
     logger.error('Erreur d\'authentification:', error);
-    return res.status(401).json({ error: 'Token invalide ou expiré' });
+    res.status(401).json({ error: 'Token invalide ou expiré' });
+    return;
   }
 };
 
 export const isAdmin = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     if (!req.user) {
-      return res.status(401).json({ error: 'Utilisateur non authentifié' });
+      res.status(401).json({ error: 'Utilisateur non authentifié' });
+      return;
     }
 
     if (req.user.role !== 'admin') {
-      return res.status(403).json({ error: 'Accès non autorisé' });
+      res.status(403).json({ error: 'Accès non autorisé' });
+      return;
     }
 
     next();
+    return;
   } catch (error) {
     logger.error('Erreur de vérification admin:', error);
-    return res.status(500).json({ error: 'Erreur interne du serveur' });
+    res.status(500).json({ error: 'Erreur interne du serveur' });
+    return;
   }
 }; 

@@ -1,15 +1,11 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import compression from 'compression';
 import mongoose from 'mongoose';
-import { config } from './config';
 import { errorHandler } from './middleware/errorHandler';
 import { rateLimiter } from './middleware/rateLimiter';
-import authRoutes from './routes/auth';
 import userRoutes from './routes/user';
-import formationRoutes from './routes/formation';
-import subscriptionRoutes from './routes/subscription';
+import formationRoutes from './routes/formations';
 import healthRoutes from './routes/health';
 
 const app = express();
@@ -17,22 +13,19 @@ const app = express();
 // Middleware de sécurité
 app.use(helmet());
 app.use(cors());
-app.use(compression());
 app.use(express.json());
 app.use(rateLimiter);
 
 // Routes
 app.use('/api/health', healthRoutes);
-app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/formations', formationRoutes);
-app.use('/api/subscriptions', subscriptionRoutes);
 
 // Middleware de gestion d'erreurs
 app.use(errorHandler);
 
 // Connexion à MongoDB
-mongoose.connect(config.mongoUri)
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/businessconnect')
   .then(() => {
     console.log('Connecté à MongoDB');
     const port = process.env.PORT || 3001;

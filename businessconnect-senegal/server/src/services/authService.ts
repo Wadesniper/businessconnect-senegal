@@ -18,7 +18,9 @@ export interface User {
 }
 
 const USERS_FILE = path.join(__dirname, '../data/users.json');
-const JWT_SECRET = process.env.JWT_SECRET || 'votre_secret_jwt_super_securise';
+const jwtSecret: any = process.env.JWT_SECRET || 'default_secret';
+const jwtExpire: any = process.env.JWT_EXPIRE || process.env.JWT_EXPIRES_IN || '24h';
+const options: jwt.SignOptions = { expiresIn: jwtExpire };
 
 // Assurez-vous que le dossier data existe
 async function ensureDataDirectory() {
@@ -117,7 +119,11 @@ class AuthService {
     this.users.set(user.id, user);
     await saveUsers(this.users);
 
-    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '24h' });
+    const token = jwt.sign(
+      { userId: user.id },
+      jwtSecret,
+      options
+    );
     const { passwordHash, ...userWithoutPassword } = user;
 
     return { user: userWithoutPassword, token };
@@ -139,7 +145,11 @@ class AuthService {
       throw new Error('Identifiants invalides');
     }
 
-    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '24h' });
+    const token = jwt.sign(
+      { userId: user.id },
+      jwtSecret,
+      options
+    );
     const { passwordHash, ...userWithoutPassword } = user;
 
     return { user: userWithoutPassword, token };
@@ -147,7 +157,7 @@ class AuthService {
 
   async verifyToken(token: string): Promise<Omit<User, 'passwordHash'>> {
     try {
-      const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
+      const decoded = jwt.verify(token, jwtSecret) as { userId: string };
       const user = this.users.get(decoded.userId);
 
       if (!user) {

@@ -101,8 +101,8 @@ export class CVService {
       doc.pipe(writeStream);
       doc.end();
 
-      await new Promise((resolve, reject) => {
-        writeStream.on('finish', resolve);
+      await new Promise<void>((resolve, reject) => {
+        writeStream.on('finish', () => resolve());
         writeStream.on('error', reject);
       });
 
@@ -121,8 +121,8 @@ export class CVService {
 
   async generateCV(cvData: any): Promise<string> {
     try {
-      const pdfBuffer = await this.generatePDF(cvData);
-      return pdfBuffer.toString('base64');
+      const pdfPath = await this.generatePDF(cvData, '');
+      return pdfPath;
     } catch (error) {
       logger.error('Erreur lors de la génération du CV:', error);
       throw new Error('Échec de la génération du CV');
@@ -307,17 +307,17 @@ export class CVService {
     }
   }
 
-  private async applyClassicTemplate(doc: PDFKit.PDFDocument, cv: any) {
+  private async applyClassicTemplate(_: any, __: any) {
     // Implémentation similaire au template moderne mais avec un style plus classique
     // À implémenter selon les besoins
   }
 
-  private async applyCreativeTemplate(doc: PDFKit.PDFDocument, cv: any) {
+  private async applyCreativeTemplate(_: any, __: any) {
     // Template créatif avec plus de couleurs et de mise en page dynamique
     // À implémenter selon les besoins
   }
 
-  private async applyProfessionalTemplate(doc: PDFKit.PDFDocument, cv: any) {
+  private async applyProfessionalTemplate(_: any, __: any) {
     // Template professionnel avec une mise en page sobre et élégante
     // À implémenter selon les besoins
   }

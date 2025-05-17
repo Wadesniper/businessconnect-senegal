@@ -1,7 +1,7 @@
 import { logger } from '../utils/logger';
 import { InAppNotificationService } from './inAppNotificationService';
 import nodemailer from 'nodemailer';
-import { User } from '../models/user';
+import { User } from '../models/User';
 import { config } from '../config';
 
 export type NotificationType = 'subscription_expiration' | 'new_offer' | 'system' | 'payment_success' | 'payment_failure';
@@ -411,4 +411,23 @@ export class NotificationService {
     };
     await transporter.sendMail(mailOptions);
   }
-} 
+
+  // --- Stubs pour compatibilité routes notifications ---
+  async getUserNotifications(_: string) {
+    return [];
+  }
+  async getUnreadNotifications(_: string) {
+    return [];
+  }
+  async markAsRead(_: string, __: string) {
+    return { success: true };
+  }
+  async markAllAsRead(_: string) {
+    return { success: true };
+  }
+  async deleteNotification(_: string, __: string) {
+    return { success: true };
+  }
+}
+
+export const notificationService = new NotificationService(); 

@@ -8,7 +8,7 @@ export const rateLimiter = rateLimit({
     status: 'error',
     message: 'Trop de requêtes, veuillez réessayer plus tard.'
   },
-  handler: (req, res, next, options) => {
+  handler: (req, res, _next, options) => {
     logger.warn(`Rate limit exceeded for IP: ${req.ip}`);
     res.status(429).json(options.message);
   },

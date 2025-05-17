@@ -40,10 +40,13 @@ export class AuthController {
       await user.save();
 
       // Générer le token de vérification
+      const jwtSecret: any = process.env.JWT_SECRET || 'default_secret';
+      const jwtExpire: any = process.env.JWT_EXPIRE || process.env.JWT_EXPIRES_IN || '30d';
+      const options: jwt.SignOptions = { expiresIn: jwtExpire };
       const verificationToken = jwt.sign(
         { id: user._id },
-        config.JWT_SECRET,
-        { expiresIn: '24h' }
+        jwtSecret,
+        options
       );
 
       // Envoyer l'email de vérification
@@ -51,14 +54,16 @@ export class AuthController {
 
       res.status(201).json({
         success: true,
-        message: 'Inscription réussie. Veuillez vérifier votre email.'
+        message: 'Inscription réussie, veuillez vérifier votre email.'
       });
+      return;
     } catch (error) {
       logger.error('Erreur lors de l\'inscription:', error);
       res.status(500).json({
         success: false,
         message: 'Une erreur est survenue lors de l\'inscription'
       });
+      return;
     }
   };
 
@@ -93,10 +98,13 @@ export class AuthController {
       }
 
       // Générer le token JWT
+      const jwtSecret: any = process.env.JWT_SECRET || 'default_secret';
+      const jwtExpire: any = process.env.JWT_EXPIRE || process.env.JWT_EXPIRES_IN || '30d';
+      const options: jwt.SignOptions = { expiresIn: jwtExpire };
       const token = jwt.sign(
         { id: user._id },
-        config.JWT_SECRET,
-        { expiresIn: config.JWT_EXPIRES_IN }
+        jwtSecret,
+        options
       );
 
       res.status(200).json({
@@ -109,12 +117,14 @@ export class AuthController {
           role: user.role
         }
       });
+      return;
     } catch (error) {
       logger.error('Erreur lors de la connexion:', error);
       res.status(500).json({
         success: false,
         message: 'Une erreur est survenue lors de la connexion'
       });
+      return;
     }
   };
 
@@ -141,12 +151,14 @@ export class AuthController {
         success: true,
         message: 'Email vérifié avec succès'
       });
+      return;
     } catch (error) {
       logger.error('Erreur lors de la vérification de l\'email:', error);
       res.status(400).json({
         success: false,
         message: 'Token invalide ou expiré'
       });
+      return;
     }
   };
 
@@ -163,10 +175,13 @@ export class AuthController {
       }
 
       // Générer le token de réinitialisation
+      const jwtSecret: any = process.env.JWT_SECRET || 'default_secret';
+      const jwtExpire: any = process.env.JWT_EXPIRE || process.env.JWT_EXPIRES_IN || '30d';
+      const options: jwt.SignOptions = { expiresIn: jwtExpire };
       const resetToken = jwt.sign(
         { id: user._id },
-        config.JWT_SECRET,
-        { expiresIn: '1h' }
+        jwtSecret,
+        options
       );
 
       // Sauvegarder le token
@@ -181,12 +196,14 @@ export class AuthController {
         success: true,
         message: 'Email de réinitialisation envoyé'
       });
+      return;
     } catch (error) {
       logger.error('Erreur lors de la demande de réinitialisation:', error);
       res.status(500).json({
         success: false,
         message: 'Une erreur est survenue'
       });
+      return;
     }
   };
 
@@ -224,12 +241,14 @@ export class AuthController {
         success: true,
         message: 'Mot de passe réinitialisé avec succès'
       });
+      return;
     } catch (error) {
       logger.error('Erreur lors de la réinitialisation du mot de passe:', error);
       res.status(400).json({
         success: false,
         message: 'Token invalide ou expiré'
       });
+      return;
     }
   };
 
@@ -263,12 +282,14 @@ export class AuthController {
           role: user.role
         }
       });
+      return;
     } catch (error) {
       logger.error('Erreur lors de la vérification du token:', error);
       res.status(401).json({
         success: false,
         message: 'Token invalide'
       });
+      return;
     }
   };
 } 

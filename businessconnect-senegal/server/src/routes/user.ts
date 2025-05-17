@@ -1,10 +1,9 @@
 import express from 'express';
 import { body } from 'express-validator';
-import { UserController } from '../controllers/userController';
+import { userController } from '../controllers/userController';
 import { authMiddleware } from '../middleware/authMiddleware';
 
 const router = express.Router();
-const userController = new UserController();
 
 // Routes publiques
 router.post(
@@ -16,7 +15,7 @@ router.post(
       .withMessage('Le mot de passe doit contenir au moins 6 caractères'),
     body('name').not().isEmpty().withMessage('Le nom est requis'),
   ],
-  userController.register
+  async (req: import('express').Request, res: import('express').Response) => { await userController.register(req, res); }
 );
 
 router.post(
@@ -25,17 +24,17 @@ router.post(
     body('email').isEmail().withMessage('Email invalide'),
     body('password').exists().withMessage('Le mot de passe est requis'),
   ],
-  userController.login
+  async (req: import('express').Request, res: import('express').Response) => { await userController.login(req, res); }
 );
 
 // Routes protégées
-router.get('/profile', authMiddleware, userController.getProfile);
-router.put('/profile', authMiddleware, userController.updateProfile);
-router.put('/password', authMiddleware, userController.updatePassword);
+router.get('/profile', authMiddleware, async (req: import('express').Request, res: import('express').Response) => { await userController.getProfile(req, res); });
+router.put('/profile', authMiddleware, async (req: import('express').Request, res: import('express').Response) => { await userController.updateProfile(req, res); });
+router.put('/password', authMiddleware, async (req: import('express').Request, res: import('express').Response) => { await userController.updatePassword(req, res); });
 
 // Routes admin
-router.get('/admin/users', authMiddleware, userController.getAllUsers);
-router.put('/admin/users/:id', authMiddleware, userController.updateUser);
-router.delete('/admin/users/:id', authMiddleware, userController.deleteUser);
+router.get('/admin/users', authMiddleware, async (req: import('express').Request, res: import('express').Response) => { await userController.getAllUsers(req, res); });
+router.put('/admin/users/:id', authMiddleware, async (req: import('express').Request, res: import('express').Response) => { await userController.updateUser(req, res); });
+router.delete('/admin/users/:id', authMiddleware, async (req: import('express').Request, res: import('express').Response) => { await userController.deleteUser(req, res); });
 
 export default router; 

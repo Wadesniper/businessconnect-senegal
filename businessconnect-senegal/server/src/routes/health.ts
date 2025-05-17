@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 
 const router = Router();
 
-router.get('/', async (req, res) => {
+router.get('/', async (_req, res) => {
   try {
     // Vérifier la connexion à MongoDB
     const dbState = mongoose.connection.readyState;
@@ -22,7 +22,7 @@ router.get('/', async (req, res) => {
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
       database: {
-        status: dbStatus[dbState],
+        status: dbStatus[dbState as keyof typeof dbStatus],
         connected: dbState === 1
       },
       memory: {

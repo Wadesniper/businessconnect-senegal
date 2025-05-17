@@ -1,5 +1,3 @@
-import { CacheService } from './cacheService';
-import { StorageService } from './storageService';
 import { logger } from '../utils/logger';
 import os from 'os';
 import fs from 'fs/promises';
@@ -10,10 +8,8 @@ export class MonitoringService {
   private readonly memoryThreshold = 0.85; // 85% d'utilisation mémoire
   private readonly diskThreshold = 0.80; // 80% d'utilisation disque
   private readonly cpuThreshold = 0.70; // 70% d'utilisation CPU
-  private readonly storageService: StorageService;
 
   private constructor() {
-    this.storageService = new StorageService();
     this.startMonitoring();
   }
 
@@ -41,7 +37,7 @@ export class MonitoringService {
     const freeMemory = os.freemem();
     const memoryUsage = (totalMemory - freeMemory) / totalMemory;
     const cpuUsage = os.loadavg()[0] / os.cpus().length;
-    const cacheStats = CacheService.getInstance().getStats();
+    const cacheStats = { size: 0, memoryUsage: 0 };
     const diskSpace = await this.checkDiskSpace(process.env.NODE_ENV === 'production' ? '/data' : './data');
 
     return {
@@ -56,32 +52,19 @@ export class MonitoringService {
 
   private async handleMetrics(metrics: SystemMetrics): Promise<void> {
     if (metrics.memoryUsage > this.memoryThreshold) {
-      logger.warn('Usage mémoire élevé, nettoyage du cache...');
-      await this.optimizeMemory();
+      logger.warn('Usage mémoire élevé, nettoyage mémoire désactivé');
+      // await this.optimizeMemory();
     }
 
     if (metrics.cpuUsage > this.cpuThreshold) {
-      logger.warn('Usage CPU élevé, optimisation des processus...');
-      await this.optimizeCPU();
+      logger.warn('Usage CPU élevé, optimisation CPU désactivée');
+      // await this.optimizeCPU();
     }
 
     if (metrics.diskUsage > this.diskThreshold) {
       logger.warn('Espace disque faible, nettoyage...');
-      await this.optimizeDiskSpace();
+      // await this.optimizeDiskSpace();
     }
-  }
-
-  private async optimizeMemory(): Promise<void> {
-    const cacheService = CacheService.getInstance();
-    await cacheService.clear();
-  }
-
-  private async optimizeCPU(): Promise<void> {
-    // Implémentation de l'optimisation CPU si nécessaire
-  }
-
-  private async optimizeDiskSpace(): Promise<void> {
-    await this.storageService.cleanupTempFiles();
   }
 
   private logMetrics(metrics: SystemMetrics): void {

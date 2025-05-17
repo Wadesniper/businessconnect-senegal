@@ -35,12 +35,13 @@ export const register = async (
       password: hashedPassword,
     });
 
+    const jwtSecret: jwt.Secret = process.env.JWT_SECRET ? String(process.env.JWT_SECRET) : 'default_secret';
+    const jwtExpire: any = process.env.JWT_EXPIRE || process.env.JWT_EXPIRES_IN || '30d';
+    const options: jwt.SignOptions = { expiresIn: jwtExpire };
     const token = jwt.sign(
       { id: user._id },
-      process.env.JWT_SECRET || 'default_secret',
-      {
-        expiresIn: process.env.JWT_EXPIRE || '30d',
-      }
+      jwtSecret,
+      options
     );
 
     res.status(201).json({
@@ -52,9 +53,10 @@ export const register = async (
         email: user.email,
       },
     });
+    return;
   } catch (error) {
     logger.error('Erreur lors de l\'inscription:', error);
-    next(error);
+    return next(error);
   }
 };
 
@@ -87,12 +89,13 @@ export const login = async (
       });
     }
 
+    const jwtSecret: jwt.Secret = process.env.JWT_SECRET ? String(process.env.JWT_SECRET) : 'default_secret';
+    const jwtExpire: any = process.env.JWT_EXPIRE || process.env.JWT_EXPIRES_IN || '30d';
+    const options: jwt.SignOptions = { expiresIn: jwtExpire };
     const token = jwt.sign(
       { id: user._id },
-      process.env.JWT_SECRET || 'default_secret',
-      {
-        expiresIn: process.env.JWT_EXPIRE || '30d',
-      }
+      jwtSecret,
+      options
     );
 
     res.json({
@@ -104,9 +107,10 @@ export const login = async (
         email: user.email,
       },
     });
+    return;
   } catch (error) {
     logger.error('Erreur lors de la connexion:', error);
-    next(error);
+    return next(error);
   }
 };
 
@@ -130,14 +134,15 @@ export const forgotPassword = async (
       success: true,
       message: 'Email de réinitialisation envoyé',
     });
+    return;
   } catch (error) {
     logger.error('Erreur lors de la demande de réinitialisation:', error);
-    next(error);
+    return next(error);
   }
 };
 
 export const resetPassword = async (
-  req: Request,
+  _: Request,
   res: Response,
   next: NextFunction
 ) => {
@@ -147,8 +152,9 @@ export const resetPassword = async (
       success: true,
       message: 'Mot de passe réinitialisé avec succès',
     });
+    return;
   } catch (error) {
     logger.error('Erreur lors de la réinitialisation:', error);
-    next(error);
+    return next(error);
   }
 }; 

@@ -28,9 +28,10 @@ export const checkSubscription = async (
     }
 
     next();
+    return;
   } catch (error) {
     console.error('Erreur lors de la vérification de l\'abonnement:', error);
-    res.status(500).json({
+    return res.status(500).json({
       status: 'error',
       message: 'Erreur lors de la vérification de l\'abonnement',
     });

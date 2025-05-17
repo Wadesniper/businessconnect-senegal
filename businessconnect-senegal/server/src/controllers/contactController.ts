@@ -59,13 +59,13 @@ export const sendContactEmail = async (req: Request, res: Response) => {
 
     await transporter.sendMail(confirmationMailOptions);
 
-    res.status(200).json({ 
+    return res.status(200).json({ 
       success: true, 
       message: 'Email envoyé avec succès' 
     });
   } catch (error) {
     console.error('Erreur lors de l\'envoi de l\'email:', error);
-    res.status(500).json({ 
+    return res.status(500).json({ 
       success: false, 
       message: 'Erreur lors de l\'envoi de l\'email' 
     });

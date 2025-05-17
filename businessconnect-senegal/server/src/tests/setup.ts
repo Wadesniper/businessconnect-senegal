@@ -13,8 +13,6 @@ dotenv.config({ path: '.env.test' });
 process.env.JWT_SECRET = 'test_secret';
 process.env.NODE_ENV = 'test';
 process.env.TEST_DATABASE_URL = 'postgresql://postgres:postgres@localhost:5432/businessconnect_test';
-process.env.PAYTECH_API_KEY = 'test_key';
-process.env.PAYTECH_API_SECRET = 'test_secret';
 
 // Configuration de Jest
 jest.setTimeout(10000);
@@ -84,8 +82,7 @@ jest.mock('../utils/logger', () => ({
 }));
 
 // Mock des dépendances externes
-jest.mock('../services/subscription.service');
-jest.mock('../config/paytech');
+jest.mock('../services/subscriptionService');
 
 // Initialiser la base de données avant tous les tests
 beforeAll(async () => {

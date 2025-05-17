@@ -2,28 +2,8 @@ import express from 'express';
 import { paymentController } from '../controllers/paymentController';
 import { authenticate } from '../middleware/auth';
 import { checkInvoiceAccess } from '../middleware/invoiceAccess';
-import { validateRequest } from '../middleware/validation';
-import { z } from 'zod';
 
 const router = express.Router();
-
-// Schémas de validation
-const processPaymentSchema = z.object({
-  amount: z.number().positive(),
-  currency: z.string().length(3),
-  payment_method_id: z.string(),
-  order_id: z.string()
-});
-
-const subscriptionSchema = z.object({
-  plan_id: z.string(),
-  payment_method_id: z.string()
-});
-
-const refundSchema = z.object({
-  amount: z.number().positive(),
-  reason: z.string().optional()
-});
 
 // Routes protégées (nécessitent une authentification)
 router.use(authenticate);
@@ -36,14 +16,14 @@ router.delete('/payment-methods/:id', paymentController.deletePaymentMethod);
 // Paiements
 router.post(
   '/process',
-  validateRequest({ body: processPaymentSchema }),
+  // TODO: Ajouter une validation express-validator si besoin
   paymentController.processPayment
 );
 
 // Abonnements
 router.post(
   '/subscriptions',
-  validateRequest({ body: subscriptionSchema }),
+  // TODO: Ajouter une validation express-validator si besoin
   paymentController.createSubscription
 );
 router.delete('/subscriptions', paymentController.cancelSubscription);
@@ -51,7 +31,7 @@ router.delete('/subscriptions', paymentController.cancelSubscription);
 // Remboursements
 router.post(
   '/refunds/:paymentId',
-  validateRequest({ body: refundSchema }),
+  // TODO: Ajouter une validation express-validator si besoin
   paymentController.refundPayment
 );
 

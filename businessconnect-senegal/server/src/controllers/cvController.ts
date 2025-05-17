@@ -23,10 +23,10 @@ export class CVController {
       }
 
       const cv = await this.cvService.createCV(userId, req.body);
-      res.status(201).json({ success: true, data: cv });
+      return res.status(201).json({ success: true, data: cv });
     } catch (error) {
       logger.error('Erreur lors de la création du CV:', error);
-      res.status(500).json({ success: false, message: 'Erreur serveur' });
+      return res.status(500).json({ success: false, message: 'Erreur serveur' });
     }
   };
 
@@ -47,10 +47,10 @@ export class CVController {
         return res.status(404).json({ success: false, message: 'CV non trouvé' });
       }
 
-      res.status(200).json({ success: true, data: cv });
+      return res.status(200).json({ success: true, data: cv });
     } catch (error) {
       logger.error('Erreur lors de la mise à jour du CV:', error);
-      res.status(500).json({ success: false, message: 'Erreur serveur' });
+      return res.status(500).json({ success: false, message: 'Erreur serveur' });
     }
   };
 
@@ -66,10 +66,10 @@ export class CVController {
         return res.status(404).json({ success: false, message: 'CV non trouvé' });
       }
 
-      res.status(200).json({ success: true, data: cv });
+      return res.status(200).json({ success: true, data: cv });
     } catch (error) {
       logger.error('Erreur lors de la récupération du CV:', error);
-      res.status(500).json({ success: false, message: 'Erreur serveur' });
+      return res.status(500).json({ success: false, message: 'Erreur serveur' });
     }
   };
 
@@ -81,10 +81,10 @@ export class CVController {
       }
 
       const cvs = await this.cvService.getUserCVs(userId);
-      res.status(200).json({ success: true, data: cvs });
+      return res.status(200).json({ success: true, data: cvs });
     } catch (error) {
       logger.error('Erreur lors de la récupération des CVs:', error);
-      res.status(500).json({ success: false, message: 'Erreur serveur' });
+      return res.status(500).json({ success: false, message: 'Erreur serveur' });
     }
   };
 
@@ -100,10 +100,10 @@ export class CVController {
         return res.status(404).json({ success: false, message: 'CV non trouvé' });
       }
 
-      res.status(200).json({ success: true, message: 'CV supprimé' });
+      return res.status(200).json({ success: true, message: 'CV supprimé' });
     } catch (error) {
       logger.error('Erreur lors de la suppression du CV:', error);
-      res.status(500).json({ success: false, message: 'Erreur serveur' });
+      return res.status(500).json({ success: false, message: 'Erreur serveur' });
     }
   };
 
@@ -115,10 +115,10 @@ export class CVController {
       }
 
       const pdfUrl = await this.cvService.generatePDF(req.params.id, userId);
-      res.status(200).json({ success: true, data: { pdfUrl } });
+      return res.status(200).json({ success: true, data: { pdfUrl } });
     } catch (error) {
       logger.error('Erreur lors de la génération du PDF:', error);
-      res.status(500).json({ success: false, message: 'Erreur serveur' });
+      return res.status(500).json({ success: false, message: 'Erreur serveur' });
     }
   };
 }

@@ -15,13 +15,15 @@ router.get('/:userId', async (req: Request, res: Response) => {
     const subscription = await subscriptionService.getSubscription(userId);
     
     if (!subscription) {
-      return res.status(404).json({ error: 'Abonnement non trouvé' });
+      res.status(404).json({ error: 'Abonnement non trouvé' });
+      return;
     }
-    
-    return res.json(subscription);
+    res.json(subscription);
+    return;
   } catch (error) {
     logger.error('Erreur lors de la récupération de l\'abonnement:', error);
-    return res.status(500).json({ error: 'Erreur serveur lors de la récupération de l\'abonnement' });
+    res.status(500).json({ error: 'Erreur serveur lors de la récupération de l\'abonnement' });
+    return;
   }
 });
 
@@ -43,7 +45,8 @@ router.post('/initiate', async (req: Request, res: Response) => {
     const { userId, subscriptionType, customer_name, customer_surname, customer_email, customer_phone_number } = req.body;
 
     if (!userId || !subscriptionType || !customer_name || !customer_surname || !customer_email || !customer_phone_number) {
-      return res.status(400).json({ error: 'Paramètres manquants' });
+      res.status(400).json({ error: 'Paramètres manquants' });
+      return;
     }
 
     const paymentInitiation = await subscriptionService.initiatePayment({
@@ -54,10 +57,12 @@ router.post('/initiate', async (req: Request, res: Response) => {
       customer_phone_number,
       userId
     });
-    return res.json({ paymentUrl: paymentInitiation });
+    res.json({ paymentUrl: paymentInitiation });
+    return;
   } catch (error) {
     logger.error('Erreur lors de l\'initiation de l\'abonnement:', error);
-    return res.status(500).json({ error: 'Erreur serveur lors de l\'initiation de l\'abonnement' });
+    res.status(500).json({ error: 'Erreur serveur lors de l\'initiation de l\'abonnement' });
+    return;
   }
 });
 

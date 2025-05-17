@@ -35,18 +35,20 @@ export const userController = {
       const { name, phone, password, email } = req.body;
       const normalizedPhone = normalizePhone(phone);
       if (!normalizedPhone) {
-        return res.status(400).json({
+        res.status(400).json({
           status: 'error',
-          message: 'Merci d’entrer votre numéro au format international (+221786049485 ou +33612345678).'
+          message: "Merci d'entrer votre numéro au format international (ex : +221770000000 ou +33612345678)."
         });
+        return;
       }
       // Vérifier si l'utilisateur existe déjà par téléphone
       const existingUser = await query('SELECT * FROM users WHERE phone = $1', [normalizedPhone]);
       if (existingUser.rows.length > 0) {
-        return res.status(400).json({
+        res.status(400).json({
           status: 'error',
           message: 'Un utilisateur avec ce numéro de téléphone existe déjà'
         });
+        return;
       }
       // Hasher le mot de passe
       const salt = await bcrypt.genSalt(10);
@@ -58,10 +60,13 @@ export const userController = {
       );
       const user = result.rows[0];
       // Générer le token JWT
+      const jwtSecret: any = process.env.JWT_SECRET || 'default_secret';
+      const jwtExpire: any = process.env.JWT_EXPIRE || process.env.JWT_EXPIRES_IN || '30d';
+      const options: jwt.SignOptions = { expiresIn: jwtExpire };
       const token = jwt.sign(
         { userId: user.id, role: user.role },
-        process.env.JWT_SECRET || 'default_secret',
-        { expiresIn: '24h' }
+        jwtSecret,
+        options
       );
       res.status(201).json({
         status: 'success',
@@ -76,12 +81,14 @@ export const userController = {
           token
         }
       });
+      return;
     } catch (error) {
       logger.error('Erreur lors de l\'inscription:', error);
       res.status(500).json({
         status: 'error',
         message: 'Erreur lors de l\'inscription'
       });
+      return;
     }
   },
 
@@ -90,33 +97,39 @@ export const userController = {
       const { phone, password } = req.body;
       const normalizedPhone = normalizePhone(phone);
       if (!normalizedPhone) {
-        return res.status(400).json({
+        res.status(400).json({
           status: 'error',
-          message: 'Merci d’entrer votre numéro au format international (+221786049485 ou +33612345678).'
+          message: "Merci d'entrer votre numéro au format international (ex : +221770000000 ou +33612345678)."
         });
+        return;
       }
       // Vérifier si l'utilisateur existe par téléphone
       const result = await query('SELECT * FROM users WHERE phone = $1', [normalizedPhone]);
       if (result.rows.length === 0) {
-        return res.status(401).json({
+        res.status(401).json({
           status: 'error',
           message: 'Numéro de téléphone ou mot de passe incorrect'
         });
+        return;
       }
       const user = result.rows[0] as User;
       // Vérifier le mot de passe
       const isValidPassword = await bcrypt.compare(password, user.password);
       if (!isValidPassword) {
-        return res.status(401).json({
+        res.status(401).json({
           status: 'error',
           message: 'Numéro de téléphone ou mot de passe incorrect'
         });
+        return;
       }
       // Générer le token JWT
+      const jwtSecret: any = process.env.JWT_SECRET || 'default_secret';
+      const jwtExpire: any = process.env.JWT_EXPIRE || process.env.JWT_EXPIRES_IN || '30d';
+      const options: jwt.SignOptions = { expiresIn: jwtExpire };
       const token = jwt.sign(
         { userId: user.id, role: user.role },
-        process.env.JWT_SECRET || 'default_secret',
-        { expiresIn: '24h' }
+        jwtSecret,
+        options
       );
       res.json({
         status: 'success',
@@ -131,12 +144,14 @@ export const userController = {
           token
         }
       });
+      return;
     } catch (error) {
       logger.error('Erreur lors de la connexion:', error);
       res.status(500).json({
         status: 'error',
         message: 'Erreur lors de la connexion'
       });
+      return;
     }
   },
 
@@ -149,22 +164,25 @@ export const userController = {
       );
 
       if (result.rows.length === 0) {
-        return res.status(404).json({
+        res.status(404).json({
           status: 'error',
           message: 'Utilisateur non trouvé'
         });
+        return;
       }
 
       res.json({
         status: 'success',
         data: result.rows[0]
       });
+      return;
     } catch (error) {
       logger.error('Erreur lors de la récupération du profil:', error);
       res.status(500).json({
         status: 'error',
         message: 'Erreur lors de la récupération du profil'
       });
+      return;
     }
   },
 
@@ -182,12 +200,14 @@ export const userController = {
         status: 'success',
         data: result.rows[0]
       });
+      return;
     } catch (error) {
       logger.error('Erreur lors de la mise à jour du profil:', error);
       res.status(500).json({
         status: 'error',
         message: 'Erreur lors de la mise à jour du profil'
       });
+      return;
     }
   },
 
@@ -201,10 +221,11 @@ export const userController = {
       const isValidPassword = await bcrypt.compare(currentPassword, user.rows[0].password);
 
       if (!isValidPassword) {
-        return res.status(401).json({
+        res.status(401).json({
           status: 'error',
           message: 'Mot de passe actuel incorrect'
         });
+        return;
       }
 
       // Hasher le nouveau mot de passe
@@ -221,12 +242,14 @@ export const userController = {
         status: 'success',
         message: 'Mot de passe mis à jour avec succès'
       });
+      return;
     } catch (error) {
       logger.error('Erreur lors de la mise à jour du mot de passe:', error);
       res.status(500).json({
         status: 'error',
         message: 'Erreur lors de la mise à jour du mot de passe'
       });
+      return;
     }
   },
 
@@ -239,17 +262,19 @@ export const userController = {
         status: 'success',
         message: 'Compte supprimé avec succès'
       });
+      return;
     } catch (error) {
       logger.error('Erreur lors de la suppression du compte:', error);
       res.status(500).json({
         status: 'error',
         message: 'Erreur lors de la suppression du compte'
       });
+      return;
     }
   },
 
   // Méthodes administrateur
-  async getAllUsers(req: Request, res: Response) {
+  async getAllUsers(_: Request, res: Response) {
     try {
       const result = await query(
         'SELECT id, email, name, role, created_at, updated_at FROM users ORDER BY created_at DESC'
@@ -259,12 +284,14 @@ export const userController = {
         status: 'success',
         data: result.rows
       });
+      return;
     } catch (error) {
       logger.error('Erreur lors de la récupération des utilisateurs:', error);
       res.status(500).json({
         status: 'error',
         message: 'Erreur lors de la récupération des utilisateurs'
       });
+      return;
     }
   },
 
@@ -279,22 +306,25 @@ export const userController = {
       );
 
       if (result.rows.length === 0) {
-        return res.status(404).json({
+        res.status(404).json({
           status: 'error',
           message: 'Utilisateur non trouvé'
         });
+        return;
       }
 
       res.json({
         status: 'success',
         data: result.rows[0]
       });
+      return;
     } catch (error) {
       logger.error('Erreur lors de la mise à jour de l\'utilisateur:', error);
       res.status(500).json({
         status: 'error',
         message: 'Erreur lors de la mise à jour de l\'utilisateur'
       });
+      return;
     }
   },
 
@@ -304,22 +334,41 @@ export const userController = {
       const result = await query('DELETE FROM users WHERE id = $1 RETURNING id', [id]);
 
       if (result.rows.length === 0) {
-        return res.status(404).json({
+        res.status(404).json({
           status: 'error',
           message: 'Utilisateur non trouvé'
         });
+        return;
       }
 
       res.json({
         status: 'success',
         message: 'Utilisateur supprimé avec succès'
       });
+      return;
     } catch (error) {
       logger.error('Erreur lors de la suppression de l\'utilisateur:', error);
       res.status(500).json({
         status: 'error',
         message: 'Erreur lors de la suppression de l\'utilisateur'
       });
+      return;
     }
+  },
+
+  async forgotPassword(_: Request, res: Response) {
+    res.status(501).json({
+      status: 'error',
+      message: 'La fonctionnalité de réinitialisation par téléphone n\'est pas encore implémentée.'
+    });
+    return;
+  },
+
+  async resetPassword(_: Request, res: Response) {
+    res.status(501).json({
+      status: 'error',
+      message: 'La fonctionnalité de réinitialisation par téléphone n\'est pas encore implémentée.'
+    });
+    return;
   }
 }; 

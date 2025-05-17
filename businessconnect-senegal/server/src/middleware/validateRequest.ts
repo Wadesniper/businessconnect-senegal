@@ -12,9 +12,10 @@ export const validateRequest = (
       success: false,
       errors: errors.array().map(error => ({
         message: error.msg,
-        field: error.param
+        field: (error as any).param || (error as any).path
       }))
     });
   }
   next();
+  return;
 }; 

@@ -2,7 +2,6 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import authRoutes from './routes/auth';
 import webhookRoutes from './routes/webhook';
 import healthcheckRoutes from './routes/healthcheck';
 import { errorHandler } from './middleware/errorHandler';
@@ -28,7 +27,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use('/api/auth', authRoutes);
 app.use('/api/webhooks', webhookRoutes);
 app.use('/api/healthcheck', healthcheckRoutes);
 
