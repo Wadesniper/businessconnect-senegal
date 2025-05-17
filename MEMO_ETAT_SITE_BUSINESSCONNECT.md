@@ -660,3 +660,31 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Statut : Prêt pour la création d'un nouveau service Render, build du site complet garanti.
 
 ---
+
+## [2024-05-17 : Résolution définitive du bug Render/Mongoose]
+
+- **Problème** : Le déploiement Render échouait systématiquement avec l'erreur `Cannot find module './types/documentArray/isMongooseDocumentArray'` lors du lancement du backend Node.js, malgré un code et des dépendances sains en local.
+- **Analyse** : Ce bug est causé par une incompatibilité entre Mongoose 8.x et Node.js 22/24 sur Render, menant à une installation corrompue de Mongoose (fichiers manquants dans node_modules). Même le downgrade à Mongoose 7.x avec suppression/recréation du service ne corrigeait pas le problème.
+- **Corrections apportées** :
+    - Forçage du registre npm officiel via `.npmrc` pour éviter tout cache ou proxy tiers.
+    - Downgrade strict de Mongoose à la version `7.6.0` (sans caret) dans `package.json`.
+    - Ajout d'un script `postinstall` (`npm install mongoose@7.6.0`) pour garantir la réinstallation propre de Mongoose après chaque build sur Render.
+    - Nettoyage complet des fichiers de lock et des modules avant réinstallation (`node_modules`, `yarn.lock`, `package-lock.json`).
+    - Build universel (`npx rimraf dist && tsc`) compatible Windows/Linux.
+    - Aucune suppression de code métier, aucune perte de fonctionnalité, le site complet est maintenu.
+- **À faire sur Render** :
+    - Toujours bien vider le cache Render lors d'un bug de dépendance.
+    - Vérifier que la version Node.js utilisée est bien 20 ou 22 (cf. engines dans package.json).
+    - Ne jamais activer de scripts postinstall parasites dans d'autres dépendances.
+- **Statut** :
+    - Le code et la configuration sont désormais robustes pour un déploiement complet en production sur Render.
+    - Toute la traçabilité des corrections est assurée dans ce mémo.
+
+---
+
+**Rappel :**
+- Aucune version minimaliste n'a été utilisée. Le site complet, avec toutes ses fonctionnalités, est garanti en production.
+- Toute suppression de code métier ou de fonctionnalité est proscrite.
+- Ce mémo doit être mis à jour à chaque correction majeure impactant le build, les dépendances ou le déploiement.
+
+---
