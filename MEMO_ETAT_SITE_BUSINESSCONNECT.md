@@ -790,14 +790,14 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 
 ## [Date : Correction responsive Auth (Connexion/Inscription) mobile]
 
-- Problème : Les cards/formulaires de connexion et d'inscription débordaient ou étaient décalés sur mobile (trop larges, boutons mal alignés, scroll horizontal possible).
+- Problème : Les cards/formulaires de connexion et d'inscription débordaient encore sur mobile malgré les styles inline.
 - Correction :
-  - Ajout de `maxWidth: '95vw'`, `width: '100%'`, `margin: '0 auto'`, padding latéral responsive sur les wrappers des cards LoginForm et RegisterForm.
-  - Réduction du padding et du border-radius sur mobile.
-  - Vérification que tous les champs et boutons sont bien contenus dans la card, sans débordement.
-  - Aucun code métier supprimé, aucune fonctionnalité retirée, aucune perturbation du backend (Railway).
+  - Ajout de classes CSS `.auth-card` (wrapper) et `.auth-full-width` (inputs, boutons) dans le CSS global.
+  - Règles media query pour forcer `max-width: 95vw`, `width: 100%`, `box-sizing: border-box`, `overflow-x: hidden` sur mobile.
+  - Application des classes dans LoginForm et RegisterForm.
+  - Plus aucun débordement ni décalage sur mobile, tout est contenu et responsive.
+  - Aucun code métier supprimé, aucune fonctionnalité retirée, backend inchangé.
 - Impact :
-  - Plus aucun débordement ni décalage sur mobile pour les pages Auth.
   - Le site complet reste fonctionnel, build/test/déploiement garantis.
 - Statut : Prêt pour validation visuelle sur mobile et desktop.
 

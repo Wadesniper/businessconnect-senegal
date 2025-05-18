@@ -62,6 +62,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
           <Input
             size="large"
             placeholder="+221 XX XXX XX XX"
+            className="auth-full-width"
             style={{ borderRadius: 8, width: '100% !important' }}
             onBlur={e => validatePhone(e.target.value)}
           />
@@ -72,13 +73,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
           label={<span style={{ fontWeight: 500 }}>Mot de passe</span>}
           rules={[{ required: true, message: 'Veuillez saisir votre mot de passe' }]}
         >
-          <Input.Password size="large" placeholder="Votre mot de passe" style={{ borderRadius: 8, width: '100% !important' }} />
+          <Input.Password size="large" placeholder="Votre mot de passe" className="auth-full-width" style={{ borderRadius: 8, width: '100% !important' }} />
         </Form.Item>
         <Form.Item style={{ marginBottom: 8 }}>
           <Button
             type="primary"
             htmlType="submit"
             size="large"
+            className="auth-full-width"
             style={{ width: '100% !important', borderRadius: 8, fontWeight: 600, fontSize: 16, height: 48 }}
             loading={loading}
           >
@@ -106,7 +108,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
       boxSizing: 'border-box',
       overflowX: 'hidden',
     }}>
-      <div style={{
+      <div className="auth-card" style={{
         width: '100%',
         maxWidth: isMobile ? '95vw' : 420,
         padding: isMobile ? '12px 6px' : '40px 32px 32px 32px',
@@ -146,8 +148,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
             <Input
               size="large"
               placeholder="+221 XX XXX XX XX"
-              style={{ borderRadius: 8, width: '100% !important' }}
-              onBlur={e => validatePhone(e.target.value)}
+              className="auth-full-width"
+              style={{ borderRadius: 8 }}
+              onBlur={(e) => validatePhone(e.target.value)}
             />
           </Form.Item>
           {phoneError && <div style={{ color: 'red', marginBottom: 12 }}>{phoneError}</div>}
@@ -156,14 +159,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
             label={<span style={{ fontWeight: 500 }}>Mot de passe</span>}
             rules={[{ required: true, message: 'Veuillez saisir votre mot de passe' }]}
           >
-            <Input.Password size="large" placeholder="Votre mot de passe" style={{ borderRadius: 8, width: '100% !important' }} />
+            <Input.Password size="large" placeholder="Votre mot de passe" className="auth-full-width" style={{ borderRadius: 8 }} />
           </Form.Item>
           <Form.Item style={{ marginBottom: 8 }}>
             <Button
               type="primary"
               htmlType="submit"
               size="large"
-              style={{ width: '100% !important', borderRadius: 8, fontWeight: 600, fontSize: isMobile ? 15 : 16, height: isMobile ? 40 : 48 }}
+              className="auth-full-width"
+              style={{ borderRadius: 8, fontWeight: 600, fontSize: isMobile ? 15 : 16, height: isMobile ? 40 : 48 }}
               loading={loading}
             >
               Se connecter

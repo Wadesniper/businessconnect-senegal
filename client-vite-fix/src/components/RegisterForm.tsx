@@ -76,7 +76,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
             { pattern: /^[a-zA-ZÀ-ÿ\s]+$/, message: 'Le nom ne doit contenir que des lettres' }
           ]}
         >
-          <Input size="large" placeholder="Prénom et Nom" style={{ borderRadius: 8 }} />
+          <Input size="large" placeholder="Prénom et Nom" className="auth-full-width" style={{ borderRadius: 8 }} />
         </Form.Item>
         <Form.Item
           name="phoneNumber"
@@ -89,6 +89,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
           <Input
             size="large"
             placeholder="+221 XX XXX XX XX"
+            className="auth-full-width"
             style={{ borderRadius: 8 }}
             onBlur={e => validatePhone(e.target.value)}
           />
@@ -101,7 +102,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
             { type: 'email', message: 'Email invalide' }
           ]}
         >
-          <Input size="large" placeholder="exemple@email.com" style={{ borderRadius: 8 }} />
+          <Input size="large" placeholder="exemple@email.com" className="auth-full-width" style={{ borderRadius: 8 }} />
         </Form.Item>
         <Form.Item
           name="password"
@@ -111,7 +112,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
             { min: 8, message: 'Le mot de passe doit contenir au moins 8 caractères' }
           ]}
         >
-          <Input.Password size="large" placeholder="Votre mot de passe" style={{ borderRadius: 8 }} />
+          <Input.Password size="large" placeholder="Votre mot de passe" className="auth-full-width" style={{ borderRadius: 8 }} />
         </Form.Item>
         <Form.Item
           name="confirmPassword"
@@ -129,14 +130,15 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
             }),
           ]}
         >
-          <Input.Password size="large" placeholder="Confirmez votre mot de passe" style={{ borderRadius: 8 }} />
+          <Input.Password size="large" placeholder="Confirmez votre mot de passe" className="auth-full-width" style={{ borderRadius: 8 }} />
         </Form.Item>
         <Form.Item style={{ marginBottom: 8 }}>
           <Button
             type="primary"
             htmlType="submit"
             size="large"
-            style={{ width: '100%', borderRadius: 8, fontWeight: 600, fontSize: 16, height: 48 }}
+            className="auth-full-width"
+            style={{ borderRadius: 8, fontWeight: 600, fontSize: 16, height: 48 }}
             loading={loading}
           >
             S'inscrire
@@ -152,7 +154,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
   }
 
   return (
-    <div style={{
+    <div className="auth-card" style={{
       minHeight: '100vh',
       width: '100%',
       display: 'flex',
@@ -163,7 +165,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
       boxSizing: 'border-box',
       overflowX: 'hidden',
     }}>
-      <div style={{
+      <div className="auth-card" style={{
         width: '100%',
         maxWidth: typeof window !== 'undefined' && window.innerWidth <= 600 ? '95vw' : 480,
         padding: typeof window !== 'undefined' && window.innerWidth <= 600 ? '12px 6px' : '40px 32px 32px 32px',
@@ -201,7 +203,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
               { pattern: /^[a-zA-ZÀ-ÿ\s]+$/, message: 'Le nom ne doit contenir que des lettres' }
             ]}
           >
-            <Input size="large" placeholder="Prénom et Nom" style={{ borderRadius: 8 }} />
+            <Input size="large" placeholder="Prénom et Nom" className="auth-full-width" style={{ borderRadius: 8 }} />
           </Form.Item>
           <Form.Item
             name="phoneNumber"
@@ -214,6 +216,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
             <Input
               size="large"
               placeholder="+221 XX XXX XX XX"
+              className="auth-full-width"
               style={{ borderRadius: 8 }}
               onBlur={e => validatePhone(e.target.value)}
             />
@@ -226,7 +229,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
               { type: 'email', message: 'Email invalide' }
             ]}
           >
-            <Input size="large" placeholder="exemple@email.com" style={{ borderRadius: 8 }} />
+            <Input size="large" placeholder="exemple@email.com" className="auth-full-width" style={{ borderRadius: 8 }} />
           </Form.Item>
           <Form.Item
             name="password"
@@ -236,7 +239,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
               { min: 8, message: 'Le mot de passe doit contenir au moins 8 caractères' }
             ]}
           >
-            <Input.Password size="large" placeholder="Votre mot de passe" style={{ borderRadius: 8 }} />
+            <Input.Password size="large" placeholder="Votre mot de passe" className="auth-full-width" style={{ borderRadius: 8 }} />
           </Form.Item>
           <Form.Item
             name="confirmPassword"
@@ -254,14 +257,15 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
               }),
             ]}
           >
-            <Input.Password size="large" placeholder="Confirmez votre mot de passe" style={{ borderRadius: 8 }} />
+            <Input.Password size="large" placeholder="Confirmez votre mot de passe" className="auth-full-width" style={{ borderRadius: 8 }} />
           </Form.Item>
           <Form.Item style={{ marginBottom: 8 }}>
             <Button
               type="primary"
               htmlType="submit"
               size="large"
-              style={{ width: '100%', borderRadius: 8, fontWeight: 600, fontSize: 16, height: 48 }}
+              className="auth-full-width"
+              style={{ borderRadius: 8, fontWeight: 600, fontSize: 16, height: 48 }}
               loading={loading}
             >
               S'inscrire
