@@ -7,7 +7,7 @@ import { ArrowRightOutlined } from '@ant-design/icons';
 const { Title, Paragraph } = Typography;
 
 const TitleStyled = styled(Title)`
-  color: white;
+  color: white !important;
   font-size: 48px;
   margin-bottom: 20px;
   @media (max-width: 600px) {
@@ -111,14 +111,14 @@ const ImageSlider = styled.div`
   padding-top: 40%; /* Ratio 2.5/1 large et plus haut */
   border-radius: 32px;
   overflow: hidden;
-  background: #f7fafc;
+  background: #001529; /* Fond foncé de secours */
   box-shadow: 0 8px 32px #00152933;
   border: 2px solid #fff;
   min-width: 0;
   @media (max-width: 600px) {
     width: 100% !important;
     max-width: 100% !important;
-    padding-top: 50%; /* Ratio compromis mobile */
+    padding-top: 35%; /* Ratio compact mobile */
     border-radius: 14px;
     margin-top: 18px;
   }
@@ -136,6 +136,7 @@ const SlideImage = styled(motion.div)<{ $imageUrl: string }>`
   border-radius: 32px;
   display: flex;
   align-items: flex-end;
+  background-color: #001529; /* Fond foncé de secours */
 `;
 
 const StyledButton = styled(Button)`
