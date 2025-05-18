@@ -96,20 +96,24 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
   return (
     <div style={{
       minHeight: '100vh',
-      width: '100vw',
+      width: '100%',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
       background: 'linear-gradient(135deg, #1890ff 0%, #43e97b 100%)',
       padding: 0,
+      boxSizing: 'border-box',
+      overflowX: 'hidden',
     }}>
       <div style={{
         width: '100%',
-        maxWidth: isMobile ? '98vw' : 480,
-        padding: isMobile ? '18px 6vw 18px 6vw' : '40px 32px 32px 32px',
+        maxWidth: isMobile ? 420 : 480,
+        padding: isMobile ? '12px 12px' : '40px 32px 32px 32px',
         borderRadius: isMobile ? 10 : 18,
         boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.12)',
         background: '#fff',
+        boxSizing: 'border-box',
+        margin: isMobile ? '0 4px' : undefined,
       }}>
         <div style={{ textAlign: 'center', marginBottom: 18 }}>
           <img src="/logo192.png" alt="Logo" style={{ width: 56, marginBottom: 8 }} />
