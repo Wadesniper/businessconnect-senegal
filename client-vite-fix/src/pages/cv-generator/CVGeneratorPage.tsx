@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { Template } from '../../types/cv';
 import { CV_TEMPLATES } from './components/data/templates';
 import { useAuth } from '../../hooks/useAuth';
+import { useSubscription } from '../../hooks/useSubscription';
 
 const { Title } = Typography;
 
@@ -19,6 +20,7 @@ const exampleCVs = [
 
 const CVGeneratorPage: React.FC = () => {
   const { user } = useAuth();
+  const { hasActiveSubscription } = useSubscription();
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
   const [myCVs, setMyCVs] = useState(exampleCVs);
   const navigate = useNavigate();
@@ -58,6 +60,42 @@ const CVGeneratorPage: React.FC = () => {
 
   return (
     <div style={{ padding: '24px' }}>
+      {!hasActiveSubscription && (
+        <div style={{
+          background: 'linear-gradient(90deg, #fffbe6 0%, #f7faff 100%)',
+          border: '1.5px solid #ffe58f',
+          borderRadius: 16,
+          padding: '18px 12px',
+          margin: '0 auto 32px auto',
+          maxWidth: 700,
+          textAlign: 'center',
+          color: '#ad8b00',
+          fontWeight: 600,
+          fontSize: 17,
+          boxShadow: '0 2px 8px #ffe58f33',
+        }}>
+          <span>Pour créer et télécharger votre CV, <span style={{color:'#1890ff', fontWeight:700}}>abonnez-vous</span> à la plateforme !</span>
+          <br />
+          <button
+            style={{
+              marginTop: 10,
+              background: '#1890ff',
+              color: '#fff',
+              border: 'none',
+              borderRadius: 8,
+              padding: '8px 22px',
+              fontWeight: 700,
+              fontSize: 16,
+              cursor: 'pointer',
+              boxShadow: '0 2px 8px #1890ff22',
+              transition: 'background 0.2s',
+            }}
+            onClick={() => navigate('/subscription')}
+          >
+            S'abonner
+          </button>
+        </div>
+      )}
       <Title level={2}>Générateur de CV</Title>
       <Title level={3} style={{ marginTop: '24px' }}>
         Choisissez un modèle professionnel selon votre secteur et votre style
@@ -87,14 +125,25 @@ const CVGeneratorPage: React.FC = () => {
           </Col>
         ))}
       </Row>
-      <Button
-        type="primary"
-        size="large"
-        onClick={handleStartCV}
-        style={{ marginTop: '32px' }}
-      >
-        Commencer mon CV avec ce modèle
-      </Button>
+      {hasActiveSubscription ? (
+        <Button
+          type="primary"
+          size="large"
+          onClick={handleStartCV}
+          style={{ marginTop: '32px' }}
+        >
+          Commencer mon CV avec ce modèle
+        </Button>
+      ) : (
+        <Button
+          type="default"
+          size="large"
+          disabled
+          style={{ marginTop: '32px', background: '#f7faff', color: '#bbb', border: '1.5px solid #eee', cursor: 'not-allowed' }}
+        >
+          Abonnez-vous pour créer votre CV
+        </Button>
+      )}
 
       {/* Section Mes CVs */}
       <Title level={3} style={{ marginTop: '48px' }}>
