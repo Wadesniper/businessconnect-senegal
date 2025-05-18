@@ -145,22 +145,12 @@ html, body {
 }
 
 @media (max-width: 800px) {
-  .navbar {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    min-height: 48px !important;
-    padding: 0 8px !important;
-    margin: 0 !important;
-  }
-  .navbar-brand {
-    padding: 0 !important;
-    margin: 0 !important;
+  .navbar-menu {
+    display: none !important;
   }
   .navbar-burger {
     display: block !important;
-    margin-left: 0 !important;
+    margin-left: auto !important;
     z-index: 110;
   }
 }
