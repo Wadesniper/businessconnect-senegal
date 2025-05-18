@@ -4127,6 +4127,42 @@ const CareersPage: React.FC = () => {
           Découvrez les métiers qui recrutent au Sénégal et leurs perspectives d'évolution
         </Paragraph>
       </div>
+      {!hasActiveSubscription && (
+        <div style={{
+          background: 'linear-gradient(90deg, #fffbe6 0%, #f7faff 100%)',
+          border: '1.5px solid #ffe58f',
+          borderRadius: 16,
+          padding: '18px 12px',
+          margin: '0 auto 32px auto',
+          maxWidth: 700,
+          textAlign: 'center',
+          color: '#ad8b00',
+          fontWeight: 600,
+          fontSize: 17,
+          boxShadow: '0 2px 8px #ffe58f33',
+        }}>
+          <span>Pour consulter le détail des fiches métiers, <span style={{color:'#1890ff', fontWeight:700}}>abonnez-vous</span> à la plateforme !</span>
+          <br />
+          <button
+            style={{
+              marginTop: 10,
+              background: '#1890ff',
+              color: '#fff',
+              border: 'none',
+              borderRadius: 8,
+              padding: '8px 22px',
+              fontWeight: 700,
+              fontSize: 16,
+              cursor: 'pointer',
+              boxShadow: '0 2px 8px #1890ff22',
+              transition: 'background 0.2s',
+            }}
+            onClick={() => navigate('/subscription')}
+          >
+            S'abonner
+          </button>
+        </div>
+      )}
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
         <Row justify="center" style={{ marginBottom: 32 }}>
           <Col xs={24} sm={16} md={12}>
@@ -4179,22 +4215,11 @@ const CareersPage: React.FC = () => {
                           </div>
                           <Button
                             type={hasActiveSubscription ? 'primary' : 'default'}
-                            icon={!hasActiveSubscription ? (
-                              <span style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                width: 28,
-                                height: 28,
-                                borderRadius: '50%',
-                                background: '#fff',
-                                boxShadow: '0 2px 8px #e3e8f7',
-                                marginRight: 8
-                              }}>
-                                <LockOutlined style={{ color: '#bbb', fontSize: 18 }} />
-                              </span>
-                            ) : <ArrowRightOutlined />}
                             style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: 8,
                               borderRadius: 20,
                               fontWeight: 700,
                               background: hasActiveSubscription ? '#1890ff' : '#fff',
@@ -4205,11 +4230,11 @@ const CareersPage: React.FC = () => {
                               width: '100%',
                               maxWidth: 180,
                               margin: '0 auto',
-                              display: 'block',
                               cursor: 'pointer',
                               opacity: 1,
                               boxShadow: '0 2px 8px #e3e8f7',
                               transition: 'all 0.2s',
+                              height: 44,
                             }}
                             onClick={() => {
                               if (hasActiveSubscription) {
@@ -4219,7 +4244,21 @@ const CareersPage: React.FC = () => {
                               }
                             }}
                           >
-                            Consulter
+                            {!hasActiveSubscription ? (
+                              <span style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: 28,
+                                height: 28,
+                                borderRadius: '50%',
+                                background: '#fff',
+                                boxShadow: '0 2px 8px #e3e8f7',
+                              }}>
+                                <LockOutlined style={{ color: '#bbb', fontSize: 18 }} />
+                              </span>
+                            ) : <ArrowRightOutlined />}
+                            <span>Consulter</span>
                           </Button>
                         </Space>
                       </Card>
@@ -4262,22 +4301,11 @@ const CareersPage: React.FC = () => {
                         </div>
                         <Button
                           type={hasActiveSubscription ? 'primary' : 'default'}
-                          icon={!hasActiveSubscription ? (
-                            <span style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              width: 28,
-                              height: 28,
-                              borderRadius: '50%',
-                              background: '#fff',
-                              boxShadow: '0 2px 8px #e3e8f7',
-                              marginRight: 8
-                            }}>
-                              <LockOutlined style={{ color: '#bbb', fontSize: 18 }} />
-                            </span>
-                          ) : <ArrowRightOutlined />}
                           style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: 8,
                             borderRadius: 20,
                             fontWeight: 700,
                             background: hasActiveSubscription ? '#1890ff' : '#fff',
@@ -4288,11 +4316,11 @@ const CareersPage: React.FC = () => {
                             width: '100%',
                             maxWidth: 180,
                             margin: '0 auto',
-                            display: 'block',
                             cursor: 'pointer',
                             opacity: 1,
                             boxShadow: '0 2px 8px #e3e8f7',
                             transition: 'all 0.2s',
+                            height: 44,
                           }}
                           onClick={() => {
                             if (hasActiveSubscription) {
@@ -4302,7 +4330,21 @@ const CareersPage: React.FC = () => {
                             }
                           }}
                         >
-                          Consulter
+                          {!hasActiveSubscription ? (
+                            <span style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              width: 28,
+                              height: 28,
+                              borderRadius: '50%',
+                              background: '#fff',
+                              boxShadow: '0 2px 8px #e3e8f7',
+                            }}>
+                              <LockOutlined style={{ color: '#bbb', fontSize: 18 }} />
+                            </span>
+                          ) : <ArrowRightOutlined />}
+                          <span>Consulter</span>
                         </Button>
                       </Space>
                     </Card>
