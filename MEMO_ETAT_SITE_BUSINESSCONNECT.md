@@ -841,3 +841,24 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Statut : Prêt pour validation visuelle et déploiement.
 
 ---
+
+## [Date : Restriction accès Générateur de CV & bandeau abonnement]
+
+- Accès à la création de CV désormais réservé aux abonnés (politique d'accès renforcée).
+- Les non-abonnés voient uniquement la galerie des modèles de CV, sans pouvoir créer ni télécharger.
+- Ajout d'un bandeau d'incitation à l'abonnement en haut de la page Générateur de CV pour les non-abonnés, avec bouton « S'abonner ».
+- UX conforme à la politique d'accès : bouton de création désactivé pour les non-abonnés, expérience premium maintenue pour les abonnés.
+- Aucune suppression de fonctionnalité pour les abonnés, aucun impact sur le backend ou le déploiement.
+- Statut : Prêt pour validation visuelle et déploiement.
+
+---
+
+## [Date : Conformité accès premium Formations & Fiches Métiers]
+
+- Pages Formations et Fiches Métiers : accès à la consultation réservé aux abonnés, galerie visible par tous.
+- Bandeau d'incitation à l'abonnement affiché pour les non-abonnés, avec bouton « S'abonner » bien visible.
+- Boutons premium « Accéder » (Formations) et « Consulter » (Fiches Métiers) : cadenas harmonisé, alignement parfait, redirection directe vers la page abonnement pour les non-abonnés.
+- UX/UI premium, responsive, aucune perte de fonctionnalité pour les abonnés, site complet maintenu.
+- Statut : Prêt pour validation visuelle et déploiement.
+
+---
