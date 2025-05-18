@@ -59,7 +59,8 @@ const GeometricBackground = styled.div`
 
 const ContentWrapper = styled.div`
   position: relative;
-  width: 100%;
+  width: 100vw;
+  max-width: 100vw;
   padding: 0;
   height: 100%;
   display: flex;
@@ -89,6 +90,7 @@ const ImageSlider = styled.div`
   background: #f7fafc;
   box-shadow: 0 8px 32px #00152933;
   border: 2px solid #fff;
+  min-width: 0;
 `;
 
 const SlideImage = styled(motion.div)<{ $imageUrl: string }>`
