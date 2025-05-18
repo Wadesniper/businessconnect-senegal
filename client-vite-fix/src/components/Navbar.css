@@ -159,7 +159,9 @@ html, body {
     margin: 0 !important;
   }
   .navbar-burger {
+    display: block !important;
     margin-left: 0 !important;
+    z-index: 110;
   }
 }
 

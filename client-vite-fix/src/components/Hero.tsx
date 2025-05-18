@@ -28,6 +28,7 @@ const HeroContainer = styled.div`
     max-width: 100% !important;
     min-width: 0 !important;
     overflow-x: hidden !important;
+    margin-top: 56px !important;
   }
 `;
 
