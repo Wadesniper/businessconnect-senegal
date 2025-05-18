@@ -152,7 +152,7 @@ html, body {
     display: block;
   }
   .navbar-end {
-    gap: 6px;
+    display: none !important;
   }
   .navbar {
     flex-direction: column;

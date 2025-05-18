@@ -118,7 +118,7 @@ const ImageSlider = styled.div`
   @media (max-width: 600px) {
     width: 100% !important;
     max-width: 100% !important;
-    padding-top: 60%; /* Ratio plus haut sur mobile */
+    padding-top: 50%; /* Ratio compromis mobile */
     border-radius: 14px;
     margin-top: 18px;
   }
