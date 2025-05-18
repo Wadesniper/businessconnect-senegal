@@ -7,10 +7,7 @@ const Footer: React.FC = () => {
   return (
     <footer className="footer-modern">
       <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 18 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 26, textAlign: 'center', gap: 8 }}>
-          <img src="/logo192.png" alt="Logo B" style={{ width: 38, height: 38, marginRight: 8, borderRadius: 8, boxShadow: '0 2px 8px #e3e8f7', background: '#fff' }} />
-          <span style={{ color: '#1890ff' }}>BusinessConnect</span><span style={{ color: '#1ec773' }}>Sénégal</span>
-        </div>
+        <img src="/logo192.png" alt="Logo B" style={{ width: 48, height: 48, borderRadius: 12, boxShadow: '0 2px 8px #e3e8f7', background: '#fff', display: 'block' }} />
       </div>
       <div className="footer-content">
         <div className="footer-section">

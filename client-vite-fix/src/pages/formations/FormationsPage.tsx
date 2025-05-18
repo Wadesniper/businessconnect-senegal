@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Layout, Card, Row, Col, Input, Select, Slider, Tag, Rate, Button, Empty, Spin, message } from 'antd';
-import { SearchOutlined, FilterOutlined, BookOutlined, ClockCircleOutlined, UserOutlined, ArrowRightOutlined } from '@ant-design/icons';
+import { SearchOutlined, FilterOutlined, BookOutlined, ClockCircleOutlined, UserOutlined, ArrowRightOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useSubscription } from '../../hooks/useSubscription';
@@ -129,19 +129,38 @@ const FormationsPage: React.FC = () => {
                         <p style={{ color: '#333', marginBottom: 12, minHeight: 48 }}>{f.description}</p>
                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                           <Button
-                            type="primary"
-                            icon={hasActiveSubscription ? <ArrowRightOutlined /> : <span role="img" aria-label="lock">🔒</span>}
+                            type={hasActiveSubscription ? 'primary' : 'default'}
+                            icon={!hasActiveSubscription ? (
+                              <span style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: 28,
+                                height: 28,
+                                borderRadius: '50%',
+                                background: '#fff',
+                                boxShadow: '0 2px 8px #e3e8f7',
+                                marginRight: 8
+                              }}>
+                                <LockOutlined style={{ color: '#bbb', fontSize: 18 }} />
+                              </span>
+                            ) : <ArrowRightOutlined />}
                             style={{
                               borderRadius: 20,
                               fontWeight: 700,
-                              background: hasActiveSubscription ? '#1890ff' : '#aaa',
-                              border: 'none',
+                              background: hasActiveSubscription ? '#1890ff' : '#fff',
+                              color: hasActiveSubscription ? '#fff' : '#bbb',
+                              border: hasActiveSubscription ? 'none' : '1.5px solid #eee',
                               fontSize: 16,
                               padding: '8px 24px',
                               width: '100%',
                               maxWidth: 180,
                               margin: '0 auto',
                               display: 'block',
+                              cursor: 'pointer',
+                              opacity: 1,
+                              boxShadow: '0 2px 8px #e3e8f7',
+                              transition: 'all 0.2s',
                             }}
                             onClick={() => handleFormationClick(f.url)}
                           >

@@ -4215,16 +4215,7 @@ const CareersPage: React.FC = () => {
                               if (hasActiveSubscription) {
                                 showMetierDetail(metier);
                               } else {
-                                Modal.info({
-                                  title: 'Abonnement requis',
-                                  content: (
-                                    <div style={{textAlign: 'center'}}>
-                                      <p>Cette fonctionnalité est réservée aux abonnés.</p>
-                                      <Button type="primary" onClick={() => navigate('/subscription')}>S'abonner</Button>
-                                    </div>
-                                  ),
-                                  okText: 'Fermer',
-                                });
+                                navigate('/subscription');
                               }
                             }}
                           >
@@ -4307,16 +4298,7 @@ const CareersPage: React.FC = () => {
                             if (hasActiveSubscription) {
                               showMetierDetail(metier);
                             } else {
-                              Modal.info({
-                                title: 'Abonnement requis',
-                                content: (
-                                  <div style={{textAlign: 'center'}}>
-                                    <p>Cette fonctionnalité est réservée aux abonnés.</p>
-                                    <Button type="primary" onClick={() => navigate('/subscription')}>S'abonner</Button>
-                                  </div>
-                                ),
-                                okText: 'Fermer',
-                              });
+                              navigate('/subscription');
                             }
                           }}
                         >
