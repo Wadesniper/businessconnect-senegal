@@ -820,3 +820,15 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Statut : Prêt pour validation visuelle et déploiement.
 
 ---
+
+## [Date : Amélioration UX/UI page Formations]
+
+- Amélioration du header (titre premium, fond dégradé, sous-titre visible et moderne).
+- Ajout d'une recherche simple (filtrage live sur le titre/description).
+- Cards formations plus harmonieuses, responsive, bouton « Accéder » bien visible et centré.
+- Ajout d'un bandeau d'incitation à l'abonnement (uniquement pour les non-abonnés, discret mais efficace).
+- Aucun filtre avancé, aucun badge « certifiant » ou « gratuit ».
+- Aucune suppression de fonctionnalité, site complet maintenu, aucune perturbation du backend ou du déploiement.
+- Statut : Prêt pour validation visuelle et déploiement.
+
+---
