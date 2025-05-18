@@ -49,6 +49,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
         onFinish={onFinish}
         layout="vertical"
         requiredMark={false}
+        style={{ boxSizing: 'border-box', overflowX: 'hidden' }}
       >
         <Form.Item
           name="phoneNumber"
@@ -61,7 +62,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
           <Input
             size="large"
             placeholder="+221 XX XXX XX XX"
-            style={{ borderRadius: 8 }}
+            style={{ borderRadius: 8, width: '100% !important' }}
             onBlur={e => validatePhone(e.target.value)}
           />
         </Form.Item>
@@ -71,14 +72,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
           label={<span style={{ fontWeight: 500 }}>Mot de passe</span>}
           rules={[{ required: true, message: 'Veuillez saisir votre mot de passe' }]}
         >
-          <Input.Password size="large" placeholder="Votre mot de passe" style={{ borderRadius: 8 }} />
+          <Input.Password size="large" placeholder="Votre mot de passe" style={{ borderRadius: 8, width: '100% !important' }} />
         </Form.Item>
         <Form.Item style={{ marginBottom: 8 }}>
           <Button
             type="primary"
             htmlType="submit"
             size="large"
-            style={{ width: '100%', borderRadius: 8, fontWeight: 600, fontSize: 16, height: 48 }}
+            style={{ width: '100% !important', borderRadius: 8, fontWeight: 600, fontSize: 16, height: 48 }}
             loading={loading}
           >
             Se connecter
@@ -101,19 +102,19 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
       justifyContent: 'center',
       alignItems: 'center',
       background: 'linear-gradient(135deg, #1890ff 0%, #43e97b 100%)',
-      padding: 0,
+      padding: isMobile ? '0 0 0 0' : 0,
       boxSizing: 'border-box',
       overflowX: 'hidden',
     }}>
       <div style={{
         width: '100%',
-        maxWidth: isMobile ? 420 : 480,
-        padding: isMobile ? '12px 12px' : '40px 32px 32px 32px',
+        maxWidth: isMobile ? '95vw' : 420,
+        padding: isMobile ? '12px 6px' : '40px 32px 32px 32px',
         borderRadius: isMobile ? 10 : 18,
         boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.12)',
         background: '#fff',
         boxSizing: 'border-box',
-        margin: isMobile ? '0 4px' : undefined,
+        margin: isMobile ? '0 auto' : undefined,
       }}>
         <div style={{ textAlign: 'center', marginBottom: 18 }}>
           <img src="/logo192.png" alt="Logo" style={{ width: 56, marginBottom: 8 }} />
@@ -132,6 +133,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
           onFinish={onFinish}
           layout="vertical"
           requiredMark={false}
+          style={{ boxSizing: 'border-box', overflowX: 'hidden' }}
         >
           <Form.Item
             name="phoneNumber"
@@ -144,7 +146,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
             <Input
               size="large"
               placeholder="+221 XX XXX XX XX"
-              style={{ borderRadius: 8 }}
+              style={{ borderRadius: 8, width: '100% !important' }}
               onBlur={e => validatePhone(e.target.value)}
             />
           </Form.Item>
@@ -154,14 +156,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
             label={<span style={{ fontWeight: 500 }}>Mot de passe</span>}
             rules={[{ required: true, message: 'Veuillez saisir votre mot de passe' }]}
           >
-            <Input.Password size="large" placeholder="Votre mot de passe" style={{ borderRadius: 8 }} />
+            <Input.Password size="large" placeholder="Votre mot de passe" style={{ borderRadius: 8, width: '100% !important' }} />
           </Form.Item>
           <Form.Item style={{ marginBottom: 8 }}>
             <Button
               type="primary"
               htmlType="submit"
               size="large"
-              style={{ width: '100%', borderRadius: 8, fontWeight: 600, fontSize: isMobile ? 15 : 16, height: isMobile ? 40 : 48 }}
+              style={{ width: '100% !important', borderRadius: 8, fontWeight: 600, fontSize: isMobile ? 15 : 16, height: isMobile ? 40 : 48 }}
               loading={loading}
             >
               Se connecter

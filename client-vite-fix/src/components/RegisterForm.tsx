@@ -154,20 +154,24 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
   return (
     <div style={{
       minHeight: '100vh',
-      width: '100vw',
+      width: '100%',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
       background: 'linear-gradient(135deg, #1890ff 0%, #43e97b 100%)',
-      padding: 0,
+      padding: typeof window !== 'undefined' && window.innerWidth <= 600 ? '0 0 0 0' : 0,
+      boxSizing: 'border-box',
+      overflowX: 'hidden',
     }}>
       <div style={{
         width: '100%',
-        maxWidth: 480,
-        padding: '40px 32px 32px 32px',
-        borderRadius: 18,
+        maxWidth: typeof window !== 'undefined' && window.innerWidth <= 600 ? '95vw' : 480,
+        padding: typeof window !== 'undefined' && window.innerWidth <= 600 ? '12px 6px' : '40px 32px 32px 32px',
+        borderRadius: typeof window !== 'undefined' && window.innerWidth <= 600 ? 10 : 18,
         boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.12)',
         background: '#fff',
+        boxSizing: 'border-box',
+        margin: typeof window !== 'undefined' && window.innerWidth <= 600 ? '0 auto' : undefined,
       }}>
         <div style={{ textAlign: 'center', marginBottom: 18 }}>
           <img src="/logo192.png" alt="Logo" style={{ width: 56, marginBottom: 8 }} />

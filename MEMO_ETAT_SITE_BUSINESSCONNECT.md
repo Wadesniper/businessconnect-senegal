@@ -726,3 +726,79 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
     - La traçabilité de toutes les étapes est assurée dans ce mémo.
 
 ---
+
+## [Date : Correction Rollup/Vercel - build bloqué par module natif Rollup]
+
+- Problème : Le build Vercel échouait à cause d'une erreur Rollup ("Cannot find module @rollup/rollup-linux-x64-gnu") liée à un bug npm sur les dépendances optionnelles.
+- Correction : Suppression complète de `node_modules` et du `package-lock.json`, réinstallation propre des dépendances avec `npm install`.
+- Action : Commit et push du nouveau lockfile généré, déclenchement d'un nouveau build Vercel.
+- Impact : Aucune suppression de code métier, aucune perte de fonctionnalité, le site complet reste inchangé et fonctionnel.
+- Backend Railway : Aucun impact, le backend reste stable et en production.
+- Statut : Prêt pour validation du build Vercel et test du site complet en production.
+
+---
+
+## [Date : Correction layout global - affichage miniature prod]
+
+- Problème : La page d'accueil (Home) et toutes les sections principales s'affichaient en miniature à cause de wrappers avec maxWidth/margin restrictifs.
+- Correction : Suppression des restrictions de largeur sur tous les wrappers principaux de Home (`width: 100vw`, `maxWidth: 100vw`, `margin: 0`), tout en gardant les cards et sections centrées.
+- Action : Commit/push du correctif, build Vercel déclenché pour validation sur la prod.
+- Impact : Aucune suppression de code métier, aucune perte de fonctionnalité, le backend Railway reste inchangé.
+- Statut : Prêt pour validation visuelle sur l'URL principale prod avant de passer à l'étape suivante.
+
+---
+
+## [Date : Correction critique - import CSS global dans main.tsx]
+
+- Problème : Le site s'affichait en miniature sur l'URL principale Vercel, alors que les URLs de commit étaient correctes. Le CSS global n'était pas importé dans main.tsx, donc les styles n'étaient pas appliqués en production SSR/CSR.
+- Correction : Ajout explicite de l'import `import './index.css';` en tout premier dans `src/main.tsx`.
+- Action : Commit/push du correctif, build Vercel déclenché pour validation sur la prod.
+- Impact : Aucune suppression de code métier, aucune perte de fonctionnalité, le backend Railway reste inchangé.
+- Statut : Prêt pour validation visuelle sur l'URL principale prod. Si le bug persiste, on poursuivra l'investigation sur la chaîne de build ou la config Vercel.
+
+---
+
+## [Date : Correction mobile Hero (carrousel)]
+
+- Problème : Sur mobile, le carrousel Hero débordait horizontalement, les images étaient coupées et le ratio inadapté.
+- Correction : Ajout de media queries dans le composant Hero pour forcer la largeur à 100%, adapter le ratio (padding-top: 60%), border-radius réduit, overflow-x: hidden sur mobile.
+- Action : Commit/push du correctif, build Vercel déclenché pour validation sur mobile.
+- Impact : Aucune suppression de code métier, aucune perte de fonctionnalité, le backend Railway reste inchangé.
+- Statut : Prêt pour validation visuelle sur mobile avant de passer à l'étape suivante (Navbar).
+
+---
+
+## [Date : Correction mobile Navbar + titre Hero]
+
+- Problème : Sur mobile, la Navbar débordait (boutons, logo), le menu burger n'était pas optimal, et le titre du Hero était trop grand.
+- Correction : Media queries sur la Navbar pour réduire la taille/padding des boutons et du logo, meilleure gestion du menu burger. Media query sur le titre du Hero pour réduire la taille sur mobile.
+- Action : Commit/push du correctif, build Vercel déclenché pour validation sur mobile.
+- Impact : Aucune suppression de code métier, aucune perte de fonctionnalité, le backend Railway reste inchangé.
+- Statut : Prêt pour validation visuelle sur mobile avant de passer à l'étape suivante (page Connexion/Inscription).
+
+---
+
+## [Date : Correction mobile - Navbar (auth) et carrousel]
+
+- Problème : Sur mobile, les boutons d'authentification (S'abonner, Connexion, Inscription) apparaissaient à la fois dans la barre principale et dans le menu burger, ce qui masquait le titre et surchargeait l'UI. Le carrousel était devenu trop haut.
+- Correction : Masquage de .navbar-end (auth-buttons) sur mobile, les boutons sont désormais uniquement dans le menu burger. Ratio du carrousel ajusté à 50% sur mobile pour un compromis visuel.
+- Action : Commit/push du correctif, build Vercel déclenché pour validation sur mobile.
+- Impact : Aucune suppression de code métier, aucune perte de fonctionnalité, le backend Railway reste inchangé.
+- Statut : Prêt pour validation visuelle sur mobile avant de passer à l'étape suivante (page Connexion/Inscription).
+
+---
+
+## [Date : Correction responsive Auth (Connexion/Inscription) mobile]
+
+- Problème : Les cards/formulaires de connexion et d'inscription débordaient ou étaient décalés sur mobile (trop larges, boutons mal alignés, scroll horizontal possible).
+- Correction :
+  - Ajout de `maxWidth: '95vw'`, `width: '100%'`, `margin: '0 auto'`, padding latéral responsive sur les wrappers des cards LoginForm et RegisterForm.
+  - Réduction du padding et du border-radius sur mobile.
+  - Vérification que tous les champs et boutons sont bien contenus dans la card, sans débordement.
+  - Aucun code métier supprimé, aucune fonctionnalité retirée, aucune perturbation du backend (Railway).
+- Impact :
+  - Plus aucun débordement ni décalage sur mobile pour les pages Auth.
+  - Le site complet reste fonctionnel, build/test/déploiement garantis.
+- Statut : Prêt pour validation visuelle sur mobile et desktop.
+
+---
