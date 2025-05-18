@@ -17,9 +17,26 @@ const AuthPage: React.FC = () => {
           Connectez-vous ou créez un compte pour rejoindre la communauté
         </div>
       </div>
-      <div style={{ background: '#fff', borderRadius: 24, boxShadow: '0 8px 32px #e3e8f7', padding: 32, maxWidth: 1000, width: '100%', display: 'flex', flexDirection: window.innerWidth < 800 ? 'column' : 'row', gap: 0, position: 'relative' }}>
+      <div 
+        className="auth-card"
+        style={{ 
+          background: '#fff', 
+          borderRadius: 24, 
+          boxShadow: '0 8px 32px #e3e8f7', 
+          padding: window.innerWidth < 600 ? '8px 0' : 32, 
+          maxWidth: 1000, 
+          width: '100%', 
+          display: 'flex', 
+          flexDirection: window.innerWidth < 800 ? 'column' : 'row', 
+          gap: window.innerWidth < 800 ? 0 : 0, 
+          position: 'relative',
+          margin: '0 auto',
+          boxSizing: 'border-box',
+          overflowX: 'hidden',
+        }}
+      >
         {/* Connexion */}
-        <div style={{ flex: 1, minWidth: 320, maxWidth: 420, padding: 24, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div style={{ flex: 1, minWidth: 0, maxWidth: 420, width: '100%', padding: 24, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div style={{
             border: '2px solid #1890ff',
             borderRadius: 12,
@@ -37,12 +54,12 @@ const AuthPage: React.FC = () => {
           }}>
             Connexion
           </div>
-          <div style={{width:'100%', maxWidth:380}}>
+          <div style={{width:'100%', maxWidth:340, margin:'0 auto'}}>
             <LoginForm noCard noBg hideRegisterLink />
           </div>
         </div>
         {/* Séparateur OU */}
-        <div style={{ display: window.innerWidth < 800 ? 'none' : 'flex', alignItems: 'flex-start', justifyContent: 'center', width: 60, marginTop: 56 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: window.innerWidth < 800 ? '100%' : 60, margin: window.innerWidth < 800 ? '18px 0' : '56px 0 0 0' }}>
           <div style={{
             background: '#f0f5ff',
             color: '#1890ff',
@@ -59,7 +76,7 @@ const AuthPage: React.FC = () => {
           }}>ou</div>
         </div>
         {/* Inscription */}
-        <div style={{ flex: 1, minWidth: 320, maxWidth: 420, padding: 24, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div style={{ flex: 1, minWidth: 0, maxWidth: 420, width: '100%', padding: 24, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div style={{
             border: '2px solid #1ec773',
             borderRadius: 12,
@@ -93,29 +110,10 @@ const AuthPage: React.FC = () => {
             Vous êtes nouveau ? Créez votre compte gratuitement pour découvrir la plateforme.<br/>
             <span style={{color:'#1890ff'}}>Certaines fonctionnalités nécessitent un abonnement.</span>
           </div>
-          <div style={{width:'100%', maxWidth:380}}>
+          <div style={{width:'100%', maxWidth:340, margin:'0 auto'}}>
             <RegisterForm noCard noBg hideLoginLink />
           </div>
         </div>
-        {/* Séparateur OU mobile */}
-        {window.innerWidth < 800 && (
-          <div style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '18px 0' }}>
-            <div style={{
-              background: '#f0f5ff',
-              color: '#1890ff',
-              borderRadius: '50%',
-              width: 44,
-              height: 44,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 700,
-              fontSize: 18,
-              boxShadow: '0 2px 12px #1890ff22',
-              border: '2px solid #e6f7ff',
-            }}>ou</div>
-          </div>
-        )}
       </div>
     </div>
   );

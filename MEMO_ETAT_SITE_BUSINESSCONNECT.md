@@ -1,5 +1,13 @@
 # MEMO ÉTAT SITE BUSINESSCONNECT
 
+## [Date : Correction responsive définitive page connexion/inscription mobile]
+
+- Problème : Sur mobile, les champs de la page de connexion dépassaient et n'étaient pas bien centrés. Le séparateur "ou" n'était pas toujours visible entre les deux formulaires.
+- Correction : Réduction de la largeur maximale des champs, centrage parfait des formulaires, et affichage du séparateur "ou" entre connexion et inscription sur tous les écrans (mobile inclus).
+- Aucun code ou fonctionnalité essentielle supprimé, aucun impact sur le backend ou le déploiement backend.
+- Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
+- Statut : Prêt pour validation visuelle finale et déploiement en production.
+
 ## [Date : Correction CI/CD - duplication .env pour les tests]
 
 - Problème : Les tests échouaient sur GitHub Actions à cause de l'absence du fichier .env.test, ce qui bloquait le déploiement Vercel.
