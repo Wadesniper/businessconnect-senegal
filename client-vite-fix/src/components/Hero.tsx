@@ -13,6 +13,12 @@ const HeroContainer = styled.div`
   overflow-x: hidden;
   overflow-y: hidden;
   background: linear-gradient(135deg, #001529 0%, #003366 100%);
+  @media (max-width: 600px) {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow-x: hidden !important;
+  }
 `;
 
 const HeroBackground = styled.div<{ $imageUrl: string }>`
@@ -67,6 +73,14 @@ const ContentWrapper = styled.div`
   align-items: center;
   justify-content: space-between;
   z-index: 1;
+  @media (max-width: 600px) {
+    flex-direction: column;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    padding: 0;
+    overflow-x: hidden !important;
+  }
 `;
 
 const TextContent = styled.div`
@@ -91,6 +105,13 @@ const ImageSlider = styled.div`
   box-shadow: 0 8px 32px #00152933;
   border: 2px solid #fff;
   min-width: 0;
+  @media (max-width: 600px) {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-top: 60%; /* Ratio plus haut sur mobile */
+    border-radius: 14px;
+    margin-top: 18px;
+  }
 `;
 
 const SlideImage = styled(motion.div)<{ $imageUrl: string }>`
