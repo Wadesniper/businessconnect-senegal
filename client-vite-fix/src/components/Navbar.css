@@ -153,6 +153,9 @@ html, body {
     margin-left: auto !important;
     z-index: 110;
   }
+  .navbar-end {
+    display: none !important;
+  }
 }
 
 .navbar-burger {
