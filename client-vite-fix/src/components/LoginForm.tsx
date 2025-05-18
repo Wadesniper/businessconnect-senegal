@@ -38,6 +38,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
     }
   };
 
+  // Styles responsives pour mobile
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 600;
+
   // Si noCard ou noBg, on affiche juste le formulaire sans fond ni card
   if (noCard || noBg) {
     return (
@@ -102,9 +105,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
     }}>
       <div style={{
         width: '100%',
-        maxWidth: 480,
-        padding: '40px 32px 32px 32px',
-        borderRadius: 18,
+        maxWidth: isMobile ? '98vw' : 480,
+        padding: isMobile ? '18px 6vw 18px 6vw' : '40px 32px 32px 32px',
+        borderRadius: isMobile ? 10 : 18,
         boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.12)',
         background: '#fff',
       }}>
@@ -117,7 +120,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
             Connectez-vous pour accéder à votre espace personnel
           </div>
         </div>
-        <h2 style={{ textAlign: 'center', marginBottom: 24, fontWeight: 700, letterSpacing: 1, fontSize: 28 }}>
+        <h2 style={{ textAlign: 'center', marginBottom: isMobile ? 12 : 24, fontWeight: 700, letterSpacing: 1, fontSize: isMobile ? 20 : 28 }}>
           Connexion
         </h2>
         <Form
@@ -154,7 +157,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
               type="primary"
               htmlType="submit"
               size="large"
-              style={{ width: '100%', borderRadius: 8, fontWeight: 600, fontSize: 16, height: 48 }}
+              style={{ width: '100%', borderRadius: 8, fontWeight: 600, fontSize: isMobile ? 15 : 16, height: isMobile ? 40 : 48 }}
               loading={loading}
             >
               Se connecter
