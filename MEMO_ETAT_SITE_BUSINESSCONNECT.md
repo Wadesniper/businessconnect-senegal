@@ -802,3 +802,13 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Statut : Prêt pour validation visuelle sur mobile et desktop.
 
 ---
+
+## [Date : Correction séparations sections page Home]
+
+- Problème : Les sections de la page d'accueil étaient trop collées ou mal espacées, ce qui nuisait à la lisibilité et à l'harmonie visuelle.
+- Correction : Ajout d'une marge verticale (`margin: 40px 0 0 0`) entre chaque grande section de la page Home pour une séparation claire et harmonieuse, sur desktop et mobile.
+- Aucun contenu ni fonctionnalité supprimé, backend inchangé.
+- Impact : Navigation plus fluide, site plus lisible et premium.
+- Statut : Prêt pour validation visuelle et déploiement.
+
+---

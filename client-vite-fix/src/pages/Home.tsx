@@ -140,7 +140,7 @@ const Home: React.FC = () => {
     <Layout>
       <Hero onDiscoverClick={handleScrollToServices} />
       {/* Section Secteurs d'activité */}
-      <div style={{ width: '100vw', maxWidth: '100vw', margin: 0, padding: '0 32px' }}>
+      <div style={{ width: '100vw', maxWidth: '100vw', margin: '40px 0 0 0', padding: '0 32px' }}>
         <div style={{ background: '#fff', borderRadius: 32, boxShadow: '0 8px 32px #e3e8f7', padding: '48px 0', maxWidth: 1400, margin: '0 auto' }}>
           <Title level={1} style={{ textAlign: 'center', marginBottom: 16, fontWeight: 700, fontSize: 38 }}>
             Secteurs d'<span style={{ color: '#1890ff' }}>activité</span>
@@ -206,7 +206,7 @@ const Home: React.FC = () => {
         </div>
       </div>
       {/* Section Emploi */}
-      <div style={{ width: '100vw', maxWidth: '100vw', margin: 0, padding: '0 32px' }}>
+      <div style={{ width: '100vw', maxWidth: '100vw', margin: '40px 0 0 0', padding: '0 32px' }}>
         <div style={{ background: '#fff', borderRadius: 32, boxShadow: '0 8px 32px #e3e8f7', padding: '48px 0', maxWidth: 1400, margin: '0 auto' }}>
           <Typography.Title level={2} style={{ color: '#1d3557', marginBottom: 24 }}>
             Offres d'emploi récentes
@@ -239,7 +239,7 @@ const Home: React.FC = () => {
         </div>
       </div>
       {/* Section Nos Services Professionnels */}
-      <div style={{ width: '100vw', maxWidth: '100vw', margin: 0, padding: '0 32px' }}>
+      <div style={{ width: '100vw', maxWidth: '100vw', margin: '40px 0 0 0', padding: '0 32px' }}>
         <div style={{ background: '#fff', borderRadius: 32, boxShadow: '0 8px 32px #e3e8f7', padding: '48px 0', maxWidth: 1400, margin: '0 auto' }}>
           <Title level={1} style={{ textAlign: 'center', marginBottom: 16 }}>
             Nos Services <span style={{ color: '#1890ff' }}>Professionnels</span>
@@ -302,7 +302,7 @@ const Home: React.FC = () => {
         </div>
       </div>
       {/* Section Abonnements */}
-      <div style={{ width: '100vw', maxWidth: '100vw', margin: 0, padding: '0 32px' }}>
+      <div style={{ width: '100vw', maxWidth: '100vw', margin: '40px 0 0 0', padding: '0 32px' }}>
         <div style={{ background: '#fff', borderRadius: 32, boxShadow: '0 8px 32px #e3e8f7', padding: '48px 0', maxWidth: 1400, margin: '0 auto' }}>
           <Title level={1} style={{ textAlign: 'center', marginBottom: 16, fontWeight: 700, fontSize: 38 }}>
             Nos <span style={{ color: '#1890ff' }}>Abonnements</span>
@@ -368,7 +368,7 @@ const Home: React.FC = () => {
         </div>
       </div>
       {/* Section CV Professionnel */}
-      <div style={{ width: '100vw', maxWidth: '100vw', margin: 0, padding: '0 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', background: 'linear-gradient(90deg, #f7fafc 60%, #e3fcec 100%)', borderRadius: 24, boxShadow: '0 4px 24px #e3e8f7' }}>
+      <div style={{ width: '100vw', maxWidth: '100vw', margin: '40px 0 0 0', padding: '0 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', background: 'linear-gradient(90deg, #f7fafc 60%, #e3fcec 100%)', borderRadius: 24, boxShadow: '0 4px 24px #e3e8f7' }}>
         <div style={{ flex: 1, minWidth: 320, padding: '40px 24px 40px 0' }}>
           <Title level={2} style={{ color: '#1d3557', marginBottom: 16 }}>Créez un CV professionnel</Title>
           <Paragraph style={{ fontSize: 18, color: '#333', marginBottom: 24 }}>
@@ -394,7 +394,7 @@ const Home: React.FC = () => {
         </div>
       </div>
       {/* Section Marketplace */}
-      <div style={{ width: '100vw', maxWidth: '100vw', margin: 0, padding: '0 32px', background: 'linear-gradient(90deg, #f7fafc 60%, #e3e8f7 100%)', borderRadius: 24, boxShadow: '0 4px 24px #e3e8f7' }}>
+      <div style={{ width: '100vw', maxWidth: '100vw', margin: '40px 0 0 0', padding: '0 32px', background: 'linear-gradient(90deg, #f7fafc 60%, #e3e8f7 100%)', borderRadius: 24, boxShadow: '0 4px 24px #e3e8f7' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', padding: '32px 0 16px 0' }}>
           <Title level={2} style={{ color: '#7c3aed', margin: 0 }}>Marketplace</Title>
           <div style={{ display: 'flex', gap: 16 }}>
@@ -407,7 +407,7 @@ const Home: React.FC = () => {
         </div>
       </div>
       {/* Section BusinessConnect en chiffres */}
-      <div style={{ width: '100vw', maxWidth: '100vw', margin: 0, padding: '0 32px' }}>
+      <div style={{ width: '100vw', maxWidth: '100vw', margin: '40px 0 0 0', padding: '0 32px' }}>
         <div style={{ background: '#fff', borderRadius: 32, boxShadow: '0 8px 32px #e3e8f7', padding: '48px 0', maxWidth: 1400, margin: '0 auto' }}>
           <Title level={2} style={{ color: '#1d3557', marginBottom: 32, textAlign: 'center' }}>BusinessConnect en chiffres</Title>
           <Row gutter={[32, 32]} justify="center">
@@ -487,7 +487,7 @@ const Home: React.FC = () => {
         </div>
       </div>
       {/* Section Ils nous font confiance */}
-      <div style={{ width: '100vw', maxWidth: '100vw', margin: 0, padding: '0 32px' }}>
+      <div style={{ width: '100vw', maxWidth: '100vw', margin: '40px 0 0 0', padding: '0 32px' }}>
         <div style={{ background: '#fff', borderRadius: 32, boxShadow: '0 8px 32px #e3e8f7', padding: '48px 0', maxWidth: 1400, margin: '0 auto' }}>
           <Title level={2} style={{ color: '#1d3557', marginBottom: 32, textAlign: 'center' }}>Ils nous font confiance</Title>
           <Row gutter={[32, 32]} justify="center">
@@ -510,7 +510,7 @@ const Home: React.FC = () => {
         </div>
       </div>
       {/* Section Appel à l'action */}
-      <div style={{ width: '100vw', maxWidth: '100vw', background: '#2056a8', color: '#fff', padding: '64px 0 56px 0', margin: '0 auto', textAlign: 'center' }}>
+      <div style={{ width: '100vw', maxWidth: '100vw', background: '#2056a8', color: '#fff', padding: '64px 0 56px 0', margin: '40px auto 0 auto', textAlign: 'center' }}>
         <Typography.Title level={2} style={{ color: '#fff', marginBottom: 24, fontSize: 36, fontWeight: 700 }}>
           Prêt à booster votre carrière professionnelle ?
         </Typography.Title>
