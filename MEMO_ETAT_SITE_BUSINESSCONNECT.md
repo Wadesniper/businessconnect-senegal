@@ -832,3 +832,12 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Statut : Prêt pour validation visuelle et déploiement.
 
 ---
+
+## [Date : Uniformisation cadenas Fiches Métiers]
+
+- Uniformisation du design du cadenas sur les boutons « Voir les détails » de la page Fiches Métiers (même modèle que la page Formations, couleur grise, bouton arrondi, fond gris clair, effet désactivé doux).
+- Amélioration de l'harmonie visuelle sur la page Fiches Métiers.
+- Aucun impact sur le backend, aucune suppression de fonctionnalité, site complet maintenu.
+- Statut : Prêt pour validation visuelle et déploiement.
+
+---

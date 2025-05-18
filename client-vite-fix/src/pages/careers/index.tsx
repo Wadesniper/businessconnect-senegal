@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Row, Col, Card, Typography, Button, Space, Tag, Input, Tabs, Modal, Statistic, Spin } from 'antd';
-import { SearchOutlined, ArrowRightOutlined, EnvironmentOutlined, BookOutlined, TrophyOutlined } from '@ant-design/icons';
+import { SearchOutlined, ArrowRightOutlined, EnvironmentOutlined, BookOutlined, TrophyOutlined, LockOutlined } from '@ant-design/icons';
 import type { Secteur, FicheMetier, Competence } from './types';
 import { formatNumberToCurrency } from '../../utils/format';
 import { useAuth } from '../../hooks/useAuth';
@@ -4046,19 +4046,16 @@ const CareersPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMetier, setSelectedMetier] = useState<FicheMetier | null>(null);
+  const [forceShow, setForceShow] = useState(false);
 
+  // Timeout de fallback pour éviter le blocage sur loading
   React.useEffect(() => {
-    // Suppression de la redirection automatique vers /subscription
-    // Désormais, tout le monde accède à la page, seuls les détails sont protégés
+    const timer = setTimeout(() => setForceShow(true), 5000);
+    return () => clearTimeout(timer);
   }, []);
-
-  if (isLoading || loadingSub) {
-    return <div style={{ textAlign: 'center', marginTop: 100 }}><Spin size="large" tip="Chargement..." /></div>;
-  }
 
   const filteredSecteurs = useMemo(() => {
     if (!searchTerm) return secteurs;
-
     return secteurs.map(secteur => ({
       ...secteur,
       metiers: secteur.metiers.filter(metier =>
@@ -4076,7 +4073,6 @@ const CareersPage: React.FC = () => {
       'avancé': 3,
       'expert': 4
     };
-    
     return (
       <div style={{ display: 'flex', gap: 4 }}>
         {Array.from({ length: 4 }).map((_, i) => (
@@ -4106,16 +4102,32 @@ const CareersPage: React.FC = () => {
     setSelectedMetier(metier);
   };
 
-  return (
-    <div style={{ padding: '40px 20px' }}>
-      <Space direction="vertical" size="large" style={{ width: '100%' }}>
-        <div style={{ textAlign: 'center', marginBottom: 40 }}>
-          <Title level={1}>Fiches Métiers</Title>
-          <Paragraph style={{ fontSize: 18 }}>
-            Découvrez les métiers qui recrutent au Sénégal et leurs perspectives d'évolution
-          </Paragraph>
-        </div>
+  // Header premium
+  const headerStyle = {
+    background: 'linear-gradient(90deg, #e6f0ff 0%, #f7faff 100%)',
+    borderRadius: 24,
+    padding: '32px 16px 24px 16px',
+    marginBottom: 32,
+    textAlign: 'center' as const,
+    boxShadow: '0 4px 24px #e3e8f7',
+    maxWidth: 900,
+    margin: '0 auto 32px auto',
+  };
 
+  // Affichage même si loading, avec fallback après 5s
+  if ((isLoading || loadingSub) && !forceShow) {
+    return <div style={{ textAlign: 'center', marginTop: 100 }}><Spin size="large" tip="Chargement..." /></div>;
+  }
+
+  return (
+    <div style={{ padding: '40px 8px', background: '#f7faff', minHeight: '100vh' }}>
+      <div style={headerStyle}>
+        <Title level={1} style={{ color: '#1890ff', fontWeight: 800, marginBottom: 8 }}>Fiches Métiers</Title>
+        <Paragraph style={{ fontSize: 18, color: '#333', marginBottom: 0 }}>
+          Découvrez les métiers qui recrutent au Sénégal et leurs perspectives d'évolution
+        </Paragraph>
+      </div>
+      <Space direction="vertical" size="large" style={{ width: '100%' }}>
         <Row justify="center" style={{ marginBottom: 32 }}>
           <Col xs={24} sm={16} md={12}>
             <Search
@@ -4127,36 +4139,67 @@ const CareersPage: React.FC = () => {
             />
           </Col>
         </Row>
-
         <Tabs defaultActiveKey="all" centered>
           <TabPane tab="Tous les secteurs" key="all">
             {filteredSecteurs.map(secteur => (
               <div key={secteur.id} style={{ marginBottom: 48 }}>
                 <Space align="center" style={{ marginBottom: 24 }}>
                   <span style={{ fontSize: 32 }}>{secteur.icone}</span>
-                  <Title level={2} style={{ margin: 0 }}>{secteur.nom}</Title>
+                  <Title level={2} style={{ margin: 0, color: secteur.couleur }}>{secteur.nom}</Title>
                 </Space>
                 <Paragraph style={{ marginBottom: 24 }}>{secteur.description}</Paragraph>
-                
                 <Row gutter={[24, 24]}>
                   {secteur.metiers.map(metier => (
-                    <Col key={metier.id} xs={24} md={12} lg={8}>
+                    <Col key={metier.id} xs={24} md={12} lg={8} style={{ display: 'flex' }}>
                       <Card
-                        hoverable
-                        style={{ height: '100%' }}
-                        onClick={() => showMetierDetail(metier)}
+                        hoverable={!!hasActiveSubscription}
+                        style={{
+                          height: '100%',
+                          borderRadius: 18,
+                          boxShadow: '0 4px 24px #e3e8f7',
+                          border: 'none',
+                          background: '#fff',
+                          marginBottom: 24,
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between',
+                          width: '100%',
+                          maxWidth: 400,
+                          margin: '0 auto',
+                        }}
+                        onClick={hasActiveSubscription ? () => showMetierDetail(metier) : undefined}
                       >
                         <Space direction="vertical" size="middle" style={{ width: '100%' }}>
                           <Title level={4} style={{ margin: 0 }}>{metier.titre}</Title>
                           <Paragraph>{metier.description}</Paragraph>
                           <div>
                             {metier.tags.map(tag => (
-                              <Tag key={tag} color={secteur.couleur}>
-                                {tag}
-                              </Tag>
+                              <Tag key={tag} color={secteur.couleur} style={{ fontSize: 15 }}>{tag}</Tag>
                             ))}
                           </div>
-                          <Button type="link" icon={<ArrowRightOutlined />}>
+                          <Button
+                            type={hasActiveSubscription ? 'primary' : 'default'}
+                            icon={!hasActiveSubscription ? <LockOutlined style={{ color: '#aaa', fontSize: 18 }} /> : <ArrowRightOutlined />}
+                            style={{
+                              borderRadius: 20,
+                              fontWeight: 700,
+                              background: hasActiveSubscription ? '#1890ff' : '#f0f0f0',
+                              color: hasActiveSubscription ? '#fff' : '#aaa',
+                              border: hasActiveSubscription ? 'none' : '1.5px solid #eee',
+                              fontSize: 16,
+                              padding: '8px 24px',
+                              width: '100%',
+                              maxWidth: 180,
+                              margin: '0 auto',
+                              display: 'block',
+                              cursor: hasActiveSubscription ? 'pointer' : 'not-allowed',
+                              opacity: hasActiveSubscription ? 1 : 0.7,
+                              boxShadow: hasActiveSubscription ? '0 2px 8px #e3e8f7' : 'none',
+                              transition: 'all 0.2s',
+                            }}
+                            disabled={!hasActiveSubscription}
+                            onClick={hasActiveSubscription ? () => showMetierDetail(metier) : undefined}
+                          >
                             Voir les détails
                           </Button>
                         </Space>
@@ -4171,23 +4214,56 @@ const CareersPage: React.FC = () => {
             <TabPane tab={`${secteur.icone} ${secteur.nom}`} key={secteur.id}>
               <Row gutter={[24, 24]}>
                 {secteur.metiers.map(metier => (
-                  <Col key={metier.id} xs={24} md={12} lg={8}>
+                  <Col key={metier.id} xs={24} md={12} lg={8} style={{ display: 'flex' }}>
                     <Card
-                      hoverable
-                      style={{ height: '100%' }}
-                      onClick={() => showMetierDetail(metier)}
+                      hoverable={!!hasActiveSubscription}
+                      style={{
+                        height: '100%',
+                        borderRadius: 18,
+                        boxShadow: '0 4px 24px #e3e8f7',
+                        border: 'none',
+                        background: '#fff',
+                        marginBottom: 24,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        width: '100%',
+                        maxWidth: 400,
+                        margin: '0 auto',
+                      }}
+                      onClick={hasActiveSubscription ? () => showMetierDetail(metier) : undefined}
                     >
                       <Space direction="vertical" size="middle" style={{ width: '100%' }}>
                         <Title level={4} style={{ margin: 0 }}>{metier.titre}</Title>
                         <Paragraph>{metier.description}</Paragraph>
                         <div>
                           {metier.tags.map(tag => (
-                            <Tag key={tag} color={secteur.couleur}>
-                              {tag}
-                            </Tag>
+                            <Tag key={tag} color={secteur.couleur} style={{ fontSize: 15 }}>{tag}</Tag>
                           ))}
                         </div>
-                        <Button type="link" icon={<ArrowRightOutlined />}>
+                        <Button
+                          type={hasActiveSubscription ? 'primary' : 'default'}
+                          icon={!hasActiveSubscription ? <LockOutlined style={{ color: '#aaa', fontSize: 18 }} /> : <ArrowRightOutlined />}
+                          style={{
+                            borderRadius: 20,
+                            fontWeight: 700,
+                            background: hasActiveSubscription ? '#1890ff' : '#f0f0f0',
+                            color: hasActiveSubscription ? '#fff' : '#aaa',
+                            border: hasActiveSubscription ? 'none' : '1.5px solid #eee',
+                            fontSize: 16,
+                            padding: '8px 24px',
+                            width: '100%',
+                            maxWidth: 180,
+                            margin: '0 auto',
+                            display: 'block',
+                            cursor: hasActiveSubscription ? 'pointer' : 'not-allowed',
+                            opacity: hasActiveSubscription ? 1 : 0.7,
+                            boxShadow: hasActiveSubscription ? '0 2px 8px #e3e8f7' : 'none',
+                            transition: 'all 0.2s',
+                          }}
+                          disabled={!hasActiveSubscription}
+                          onClick={hasActiveSubscription ? () => showMetierDetail(metier) : undefined}
+                        >
                           Voir les détails
                         </Button>
                       </Space>
@@ -4198,7 +4274,6 @@ const CareersPage: React.FC = () => {
             </TabPane>
           ))}
         </Tabs>
-
         <Modal
           visible={!!selectedMetier}
           onCancel={() => setSelectedMetier(null)}
