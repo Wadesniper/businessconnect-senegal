@@ -119,7 +119,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
         margin: isMobile ? '0 auto' : undefined,
       }}>
         <div style={{ textAlign: 'center', marginBottom: 18 }}>
-          <img src="/logo192.png" alt="Logo" style={{ width: 56, marginBottom: 8 }} />
           <div style={{ fontWeight: 600, fontSize: 20, color: '#1890ff', marginBottom: 2 }}>
             Bienvenue sur BusinessConnect Sénégal
           </div>

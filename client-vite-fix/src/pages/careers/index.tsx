@@ -4179,12 +4179,26 @@ const CareersPage: React.FC = () => {
                           </div>
                           <Button
                             type={hasActiveSubscription ? 'primary' : 'default'}
-                            icon={!hasActiveSubscription ? <LockOutlined style={{ color: '#aaa', fontSize: 18 }} /> : <ArrowRightOutlined />}
+                            icon={!hasActiveSubscription ? (
+                              <span style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: 28,
+                                height: 28,
+                                borderRadius: '50%',
+                                background: '#fff',
+                                boxShadow: '0 2px 8px #e3e8f7',
+                                marginRight: 8
+                              }}>
+                                <LockOutlined style={{ color: '#bbb', fontSize: 18 }} />
+                              </span>
+                            ) : <ArrowRightOutlined />}
                             style={{
                               borderRadius: 20,
                               fontWeight: 700,
-                              background: hasActiveSubscription ? '#1890ff' : '#f0f0f0',
-                              color: hasActiveSubscription ? '#fff' : '#aaa',
+                              background: hasActiveSubscription ? '#1890ff' : '#fff',
+                              color: hasActiveSubscription ? '#fff' : '#bbb',
                               border: hasActiveSubscription ? 'none' : '1.5px solid #eee',
                               fontSize: 16,
                               padding: '8px 24px',
@@ -4192,15 +4206,29 @@ const CareersPage: React.FC = () => {
                               maxWidth: 180,
                               margin: '0 auto',
                               display: 'block',
-                              cursor: hasActiveSubscription ? 'pointer' : 'not-allowed',
-                              opacity: hasActiveSubscription ? 1 : 0.7,
-                              boxShadow: hasActiveSubscription ? '0 2px 8px #e3e8f7' : 'none',
+                              cursor: 'pointer',
+                              opacity: 1,
+                              boxShadow: '0 2px 8px #e3e8f7',
                               transition: 'all 0.2s',
                             }}
-                            disabled={!hasActiveSubscription}
-                            onClick={hasActiveSubscription ? () => showMetierDetail(metier) : undefined}
+                            onClick={() => {
+                              if (hasActiveSubscription) {
+                                showMetierDetail(metier);
+                              } else {
+                                Modal.info({
+                                  title: 'Abonnement requis',
+                                  content: (
+                                    <div style={{textAlign: 'center'}}>
+                                      <p>Cette fonctionnalité est réservée aux abonnés.</p>
+                                      <Button type="primary" onClick={() => navigate('/subscription')}>S'abonner</Button>
+                                    </div>
+                                  ),
+                                  okText: 'Fermer',
+                                });
+                              }
+                            }}
                           >
-                            Voir les détails
+                            Consulter
                           </Button>
                         </Space>
                       </Card>
@@ -4243,12 +4271,26 @@ const CareersPage: React.FC = () => {
                         </div>
                         <Button
                           type={hasActiveSubscription ? 'primary' : 'default'}
-                          icon={!hasActiveSubscription ? <LockOutlined style={{ color: '#aaa', fontSize: 18 }} /> : <ArrowRightOutlined />}
+                          icon={!hasActiveSubscription ? (
+                            <span style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              width: 28,
+                              height: 28,
+                              borderRadius: '50%',
+                              background: '#fff',
+                              boxShadow: '0 2px 8px #e3e8f7',
+                              marginRight: 8
+                            }}>
+                              <LockOutlined style={{ color: '#bbb', fontSize: 18 }} />
+                            </span>
+                          ) : <ArrowRightOutlined />}
                           style={{
                             borderRadius: 20,
                             fontWeight: 700,
-                            background: hasActiveSubscription ? '#1890ff' : '#f0f0f0',
-                            color: hasActiveSubscription ? '#fff' : '#aaa',
+                            background: hasActiveSubscription ? '#1890ff' : '#fff',
+                            color: hasActiveSubscription ? '#fff' : '#bbb',
                             border: hasActiveSubscription ? 'none' : '1.5px solid #eee',
                             fontSize: 16,
                             padding: '8px 24px',
@@ -4256,15 +4298,29 @@ const CareersPage: React.FC = () => {
                             maxWidth: 180,
                             margin: '0 auto',
                             display: 'block',
-                            cursor: hasActiveSubscription ? 'pointer' : 'not-allowed',
-                            opacity: hasActiveSubscription ? 1 : 0.7,
-                            boxShadow: hasActiveSubscription ? '0 2px 8px #e3e8f7' : 'none',
+                            cursor: 'pointer',
+                            opacity: 1,
+                            boxShadow: '0 2px 8px #e3e8f7',
                             transition: 'all 0.2s',
                           }}
-                          disabled={!hasActiveSubscription}
-                          onClick={hasActiveSubscription ? () => showMetierDetail(metier) : undefined}
+                          onClick={() => {
+                            if (hasActiveSubscription) {
+                              showMetierDetail(metier);
+                            } else {
+                              Modal.info({
+                                title: 'Abonnement requis',
+                                content: (
+                                  <div style={{textAlign: 'center'}}>
+                                    <p>Cette fonctionnalité est réservée aux abonnés.</p>
+                                    <Button type="primary" onClick={() => navigate('/subscription')}>S'abonner</Button>
+                                  </div>
+                                ),
+                                okText: 'Fermer',
+                              });
+                            }
+                          }}
                         >
-                          Voir les détails
+                          Consulter
                         </Button>
                       </Space>
                     </Card>
