@@ -145,23 +145,21 @@ html, body {
 }
 
 @media (max-width: 800px) {
-  .navbar-menu {
-    display: none;
-  }
-  .navbar-burger {
-    display: block;
-  }
-  .navbar-end {
-    display: none !important;
-  }
   .navbar {
-    flex-direction: column;
-    align-items: flex-start;
-    min-height: 56px;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    min-height: 48px !important;
+    padding: 0 8px !important;
+    margin: 0 !important;
   }
   .navbar-brand {
-    font-size: 18px;
-    padding: 8px 0;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .navbar-burger {
+    margin-left: 0 !important;
   }
 }
 
