@@ -6,6 +6,16 @@ import { ArrowRightOutlined } from '@ant-design/icons';
 
 const { Title, Paragraph } = Typography;
 
+const TitleStyled = styled(Title)`
+  color: white;
+  font-size: 48px;
+  margin-bottom: 20px;
+  @media (max-width: 600px) {
+    font-size: 28px !important;
+    margin-bottom: 10px !important;
+  }
+`;
+
 const HeroContainer = styled.div`
   position: relative;
   height: 100vh;
@@ -194,9 +204,9 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <Title style={{ color: 'white', fontSize: '48px', marginBottom: '20px' }}>
+            <TitleStyled>
               La <GreenSpan>plateforme n°1</GreenSpan> où les <GreenSpan>talents</GreenSpan> <span style={{color:'white', fontWeight:700}}>sénégalais</span> rencontrent les <GreenSpan>opportunités</GreenSpan>
-            </Title>
+            </TitleStyled>
             <Paragraph style={{ color: 'white', fontSize: '18px', marginBottom: '30px' }}>
               Découvrez les meilleurs talents et opportunités dans tous les secteurs d'activité. 
               Une plateforme unique pour les professionnels qui façonnent l'avenir du Sénégal.

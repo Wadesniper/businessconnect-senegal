@@ -173,4 +173,26 @@ html, body {
   .navbar-burger {
     display: block;
   }
+}
+
+@media (max-width: 600px) {
+  .subscribe-button, .login-button, .register-button {
+    font-size: 13px;
+    padding: 4px 8px;
+    min-width: 80px;
+    height: 32px;
+  }
+  .navbar-brand {
+    font-size: 15px !important;
+    gap: 4px;
+  }
+  .navbar-end {
+    gap: 2px;
+  }
+  .auth-buttons {
+    gap: 2px;
+  }
+  .navbar {
+    min-height: 48px;
+  }
 } 
