@@ -1027,3 +1027,28 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Frontend et backend restent stables et fonctionnels.
 
 ---
+
+## [Correction critique 19/05/2025] Fluidité totale : plus aucun blocage, bandeau d'alerte seulement
+
+- Suppression de tout blocage sur le chargement du user sur toutes les pages premium (CV, Fiches Métiers, Formations, etc.).
+- Le contenu s'affiche immédiatement, même si le user n'est pas chargé ou si l'API est lente.
+- Si le profil ne se charge pas après 10 secondes, un bandeau d'alerte discret s'affiche en haut de la page, mais l'accès reste total (jamais de blocage).
+- L'admin a toujours accès complet, même si l'API ne répond pas.
+- Aucun code ou fonctionnalité essentielle supprimé, site complet maintenu.
+- Frontend et backend restent stables et fonctionnels.
+
+---
+
+## [Premium Access] Correctif du 2024-06-09
+
+- Suppression définitive de tous les blocages d'accès liés au chargement du profil ou de l'abonnement pour les utilisateurs abonnés et les admins.
+- Les pages concernées : Générateur de CV, Fiches Métiers, Formations, Emplois (JobList).
+- Unification de la logique d'accès premium : utilisation systématique du hook global d'abonnement (`useSubscription`) et du rôle utilisateur.
+- Désormais, un abonné ou un admin a un accès immédiat à toutes les fonctionnalités premium, même si le profil met du temps à charger ou si l'API est lente.
+- Les non-abonnés restent limités et voient les incitations à s'abonner, mais ne peuvent pas accéder aux fonctionnalités premium.
+- Plus aucun return bloquant ou redirection abusive sur timeout ou loading : seul un bandeau d'alerte doux est affiché si besoin.
+- Correction de la logique d'accès dans JobList (offres d'emploi) pour utiliser le hook global et non plus le localStorage.
+
+Testé et validé : le site complet fonctionne en production, sans version minimaliste, et passe les tests/déploiements.
+
+---

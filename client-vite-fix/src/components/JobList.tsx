@@ -3,8 +3,10 @@ import { Card, Button, Tag, Space, Input, Select, message, Modal, Typography, Di
 import { SearchOutlined, EyeOutlined, SendOutlined } from '@ant-design/icons';
 import { JobService } from '../services/jobService';
 import { authService } from '../services/authService';
-import { Job } from '../types/job';
+import type { Job } from '../types/job';
 import { useNavigate } from 'react-router-dom';
+import { useSubscription } from '../hooks/useSubscription';
+import { useAuth } from '../hooks/useAuth';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -37,19 +39,11 @@ export const JobList: React.FC = () => {
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const navigate = useNavigate();
-  const [isSubscribed, setIsSubscribed] = useState(false);
+  const { hasActiveSubscription } = useSubscription();
+  const { user } = useAuth();
 
   useEffect(() => {
     fetchJobs();
-    const userStr = localStorage.getItem('user');
-    let isActive = false;
-    if (userStr) {
-      try {
-        const user = JSON.parse(userStr);
-        isActive = user.subscription && user.subscription.status === 'active';
-      } catch (e) {}
-    }
-    setIsSubscribed(isActive);
   }, [selectedSector, selectedType, searchText]);
 
   const fetchJobs = async () => {
@@ -69,7 +63,6 @@ export const JobList: React.FC = () => {
   };
 
   const handleApply = async (jobId: string) => {
-    const user = authService.getCurrentUser();
     if (!user) {
       message.error('Veuillez vous connecter pour postuler');
       return;
@@ -129,7 +122,7 @@ export const JobList: React.FC = () => {
                   type="primary"
                   icon={<EyeOutlined />}
                   onClick={() => {
-                    if (!isSubscribed) {
+                    if (!hasActiveSubscription) {
                       navigate('/subscription');
                     } else {
                       handleViewDetails(job);
@@ -137,12 +130,12 @@ export const JobList: React.FC = () => {
                   }}
                   disabled={false}
                 >
-                  {!isSubscribed ? <span><EyeOutlined /> <span role="img" aria-label="lock">🔒</span> Voir détails</span> : 'Voir détails'}
+                  {!hasActiveSubscription ? <span><EyeOutlined /> <span role="img" aria-label="lock">🔒</span> Voir détails</span> : 'Voir détails'}
                 </Button>
                 <Button
                   icon={<SendOutlined />}
                   onClick={() => {
-                    if (!isSubscribed) {
+                    if (!hasActiveSubscription) {
                       navigate('/subscription');
                     } else {
                       handleApply(job.id);
@@ -150,7 +143,7 @@ export const JobList: React.FC = () => {
                   }}
                   disabled={false}
                 >
-                  {!isSubscribed ? <span><SendOutlined /> <span role="img" aria-label="lock">🔒</span> Postuler</span> : 'Postuler'}
+                  {!hasActiveSubscription ? <span><SendOutlined /> <span role="img" aria-label="lock">🔒</span> Postuler</span> : 'Postuler'}
                 </Button>
               </Space>
             </div>
