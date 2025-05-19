@@ -17,7 +17,7 @@ const TOKEN_KEY = 'auth_token';
 export const authService = {
   async login(credentials: LoginCredentials): Promise<AuthResponse['data']> {
     try {
-      const response = await api.post<AuthResponse>('/auth/login', credentials);
+      const response = await api.post<AuthResponse>('/api/auth/login', credentials);
       if (response.data.success) {
         localStorage.setItem('token', response.data.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.data.user));
@@ -32,7 +32,7 @@ export const authService = {
 
   async register(data: UserRegistrationData): Promise<AuthResponse> {
     try {
-      const response = await api.post<AuthResponse>('/auth/register', data);
+      const response = await api.post<AuthResponse>('/api/auth/register', data);
       if (response.data.success) {
         localStorage.setItem('token', response.data.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.data.user));
@@ -52,43 +52,43 @@ export const authService = {
   },
 
   async getCurrentUser(): Promise<User> {
-    const response = await api.get<User>('/auth/me');
+    const response = await api.get<User>('/api/auth/me');
     return response.data;
   },
 
   async updateProfile(data: Partial<User>): Promise<User> {
-    const response = await api.patch<User>('/auth/profile', data);
+    const response = await api.patch<User>('/api/auth/profile', data);
     return response.data;
   },
 
   async resetPassword(phoneNumber: string): Promise<void> {
-    await api.post('/auth/reset-password', { phoneNumber });
+    await api.post('/api/auth/reset-password', { phoneNumber });
   },
 
   async verifyResetToken(token: string): Promise<void> {
-    await api.post('/auth/verify-reset-token', { token });
+    await api.post('/api/auth/verify-reset-token', { token });
   },
 
   async setNewPassword(token: string, password: string): Promise<void> {
-    await api.post('/auth/set-new-password', { token, password });
+    await api.post('/api/auth/set-new-password', { token, password });
   },
 
   async verifyPhoneNumber(token: string): Promise<void> {
-    await api.post('/auth/verify-phone', { token });
+    await api.post('/api/auth/verify-phone', { token });
   },
 
   async updateSubscription(status: 'active' | 'cancelled'): Promise<User> {
-    const response = await api.patch<User>('/auth/subscription', { status });
+    const response = await api.patch<User>('/api/auth/subscription', { status });
     return response.data;
   },
 
   async updateCompanyInfo(companyData: Partial<User['company']>): Promise<User> {
-    const response = await api.patch<User>('/auth/company', companyData);
+    const response = await api.patch<User>('/api/auth/company', companyData);
     return response.data;
   },
 
   async updateProfileInfo(profileData: Partial<User['profile']>): Promise<User> {
-    const response = await api.patch<User>('/auth/profile-details', profileData);
+    const response = await api.patch<User>('/api/auth/profile-details', profileData);
     return response.data;
   },
 
