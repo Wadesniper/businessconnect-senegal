@@ -78,7 +78,7 @@ const FormationsPage: React.FC = () => {
             Développez vos compétences avec plus de 4000 cours en ligne gratuits et certifiants dans de nombreux domaines.
           </p>
         </div>
-        {!isPremium && user?.role !== 'admin' && (
+        {!isPremium && (
           <div style={{
             background: 'linear-gradient(90deg, #fffbe6 0%, #f7faff 100%)',
             border: '1.5px solid #ffe58f',

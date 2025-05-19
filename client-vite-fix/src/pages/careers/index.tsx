@@ -4154,7 +4154,7 @@ const CareersPage: React.FC = () => {
           Découvrez les métiers qui recrutent au Sénégal et leurs perspectives d'évolution
         </Paragraph>
       </div>
-      {!isPremium && user?.role !== 'admin' && (
+      {!isPremium && (
         <div style={{
           background: 'linear-gradient(90deg, #fffbe6 0%, #f7faff 100%)',
           border: '1.5px solid #ffe58f',

@@ -234,7 +234,7 @@ const CVGenerator: React.FC<Partial<CVGeneratorProps>> = (props) => {
             Créez, personnalisez et exportez votre CV premium en quelques clics.
           </div>
         </div>
-        {!isPremium && user?.role !== 'admin' && (
+        {!isPremium && (
           <div style={{
             background: 'linear-gradient(90deg, #fffbe6 0%, #f7faff 100%)',
             border: '1.5px solid #ffe58f',
