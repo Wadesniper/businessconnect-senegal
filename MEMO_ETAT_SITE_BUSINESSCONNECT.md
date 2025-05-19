@@ -862,3 +862,14 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Statut : Prêt pour validation visuelle et déploiement.
 
 ---
+
+## [Date : Refonte premium page Générateur de CV]
+
+- Suppression du logo et des titres redondants, header unique premium harmonisé avec Fiches Métiers.
+- Bandeau d'incitation à l'abonnement harmonisé, bien visible pour les non-abonnés.
+- Accès admin sans abonnement (bypass automatique pour le rôle admin).
+- UX/UI premium, page aérée, navigation claire, aucune perte de fonctionnalité pour les abonnés.
+- Site complet maintenu, aucune perturbation du backend ou du déploiement.
+- Statut : Prêt pour validation visuelle et déploiement.
+
+---

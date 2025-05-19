@@ -151,14 +151,11 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
 
   return (
     <Layout style={{ minHeight: '100vh', backgroundColor: '#fff' }}>
-      <Content style={{ padding: '50px 50px 0', maxWidth: 1200, margin: '0 auto' }}>
-        <AntTitle level={2} style={{ textAlign: 'center', marginBottom: 40 }}>
-          Créez votre CV professionnel
-        </AntTitle>
+      <Content style={{ padding: '0', maxWidth: 1200, margin: '0 auto' }}>
         <Steps
           current={currentStep}
           items={steps}
-          style={{ marginBottom: 40 }}
+          style={{ marginBottom: 40, marginTop: 0 }}
         />
         <div style={{ marginBottom: 40 }}>
           {renderStepContent()}
@@ -189,20 +186,84 @@ const CVGenerator: React.FC<Partial<CVGeneratorProps>> = (props) => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  // Détection admin
+  const isAdmin = user?.role === 'admin';
+  const isSubscribed = isAdmin ? true : hasActiveSubscription;
+
+  // Redirection uniquement si non abonné et non admin
   React.useEffect(() => {
-    if (!loading && user && !hasActiveSubscription) {
+    if (!loading && user && !isSubscribed) {
       navigate('/subscription', { replace: true });
     }
-  }, [loading, hasActiveSubscription, user, navigate]);
+  }, [loading, isSubscribed, user, navigate]);
 
   if (loading) {
     return <div style={{ textAlign: 'center', marginTop: 100 }}><Spin size="large" tip="Chargement..." /></div>;
   }
 
   return (
-    <CVProvider>
-      <CVGeneratorContent {...props} isSubscribed={hasActiveSubscription} />
-    </CVProvider>
+    <Layout style={{ minHeight: '100vh', backgroundColor: '#fff' }}>
+      <Content style={{ padding: '40px 8px 0', maxWidth: 1200, margin: '0 auto' }}>
+        <div style={{
+          background: 'linear-gradient(90deg, #e6f0ff 0%, #f7faff 100%)',
+          borderRadius: 24,
+          padding: '32px 16px 24px 16px',
+          marginBottom: 32,
+          textAlign: 'center',
+          boxShadow: '0 4px 24px #e3e8f7',
+          maxWidth: 900,
+          margin: '0 auto 32px auto',
+        }}>
+          <AntTitle level={2} style={{ color: '#1890ff', fontWeight: 800, marginBottom: 8 }}>
+            Générateur de CV professionnel
+          </AntTitle>
+          <div style={{ fontSize: 18, color: '#333', marginBottom: 0 }}>
+            Créez, personnalisez et exportez votre CV premium en quelques clics.
+          </div>
+        </div>
+        {!isSubscribed && !isAdmin && (
+          <div style={{
+            background: 'linear-gradient(90deg, #fffbe6 0%, #f7faff 100%)',
+            border: '1.5px solid #ffe58f',
+            borderRadius: 16,
+            padding: '18px 12px',
+            margin: '0 auto 32px auto',
+            maxWidth: 700,
+            textAlign: 'center',
+            color: '#ad8b00',
+            fontWeight: 600,
+            fontSize: 17,
+            boxShadow: '0 2px 8px #ffe58f33',
+          }}>
+            <span>Pour créer et télécharger votre CV, <span style={{color:'#1890ff', fontWeight:700}}>abonnez-vous</span> à la plateforme !</span>
+            <br />
+            <button
+              style={{
+                marginTop: 10,
+                background: '#1890ff',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 8,
+                padding: '8px 22px',
+                fontWeight: 700,
+                fontSize: 16,
+                cursor: 'pointer',
+                boxShadow: '0 2px 8px #1890ff22',
+                transition: 'background 0.2s',
+              }}
+              onClick={() => navigate('/subscription')}
+            >
+              S'abonner
+            </button>
+          </div>
+        )}
+        <div style={{ marginBottom: 40 }}>
+          <CVProvider>
+            <CVGeneratorContent isSubscribed={isSubscribed} />
+          </CVProvider>
+        </div>
+      </Content>
+    </Layout>
   );
 };
 
