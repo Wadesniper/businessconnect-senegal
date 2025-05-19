@@ -15,6 +15,9 @@ const ITEMS_PER_PAGE = 12;
 const FormationsPage: React.FC = () => {
   const navigate = useNavigate();
   const { hasActiveSubscription } = useSubscription();
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
+  const isSubscribed = isAdmin ? true : hasActiveSubscription;
   const [search, setSearch] = useState('');
 
   const filteredFormations = formationsData.filter(f =>
@@ -23,7 +26,7 @@ const FormationsPage: React.FC = () => {
   );
 
   const handleFormationClick = (url: string) => {
-    if (hasActiveSubscription) {
+    if (isSubscribed) {
       window.open(url, '_blank');
     } else {
       navigate('/subscription');
@@ -48,7 +51,7 @@ const FormationsPage: React.FC = () => {
             Développez vos compétences avec plus de 4000 cours en ligne gratuits et certifiants dans de nombreux domaines.
           </p>
         </div>
-        {!hasActiveSubscription && (
+        {!isSubscribed && (
           <div style={{
             background: 'linear-gradient(90deg, #fffbe6 0%, #f7faff 100%)',
             border: '1.5px solid #ffe58f',
@@ -129,8 +132,31 @@ const FormationsPage: React.FC = () => {
                         <p style={{ color: '#333', marginBottom: 12, minHeight: 48 }}>{f.description}</p>
                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                           <Button
-                            type={hasActiveSubscription ? 'primary' : 'default'}
-                            icon={!hasActiveSubscription ? (
+                            type={isSubscribed ? 'primary' : 'default'}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: 8,
+                              borderRadius: 20,
+                              fontWeight: 700,
+                              background: isSubscribed ? '#1890ff' : '#fff',
+                              color: isSubscribed ? '#fff' : '#bbb',
+                              border: isSubscribed ? 'none' : '1.5px solid #eee',
+                              fontSize: 16,
+                              padding: '8px 24px',
+                              width: '100%',
+                              maxWidth: 180,
+                              margin: '0 auto',
+                              cursor: 'pointer',
+                              opacity: 1,
+                              boxShadow: '0 2px 8px #e3e8f7',
+                              transition: 'all 0.2s',
+                              height: 44,
+                            }}
+                            onClick={() => handleFormationClick(f.url)}
+                          >
+                            {!isSubscribed ? (
                               <span style={{
                                 display: 'inline-flex',
                                 alignItems: 'center',
@@ -140,31 +166,11 @@ const FormationsPage: React.FC = () => {
                                 borderRadius: '50%',
                                 background: '#fff',
                                 boxShadow: '0 2px 8px #e3e8f7',
-                                marginRight: 8
                               }}>
                                 <LockOutlined style={{ color: '#bbb', fontSize: 18 }} />
                               </span>
                             ) : <ArrowRightOutlined />}
-                            style={{
-                              borderRadius: 20,
-                              fontWeight: 700,
-                              background: hasActiveSubscription ? '#1890ff' : '#fff',
-                              color: hasActiveSubscription ? '#fff' : '#bbb',
-                              border: hasActiveSubscription ? 'none' : '1.5px solid #eee',
-                              fontSize: 16,
-                              padding: '8px 24px',
-                              width: '100%',
-                              maxWidth: 180,
-                              margin: '0 auto',
-                              display: 'block',
-                              cursor: 'pointer',
-                              opacity: 1,
-                              boxShadow: '0 2px 8px #e3e8f7',
-                              transition: 'all 0.2s',
-                            }}
-                            onClick={() => handleFormationClick(f.url)}
-                          >
-                            Accéder
+                            <span>Accéder</span>
                           </Button>
                         </div>
                       </div>

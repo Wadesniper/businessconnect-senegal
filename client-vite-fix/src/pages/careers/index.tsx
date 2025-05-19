@@ -4047,6 +4047,8 @@ const CareersPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMetier, setSelectedMetier] = useState<FicheMetier | null>(null);
   const [forceShow, setForceShow] = useState(false);
+  const isAdmin = user?.role === 'admin';
+  const isSubscribed = isAdmin ? true : hasActiveSubscription;
 
   // Timeout de fallback pour éviter le blocage sur loading
   React.useEffect(() => {
@@ -4091,7 +4093,7 @@ const CareersPage: React.FC = () => {
   };
 
   const showMetierDetail = (metier: FicheMetier) => {
-    if (!hasActiveSubscription) {
+    if (!isSubscribed) {
       Modal.info({
         title: 'Fonctionnalité réservée',
         content: 'Cette fonctionnalité est réservée aux abonnés. Abonnez-vous pour consulter le détail des métiers.',
@@ -4127,7 +4129,7 @@ const CareersPage: React.FC = () => {
           Découvrez les métiers qui recrutent au Sénégal et leurs perspectives d'évolution
         </Paragraph>
       </div>
-      {!hasActiveSubscription && (
+      {!isSubscribed && (
         <div style={{
           background: 'linear-gradient(90deg, #fffbe6 0%, #f7faff 100%)',
           border: '1.5px solid #ffe58f',
@@ -4188,7 +4190,7 @@ const CareersPage: React.FC = () => {
                   {secteur.metiers.map(metier => (
                     <Col key={metier.id} xs={24} md={12} lg={8} style={{ display: 'flex' }}>
                       <Card
-                        hoverable={!!hasActiveSubscription}
+                        hoverable={isSubscribed}
                         style={{
                           height: '100%',
                           borderRadius: 18,
@@ -4203,7 +4205,7 @@ const CareersPage: React.FC = () => {
                           maxWidth: 400,
                           margin: '0 auto',
                         }}
-                        onClick={hasActiveSubscription ? () => showMetierDetail(metier) : undefined}
+                        onClick={isSubscribed ? () => showMetierDetail(metier) : undefined}
                       >
                         <Space direction="vertical" size="middle" style={{ width: '100%' }}>
                           <Title level={4} style={{ margin: 0 }}>{metier.titre}</Title>
@@ -4214,7 +4216,7 @@ const CareersPage: React.FC = () => {
                             ))}
                           </div>
                           <Button
-                            type={hasActiveSubscription ? 'primary' : 'default'}
+                            type={isSubscribed ? 'primary' : 'default'}
                             style={{
                               display: 'flex',
                               alignItems: 'center',
@@ -4222,9 +4224,9 @@ const CareersPage: React.FC = () => {
                               gap: 8,
                               borderRadius: 20,
                               fontWeight: 700,
-                              background: hasActiveSubscription ? '#1890ff' : '#fff',
-                              color: hasActiveSubscription ? '#fff' : '#bbb',
-                              border: hasActiveSubscription ? 'none' : '1.5px solid #eee',
+                              background: isSubscribed ? '#1890ff' : '#fff',
+                              color: isSubscribed ? '#fff' : '#bbb',
+                              border: isSubscribed ? 'none' : '1.5px solid #eee',
                               fontSize: 16,
                               padding: '8px 24px',
                               width: '100%',
@@ -4237,14 +4239,14 @@ const CareersPage: React.FC = () => {
                               height: 44,
                             }}
                             onClick={() => {
-                              if (hasActiveSubscription) {
+                              if (isSubscribed) {
                                 showMetierDetail(metier);
                               } else {
                                 navigate('/subscription');
                               }
                             }}
                           >
-                            {!hasActiveSubscription ? (
+                            {!isSubscribed ? (
                               <span style={{
                                 display: 'inline-flex',
                                 alignItems: 'center',
@@ -4274,7 +4276,7 @@ const CareersPage: React.FC = () => {
                 {secteur.metiers.map(metier => (
                   <Col key={metier.id} xs={24} md={12} lg={8} style={{ display: 'flex' }}>
                     <Card
-                      hoverable={!!hasActiveSubscription}
+                      hoverable={isSubscribed}
                       style={{
                         height: '100%',
                         borderRadius: 18,
@@ -4289,7 +4291,7 @@ const CareersPage: React.FC = () => {
                         maxWidth: 400,
                         margin: '0 auto',
                       }}
-                      onClick={hasActiveSubscription ? () => showMetierDetail(metier) : undefined}
+                      onClick={isSubscribed ? () => showMetierDetail(metier) : undefined}
                     >
                       <Space direction="vertical" size="middle" style={{ width: '100%' }}>
                         <Title level={4} style={{ margin: 0 }}>{metier.titre}</Title>
@@ -4300,7 +4302,7 @@ const CareersPage: React.FC = () => {
                           ))}
                         </div>
                         <Button
-                          type={hasActiveSubscription ? 'primary' : 'default'}
+                          type={isSubscribed ? 'primary' : 'default'}
                           style={{
                             display: 'flex',
                             alignItems: 'center',
@@ -4308,9 +4310,9 @@ const CareersPage: React.FC = () => {
                             gap: 8,
                             borderRadius: 20,
                             fontWeight: 700,
-                            background: hasActiveSubscription ? '#1890ff' : '#fff',
-                            color: hasActiveSubscription ? '#fff' : '#bbb',
-                            border: hasActiveSubscription ? 'none' : '1.5px solid #eee',
+                            background: isSubscribed ? '#1890ff' : '#fff',
+                            color: isSubscribed ? '#fff' : '#bbb',
+                            border: isSubscribed ? 'none' : '1.5px solid #eee',
                             fontSize: 16,
                             padding: '8px 24px',
                             width: '100%',
@@ -4323,14 +4325,14 @@ const CareersPage: React.FC = () => {
                             height: 44,
                           }}
                           onClick={() => {
-                            if (hasActiveSubscription) {
+                            if (isSubscribed) {
                               showMetierDetail(metier);
                             } else {
                               navigate('/subscription');
                             }
                           }}
                         >
-                          {!hasActiveSubscription ? (
+                          {!isSubscribed ? (
                             <span style={{
                               display: 'inline-flex',
                               alignItems: 'center',

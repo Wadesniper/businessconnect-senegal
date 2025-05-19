@@ -873,3 +873,13 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Statut : Prêt pour validation visuelle et déploiement.
 
 ---
+
+## [Date : Conformité admin accès premium (Formations, Fiches Métiers, CV)]
+
+- L'admin principal a désormais accès à toutes les fonctionnalités premium (Formations, Fiches Métiers, Générateur de CV) sans abonnement.
+- Aucun cadenas, aucune redirection vers l'abonnement, aucun bandeau d'incitation pour l'admin.
+- Variable isSubscribed = isAdmin ? true : hasActiveSubscription sur toutes les pages premium.
+- UX premium maintenue, aucune perte de fonctionnalité, site complet et conforme à la politique d'accès.
+- Statut : Prêt pour validation visuelle et déploiement.
+
+---
