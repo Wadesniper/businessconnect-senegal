@@ -399,7 +399,7 @@
 - Aucune autre fonctionnalité n'est supprimée, le site complet reste maintenu.
 - Statut : Prêt pour build/test, site complet sans forum.
 
-## [Date : Suppression de la logique de notation dans les formations]
+## [Date : Suppression définitive de la logique de notation dans les formations]
 
 - Suppression définitive de toute la logique de notation (rateFormation) dans le contrôleur formation (backend).
 - Correction du typage (category, level, CursaFormations) pour garantir la robustesse et la conformité métier.
@@ -891,5 +891,30 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Aucun message d'incitation ou bannière supplémentaire ici (le bandeau reste dans le header principal).
 - Aucune perte de fonctionnalité, aucune perturbation du backend ou du déploiement.
 - Statut : Prêt pour validation visuelle et déploiement.
+
+---
+
+# [CORRECTION] Authentification MongoDB par téléphone (prod)
+
+- Correction de la logique d'inscription et de connexion pour MongoDB : 
+  - Désormais, l'inscription et la connexion acceptent le téléphone (avec normalisation, ex : +221...) et/ou l'email.
+  - Priorité à la connexion par téléphone si fourni.
+  - Vérification de l'unicité sur le téléphone ET l'email.
+- Branchement de la route `/api/users` dans l'API Express pour exposer l'authentification MongoDB en production.
+- Le frontend doit envoyer `phone` et `password` pour la connexion par téléphone.
+- Plus de confusion avec PostgreSQL : toute la logique d'authentification en prod est MongoDB.
+- Aucun affichage ou fonctionnalité frontend impacté.
+
+---
+
+# [CORRECTION DÉFINITIVE] Authentification MongoDB par téléphone uniquement (prod)
+
+- La connexion se fait désormais uniquement par numéro de téléphone (format international accepté) et mot de passe. L'email n'est plus accepté pour la connexion.
+- L'inscription exige : nom complet, numéro de téléphone (unique), mot de passe, confirmation du mot de passe (côté frontend), email optionnel.
+- Le backend vérifie l'unicité du téléphone, l'email reste optionnel.
+- Toute la logique d'authentification en prod est MongoDB, plus aucune confusion avec PostgreSQL.
+- Le frontend et le backend sont parfaitement alignés sur la logique métier attendue.
+- Aucun code ou fonctionnalité essentielle supprimé, aucune perturbation du backend ou du frontend, site complet maintenu.
+- Statut : Prêt pour test, déploiement et utilisation en production.
 
 ---

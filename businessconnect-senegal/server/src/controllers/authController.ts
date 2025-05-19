@@ -15,30 +15,41 @@ export class AuthController {
 
   register = async (req: Request, res: Response) => {
     try {
-      const { name, email, password } = req.body;
-
-      // Vérifier si l'utilisateur existe déjà
-      const existingUser = await User.findOne({ email });
+      const { name, email, phone, password } = req.body;
+      // Normalisation du téléphone
+      function normalizePhone(phone: string): string | null {
+        if (!phone) return null;
+        let cleaned = phone.replace(/[^\d+]/g, '');
+        if (cleaned.startsWith('+')) return cleaned;
+        if (/^7\d{8}$/.test(cleaned)) return '+221' + cleaned;
+        return null;
+      }
+      const normalizedPhone = normalizePhone(phone);
+      if (!normalizedPhone) {
+        return res.status(400).json({
+          success: false,
+          message: "Merci d'entrer votre numéro au format international (ex : +221770000000 ou +33612345678)."
+        });
+      }
+      // Vérifier si l'utilisateur existe déjà par téléphone
+      const existingUser = await User.findOne({ phone: normalizedPhone });
       if (existingUser) {
         return res.status(400).json({
           success: false,
-          message: 'Cet email est déjà utilisé'
+          message: 'Un utilisateur avec ce numéro de téléphone existe déjà'
         });
       }
-
       // Hasher le mot de passe
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
-
       // Créer le nouvel utilisateur
       const user = new User({
         name,
         email,
+        phone: normalizedPhone,
         password: hashedPassword
       });
-
       await user.save();
-
       // Générer le token de vérification
       const jwtSecret: any = process.env.JWT_SECRET || 'default_secret';
       const jwtExpire: any = process.env.JWT_EXPIRE || process.env.JWT_EXPIRES_IN || '30d';
@@ -48,13 +59,13 @@ export class AuthController {
         jwtSecret,
         options
       );
-
-      // Envoyer l'email de vérification
-      await this.notificationService.sendVerificationEmail(email, verificationToken);
-
+      // Envoyer l'email de vérification si email fourni
+      if (email) {
+        await this.notificationService.sendVerificationEmail(email, verificationToken);
+      }
       res.status(201).json({
         success: true,
-        message: 'Inscription réussie, veuillez vérifier votre email.'
+        message: 'Inscription réussie. Veuillez vérifier votre email si vous en avez fourni un.'
       });
       return;
     } catch (error) {
@@ -69,34 +80,43 @@ export class AuthController {
 
   login = async (req: Request, res: Response) => {
     try {
-      const { email, password } = req.body;
-
-      // Vérifier si l'utilisateur existe
-      const user = await User.findOne({ email }).select('+password');
+      const { phone, password } = req.body;
+      // Normalisation du téléphone
+      function normalizePhone(phone: string): string | null {
+        if (!phone) return null;
+        let cleaned = phone.replace(/[^\d+]/g, '');
+        if (cleaned.startsWith('+')) return cleaned;
+        if (/^7\d{8}$/.test(cleaned)) return '+221' + cleaned;
+        return null;
+      }
+      if (!phone) {
+        return res.status(400).json({
+          success: false,
+          message: 'Le numéro de téléphone est requis pour la connexion.'
+        });
+      }
+      const normalizedPhone = normalizePhone(phone);
+      if (!normalizedPhone) {
+        return res.status(400).json({
+          success: false,
+          message: "Merci d'entrer votre numéro au format international (ex : +221770000000 ou +33612345678)."
+        });
+      }
+      const user = await User.findOne({ phone: normalizedPhone }).select('+password');
       if (!user) {
         return res.status(401).json({
           success: false,
-          message: 'Email ou mot de passe incorrect'
+          message: 'Numéro de téléphone ou mot de passe incorrect'
         });
       }
-
       // Vérifier le mot de passe
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
         return res.status(401).json({
           success: false,
-          message: 'Email ou mot de passe incorrect'
+          message: 'Numéro de téléphone ou mot de passe incorrect'
         });
       }
-
-      // Vérifier si l'email est vérifié
-      if (!user.isVerified) {
-        return res.status(401).json({
-          success: false,
-          message: 'Veuillez vérifier votre email avant de vous connecter'
-        });
-      }
-
       // Générer le token JWT
       const jwtSecret: any = process.env.JWT_SECRET || 'default_secret';
       const jwtExpire: any = process.env.JWT_EXPIRE || process.env.JWT_EXPIRES_IN || '30d';
@@ -106,7 +126,6 @@ export class AuthController {
         jwtSecret,
         options
       );
-
       res.status(200).json({
         success: true,
         token,
@@ -114,6 +133,7 @@ export class AuthController {
           id: user._id,
           name: user.name,
           email: user.email,
+          phone: user.phone,
           role: user.role
         }
       });

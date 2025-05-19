@@ -1,12 +1,14 @@
 import { Router } from 'express';
 import { userController } from '../controllers/userController';
 import { authMiddleware, isAdmin } from '../middleware/authMiddleware';
+import { AuthController } from '../controllers/authController';
 
 const router = Router();
+const authController = new AuthController();
 
 // Routes publiques
-router.post('/register', userController.register);
-router.post('/login', userController.login);
+router.post('/register', authController.register);
+router.post('/login', authController.login);
 router.post('/forgot-password', userController.forgotPassword);
 router.post('/reset-password', userController.resetPassword);
 

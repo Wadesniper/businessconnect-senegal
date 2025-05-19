@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import webhookRoutes from './routes/webhook';
 import healthcheckRoutes from './routes/healthcheck';
 import subscriptionsRoutes from './routes/subscriptions';
+import usersRoutes from './routes/users';
 import { errorHandler } from './middleware/errorHandler';
 
 dotenv.config();
@@ -31,6 +32,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/webhooks', webhookRoutes);
 app.use('/api/healthcheck', healthcheckRoutes);
 app.use('/api/subscriptions', subscriptionsRoutes);
+app.use('/api/users', usersRoutes);
 
 // Error handling
 app.use(errorHandler);
