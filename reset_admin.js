@@ -8,7 +8,7 @@ const NEW_ADMIN = {
   password: 'Admin@2025!', // Mot de passe en clair, sera hashé
   name: 'Administrateur',
   role: 'admin',
-  phone: '786049485',
+  phone: '+221786049485',
   isVerified: true
 };
 
@@ -19,8 +19,15 @@ async function main() {
     const db = client.db('businessconnect');
     const users = db.collection('users');
 
-    // Supprimer l'ancien admin
-    const deleteResult = await users.deleteMany({ email: 'admin@businessconnect.sn' });
+    // Supprimer tous les anciens admins (par email ou téléphone, avec ou sans indicatif)
+    const deleteResult = await users.deleteMany({
+      $or: [
+        { email: 'admin@businessconnect.sn' },
+        { phone: '786049485' },
+        { phone: '+221786049485' },
+        { email: NEW_ADMIN.email }
+      ]
+    });
     console.log(`Ancien(s) admin supprimé(s) : ${deleteResult.deletedCount}`);
 
     // Vérifier si un admin avec le même email/phone existe déjà

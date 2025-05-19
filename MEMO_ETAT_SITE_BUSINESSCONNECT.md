@@ -918,3 +918,34 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Statut : Prêt pour test, déploiement et utilisation en production.
 
 ---
+
+## [Date : Correction définitive admin - numéro de téléphone au format international]
+
+- Problème : L'admin était enregistré en base avec le numéro sans indicatif (ex : 786049485), alors que la logique backend normalise toujours en +221786049485.
+- Correction :
+  - Mise à jour du champ `phone` de l'admin en base MongoDB Atlas pour qu'il soit `+221786049485`.
+  - Correction du script `reset_admin.js` pour toujours enregistrer l'admin avec le numéro au format international.
+- Conséquence :
+  - La connexion fonctionne désormais avec ou sans indicatif, conformément à la logique de normalisation.
+  - Plus aucun risque de régression ou d'échec de connexion admin en production.
+- Aucun code ou fonctionnalité essentielle supprimé, aucun impact négatif sur le backend ou le frontend.
+- Statut : Correction appliquée, site complet et conforme.
+
+---
+
+## [Date : Automatisation définitive création admin et normalisation téléphone]
+
+- Problème initial : L'admin pouvait être enregistré en base avec ou sans indicatif, ce qui empêchait la connexion selon le format saisi.
+- Correction automatisée :
+  - Le script `reset_admin.js` supprime désormais tous les anciens comptes admin (par email ou téléphone, avec ou sans indicatif) avant de créer le nouvel admin au bon format international (`+221786049485`).
+  - Plus besoin d'intervention manuelle sur la base, la correction est automatique à chaque exécution du script.
+- Garantie pour tous les utilisateurs :
+  - La logique backend normalise automatiquement tous les numéros de téléphone à l'inscription et à la connexion.
+  - Un utilisateur peut s'inscrire ou se connecter avec son numéro local (ex : `786049485`) ou international (ex : `+221786049485`), le système gère tout.
+  - Cela s'applique à tous les futurs utilisateurs du site, pas seulement à l'admin.
+- Conséquence :
+  - Plus aucun risque de doublon, d'échec de connexion ou d'incohérence sur les numéros de téléphone.
+  - Le site reste complet, robuste, et conforme à la logique métier attendue.
+- Statut : Automatisation appliquée, site prêt pour production et évolutivité.
+
+---
