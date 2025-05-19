@@ -4048,8 +4048,6 @@ const CareersPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMetier, setSelectedMetier] = useState<FicheMetier | null>(null);
   const [forceShow, setForceShow] = useState(false);
-  const isAdmin = user?.role === 'admin';
-  const isSubscribed = isAdmin ? true : hasActiveSubscription;
   const isPremium = hasPremiumAccess(user, hasActiveSubscription);
 
   // Timeout de fallback pour éviter le blocage sur loading
@@ -4057,6 +4055,14 @@ const CareersPage: React.FC = () => {
     const timer = setTimeout(() => setForceShow(true), 5000);
     return () => clearTimeout(timer);
   }, []);
+
+  // Attendre le chargement du user
+  if ((isLoading || loadingSub) && !forceShow) {
+    return <div style={{ textAlign: 'center', marginTop: 100 }}><Spin size="large" tip="Chargement..." /></div>;
+  }
+  if (!user) {
+    return <div style={{ textAlign: 'center', marginTop: 100 }}><Spin size="large" tip="Chargement..." /></div>;
+  }
 
   const filteredSecteurs = useMemo(() => {
     if (!searchTerm) return secteurs;
@@ -4118,11 +4124,6 @@ const CareersPage: React.FC = () => {
     margin: '0 auto 32px auto',
   };
 
-  // Affichage même si loading, avec fallback après 5s
-  if ((isLoading || loadingSub) && !forceShow) {
-    return <div style={{ textAlign: 'center', marginTop: 100 }}><Spin size="large" tip="Chargement..." /></div>;
-  }
-
   return (
     <div style={{ padding: '40px 8px', background: '#f7faff', minHeight: '100vh' }}>
       <div style={headerStyle}>
@@ -4131,7 +4132,7 @@ const CareersPage: React.FC = () => {
           Découvrez les métiers qui recrutent au Sénégal et leurs perspectives d'évolution
         </Paragraph>
       </div>
-      {!isPremium && (
+      {!isPremium && user?.role !== 'admin' && (
         <div style={{
           background: 'linear-gradient(90deg, #fffbe6 0%, #f7faff 100%)',
           border: '1.5px solid #ffe58f',

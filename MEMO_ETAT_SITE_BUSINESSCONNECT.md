@@ -1006,3 +1006,14 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Frontend et backend restent stables et fonctionnels.
 
 ---
+
+## [Correction critique 19/05/2025] Accès premium admin : robustesse sur tout le site
+
+- Correction sur toutes les pages premium (CV, Fiches Métiers, Formations, etc.) :
+  - On attend désormais que le user soit chargé avant de vérifier l'accès premium.
+  - Plus aucun affichage de bandeau d'abonnement ni de blocage pour l'admin, même si le user charge lentement ou arrive après le rendu initial.
+  - Le contenu premium n'est jamais bloqué pour l'admin.
+- Aucun code ou fonctionnalité essentielle supprimé, site complet maintenu.
+- Frontend et backend restent stables et fonctionnels.
+
+---

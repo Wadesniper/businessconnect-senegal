@@ -187,17 +187,17 @@ const CVGenerator: React.FC<Partial<CVGeneratorProps>> = (props) => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  if (loading || !user) {
+    return <div style={{ textAlign: 'center', marginTop: 100 }}><Spin size="large" tip="Chargement..." /></div>;
+  }
+
   const isPremium = hasPremiumAccess(user, hasActiveSubscription);
 
   React.useEffect(() => {
-    if (!loading && user && !isPremium) {
+    if (!isPremium) {
       navigate('/subscription', { replace: true });
     }
-  }, [loading, isPremium, user, navigate]);
-
-  if (loading) {
-    return <div style={{ textAlign: 'center', marginTop: 100 }}><Spin size="large" tip="Chargement..." /></div>;
-  }
+  }, [isPremium, navigate]);
 
   return (
     <Layout style={{ minHeight: '100vh', backgroundColor: '#fff' }}>
@@ -219,7 +219,7 @@ const CVGenerator: React.FC<Partial<CVGeneratorProps>> = (props) => {
             Créez, personnalisez et exportez votre CV premium en quelques clics.
           </div>
         </div>
-        {!isPremium && (
+        {!isPremium && user?.role !== 'admin' && (
           <div style={{
             background: 'linear-gradient(90deg, #fffbe6 0%, #f7faff 100%)',
             border: '1.5px solid #ffe58f',

@@ -14,13 +14,15 @@ const { Option } = Select;
 const ITEMS_PER_PAGE = 12;
 
 const FormationsPage: React.FC = () => {
-  const navigate = useNavigate();
-  const { hasActiveSubscription } = useSubscription();
+  const { hasActiveSubscription, loading } = useSubscription();
   const { user } = useAuth();
-  const isAdmin = user?.role === 'admin';
-  const isSubscribed = isAdmin ? true : hasActiveSubscription;
+  const navigate = useNavigate();
   const isPremium = hasPremiumAccess(user, hasActiveSubscription);
   const [search, setSearch] = useState('');
+
+  if (loading || !user) {
+    return <div style={{ textAlign: 'center', marginTop: 100 }}><Spin size="large" tip="Chargement..." /></div>;
+  }
 
   const filteredFormations = formationsData.filter(f =>
     f.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -53,7 +55,7 @@ const FormationsPage: React.FC = () => {
             Développez vos compétences avec plus de 4000 cours en ligne gratuits et certifiants dans de nombreux domaines.
           </p>
         </div>
-        {!isPremium && (
+        {!isPremium && user?.role !== 'admin' && (
           <div style={{
             background: 'linear-gradient(90deg, #fffbe6 0%, #f7faff 100%)',
             border: '1.5px solid #ffe58f',
