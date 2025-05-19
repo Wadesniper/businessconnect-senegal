@@ -949,3 +949,15 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Statut : Automatisation appliquée, site prêt pour production et évolutivité.
 
 ---
+
+## [Date : Correction critique authentification - compatibilité phone/phoneNumber]
+
+- Problème : Le frontend envoyait 'phoneNumber' alors que le backend attendait 'phone', ce qui empêchait toute connexion, même pour l'admin.
+- Correction : Le backend accepte désormais indifféremment 'phone' ou 'phoneNumber' dans le body lors de la connexion.
+- Conséquence :
+  - La connexion fonctionne immédiatement pour l'admin et tous les futurs utilisateurs, quel que soit le nom du champ envoyé.
+  - Plus aucun risque d'incompatibilité frontend/backend sur ce point.
+- Aucun code ou fonctionnalité essentielle supprimé, aucune perturbation du site, site complet maintenu.
+- Statut : Correction appliquée, site prêt pour test et production.
+
+---

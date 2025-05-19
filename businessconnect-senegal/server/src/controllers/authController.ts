@@ -80,7 +80,9 @@ export class AuthController {
 
   login = async (req: Request, res: Response) => {
     try {
-      const { phone, password } = req.body;
+      // Accepte 'phone' ou 'phoneNumber' pour compatibilité frontend
+      const phone = req.body.phone || req.body.phoneNumber;
+      const { password } = req.body;
       // Normalisation du téléphone
       function normalizePhone(phone: string): string | null {
         if (!phone) return null;
