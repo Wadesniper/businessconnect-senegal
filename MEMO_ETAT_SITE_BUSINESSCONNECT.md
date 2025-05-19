@@ -973,3 +973,16 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Statut : Correction appliquée, site prêt pour test et production.
 
 ---
+
+## [19/05/2025] Correction critique : utilisation stricte de l'URL d'API en production
+
+- Suppression de tous les fallbacks vers localhost dans le code frontend (Vite et React classique).
+- Tous les services utilisent désormais uniquement la variable d'environnement `REACT_APP_API_URL` pour l'URL de l'API.
+- Si la variable n'est pas définie, une erreur explicite est affichée au build/runtime.
+- Pour déployer en production, il est impératif de définir `REACT_APP_API_URL` sur Vercel avec l'URL de l'API Railway (ex : `https://businessconnect-senegal-api-production.up.railway.app`).
+- Après toute modification de cette variable, il faut redéployer le frontend sur Vercel.
+- Le backend n'a pas été modifié, il reste stable et fonctionnel.
+
+**But :** garantir que le site complet fonctionne en production, sans version minimaliste, et que tous les appels API passent bien par l'API de production.
+
+---

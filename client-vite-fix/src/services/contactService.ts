@@ -7,7 +7,10 @@ interface ContactFormData {
   message: string;
 }
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
+const API_URL = process.env.REACT_APP_API_URL;
+if (!API_URL) {
+  throw new Error('REACT_APP_API_URL n\'est pas définie dans les variables d\'environnement !');
+}
 
 export const contactService = {
   sendContactEmail: async (formData: ContactFormData) => {

@@ -1,4 +1,7 @@
-const API_URL = process.env.REACT_APP_API_URL || 'https://api.businessconnectsenegal.com';
+const API_URL = process.env.REACT_APP_API_URL;
+if (!API_URL) {
+  throw new Error('REACT_APP_API_URL n\'est pas définie dans les variables d\'environnement !');
+}
 
 export const endpoints = {
   // Auth
