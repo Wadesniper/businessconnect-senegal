@@ -192,7 +192,7 @@ const CVGenerator: React.FC<Partial<CVGeneratorProps>> = (props) => {
 
   // Redirection uniquement si non abonné et non admin
   React.useEffect(() => {
-    if (!loading && user && !isSubscribed) {
+    if (!loading && user && user.role !== 'admin' && !isSubscribed) {
       navigate('/subscription', { replace: true });
     }
   }, [loading, isSubscribed, user, navigate]);
@@ -221,7 +221,7 @@ const CVGenerator: React.FC<Partial<CVGeneratorProps>> = (props) => {
             Créez, personnalisez et exportez votre CV premium en quelques clics.
           </div>
         </div>
-        {!isSubscribed && !isAdmin && (
+        {!isSubscribed && user?.role !== 'admin' && (
           <div style={{
             background: 'linear-gradient(90deg, #fffbe6 0%, #f7faff 100%)',
             border: '1.5px solid #ffe58f',
