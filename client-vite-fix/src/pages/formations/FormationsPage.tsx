@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useSubscription } from '../../hooks/useSubscription';
 import { formationsData } from '../../data/formationsData';
+import { hasPremiumAccess } from '../../utils/premiumAccess';
 
 const { Content } = Layout;
 const { Search } = Input;
@@ -18,6 +19,7 @@ const FormationsPage: React.FC = () => {
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
   const isSubscribed = isAdmin ? true : hasActiveSubscription;
+  const isPremium = hasPremiumAccess(user, hasActiveSubscription);
   const [search, setSearch] = useState('');
 
   const filteredFormations = formationsData.filter(f =>
@@ -26,7 +28,7 @@ const FormationsPage: React.FC = () => {
   );
 
   const handleFormationClick = (url: string) => {
-    if (isSubscribed) {
+    if (isPremium) {
       window.open(url, '_blank');
     } else {
       navigate('/subscription');
@@ -51,7 +53,7 @@ const FormationsPage: React.FC = () => {
             Développez vos compétences avec plus de 4000 cours en ligne gratuits et certifiants dans de nombreux domaines.
           </p>
         </div>
-        {!isSubscribed && (
+        {!isPremium && (
           <div style={{
             background: 'linear-gradient(90deg, #fffbe6 0%, #f7faff 100%)',
             border: '1.5px solid #ffe58f',
@@ -132,7 +134,7 @@ const FormationsPage: React.FC = () => {
                         <p style={{ color: '#333', marginBottom: 12, minHeight: 48 }}>{f.description}</p>
                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                           <Button
-                            type={isSubscribed ? 'primary' : 'default'}
+                            type={isPremium ? 'primary' : 'default'}
                             style={{
                               display: 'flex',
                               alignItems: 'center',
@@ -140,9 +142,9 @@ const FormationsPage: React.FC = () => {
                               gap: 8,
                               borderRadius: 20,
                               fontWeight: 700,
-                              background: isSubscribed ? '#1890ff' : '#fff',
-                              color: isSubscribed ? '#fff' : '#bbb',
-                              border: isSubscribed ? 'none' : '1.5px solid #eee',
+                              background: isPremium ? '#1890ff' : '#fff',
+                              color: isPremium ? '#fff' : '#bbb',
+                              border: isPremium ? 'none' : '1.5px solid #eee',
                               fontSize: 16,
                               padding: '8px 24px',
                               width: '100%',
@@ -156,7 +158,7 @@ const FormationsPage: React.FC = () => {
                             }}
                             onClick={() => handleFormationClick(f.url)}
                           >
-                            {!isSubscribed ? (
+                            {!isPremium ? (
                               <span style={{
                                 display: 'inline-flex',
                                 alignItems: 'center',

@@ -6,6 +6,7 @@ import { formatNumberToCurrency } from '../../utils/format';
 import { useAuth } from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { useSubscription } from '../../hooks/useSubscription';
+import { hasPremiumAccess } from '../../utils/premiumAccess';
 
 const { Title, Text, Paragraph } = Typography;
 const { Search } = Input;
@@ -4049,6 +4050,7 @@ const CareersPage: React.FC = () => {
   const [forceShow, setForceShow] = useState(false);
   const isAdmin = user?.role === 'admin';
   const isSubscribed = isAdmin ? true : hasActiveSubscription;
+  const isPremium = hasPremiumAccess(user, hasActiveSubscription);
 
   // Timeout de fallback pour éviter le blocage sur loading
   React.useEffect(() => {
@@ -4093,7 +4095,7 @@ const CareersPage: React.FC = () => {
   };
 
   const showMetierDetail = (metier: FicheMetier) => {
-    if (!isSubscribed) {
+    if (!isPremium) {
       Modal.info({
         title: 'Fonctionnalité réservée',
         content: 'Cette fonctionnalité est réservée aux abonnés. Abonnez-vous pour consulter le détail des métiers.',
@@ -4129,7 +4131,7 @@ const CareersPage: React.FC = () => {
           Découvrez les métiers qui recrutent au Sénégal et leurs perspectives d'évolution
         </Paragraph>
       </div>
-      {!isSubscribed && (
+      {!isPremium && (
         <div style={{
           background: 'linear-gradient(90deg, #fffbe6 0%, #f7faff 100%)',
           border: '1.5px solid #ffe58f',
@@ -4190,7 +4192,7 @@ const CareersPage: React.FC = () => {
                   {secteur.metiers.map(metier => (
                     <Col key={metier.id} xs={24} md={12} lg={8} style={{ display: 'flex' }}>
                       <Card
-                        hoverable={isSubscribed}
+                        hoverable={isPremium}
                         style={{
                           height: '100%',
                           borderRadius: 18,
@@ -4205,7 +4207,7 @@ const CareersPage: React.FC = () => {
                           maxWidth: 400,
                           margin: '0 auto',
                         }}
-                        onClick={isSubscribed ? () => showMetierDetail(metier) : undefined}
+                        onClick={isPremium ? () => showMetierDetail(metier) : undefined}
                       >
                         <Space direction="vertical" size="middle" style={{ width: '100%' }}>
                           <Title level={4} style={{ margin: 0 }}>{metier.titre}</Title>
@@ -4216,7 +4218,7 @@ const CareersPage: React.FC = () => {
                             ))}
                           </div>
                           <Button
-                            type={isSubscribed ? 'primary' : 'default'}
+                            type={isPremium ? 'primary' : 'default'}
                             style={{
                               display: 'flex',
                               alignItems: 'center',
@@ -4224,9 +4226,9 @@ const CareersPage: React.FC = () => {
                               gap: 8,
                               borderRadius: 20,
                               fontWeight: 700,
-                              background: isSubscribed ? '#1890ff' : '#fff',
-                              color: isSubscribed ? '#fff' : '#bbb',
-                              border: isSubscribed ? 'none' : '1.5px solid #eee',
+                              background: isPremium ? '#1890ff' : '#fff',
+                              color: isPremium ? '#fff' : '#bbb',
+                              border: isPremium ? 'none' : '1.5px solid #eee',
                               fontSize: 16,
                               padding: '8px 24px',
                               width: '100%',
@@ -4239,14 +4241,14 @@ const CareersPage: React.FC = () => {
                               height: 44,
                             }}
                             onClick={() => {
-                              if (isSubscribed) {
+                              if (isPremium) {
                                 showMetierDetail(metier);
                               } else {
                                 navigate('/subscription');
                               }
                             }}
                           >
-                            {!isSubscribed ? (
+                            {!isPremium ? (
                               <span style={{
                                 display: 'inline-flex',
                                 alignItems: 'center',
@@ -4276,7 +4278,7 @@ const CareersPage: React.FC = () => {
                 {secteur.metiers.map(metier => (
                   <Col key={metier.id} xs={24} md={12} lg={8} style={{ display: 'flex' }}>
                     <Card
-                      hoverable={isSubscribed}
+                      hoverable={isPremium}
                       style={{
                         height: '100%',
                         borderRadius: 18,
@@ -4291,7 +4293,7 @@ const CareersPage: React.FC = () => {
                         maxWidth: 400,
                         margin: '0 auto',
                       }}
-                      onClick={isSubscribed ? () => showMetierDetail(metier) : undefined}
+                      onClick={isPremium ? () => showMetierDetail(metier) : undefined}
                     >
                       <Space direction="vertical" size="middle" style={{ width: '100%' }}>
                         <Title level={4} style={{ margin: 0 }}>{metier.titre}</Title>
@@ -4302,7 +4304,7 @@ const CareersPage: React.FC = () => {
                           ))}
                         </div>
                         <Button
-                          type={isSubscribed ? 'primary' : 'default'}
+                          type={isPremium ? 'primary' : 'default'}
                           style={{
                             display: 'flex',
                             alignItems: 'center',
@@ -4310,9 +4312,9 @@ const CareersPage: React.FC = () => {
                             gap: 8,
                             borderRadius: 20,
                             fontWeight: 700,
-                            background: isSubscribed ? '#1890ff' : '#fff',
-                            color: isSubscribed ? '#fff' : '#bbb',
-                            border: isSubscribed ? 'none' : '1.5px solid #eee',
+                            background: isPremium ? '#1890ff' : '#fff',
+                            color: isPremium ? '#fff' : '#bbb',
+                            border: isPremium ? 'none' : '1.5px solid #eee',
                             fontSize: 16,
                             padding: '8px 24px',
                             width: '100%',
@@ -4325,14 +4327,14 @@ const CareersPage: React.FC = () => {
                             height: 44,
                           }}
                           onClick={() => {
-                            if (isSubscribed) {
+                            if (isPremium) {
                               showMetierDetail(metier);
                             } else {
                               navigate('/subscription');
                             }
                           }}
                         >
-                          {!isSubscribed ? (
+                          {!isPremium ? (
                             <span style={{
                               display: 'inline-flex',
                               alignItems: 'center',

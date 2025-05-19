@@ -9,6 +9,7 @@ import { exportCV } from './services/documentExport';
 import { useSubscription } from '../../hooks/useSubscription';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { hasPremiumAccess } from '../../utils/premiumAccess';
 
 const { Content } = Layout;
 const { Title: AntTitle } = Typography;
@@ -186,16 +187,13 @@ const CVGenerator: React.FC<Partial<CVGeneratorProps>> = (props) => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Détection admin
-  const isAdmin = user?.role === 'admin';
-  const isSubscribed = isAdmin ? true : hasActiveSubscription;
+  const isPremium = hasPremiumAccess(user, hasActiveSubscription);
 
-  // Redirection uniquement si non abonné et non admin
   React.useEffect(() => {
-    if (!loading && user && user.role !== 'admin' && !isSubscribed) {
+    if (!loading && user && !isPremium) {
       navigate('/subscription', { replace: true });
     }
-  }, [loading, isSubscribed, user, navigate]);
+  }, [loading, isPremium, user, navigate]);
 
   if (loading) {
     return <div style={{ textAlign: 'center', marginTop: 100 }}><Spin size="large" tip="Chargement..." /></div>;
@@ -221,7 +219,7 @@ const CVGenerator: React.FC<Partial<CVGeneratorProps>> = (props) => {
             Créez, personnalisez et exportez votre CV premium en quelques clics.
           </div>
         </div>
-        {!isSubscribed && user?.role !== 'admin' && (
+        {!isPremium && (
           <div style={{
             background: 'linear-gradient(90deg, #fffbe6 0%, #f7faff 100%)',
             border: '1.5px solid #ffe58f',
@@ -259,7 +257,7 @@ const CVGenerator: React.FC<Partial<CVGeneratorProps>> = (props) => {
         )}
         <div style={{ marginBottom: 40 }}>
           <CVProvider>
-            <CVGeneratorContent isSubscribed={isSubscribed} />
+            <CVGeneratorContent isSubscribed={props.isSubscribed} />
           </CVProvider>
         </div>
       </Content>

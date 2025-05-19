@@ -6,6 +6,8 @@ import { CV_TEMPLATES } from '../components/data/templates';
 import { useNavigate } from 'react-router-dom';
 import { DEMO_PROFILES } from '../CVPreviewGallery';
 import styles from './TemplateSelection.module.css';
+import { useAuth } from '../../../hooks/useAuth';
+import { hasPremiumAccess } from '../../../utils/premiumAccess';
 
 const { Text } = Typography;
 const { Search } = Input;
@@ -26,6 +28,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [showPremiumOnly, setShowPremiumOnly] = useState(false);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   // Extraction des catégories uniques
   const categories = useMemo(() => {
@@ -112,7 +115,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                   </div>
                 }
                 onClick={() => {
-                  if (!isSubscribed) {
+                  if (!hasPremiumAccess(user, isSubscribed)) {
                     Modal.info({
                       title: 'Fonctionnalité réservée',
                       content: 'Cette fonctionnalité est réservée aux abonnés. Abonnez-vous pour utiliser le générateur de CV.',
