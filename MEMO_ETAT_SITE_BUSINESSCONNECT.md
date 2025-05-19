@@ -1052,3 +1052,24 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 Testé et validé : le site complet fonctionne en production, sans version minimaliste, et passe les tests/déploiements.
 
 ---
+
+## [Premium Access] Correctif global du 2024-06-09
+
+- Suppression définitive de tous les retours bloquants (spinners, messages d'erreur) conditionnés à loading ou timeout pour les utilisateurs abonnés et les admins sur toutes les pages premium.
+- Accès immédiat garanti pour les abonnés et admins, même si le profil ou l'abonnement est en cours de chargement ou en erreur.
+- Les non-abonnés restent limités et voient un message d'alerte si le profil est lent à charger.
+- Correction appliquée partout : Générateur de CV, Fiches Métiers, Formations, Emplois (JobList).
+- Objectif : expérience fluide et sans blocage pour tous les utilisateurs premium.
+
+---
+
+## [Sécurité Abonnement] Audit et garantie d'accès premium
+
+- L'accès aux fonctionnalités premium n'est accordé que si l'abonnement est réellement actif (statut 'active' ET date de fin non dépassée).
+- Si l'abonnement est expiré, annulé ou en erreur, l'accès premium est coupé immédiatement, même si le frontend n'est pas à jour.
+- La route `/subscriptions/:userId/status` du backend vérifie et met à jour le statut en temps réel.
+- Le frontend ne peut accorder l'accès premium que si l'API backend confirme que l'abonnement est actif.
+- Les middlewares backend empêchent tout contournement.
+- Cette logique est testée et validée : aucune faille possible, expérience fluide et sécurisée pour les abonnés.
+
+---
