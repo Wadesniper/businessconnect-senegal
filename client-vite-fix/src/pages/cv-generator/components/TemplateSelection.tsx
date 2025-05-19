@@ -115,6 +115,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                   </div>
                 }
                 onClick={() => {
+                  // Correction : accès immédiat pour admin ou abonné
                   if (!hasPremiumAccess(user, isSubscribed)) {
                     Modal.info({
                       title: 'Fonctionnalité réservée',
@@ -123,6 +124,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                     });
                     return;
                   }
+                  // Si admin ou abonné, accès direct
                   onSelect(template);
                 }}
                 style={{
