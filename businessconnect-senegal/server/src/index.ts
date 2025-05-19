@@ -7,6 +7,7 @@ import { rateLimiter } from './middleware/rateLimiter';
 import userRoutes from './routes/user';
 import formationRoutes from './routes/formations';
 import healthRoutes from './routes/health';
+import usersRoutes from './routes/users';
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use(rateLimiter);
 app.use('/api/health', healthRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/formations', formationRoutes);
+app.use('/api/auth', usersRoutes);
 
 // Middleware de gestion d'erreurs
 app.use(errorHandler);

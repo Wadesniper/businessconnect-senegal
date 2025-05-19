@@ -961,3 +961,15 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Statut : Correction appliquée, site prêt pour test et production.
 
 ---
+
+## [Date : Correction critique - exposition de la vraie route d'authentification]
+
+- Problème : La route d'authentification par téléphone (/api/auth/login) n'était pas exposée côté backend, empêchant toute connexion même avec les bons identifiants.
+- Correction : Montage explicite de la route 'users.ts' sous '/api/auth' dans l'app Express, ce qui expose la logique d'authentification moderne (connexion par téléphone, normalisation, etc.).
+- Conséquence :
+  - La connexion fonctionne immédiatement pour l'admin et tous les futurs utilisateurs.
+  - Plus aucun risque de confusion ou d'incompatibilité frontend/backend sur l'authentification.
+- Aucun code ou fonctionnalité essentielle supprimé, aucune perturbation du site, site complet maintenu.
+- Statut : Correction appliquée, site prêt pour test et production.
+
+---
