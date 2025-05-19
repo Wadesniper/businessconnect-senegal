@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { DEMO_PROFILES } from '../CVPreviewGallery';
 import styles from './TemplateSelection.module.css';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 const { Search } = Input;
 const { Option } = Select;
 
@@ -50,31 +50,12 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
   return (
     <div>
       {/* Header premium modernisé */}
-      <div style={{ textAlign: 'center', marginBottom: 32, marginTop: 8 }}>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-          <img src="/logo192.png" alt="Logo" style={{ width: 48, marginBottom: 4 }} />
-          <Title level={2} style={{ fontWeight: 800, color: '#1890ff', letterSpacing: 1, marginBottom: 0 }}>
-            Galerie de modèles de CV
-          </Title>
-          <div style={{ color: '#888', fontSize: 17, marginBottom: 8 }}>
-            Explorez tous nos modèles professionnels. <br />
-            <span style={{ color: '#1ec773', fontWeight: 600 }}>Abonnez-vous pour créer et exporter votre CV !</span>
-          </div>
-          {!isSubscribed && (
-            <div style={{
-              background: 'linear-gradient(90deg, #e6fff2 0%, #f0f5ff 100%)',
-              borderRadius: 10,
-              padding: '10px 18px',
-              color: '#1ec773',
-              fontWeight: 600,
-              fontSize: 15,
-              boxShadow: '0 2px 8px #1ec77311',
-              marginBottom: 8,
-              display: 'inline-block'
-            }}>
-              Découvrez tous nos modèles. <span style={{ color: '#1890ff' }}>Abonnez-vous pour créer et exporter votre CV.</span>
-            </div>
-          )}
+      <div style={{ textAlign: 'center', marginBottom: 18, marginTop: 0 }}>
+        <span style={{ fontWeight: 600, color: '#1890ff', fontSize: 20, letterSpacing: 1 }}>
+          Galerie de modèles de CV
+        </span>
+        <div style={{ color: '#888', fontSize: 15, marginBottom: 8 }}>
+          Explorez tous nos modèles professionnels.
         </div>
       </div>
       {/* Filtres */}

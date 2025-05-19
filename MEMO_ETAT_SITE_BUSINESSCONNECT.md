@@ -883,3 +883,13 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Statut : Prêt pour validation visuelle et déploiement.
 
 ---
+
+## [Date : Suppression logo B et titre principal galerie CV]
+
+- Suppression du logo B et du titre principal trop imposant dans la galerie de modèles de CV.
+- Ajout d'un sous-titre discret « Galerie de modèles de CV » juste avant la galerie, section plus aérée et moderne.
+- Aucun message d'incitation ou bannière supplémentaire ici (le bandeau reste dans le header principal).
+- Aucune perte de fonctionnalité, aucune perturbation du backend ou du déploiement.
+- Statut : Prêt pour validation visuelle et déploiement.
+
+---
