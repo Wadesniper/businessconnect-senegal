@@ -1,6 +1,6 @@
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 if (!API_URL) {
-  throw new Error('REACT_APP_API_URL n\'est pas définie dans les variables d\'environnement !');
+  throw new Error('VITE_REACT_APP_API_URL n\'est pas définie dans les variables d\'environnement !');
 }
 
 export const endpoints = {

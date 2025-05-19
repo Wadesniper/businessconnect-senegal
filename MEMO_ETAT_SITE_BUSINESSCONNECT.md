@@ -986,3 +986,14 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 **But :** garantir que le site complet fonctionne en production, sans version minimaliste, et que tous les appels API passent bien par l'API de production.
 
 ---
+
+## [19/05/2025] Correction critique : compatibilité Vite pour l'URL d'API
+
+- Tous les services frontend utilisent désormais `import.meta.env.VITE_REACT_APP_API_URL` (spécifique Vite) pour l'URL de l'API.
+- La variable d'environnement à définir sur Vercel est `VITE_REACT_APP_API_URL` (et non `REACT_APP_API_URL`).
+- Si la variable n'est pas définie, une erreur explicite s'affiche et le site ne démarre pas (plus de fallback ni de bug silencieux).
+- Après modification de la variable sur Vercel, il faut redéployer le frontend.
+- Aucun code ou fonctionnalité essentielle supprimé, site complet maintenu.
+- Backend inchangé, toujours stable et fonctionnel.
+
+---
