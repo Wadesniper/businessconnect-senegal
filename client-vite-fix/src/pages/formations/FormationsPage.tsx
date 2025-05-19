@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Layout, Card, Row, Col, Input, Select, Slider, Tag, Rate, Button, Empty, Spin, message } from 'antd';
 import { SearchOutlined, FilterOutlined, BookOutlined, ClockCircleOutlined, UserOutlined, ArrowRightOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
@@ -13,15 +13,30 @@ const { Option } = Select;
 
 const ITEMS_PER_PAGE = 12;
 
+const TIMEOUT = 10000; // 10 secondes
+
 const FormationsPage: React.FC = () => {
   const { hasActiveSubscription, loading } = useSubscription();
   const { user } = useAuth();
   const navigate = useNavigate();
   const isPremium = hasPremiumAccess(user, hasActiveSubscription);
   const [search, setSearch] = useState('');
+  const [timeoutReached, setTimeoutReached] = useState(false);
 
-  if (loading || !user) {
+  useEffect(() => {
+    const timer = setTimeout(() => setTimeoutReached(true), TIMEOUT);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if ((loading || !user) && !timeoutReached) {
     return <div style={{ textAlign: 'center', marginTop: 100 }}><Spin size="large" tip="Chargement..." /></div>;
+  }
+  if (timeoutReached && (!user || loading)) {
+    return (
+      <div style={{ textAlign: 'center', marginTop: 100, color: 'red' }}>
+        Impossible de charger votre profil. Merci de <a href="/auth/login">vous reconnecter</a>.
+      </div>
+    );
   }
 
   const filteredFormations = formationsData.filter(f =>

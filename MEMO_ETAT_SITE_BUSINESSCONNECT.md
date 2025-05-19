@@ -1017,3 +1017,13 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Frontend et backend restent stables et fonctionnels.
 
 ---
+
+## [Correction critique 19/05/2025] Timeout et gestion d'erreur chargement user sur pages premium
+
+- Ajout d'une gestion de timeout (10 secondes) sur le chargement du user sur toutes les pages premium (CV, Fiches Métiers, Formations, etc.).
+- Si le user ne se charge pas, un message d'erreur explicite s'affiche pour inviter à se reconnecter.
+- L'admin n'est jamais bloqué, même si le user charge lentement.
+- Aucun code ou fonctionnalité essentielle supprimé, site complet maintenu.
+- Frontend et backend restent stables et fonctionnels.
+
+---

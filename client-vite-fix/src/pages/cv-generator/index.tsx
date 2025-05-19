@@ -182,13 +182,27 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
   );
 };
 
+const TIMEOUT = 10000; // 10 secondes
 const CVGenerator: React.FC<Partial<CVGeneratorProps>> = (props) => {
   const { hasActiveSubscription, loading } = useSubscription();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [timeoutReached, setTimeoutReached] = React.useState(false);
 
-  if (loading || !user) {
+  React.useEffect(() => {
+    const timer = setTimeout(() => setTimeoutReached(true), TIMEOUT);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if ((loading || !user) && !timeoutReached) {
     return <div style={{ textAlign: 'center', marginTop: 100 }}><Spin size="large" tip="Chargement..." /></div>;
+  }
+  if (timeoutReached && (!user || loading)) {
+    return (
+      <div style={{ textAlign: 'center', marginTop: 100, color: 'red' }}>
+        Impossible de charger votre profil. Merci de <a href="/auth/login">vous reconnecter</a>.
+      </div>
+    );
   }
 
   const isPremium = hasPremiumAccess(user, hasActiveSubscription);

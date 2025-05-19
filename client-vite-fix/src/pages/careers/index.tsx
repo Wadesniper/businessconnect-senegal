@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Row, Col, Card, Typography, Button, Space, Tag, Input, Tabs, Modal, Statistic, Spin } from 'antd';
 import { SearchOutlined, ArrowRightOutlined, EnvironmentOutlined, BookOutlined, TrophyOutlined, LockOutlined } from '@ant-design/icons';
 import type { Secteur, FicheMetier, Competence } from './types';
@@ -4050,18 +4050,22 @@ const CareersPage: React.FC = () => {
   const [forceShow, setForceShow] = useState(false);
   const isPremium = hasPremiumAccess(user, hasActiveSubscription);
 
-  // Timeout de fallback pour éviter le blocage sur loading
-  React.useEffect(() => {
-    const timer = setTimeout(() => setForceShow(true), 5000);
+  const TIMEOUT = 10000; // 10 secondes
+  const [timeoutReached, setTimeoutReached] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setTimeoutReached(true), TIMEOUT);
     return () => clearTimeout(timer);
   }, []);
 
-  // Attendre le chargement du user
-  if ((isLoading || loadingSub) && !forceShow) {
+  if (((isLoading || loadingSub) && !forceShow && !timeoutReached) || (!user && !timeoutReached)) {
     return <div style={{ textAlign: 'center', marginTop: 100 }}><Spin size="large" tip="Chargement..." /></div>;
   }
-  if (!user) {
-    return <div style={{ textAlign: 'center', marginTop: 100 }}><Spin size="large" tip="Chargement..." /></div>;
+  if (timeoutReached && (!user || isLoading || loadingSub)) {
+    return (
+      <div style={{ textAlign: 'center', marginTop: 100, color: 'red' }}>
+        Impossible de charger votre profil. Merci de <a href="/auth/login">vous reconnecter</a>.
+      </div>
+    );
   }
 
   const filteredSecteurs = useMemo(() => {
