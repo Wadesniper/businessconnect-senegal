@@ -41,6 +41,11 @@ export const useSubscription = () => {
         setLoading(false);
         return;
       }
+      if (user?.role === 'admin') {
+        setHasActiveSubscription(true);
+        setLoading(false);
+        return;
+      }
       try {
         const isActive = await subscriptionService.fetchSubscriptionStatus(user.id);
         setHasActiveSubscription(isActive);
@@ -51,7 +56,7 @@ export const useSubscription = () => {
       }
     };
     checkStatus();
-  }, [user?.id]);
+  }, [user?.id, user?.role]);
 
   return {
     loading,

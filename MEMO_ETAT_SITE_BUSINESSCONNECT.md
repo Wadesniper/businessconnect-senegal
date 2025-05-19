@@ -997,3 +997,12 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Backend inchangé, toujours stable et fonctionnel.
 
 ---
+
+## [Correction critique 19/05/2025] Accès admin premium sans abonnement
+
+- Correction du hook useSubscription : l'admin est toujours considéré comme abonné (`hasActiveSubscription = true`), sur toutes les pages du site.
+- Plus aucun blocage d'accès ni affichage de bandeau d'abonnement pour l'admin, même sur les pages premium (CV, Fiches Métiers, Formations, etc).
+- Aucun code ou fonctionnalité essentielle supprimé, site complet maintenu.
+- Frontend et backend restent stables et fonctionnels.
+
+---
