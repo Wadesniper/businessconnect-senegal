@@ -194,9 +194,8 @@ const CVGenerator: React.FC<Partial<CVGeneratorProps>> = (props) => {
     return () => clearTimeout(timer);
   }, []);
 
-  const showProfileAlert = timeoutReached && (!user || loading);
-
   const isPremium = hasPremiumAccess(user, hasActiveSubscription);
+  const showProfileAlert = Boolean(user) && !isPremium && timeoutReached && loading;
 
   return (
     <Layout style={{ minHeight: '100vh', backgroundColor: '#fff' }}>

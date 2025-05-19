@@ -4056,7 +4056,7 @@ const CareersPage: React.FC = () => {
     const timer = setTimeout(() => setTimeoutReached(true), TIMEOUT);
     return () => clearTimeout(timer);
   }, []);
-  const showProfileAlert = timeoutReached && (!user || isLoading || loadingSub);
+  const showProfileAlert = Boolean(user) && !isPremium && timeoutReached && (isLoading || loadingSub);
 
   if (((isLoading || loadingSub) && !forceShow && !timeoutReached) || (!user && !timeoutReached)) {
     return <div style={{ textAlign: 'center', marginTop: 100 }}><Spin size="large" tip="Chargement..." /></div>;

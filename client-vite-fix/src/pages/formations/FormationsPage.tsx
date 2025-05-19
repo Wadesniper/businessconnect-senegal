@@ -28,7 +28,7 @@ const FormationsPage: React.FC = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const showProfileAlert = timeoutReached && (!user || loading);
+  const showProfileAlert = Boolean(user) && !isPremium && timeoutReached && loading;
 
   const filteredFormations = formationsData.filter(f =>
     f.title.toLowerCase().includes(search.toLowerCase()) ||
