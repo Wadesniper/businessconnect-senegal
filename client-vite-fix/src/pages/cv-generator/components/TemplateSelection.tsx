@@ -35,6 +35,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
   const [showPremiumOnly, setShowPremiumOnly] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [previewTemplate, setPreviewTemplate] = useState<Template | null>(null);
 
   // Extraction des catégories uniques
   const categories = useMemo(() => {
@@ -106,28 +107,45 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
               <Card
                 hoverable
                 cover={
-                  <div style={{ position: 'relative', background: '#f7faff', minHeight: 220, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <img
-                      alt={template.name}
-                      src={template.thumbnail}
+                  <div
+                    style={{
+                      position: 'relative',
+                      background: '#fff',
+                      minHeight: 220,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderRadius: 8,
+                      boxShadow: '0 2px 12px #0001',
+                      overflow: 'hidden',
+                      width: 200,
+                      height: 282,
+                      margin: '0 auto',
+                      aspectRatio: '400/565',
+                      transition: 'box-shadow 0.2s, transform 0.2s',
+                    }}
+                    className={styles.cvMiniature}
+                  >
+                    <div
                       style={{
-                        width: '100%',
-                        height: 220,
-                        objectFit: 'cover',
-                        borderTopLeftRadius: 8,
-                        borderTopRightRadius: 8
+                        width: 400,
+                        height: 565,
+                        transform: 'scale(0.28)',
+                        transformOrigin: 'top left',
+                        pointerEvents: 'none',
+                        background: '#fff',
+                        borderRadius: 12,
+                        boxShadow: '0 2px 8px #0001',
+                        overflow: 'hidden',
+                        border: '1px solid #eee',
                       }}
-                    />
-                    {/* Aperçu miniature du CV */}
-                    <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 2, background: 'rgba(255,255,255,0.0)' }}>
-                      <div style={{ transform: 'scale(0.25)', transformOrigin: 'top left', width: '400px', height: '600px', pointerEvents: 'none' }}>
-                        <CVPreview
-                          data={DEMO_PROFILES[template.id] || {}}
-                          template={template}
-                          customization={defaultCustomization}
-                          isPremium={true}
-                        />
-                      </div>
+                    >
+                      <CVPreview
+                        data={DEMO_PROFILES[template.id] || {}}
+                        template={template}
+                        customization={defaultCustomization}
+                        isPremium={true}
+                      />
                     </div>
                   </div>
                 }
@@ -188,11 +206,39 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                     </Button>
                   </div>
                 )}
+                <Button
+                  type="default"
+                  size="small"
+                  style={{ marginTop: 12, width: '100%' }}
+                  onClick={e => { e.stopPropagation(); setPreviewTemplate(template); }}
+                >
+                  Aperçu
+                </Button>
               </Card>
             </Col>
           ))}
         </Row>
       )}
+      <Modal
+        open={!!previewTemplate}
+        onCancel={() => setPreviewTemplate(null)}
+        footer={null}
+        width={480}
+        style={{ top: 40 }}
+        bodyStyle={{ padding: 0, background: '#f7faff', borderRadius: 16 }}
+        destroyOnClose
+      >
+        {previewTemplate && (
+          <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 4px 24px #0002', padding: 0, margin: 0, width: 400, minHeight: 565, overflow: 'auto', marginLeft: 'auto', marginRight: 'auto' }}>
+            <CVPreview
+              data={DEMO_PROFILES[previewTemplate.id] || {}}
+              template={previewTemplate}
+              customization={defaultCustomization}
+              isPremium={true}
+            />
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };

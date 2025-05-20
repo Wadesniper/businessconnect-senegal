@@ -164,28 +164,12 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
     <div style={{ maxWidth: 1200, margin: '0 auto', padding: 24 }}>
       <Steps current={currentStep} items={steps} style={{ marginBottom: 32 }} />
       <Row gutter={32}>
-        <Col xs={24} md={14}>
+        <Col xs={24}>
           {renderStepContent()}
           <div style={{ marginTop: 32, display: 'flex', gap: 16 }}>
             {currentStep > 0 && <Button onClick={handlePrev}>Précédent</Button>}
             {currentStep < steps.length - 1 && <Button type="primary" onClick={handleNext}>Suivant</Button>}
           </div>
-        </Col>
-        <Col xs={24} md={10}>
-          <Card>
-            {selectedTemplate ? (
-              <CVPreview
-                data={cvData || emptyCVData}
-                template={selectedTemplate}
-                customization={customization}
-                isPremium={isPremium}
-              />
-            ) : (
-              <div style={{ textAlign: 'center', color: '#aaa', padding: 32 }}>
-                Sélectionnez un modèle pour voir l'aperçu
-              </div>
-            )}
-          </Card>
         </Col>
       </Row>
     </div>

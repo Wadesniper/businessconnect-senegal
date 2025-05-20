@@ -3,4 +3,12 @@
 }
 .ant-card:hover .showOnHover {
   display: block !important;
+}
+.cvMiniature {
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.cvMiniature:hover {
+  box-shadow: 0 6px 24px #1890ff33, 0 2px 12px #0002;
+  transform: scale(1.04);
+  z-index: 2;
 } 

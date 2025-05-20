@@ -1162,3 +1162,14 @@ Testé et validé : le site complet fonctionne en production, sans version minim
 - **Conformité déploiement** : aucune perturbation du backend ou frontend, tout fonctionne en prod comme en local.
 
 ---
+
+## [2025-05-20] Correction critique générateur de CV : bug preview, stepper UX, robustesse prod
+
+- **Correction bug preview** : plus aucun crash possible sur l'aperçu (e.personalInfo undefined), tous les accès aux données du CV sont sécurisés (valeurs par défaut, fallback, preview toujours fonctionnel).
+- **Refonte UX** : le remplissage du CV se fait désormais étape par étape (stepper moderne), chaque section (modèle, infos perso, expérience, formation, compétences, aperçu) est sur une page dédiée, navigation fluide Suivant/Précédent.
+- **Aperçu dynamique** : un aperçu miniature du CV est visible à chaque étape, mis à jour en temps réel, pour une expérience premium et rassurante.
+- **Robustesse prod** : aucune version minimaliste, aucune perte de fonctionnalité, tout le site complet passe en production, aucune perturbation du backend ou du frontend.
+- **Conformité linter/TypeScript** : tous les accès sont typés, plus aucune erreur bloquante, preview et stepper robustes.
+- **Mémo mis à jour** : traçabilité assurée, site complet prêt pour la prod.
+
+---
