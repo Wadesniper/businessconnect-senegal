@@ -50,6 +50,9 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
 
   const previewRef = React.useRef<HTMLDivElement>(null);
   const [isExporting, setIsExporting] = useState(false);
+  const { user } = useAuth();
+  const { hasActiveSubscription } = useSubscription();
+  const isPremium = !!hasPremiumAccess(user, hasActiveSubscription);
 
   const handleNext = () => {
     if (currentStep === 0) {
@@ -101,7 +104,7 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
           <TemplateSelection
             selected={selectedTemplate}
             onSelect={setSelectedTemplate}
-            isPremium={isSubscribed}
+            isPremium={isPremium}
           />
         );
       case 1:
@@ -109,7 +112,7 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
           <CVForm
             data={cvData}
             onChange={setCVData}
-            isPremium={isSubscribed}
+            isPremium={isPremium}
           />
         );
       case 2:
@@ -117,7 +120,7 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
           <CustomizationForm
             options={customization}
             onChange={setCustomization}
-            isPremium={isSubscribed}
+            isPremium={isPremium}
           />
         );
       case 3:
@@ -128,7 +131,7 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
                 data={cvData!}
                 template={selectedTemplate!}
                 customization={customization}
-                isPremium={isSubscribed}
+                isPremium={isPremium}
               />
             </div>
             <div style={{ marginTop: 20, display: 'flex', gap: 10 }}>
@@ -197,7 +200,7 @@ const CVGenerator: React.FC<Partial<CVGeneratorProps>> = (props) => {
     return () => clearTimeout(timer);
   }, []);
 
-  const isPremium = hasPremiumAccess(user, hasActiveSubscription);
+  const isPremium = !!hasPremiumAccess(user, hasActiveSubscription);
   const showProfileAlert = Boolean(user) && !isPremium && timeoutReached && loading;
 
   return (
@@ -237,7 +240,7 @@ const CVGenerator: React.FC<Partial<CVGeneratorProps>> = (props) => {
             Créez, personnalisez et exportez votre CV premium en quelques clics.
           </div>
         </div>
-        {!isPremium && (
+        {!isPremium && user && !['admin', 'superadmin'].includes(String(user.role).toLowerCase()) && (
           <div style={{
             background: 'linear-gradient(90deg, #fffbe6 0%, #f7faff 100%)',
             border: '1.5px solid #ffe58f',
