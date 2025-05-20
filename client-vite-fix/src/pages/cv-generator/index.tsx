@@ -54,6 +54,11 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
   const { hasActiveSubscription } = useSubscription();
   const isPremium = !!hasPremiumAccess(user, hasActiveSubscription);
 
+  React.useEffect(() => {
+    setSelectedTemplate(null);
+    setCurrentStep(0);
+  }, [user?.id]);
+
   const handleSelectTemplate = (template: Template | null) => {
     setSelectedTemplate(template);
     if (template) {
@@ -226,11 +231,6 @@ const CVGenerator: React.FC<Partial<CVGeneratorProps>> = (props) => {
 
   const isPremium = !!hasPremiumAccess(user, hasActiveSubscription);
   const showProfileAlert = Boolean(user) && !isPremium && timeoutReached && loading;
-
-  React.useEffect(() => {
-    setSelectedTemplate(null);
-    setCurrentStep(0);
-  }, [user?.id]);
 
   return (
     <Layout style={{ minHeight: '100vh', backgroundColor: '#fff' }}>
