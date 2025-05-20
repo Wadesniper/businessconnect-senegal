@@ -1141,3 +1141,13 @@ Testé et validé : le site complet fonctionne en production, sans version minim
 - Traçabilité assurée dans ce mémo.
 
 ---
+
+## [2024-06-XX] Garantie d'accès immédiat admin/abonnés, robustesse frontend
+
+- ✅ L'admin et les abonnés ont désormais un accès immédiat et inconditionnel à toutes les fonctionnalités premium, même en cas de lenteur ou d'erreur API.
+- ✅ La logique frontend a été renforcée : aucun blocage possible sur la page profil, le générateur de CV, ou ailleurs pour l'admin et les abonnés.
+- ✅ Les timeouts et erreurs API ne bloquent plus l'accès premium/admin.
+- ✅ Le site complet reste fonctionnel, aucune fonctionnalité essentielle supprimée.
+- ✅ Traçabilité assurée dans ce mémo.
+
+---

@@ -208,7 +208,7 @@ const MarketplacePage: React.FC = () => {
               <Card
                 hoverable
                 cover={
-                  item.images[0] ? (
+                  Array.isArray(item.images) && item.images[0] ? (
                     <Image
                       alt={item.title}
                       src={item.images[0]}

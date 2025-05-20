@@ -27,8 +27,9 @@ import {
   EditOutlined,
   DeleteOutlined
 } from '@ant-design/icons';
-import { marketplaceService, MarketplaceItem } from '../../services/marketplaceService';
+import { marketplaceService } from '../../services/marketplaceService';
 import { authService } from '../../services/authService';
+import type { MarketplaceItem } from '../../services/marketplaceService';
 
 const { Title, Text, Paragraph } = Typography;
 const { Content } = Layout;
@@ -111,7 +112,7 @@ const MarketplaceItemPage: React.FC = () => {
             <Card>
               <Row gutter={[24, 24]}>
                 <Col xs={24} md={12}>
-                  {item.images.length > 0 ? (
+                  {Array.isArray(item.images) && item.images.length > 0 ? (
                     <Carousel autoplay>
                       {item.images.map((image, index) => (
                         <div key={index}>
