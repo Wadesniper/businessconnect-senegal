@@ -53,13 +53,13 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
   const { user } = useAuth();
   const { hasActiveSubscription } = useSubscription();
   const isPremium = !!hasPremiumAccess(user, hasActiveSubscription);
-  const prevUserId = React.useRef<string | null>(null);
+  const hasReset = React.useRef(false);
 
   React.useEffect(() => {
-    if (user?.id !== prevUserId.current) {
+    if (!hasReset.current && user?.id) {
       setSelectedTemplate(null);
       setCurrentStep(0);
-      prevUserId.current = user?.id || null;
+      hasReset.current = true;
     }
   }, [user?.id]);
 
