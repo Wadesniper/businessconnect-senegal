@@ -5,9 +5,14 @@ export interface MarketplaceItem {
   price: number;
   currency: string;
   seller: string;
-  image: string;
+  images: string[];
+  location: string;
+  contactInfo: { email: string; phone?: string };
+  userId: string;
   category: string;
   createdAt: string;
+  updatedAt: string;
+  status: 'active' | 'sold' | 'expired';
 }
 
 export const marketplaceData: MarketplaceItem[] = [
@@ -18,9 +23,14 @@ export const marketplaceData: MarketplaceItem[] = [
     price: 15000,
     currency: 'XOF',
     seller: 'Fatou Ndiaye',
-    image: '/images/marketplace/coaching.jpg',
+    images: ['/images/marketplace/coaching.jpg'],
+    location: 'Dakar',
+    contactInfo: { email: 'fatou.ndiaye@email.com' },
+    userId: '1',
     category: 'Services',
     createdAt: '2024-05-01',
+    updatedAt: '2024-05-01',
+    status: 'active',
   },
   {
     id: '2',
@@ -29,9 +39,14 @@ export const marketplaceData: MarketplaceItem[] = [
     price: 8000,
     currency: 'XOF',
     seller: 'Mamadou Diop',
-    image: '/images/marketplace/cv.jpg',
+    images: ['/images/marketplace/cv.jpg'],
+    location: 'Thiès',
+    contactInfo: { email: 'mamadou.diop@email.com' },
+    userId: '2',
     category: 'Services',
     createdAt: '2024-05-02',
+    updatedAt: '2024-05-02',
+    status: 'active',
   },
   {
     id: '3',
@@ -40,9 +55,14 @@ export const marketplaceData: MarketplaceItem[] = [
     price: 12000,
     currency: 'XOF',
     seller: 'Awa Ba',
-    image: '/images/marketplace/excel.jpg',
+    images: ['/images/marketplace/excel.jpg'],
+    location: 'Saint-Louis',
+    contactInfo: { email: 'awa.ba@email.com' },
+    userId: '3',
     category: 'Formations',
     createdAt: '2024-05-03',
+    updatedAt: '2024-05-03',
+    status: 'active',
   },
   // Ajoutez d'autres exemples selon les besoins
 ]; 

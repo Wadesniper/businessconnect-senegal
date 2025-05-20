@@ -1,5 +1,6 @@
 import { marketplaceData } from '../data/marketplaceData';
-import { subscriptionData, UserSubscription } from '../data/subscriptionData';
+import { subscriptionData } from '../data/subscriptionData';
+import type { UserSubscription } from '../data/subscriptionData';
 
 export interface MarketplaceItem {
   id: string;
@@ -47,10 +48,18 @@ function getUserSubscription(userId: string): UserSubscription | undefined {
 }
 
 function isUserSubscribed(userId: string): boolean {
+  // Si l'utilisateur est admin, il est toujours considéré comme abonné
+  const userStr = localStorage.getItem('user');
+  if (userStr) {
+    try {
+      const user = JSON.parse(userStr);
+      if (user && user.role === 'admin') return true;
+    } catch {}
+  }
   const sub = getUserSubscription(userId);
   if (!sub) return false;
-  if (!sub.isActive) return false;
-  if (new Date(sub.expiresAt) < new Date()) return false;
+  if (sub.status !== 'active') return false;
+  if (new Date(sub.endDate) < new Date()) return false;
   return true;
 }
 
@@ -61,8 +70,8 @@ export const marketplaceService = {
     items = items.filter(i => isUserSubscribed(i.userId));
     if (filters) {
       if (filters.category) items = items.filter(i => i.category === filters.category);
-      if (filters.location) items = items.filter(i => i.location.toLowerCase().includes(filters.location.toLowerCase()));
-      if (filters.search) items = items.filter(i => i.title.toLowerCase().includes(filters.search.toLowerCase()) || i.description.toLowerCase().includes(filters.search.toLowerCase()));
+      if (filters.location) items = items.filter(i => i.location.toLowerCase().includes((filters.location || '').toLowerCase()));
+      if (filters.search) items = items.filter(i => i.title.toLowerCase().includes((filters.search || '').toLowerCase()) || i.description.toLowerCase().includes((filters.search || '').toLowerCase()));
       if (filters.minPrice !== undefined) items = items.filter(i => i.price >= filters.minPrice!);
       if (filters.maxPrice !== undefined) items = items.filter(i => i.price <= filters.maxPrice!);
     }

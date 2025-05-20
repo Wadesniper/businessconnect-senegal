@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { CVService } from '../services/cvService';
 import { logger } from '../utils/logger';
 import { body, validationResult } from 'express-validator';
+import { AuthRequest } from '../types/user';
 
 export class CVController {
   private cvService: CVService;
@@ -10,7 +11,7 @@ export class CVController {
     this.cvService = new CVService();
   }
 
-  createCV = async (req: Request, res: Response) => {
+  createCV = async (req: AuthRequest, res: Response) => {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -30,7 +31,7 @@ export class CVController {
     }
   };
 
-  updateCV = async (req: Request, res: Response) => {
+  updateCV = async (req: AuthRequest, res: Response) => {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -54,7 +55,7 @@ export class CVController {
     }
   };
 
-  getCV = async (req: Request, res: Response) => {
+  getCV = async (req: AuthRequest, res: Response) => {
     try {
       const userId = req.user?.id;
       if (!userId) {
@@ -73,7 +74,7 @@ export class CVController {
     }
   };
 
-  getUserCVs = async (req: Request, res: Response) => {
+  getUserCVs = async (req: AuthRequest, res: Response) => {
     try {
       const userId = req.user?.id;
       if (!userId) {
@@ -88,7 +89,7 @@ export class CVController {
     }
   };
 
-  deleteCV = async (req: Request, res: Response) => {
+  deleteCV = async (req: AuthRequest, res: Response) => {
     try {
       const userId = req.user?.id;
       if (!userId) {
@@ -107,7 +108,7 @@ export class CVController {
     }
   };
 
-  generatePDF = async (req: Request, res: Response) => {
+  generatePDF = async (req: AuthRequest, res: Response) => {
     try {
       const userId = req.user?.id;
       if (!userId) {

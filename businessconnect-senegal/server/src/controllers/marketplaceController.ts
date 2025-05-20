@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { logger } from '../utils/logger';
 import { query } from '../config/database';
+import { AuthRequest } from '../types/user';
 
 export const marketplaceController = {
   async getAllProducts(req: Request, res: Response) {
@@ -82,7 +83,7 @@ export const marketplaceController = {
     }
   },
 
-  async createProduct(req: Request, res: Response) {
+  async createProduct(req: AuthRequest, res: Response) {
     try {
       const { title, description, price, category_id } = req.body;
       const seller_id = req.user?.id;
@@ -107,7 +108,7 @@ export const marketplaceController = {
     }
   },
 
-  async updateProduct(req: Request, res: Response) {
+  async updateProduct(req: AuthRequest, res: Response) {
     try {
       const { id } = req.params;
       const { title, description, price, category_id, status } = req.body;
@@ -155,7 +156,7 @@ export const marketplaceController = {
     }
   },
 
-  async deleteProduct(req: Request, res: Response) {
+  async deleteProduct(req: AuthRequest, res: Response) {
     try {
       const { id } = req.params;
       const seller_id = req.user?.id;

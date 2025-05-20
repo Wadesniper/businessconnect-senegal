@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { logger } from '../utils/logger';
 import { query } from '../config/database';
+import { AuthRequest } from '../types/user';
 
 interface User {
   id: string;
@@ -155,7 +156,7 @@ export const userController = {
     }
   },
 
-  async getProfile(req: Request, res: Response) {
+  async getProfile(req: AuthRequest, res: Response) {
     try {
       const userId = req.user?.id;
       const result = await query(
@@ -186,7 +187,7 @@ export const userController = {
     }
   },
 
-  async updateProfile(req: Request, res: Response) {
+  async updateProfile(req: AuthRequest, res: Response) {
     try {
       const userId = req.user?.id;
       const { name, email } = req.body;
@@ -211,7 +212,7 @@ export const userController = {
     }
   },
 
-  async updatePassword(req: Request, res: Response) {
+  async updatePassword(req: AuthRequest, res: Response) {
     try {
       const userId = req.user?.id;
       const { currentPassword, newPassword } = req.body;
@@ -253,7 +254,7 @@ export const userController = {
     }
   },
 
-  async deleteAccount(req: Request, res: Response) {
+  async deleteAccount(req: AuthRequest, res: Response) {
     try {
       const userId = req.user?.id;
       await query('DELETE FROM users WHERE id = $1', [userId]);

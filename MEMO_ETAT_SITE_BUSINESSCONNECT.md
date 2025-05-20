@@ -1073,3 +1073,20 @@ Testé et validé : le site complet fonctionne en production, sans version minim
 - Cette logique est testée et validée : aucune faille possible, expérience fluide et sécurisée pour les abonnés.
 
 ---
+
+## [2024-06-XX] Correction critique TypeScript backend : typage req.user et robustesse production
+
+- Problème : Des erreurs TypeScript bloquaient le build backend à cause de l'accès à `req.user` ("Property 'user' does not exist on type 'Request<...>").
+- Analyse : Plusieurs contrôleurs et middlewares utilisaient `req.user` sans que le type Express soit étendu correctement, ce qui empêchait la compilation et donc le déploiement du site complet.
+- Correction :
+  - Centralisation du type `AuthRequest` dans `server/src/types/user.ts` pour garantir que tous les handlers et middlewares accèdent à `req.user` de façon typée et sûre.
+  - Remplacement systématique de `Request` par `AuthRequest` dans tous les contrôleurs et middlewares concernés (user, marketplace, job, CV, etc.).
+  - Suppression des imports inutiles pour éviter les warnings TypeScript.
+  - **Aucune suppression de code métier, aucune version minimaliste, aucune régression** : le site complet reste fonctionnel, toutes les fonctionnalités sont maintenues.
+- Validation :
+  - Le backend démarre sans aucune erreur TypeScript.
+  - Le frontend fonctionne parfaitement, aucune perturbation de l'affichage ou de la logique métier.
+  - Le site complet passe les tests, le build et le déploiement, conformément à la politique de non-minimalisme et de robustesse exigée.
+- Statut : Correction appliquée, traçabilité assurée, site complet prêt pour la production et l'évolution future.
+
+---

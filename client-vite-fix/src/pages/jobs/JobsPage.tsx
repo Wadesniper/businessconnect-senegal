@@ -5,13 +5,16 @@ import RedirectBanners from './components/RedirectBanners';
 import JobFilters from './components/JobFilters';
 import JobCard from './components/JobCard';
 import { useAuth } from '../../hooks/useAuth';
-import { JobType } from '../../types/job';
+import { useSubscription } from '../../hooks/useSubscription';
+import { hasPremiumAccess } from '../../utils/premiumAccess';
+import type { JobType } from '../../types/job';
 import { useNavigate } from 'react-router-dom';
 import { JobService } from '../../services/jobService';
 
 const JobsPage: React.FC = () => {
   const { user } = useAuth();
-  const isSubscribed = user?.subscription?.status === 'active';
+  const { hasActiveSubscription } = useSubscription();
+  const isPremium = hasPremiumAccess(user, hasActiveSubscription);
   const navigate = useNavigate();
 
   // États des filtres
@@ -60,7 +63,7 @@ const JobsPage: React.FC = () => {
   }, [jobs, selectedSector, selectedType, selectedLocation, salaryRange, experienceLevel, workLocation]);
 
   const handlePostuler = (jobId: string) => {
-    if (!isSubscribed) {
+    if (!isPremium) {
       navigate('/subscription');
     } else {
       navigate(`/jobs/${jobId}`);
@@ -72,7 +75,7 @@ const JobsPage: React.FC = () => {
       <JobAdviceBanner />
       <RedirectBanners />
       <Grid container spacing={4}>
-        <Grid item xs={12} md={3}>
+        <Box sx={{ flexBasis: { xs: '100%', md: '25%' }, maxWidth: { xs: '100%', md: '25%' }, pr: { md: 2 } }}>
           <JobFilters
             sectors={sectors}
             selectedSector={selectedSector}
@@ -88,8 +91,8 @@ const JobsPage: React.FC = () => {
             workLocation={workLocation}
             onWorkLocationChange={setWorkLocation}
           />
-        </Grid>
-        <Grid item xs={12} md={9}>
+        </Box>
+        <Box sx={{ flexBasis: { xs: '100%', md: '75%' }, maxWidth: { xs: '100%', md: '75%' } }}>
           {isLoading ? (
             <Typography>Chargement des offres...</Typography>
           ) : error ? (
@@ -115,16 +118,16 @@ const JobsPage: React.FC = () => {
               <Typography variant="subtitle1" gutterBottom>
                 {filteredJobs.length} offre{filteredJobs.length > 1 ? 's' : ''} trouvée{filteredJobs.length > 1 ? 's' : ''}
               </Typography>
-              <Grid container spacing={3}>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
                 {filteredJobs.map((job) => (
-                  <Grid item xs={12} md={6} key={job.id}>
-                    <JobCard job={job} isSubscribed={isSubscribed} onPostuler={handlePostuler} />
-                  </Grid>
+                  <Box key={job.id} sx={{ flexBasis: { xs: '100%', md: '48%' }, maxWidth: { xs: '100%', md: '48%' } }}>
+                    <JobCard job={job} isSubscribed={isPremium} onPostuler={handlePostuler} />
+                  </Box>
                 ))}
-              </Grid>
+              </Box>
             </>
           )}
-        </Grid>
+        </Box>
       </Grid>
     </Container>
   );

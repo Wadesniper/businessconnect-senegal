@@ -23,7 +23,8 @@ import {
   EnvironmentOutlined,
   EuroOutlined
 } from '@ant-design/icons';
-import { marketplaceService, MarketplaceItem } from '../../services/marketplaceService';
+import { marketplaceService } from '../../services/marketplaceService';
+import type { MarketplaceItem } from '../../services/marketplaceService';
 import { authService } from '../../services/authService';
 import { useSubscription } from '../../hooks/useSubscription';
 import { useAuth } from '../../hooks/useAuth';
@@ -53,7 +54,8 @@ const MarketplacePage: React.FC = () => {
   });
   const [subscription, setSubscription] = useState(authService.getCurrentUserSubscription());
   const { user } = useAuth();
-  const { hasActiveSubscription, loading: loadingSub, subscription: userSubscription } = useSubscription();
+  const { hasActiveSubscription, loading: loadingSub } = useSubscription();
+  const userSubscription = subscription;
 
   useEffect(() => {
     fetchItems();
@@ -73,8 +75,7 @@ const MarketplacePage: React.FC = () => {
 
   const handleCreateAd = async (values: any) => {
     try {
-      const user = authService.getCurrentUser();
-      if (!user) {
+      if (!user || !user.id) {
         message.error('Veuillez vous connecter pour créer une annonce');
         return;
       }
@@ -127,10 +128,10 @@ const MarketplacePage: React.FC = () => {
                 {subscription && (
                   <Space>
                     <span style={{ fontWeight: 'bold' }}>Abonnement : </span>
-                    <span style={{ color: subscription.isActive && new Date(subscription.expiresAt) > new Date() ? 'green' : 'red', fontWeight: 'bold' }}>
-                      {subscription.isActive && new Date(subscription.expiresAt) > new Date() ? 'Actif' : 'Expiré'}
+                    <span style={{ color: subscription.status === 'active' && new Date(subscription.endDate) > new Date() ? 'green' : 'red', fontWeight: 'bold' }}>
+                      {subscription.status === 'active' && new Date(subscription.endDate) > new Date() ? 'Actif' : 'Expiré'}
                     </span>
-                    <span>(Expire le : {new Date(subscription.expiresAt).toLocaleDateString()})</span>
+                    <span>(Expire le : {new Date(subscription.endDate).toLocaleDateString()})</span>
                     <Button onClick={handleRenew}>Renouveler</Button>
                     <Button danger onClick={handleExpire}>Expirer</Button>
                   </Space>
@@ -171,8 +172,8 @@ const MarketplacePage: React.FC = () => {
                       icon={<PlusOutlined />}
                       onClick={() => {
                         if (loadingSub) return;
-                        if (!hasActiveSubscription || !userSubscription || userSubscription.type !== 'annonceur') {
-                          message.error('Seuls les annonceurs abonnés peuvent publier une annonce.');
+                        if (!(user?.role === 'admin' || (hasActiveSubscription && userSubscription && userSubscription.type === 'annonceur'))) {
+                          message.error('Seuls les annonceurs abonnés ou les admins peuvent publier une annonce.');
                           return;
                         }
                         setIsModalVisible(true);

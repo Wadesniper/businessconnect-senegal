@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import pool from '../config/database';
 import { logger } from '../utils/logger';
+import { AuthRequest } from '../types/user';
 
 interface JobData {
   title: string;
@@ -46,7 +47,7 @@ export const jobController = {
     }
   },
 
-  async createJob(req: Request, res: Response) {
+  async createJob(req: AuthRequest, res: Response) {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -78,7 +79,7 @@ export const jobController = {
     }
   },
 
-  async updateJob(req: Request, res: Response) {
+  async updateJob(req: AuthRequest, res: Response) {
     try {
       const { id } = req.params;
       const jobData: Partial<JobData> = req.body;
@@ -110,7 +111,7 @@ export const jobController = {
     }
   },
 
-  async deleteJob(req: Request, res: Response) {
+  async deleteJob(req: AuthRequest, res: Response) {
     try {
       const { id } = req.params;
       const result = await pool.query(
@@ -154,7 +155,7 @@ export const jobController = {
     }
   },
 
-  async applyToJob(req: Request, res: Response) {
+  async applyToJob(req: AuthRequest, res: Response) {
     try {
       const { id: job_id } = req.params;
       const { cv_url, cover_letter } = req.body;
@@ -173,7 +174,7 @@ export const jobController = {
     }
   },
 
-  async getJobApplications(req: Request, res: Response) {
+  async getJobApplications(req: AuthRequest, res: Response) {
     try {
       const { jobId } = req.params;
       const result = await pool.query(
@@ -190,7 +191,7 @@ export const jobController = {
     }
   },
 
-  async updateApplicationStatus(req: Request, res: Response) {
+  async updateApplicationStatus(req: AuthRequest, res: Response) {
     try {
       const { applicationId } = req.params;
       const { status } = req.body;
