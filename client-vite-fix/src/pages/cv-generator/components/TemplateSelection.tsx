@@ -129,7 +129,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                 }}
                 style={{
                   border: selected?.id === template.id ? '2px solid #1890ff' : undefined,
-                  cursor: template.premium && !isSubscribed ? 'not-allowed' : 'pointer',
+                  cursor: isPremium ? 'pointer' : 'not-allowed',
                   borderRadius: 10,
                   boxShadow: '0 4px 18px #1890ff11',
                   transition: 'box-shadow 0.2s',
