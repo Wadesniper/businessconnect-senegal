@@ -30,7 +30,9 @@ router.get('/:userId', authenticate, async (req: Request, res: Response) => {
 router.get('/:userId/status', authenticate, async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    const isActive = await subscriptionService.checkSubscriptionStatus(userId);
+    // @ts-ignore
+    const userRole = req.user?.role;
+    const isActive = await subscriptionService.checkSubscriptionStatus(userId, userRole);
     res.json({ isActive });
   } catch (error) {
     logger.error('Erreur lors de la vérification du statut:', error);

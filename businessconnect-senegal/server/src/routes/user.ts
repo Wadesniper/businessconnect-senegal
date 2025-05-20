@@ -33,6 +33,7 @@ router.post(
 router.get('/profile', authMiddleware, async (req: AuthRequest, res: Response) => { await userController.getProfile(req, res); });
 router.put('/profile', authMiddleware, async (req: AuthRequest, res: Response) => { await userController.updateProfile(req, res); });
 router.put('/password', authMiddleware, async (req: AuthRequest, res: Response) => { await userController.updatePassword(req, res); });
+router.get('/me', authMiddleware, async (req: AuthRequest, res: Response) => { await userController.getProfile(req, res); });
 
 // Routes admin
 router.get('/admin/users', authMiddleware, async (req: AuthRequest, res: Response) => { await userController.getAllUsers(req, res); });

@@ -103,19 +103,22 @@ export class SubscriptionService {
     }
   }
 
-  public async checkSubscriptionStatus(userId: string): Promise<boolean> {
+  public async checkSubscriptionStatus(userId: string, userRole?: string): Promise<boolean> {
     try {
+      // Si le rôle est admin, accès premium automatique
+      if (userRole === 'admin') {
+        return true;
+      }
+      // Sinon, logique d'abonnement classique
       const subscription = await this.getSubscription(userId);
       if (!subscription || subscription.status !== 'active') {
         return false;
       }
-
       const now = new Date();
       if (now > new Date(subscription.endDate)) {
         await this.updateSubscriptionStatus(subscription.id, 'expired');
         return false;
       }
-
       return true;
     } catch (error) {
       logger.error('Erreur lors de la vérification du statut de l\'abonnement:', error);
