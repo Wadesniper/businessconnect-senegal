@@ -44,11 +44,35 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
     interests: Array.isArray(data?.interests) ? data.interests : [],
   };
 
-  const previewStyle = {
-    transform: `scale(${zoom / 100})`,
-    transformOrigin: 'top center',
-    transition: 'transform 0.3s ease',
-  };
+  // Ratio A4 : largeur/hauteur = 210/297 ≈ 0.707
+  const A4_RATIO = 210 / 297;
+  const MINIATURE_WIDTH = 180; // px, largeur de la miniature dans la carte
+  const MINIATURE_HEIGHT = MINIATURE_WIDTH / A4_RATIO;
+
+  // Calcul du scale pour que le contenu A4 tienne dans la miniature
+  const baseA4Width = 794; // px (A4 à 96dpi)
+  const baseA4Height = 1123; // px
+  const scaleMiniature = isMiniature ? Math.min(MINIATURE_WIDTH / baseA4Width, MINIATURE_HEIGHT / baseA4Height) : zoom / 100;
+
+  const previewStyle = isMiniature
+    ? {
+        width: `${baseA4Width}px`,
+        height: `${baseA4Height}px`,
+        transform: `scale(${scaleMiniature})`,
+        transformOrigin: 'top left',
+        pointerEvents: 'none' as const,
+        overflow: 'hidden',
+        background: '#fff',
+        borderRadius: 12,
+        boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
+        margin: 0,
+        padding: 0,
+      }
+    : {
+        transform: `scale(${zoom / 100})`,
+        transformOrigin: 'top center',
+        transition: 'transform 0.3s ease',
+      };
 
   const controls = (
     <div style={{ 
@@ -89,20 +113,45 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
     </div>
   );
 
-  const preview = (
-    <div style={{ 
+  const preview = isMiniature ? (
+    <div
+      style={{
+        width: MINIATURE_WIDTH,
+        height: MINIATURE_HEIGHT,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'transparent',
+        overflow: 'hidden',
+        position: 'relative',
+        margin: '0 auto',
+      }}
+    >
+      <div style={previewStyle}>
+        <TemplateComponent
+          data={safeData}
+          customization={customization}
+          isMiniature={true}
+        />
+      </div>
+    </div>
+  ) : (
+    <div style={{
       background: '#fff',
       borderRadius: 12,
       boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
-      padding: isMiniature ? 0 : 32,
+      padding: 32,
       maxWidth: 900,
       margin: '0 auto',
-      fontSize: isMiniature ? 12 : undefined,
-      ...previewStyle
+      fontSize: undefined,
+      ...previewStyle,
+      position: 'relative',
+      pointerEvents: 'auto' as const,
     }}>
-      <TemplateComponent 
-        data={safeData} 
+      <TemplateComponent
+        data={safeData}
         customization={customization}
+        isMiniature={false}
       />
       {!isPremium && (
         <div style={{
@@ -116,7 +165,8 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
           alignItems: 'center',
           justifyContent: 'center',
           flexDirection: 'column',
-          gap: '16px'
+          gap: '16px',
+          zIndex: 2,
         }}>
           <Title level={3}>Version d'aperçu</Title>
           <Text>Abonnez-vous pour télécharger votre CV</Text>
@@ -126,7 +176,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
     </div>
   );
 
-  if (showFullscreen) {
+  if (showFullscreen && !isMiniature) {
     return (
       <div style={{
         position: 'fixed',
@@ -137,10 +187,13 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
         background: '#f0f2f5',
         padding: '40px',
         overflow: 'auto',
-        zIndex: 1000
+        zIndex: 1000,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
       }}>
         {preview}
-        {!isMiniature && controls}
+        {controls}
       </div>
     );
   }
