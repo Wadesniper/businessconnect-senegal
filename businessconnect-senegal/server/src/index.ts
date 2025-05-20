@@ -8,6 +8,9 @@ import userRoutes from './routes/user';
 import formationRoutes from './routes/formations';
 import healthRoutes from './routes/health';
 import usersRoutes from './routes/users';
+import dotenv from 'dotenv';
+import { config } from './config';
+dotenv.config();
 
 const app = express();
 
@@ -26,35 +29,27 @@ app.use('/api/auth', usersRoutes);
 // Middleware de gestion d'erreurs
 app.use(errorHandler);
 
-// Connexion à MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/businessconnect')
-  .then(() => {
-    console.log('Connecté à MongoDB');
-    const port = process.env.PORT || 3001;
-    app.listen(port, () => {
-      console.log(`Serveur démarré sur le port ${port}`);
-    });
-  })
-  .catch((error) => {
-    console.error('Erreur de connexion à MongoDB:', error);
-    process.exit(1);
+// Connexion à MongoDB avec gestion d'erreur améliorée
+mongoose.connect(config.MONGODB_URI, {
+  serverSelectionTimeoutMS: 5000,
+  socketTimeoutMS: 45000,
+})
+.then(() => {
+  console.log('✅ Connecté à MongoDB avec succès');
+  const port = config.PORT || 3001;
+  app.listen(port, () => {
+    console.log(`🚀 Serveur démarré sur le port ${port}`);
   });
+})
+.catch((error) => {
+  console.error('❌ Erreur de connexion à MongoDB:', error.message);
+  process.exit(1);
+});
 
 // Gestion des erreurs non capturées
 process.on('unhandledRejection', (error: Error) => {
-  console.error('Erreur non gérée (Promise):', error);
-  // Ne pas arrêter le serveur en production
-  if (process.env.NODE_ENV !== 'production') {
-    process.exit(1);
-  }
-});
-
-process.on('uncaughtException', (error: Error) => {
-  console.error('Exception non capturée:', error);
-  // Ne pas arrêter le serveur en production
-  if (process.env.NODE_ENV !== 'production') {
-    process.exit(1);
-  }
+  console.error('❌ Erreur non gérée:', error.message);
+  process.exit(1);
 });
 
 export default app; 

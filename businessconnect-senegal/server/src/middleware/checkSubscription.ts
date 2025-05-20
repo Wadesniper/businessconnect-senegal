@@ -18,7 +18,8 @@ export const checkSubscription = async (
       });
     }
 
-    const hasAccess = await subscriptionService.checkSubscriptionAccess(userId);
+    const userRole = req.user?.role;
+    const hasAccess = await subscriptionService.checkSubscriptionAccess(userId, userRole);
 
     if (!hasAccess) {
       return res.status(403).json({
