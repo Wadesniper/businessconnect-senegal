@@ -145,6 +145,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                         template={template}
                         customization={defaultCustomization}
                         isPremium={true}
+                        isMiniature={true}
                       />
                     </div>
                   </div>

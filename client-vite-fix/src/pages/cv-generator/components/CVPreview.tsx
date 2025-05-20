@@ -10,9 +10,10 @@ interface CVPreviewProps {
   template: Template;
   customization: CustomizationOptions;
   isPremium: boolean;
+  isMiniature?: boolean;
 }
 
-const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, isPremium }) => {
+const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, isPremium, isMiniature = false }) => {
   const [zoom, setZoom] = useState(100);
   const [showFullscreen, setShowFullscreen] = useState(false);
 
@@ -93,9 +94,10 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
       background: '#fff',
       borderRadius: 12,
       boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
-      padding: 32,
+      padding: isMiniature ? 0 : 32,
       maxWidth: 900,
       margin: '0 auto',
+      fontSize: isMiniature ? 12 : undefined,
       ...previewStyle
     }}>
       <TemplateComponent 
