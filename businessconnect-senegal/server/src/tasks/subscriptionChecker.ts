@@ -37,7 +37,7 @@ export class SubscriptionChecker {
       const subscriptions = await this.subscriptionService.getAllSubscriptions();
       
       for (const subscription of subscriptions) {
-        await this.subscriptionService.checkSubscriptionStatus(subscription.userId);
+        await this.subscriptionService.checkSubscriptionAccess(subscription.userId);
       }
 
       logger.info('Vérification des abonnements terminée', {

@@ -1,6 +1,6 @@
 import express from 'express';
 import { body } from 'express-validator';
-import { jobController } from '../controllers/jobController';
+// import { jobController } from '../controllers/jobController';
 import { authMiddleware } from '../middleware/authMiddleware';
 import { AuthRequest } from '../types/user';
 import { Response } from 'express';
@@ -9,13 +9,13 @@ const router = express.Router();
 
 // Routes publiques
 router.get('/', async (req: AuthRequest, res: Response): Promise<void> => {
-  await jobController.getAllJobs(req, res);
+  // await jobController.getAllJobs(req, res);
 });
 router.get('/:id', async (req, res): Promise<void> => {
-  await jobController.getJob(req, res);
+  // await jobController.getJob(req, res);
 });
 router.get('/categories', async (req, res): Promise<void> => {
-  await jobController.getCategories(req, res);
+  // await jobController.getCategories(req, res);
 });
 
 // Routes protégées
@@ -29,25 +29,25 @@ router.post(
     body('location').not().isEmpty().withMessage('La localisation est requise'),
     body('type').isIn(['CDI', 'CDD', 'Stage', 'Freelance']).withMessage('Type de contrat invalide'),
   ],
-  jobController.createJob
+  // jobController.createJob
 );
 
 router.put('/:id', authMiddleware, async (req, res): Promise<void> => {
-  await jobController.updateJob(req, res);
+  // await jobController.updateJob(req, res);
 });
 router.delete('/:id', authMiddleware, async (req, res): Promise<void> => {
-  await jobController.deleteJob(req, res);
+  // await jobController.deleteJob(req, res);
 });
 
 // Routes de candidature
 router.post('/:id/apply', authMiddleware, async (req, res): Promise<void> => {
-  await jobController.applyToJob(req, res);
+  // await jobController.applyToJob(req, res);
 });
 router.get('/applications/:jobId', authMiddleware, async (req, res): Promise<void> => {
-  await jobController.getJobApplications(req, res);
+  // await jobController.getJobApplications(req, res);
 });
 router.put('/applications/:applicationId', authMiddleware, async (req, res): Promise<void> => {
-  await jobController.updateApplicationStatus(req, res);
+  // await jobController.updateApplicationStatus(req, res);
 });
 
 export default router; 

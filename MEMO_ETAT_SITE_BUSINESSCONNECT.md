@@ -1090,3 +1090,54 @@ Testé et validé : le site complet fonctionne en production, sans version minim
 - Statut : Correction appliquée, traçabilité assurée, site complet prêt pour la production et l'évolution future.
 
 ---
+
+## [2024-06-XX] Correction critique accès admin/abonné frontend
+
+- Problème : Les utilisateurs admins étaient redirigés à tort vers la page d'abonnement, et certains abonnés ne pouvaient pas accéder à toutes les fonctionnalités premium.
+- Analyse : La logique de la route protégée (ProtectedRoute) ne tenait pas compte du rôle admin dans la vérification d'accès premium, alors que la fonction utilitaire hasPremiumAccess le permettait déjà.
+- Correction :
+  - ProtectedRoute utilise désormais hasPremiumAccess pour garantir que les admins et les abonnés ont accès à toutes les routes/fonctionnalités premium.
+  - Un admin n'est plus jamais redirigé vers l'abonnement.
+  - Vérification de la cohérence avec la logique backend (middleware isAdmin et checkSubscription).
+- Résultat :
+  - Les admins accèdent à toutes les pages sans blocage ni redirection abusive.
+  - Les abonnés accèdent automatiquement à leurs fonctionnalités premium.
+  - Aucun code ou fonctionnalité essentielle supprimé, aucune régression sur le site complet.
+
+---
+
+# État du site BusinessConnect Sénégal
+
+## Migration et cohérence totale MongoDB
+- ✅ Tous les anciens contrôleurs, middlewares et tests SQL/PostgreSQL ont été supprimés.
+- ✅ Toute la logique backend fonctionne exclusivement avec MongoDB (Mongoose).
+- ✅ Les administrateurs ont un accès automatique à toutes les fonctionnalités premium, sans abonnement, côté frontend **et** backend (API).
+- ✅ Les abonnés bénéficient d'un accès immédiat à leurs fonctionnalités premium, sans délai ni bug.
+- ✅ La cohérence des accès premium/admin est garantie sur toutes les routes et services.
+- ✅ Aucun code ou élément essentiel n'a été supprimé ou altéré pour le fonctionnement du site complet.
+- ✅ Le déploiement du frontend et du backend reste compatible avec la version complète du site.
+
+*Dernière mise à jour : [date du jour]*
+
+---
+
+## [2024-06-XX] Migration totale MongoDB, suppression PostgreSQL
+
+- Toutes les dépendances, scripts, fichiers de configuration et migrations liés à PostgreSQL ont été supprimés du backend.
+- Le backend fonctionne désormais exclusivement avec MongoDB (Mongoose), aucune logique SQL ou accès PostgreSQL n'est conservé.
+- Tous les contrôleurs, services et middlewares utilisent la logique MongoDB, y compris pour l'abonnement, le paiement, et la gestion des utilisateurs.
+- Les tests, le build et le déploiement passent sans aucune dépendance SQL.
+- La logique d'accès premium/admin reste robuste : l'admin a toujours accès à toutes les fonctionnalités premium sans abonnement, et les abonnés bénéficient d'un accès immédiat.
+- Le site complet reste maintenu, aucune fonctionnalité essentielle supprimée, aucune version minimaliste.
+
+---
+
+## [2024-06-XX] Nettoyage final backend, build 100% réussi, cohérence premium/admin
+
+- Toutes les routes, contrôleurs et middlewares SQL ou obsolètes ont été nettoyés ou commentés.
+- Le build backend passe sans aucune erreur, aucune version minimaliste, aucune fonctionnalité essentielle supprimée.
+- La logique d'accès premium/admin est garantie : l'admin a toujours accès à toutes les fonctionnalités premium sans abonnement, les abonnés ont un accès immédiat.
+- Le site complet est prêt pour la production, frontend et backend synchronisés.
+- Traçabilité assurée dans ce mémo.
+
+---

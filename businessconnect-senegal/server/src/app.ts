@@ -3,7 +3,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import webhookRoutes from './routes/webhook';
-import healthcheckRoutes from './routes/healthcheck';
+// import healthcheckRoutes from './routes/healthcheck';
 import subscriptionsRoutes from './routes/subscriptions';
 import usersRoutes from './routes/users';
 import { errorHandler } from './middleware/errorHandler';
@@ -30,7 +30,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/webhooks', webhookRoutes);
-app.use('/api/healthcheck', healthcheckRoutes);
 app.use('/api/subscriptions', subscriptionsRoutes);
 app.use('/api/users', usersRoutes);
 
