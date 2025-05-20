@@ -111,16 +111,16 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                     style={{
                       position: 'relative',
                       background: '#fff',
-                      width: 300,
-                      height: 425,
+                      width: 252,
+                      height: 357,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       borderRadius: 12,
                       boxShadow: '0 4px 16px #0001',
                       margin: '0 auto',
-                      overflow: 'visible',
-                      padding: 8,
+                      overflow: 'hidden',
+                      padding: 0,
                     }}
                     className={styles.cvMiniature}
                   >
@@ -128,13 +128,12 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                       style={{
                         width: 420,
                         height: 595,
-                        transform: 'scale(0.7)',
+                        transform: 'scale(0.6)',
                         transformOrigin: 'top left',
                         pointerEvents: 'none',
                         background: '#fff',
                         borderRadius: 12,
                         boxShadow: '0 2px 8px #0001',
-                        overflow: 'visible',
                         border: '1px solid #eee',
                         display: 'flex',
                         alignItems: 'center',
