@@ -227,6 +227,11 @@ const CVGenerator: React.FC<Partial<CVGeneratorProps>> = (props) => {
   const isPremium = !!hasPremiumAccess(user, hasActiveSubscription);
   const showProfileAlert = Boolean(user) && !isPremium && timeoutReached && loading;
 
+  React.useEffect(() => {
+    setSelectedTemplate(null);
+    setCurrentStep(0);
+  }, [user?.id]);
+
   return (
     <Layout style={{ minHeight: '100vh', backgroundColor: '#fff' }}>
       <Content style={{ padding: '40px 8px 0', maxWidth: 1200, margin: '0 auto' }}>
