@@ -17,7 +17,7 @@ import {
 } from 'antd';
 import { MinusCircleOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import type { RcFile } from 'antd/es/upload';
-import { CVData } from '../../../types/cv';
+import type { CVData } from '../../../types/cv';
 import dayjs from 'dayjs';
 import moment from 'moment';
 import 'moment/locale/fr';
@@ -31,6 +31,7 @@ const { RangePicker } = DatePicker;
 interface CVFormProps {
   data: CVData | null;
   onChange: (data: CVData) => void;
+  isPremium: boolean;
 }
 
 const languageLevels = [
@@ -47,7 +48,7 @@ const skillCategories = [
   { label: 'Outils', value: 'tools' }
 ];
 
-const CVForm: React.FC<CVFormProps> = ({ data, onChange }) => {
+const CVForm: React.FC<CVFormProps> = ({ data, onChange, isPremium }) => {
   const [form] = Form.useForm();
   const [uploadLoading, setUploadLoading] = useState(false);
 

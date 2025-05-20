@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, Avatar, Typography, Divider, Tag, Space, Button, Slider } from 'antd';
 import { ZoomInOutlined, ZoomOutOutlined, DownloadOutlined, EyeOutlined } from '@ant-design/icons';
-import { CVData, CustomizationOptions, Template } from '../../../types/cv';
+import type { CVData, Template, CustomizationOptions } from '../../../types/cv';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -9,10 +9,10 @@ interface CVPreviewProps {
   data: CVData;
   template: Template;
   customization: CustomizationOptions;
-  isSubscribed: boolean;
+  isPremium: boolean;
 }
 
-const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, isSubscribed }) => {
+const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, isPremium }) => {
   const [zoom, setZoom] = useState(100);
   const [showFullscreen, setShowFullscreen] = useState(false);
 
@@ -81,7 +81,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
         data={data} 
         customization={customization}
       />
-      {!isSubscribed && (
+      {!isPremium && (
         <div style={{
           position: 'absolute',
           top: 0,

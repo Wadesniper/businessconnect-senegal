@@ -101,6 +101,7 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
           <TemplateSelection
             selected={selectedTemplate}
             onSelect={setSelectedTemplate}
+            isPremium={isSubscribed}
           />
         );
       case 1:
@@ -108,6 +109,7 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
           <CVForm
             data={cvData}
             onChange={setCVData}
+            isPremium={isSubscribed}
           />
         );
       case 2:
@@ -115,6 +117,7 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
           <CustomizationForm
             options={customization}
             onChange={setCustomization}
+            isPremium={isSubscribed}
           />
         );
       case 3:
@@ -125,7 +128,7 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
                 data={cvData!}
                 template={selectedTemplate!}
                 customization={customization}
-                isSubscribed={!!isSubscribed}
+                isPremium={isSubscribed}
               />
             </div>
             <div style={{ marginTop: 20, display: 'flex', gap: 10 }}>

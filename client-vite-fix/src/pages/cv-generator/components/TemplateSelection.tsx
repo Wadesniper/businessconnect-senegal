@@ -15,14 +15,16 @@ const { Option } = Select;
 
 interface TemplateSelectionProps {
   selected: Template | null;
-  onSelect: (template: Template) => void;
+  onSelect: (template: Template | null) => void;
   isSubscribed?: boolean;
+  isPremium: boolean;
 }
 
 const TemplateSelection: React.FC<TemplateSelectionProps> = ({
   selected,
   onSelect,
-  isSubscribed = false
+  isSubscribed = false,
+  isPremium
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -115,8 +117,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                   </div>
                 }
                 onClick={() => {
-                  // Correction : accès immédiat pour admin ou abonné
-                  if (!hasPremiumAccess(user, isSubscribed)) {
+                  if (!isPremium) {
                     Modal.info({
                       title: 'Fonctionnalité réservée',
                       content: 'Cette fonctionnalité est réservée aux abonnés. Abonnez-vous pour utiliser le générateur de CV.',
@@ -124,7 +125,6 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                     });
                     return;
                   }
-                  // Si admin ou abonné, accès direct
                   onSelect(template);
                 }}
                 style={{

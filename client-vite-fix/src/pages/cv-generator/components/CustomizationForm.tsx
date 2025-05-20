@@ -1,13 +1,14 @@
 import React from 'react';
 import { Form, Select, Space, Typography, ColorPicker, Divider, message } from 'antd';
 import type { Color } from 'antd/es/color-picker';
-import { CustomizationOptions } from '../../../types/cv';
+import type { CustomizationOptions } from '../../../types/cv';
 
 const { Title } = Typography;
 
 interface CustomizationFormProps {
   options: CustomizationOptions;
   onChange: (options: CustomizationOptions) => void;
+  isPremium: boolean;
 }
 
 const fontFamilies = [
@@ -34,7 +35,7 @@ const spacingOptions = [
   { value: 'spacious', label: 'Spacieux' }
 ];
 
-const CustomizationForm: React.FC<CustomizationFormProps> = ({ options, onChange }) => {
+const CustomizationForm: React.FC<CustomizationFormProps> = ({ options, onChange, isPremium }) => {
   const [form] = Form.useForm<CustomizationOptions>();
 
   const handleColorChange = (type: 'primaryColor' | 'secondaryColor', color: Color) => {
