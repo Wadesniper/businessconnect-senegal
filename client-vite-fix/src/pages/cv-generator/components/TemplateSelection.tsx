@@ -110,34 +110,34 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                   <div
                     style={{
                       position: 'relative',
-                      background: '#fff',
-                      minHeight: 220,
+                      background: '#f7faff',
+                      width: 210,
+                      height: 297,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      borderRadius: 8,
-                      boxShadow: '0 2px 12px #0001',
-                      overflow: 'hidden',
-                      width: 200,
-                      height: 282,
+                      borderRadius: 10,
+                      boxShadow: '0 2px 8px #0001',
                       margin: '0 auto',
-                      aspectRatio: '400/565',
-                      transition: 'box-shadow 0.2s, transform 0.2s',
+                      overflow: 'visible',
                     }}
                     className={styles.cvMiniature}
                   >
                     <div
                       style={{
-                        width: 400,
-                        height: 565,
-                        transform: 'scale(0.28)',
+                        width: 420,
+                        height: 595,
+                        transform: 'scale(0.5)',
                         transformOrigin: 'top left',
                         pointerEvents: 'none',
                         background: '#fff',
                         borderRadius: 12,
                         boxShadow: '0 2px 8px #0001',
-                        overflow: 'hidden',
+                        overflow: 'visible',
                         border: '1px solid #eee',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
                       }}
                     >
                       <CVPreview
@@ -224,12 +224,12 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
         onCancel={() => setPreviewTemplate(null)}
         footer={null}
         width={480}
-        style={{ top: 40 }}
-        bodyStyle={{ padding: 0, background: '#f7faff', borderRadius: 16 }}
+        style={{ top: 40, display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+        bodyStyle={{ padding: 0, background: '#f7faff', borderRadius: 16, maxHeight: '90vh', overflowY: 'auto', overflowX: 'hidden', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
         destroyOnClose
       >
         {previewTemplate && (
-          <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 4px 24px #0002', padding: 0, margin: 0, width: 400, minHeight: 565, overflow: 'auto', marginLeft: 'auto', marginRight: 'auto' }}>
+          <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 4px 24px #0002', padding: 0, margin: 0, width: 420, height: 595, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <CVPreview
               data={DEMO_PROFILES[previewTemplate.id] || {}}
               template={previewTemplate}
