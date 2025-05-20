@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { validationResult } from 'express-validator';
 import pool from '../config/database';
 import { logger } from '../utils/logger';
@@ -16,7 +16,7 @@ interface JobData {
 }
 
 export const jobController = {
-  async getAllJobs(_: Request, res: Response) {
+  async getAllJobs(_: AuthRequest, res: Response) {
     try {
       const result = await pool.query('SELECT * FROM jobs ORDER BY created_at DESC');
       res.json(result.rows);
@@ -28,7 +28,7 @@ export const jobController = {
     }
   },
 
-  async getJob(req: Request, res: Response) {
+  async getJob(req: AuthRequest, res: Response) {
     try {
       const { id } = req.params;
       const result = await pool.query('SELECT * FROM jobs WHERE id = $1', [id]);
@@ -133,7 +133,7 @@ export const jobController = {
     }
   },
 
-  async getCategories(_req: Request, res: Response) {
+  async getCategories(_: AuthRequest, res: Response) {
     try {
       const categories = [
         'Développement',
@@ -214,35 +214,35 @@ export const jobController = {
     }
   },
 
-  async searchJobs(_: Request, res: Response) {
+  async searchJobs(_: AuthRequest, res: Response) {
     res.status(501).json({
       status: 'error',
       message: 'Recherche d\'emplois non implémentée.'
     });
   },
 
-  async getEmployerJobs(_: Request, res: Response) {
+  async getEmployerJobs(_: AuthRequest, res: Response) {
     res.status(501).json({
       status: 'error',
       message: 'Récupération des emplois employeur non implémentée.'
     });
   },
 
-  async getCandidateApplications(_: Request, res: Response) {
+  async getCandidateApplications(_: AuthRequest, res: Response) {
     res.status(501).json({
       status: 'error',
       message: 'Récupération des candidatures non implémentée.'
     });
   },
 
-  async getSavedJobs(_: Request, res: Response) {
+  async getSavedJobs(_: AuthRequest, res: Response) {
     res.status(501).json({
       status: 'error',
       message: 'Récupération des emplois sauvegardés non implémentée.'
     });
   },
 
-  async toggleSaveJob(_: Request, res: Response) {
+  async toggleSaveJob(_: AuthRequest, res: Response) {
     res.status(501).json({
       status: 'error',
       message: 'Sauvegarde d\'emploi non implémentée.'

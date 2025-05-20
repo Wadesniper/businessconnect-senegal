@@ -1,9 +1,10 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { logger } from '../utils/logger';
 import { query } from '../config/database';
 import { AuthRequest } from '../types/user';
+import { Request } from 'express';
 
 interface User {
   id: string;
@@ -275,7 +276,7 @@ export const userController = {
   },
 
   // Méthodes administrateur
-  async getAllUsers(_: Request, res: Response) {
+  async getAllUsers(_: AuthRequest, res: Response) {
     try {
       const result = await query(
         'SELECT id, email, name, role, created_at, updated_at FROM users ORDER BY created_at DESC'
@@ -296,7 +297,7 @@ export const userController = {
     }
   },
 
-  async updateUser(req: Request, res: Response) {
+  async updateUser(req: AuthRequest, res: Response) {
     try {
       const { id } = req.params;
       const { name, email, role } = req.body;
@@ -329,7 +330,7 @@ export const userController = {
     }
   },
 
-  async deleteUser(req: Request, res: Response) {
+  async deleteUser(req: AuthRequest, res: Response) {
     try {
       const { id } = req.params;
       const result = await query('DELETE FROM users WHERE id = $1 RETURNING id', [id]);

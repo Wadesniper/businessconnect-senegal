@@ -2,6 +2,8 @@ import { Router } from 'express';
 import { marketplaceController } from '../controllers/marketplaceController';
 import { authMiddleware } from '../middleware/authMiddleware';
 import { upload } from '../middleware/uploadMiddleware';
+import { AuthRequest } from '../types/user';
+import { Response } from 'express';
 
 const router = Router();
 
@@ -9,7 +11,7 @@ const router = Router();
 router.get('/products', marketplaceController.getAllProducts);
 router.get('/products/:id', marketplaceController.getProduct);
 router.get('/categories', marketplaceController.getCategories);
-router.get('/search', async (req, res) => { await marketplaceController.searchProducts(req, res); });
+router.get('/search', async (req: AuthRequest, res: Response) => { await marketplaceController.searchProducts(req, res); });
 
 // Routes protégées
 router.use(authMiddleware);

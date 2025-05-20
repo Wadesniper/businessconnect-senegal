@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { CVService } from '../services/cvService';
 import { logger } from '../utils/logger';
 import { body, validationResult } from 'express-validator';

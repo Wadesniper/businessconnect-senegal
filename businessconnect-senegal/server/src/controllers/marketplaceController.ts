@@ -1,10 +1,10 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { logger } from '../utils/logger';
 import { query } from '../config/database';
 import { AuthRequest } from '../types/user';
 
 export const marketplaceController = {
-  async getAllProducts(req: Request, res: Response) {
+  async getAllProducts(req: AuthRequest, res: Response) {
     try {
       const { category, minPrice, maxPrice, sort } = req.query;
       let sqlQuery = `
@@ -51,7 +51,7 @@ export const marketplaceController = {
     }
   },
 
-  async getProduct(req: Request, res: Response) {
+  async getProduct(req: AuthRequest, res: Response) {
     try {
       const { id } = req.params;
       const result = await query(`
@@ -187,7 +187,7 @@ export const marketplaceController = {
     }
   },
 
-  async getCategories(_: Request, res: Response) {
+  async getCategories(_: AuthRequest, res: Response) {
     try {
       const result = await query('SELECT * FROM categories ORDER BY name');
       res.json({
@@ -203,7 +203,7 @@ export const marketplaceController = {
     }
   },
 
-  async searchProducts(req: Request, res: Response) {
+  async searchProducts(req: AuthRequest, res: Response) {
     try {
       const { q } = req.query;
       const result = await query(`
@@ -235,7 +235,7 @@ export const marketplaceController = {
     }
   },
 
-  async getSellerProducts(req: Request, res: Response) {
+  async getSellerProducts(req: AuthRequest, res: Response) {
     try {
       const seller_id = req.user?.id;
       const result = await query(`
@@ -261,7 +261,7 @@ export const marketplaceController = {
     }
   },
 
-  async toggleFavorite(req: Request, res: Response) {
+  async toggleFavorite(req: AuthRequest, res: Response) {
     try {
       const { id } = req.params;
       const user_id = req.user?.id;
@@ -305,7 +305,7 @@ export const marketplaceController = {
     }
   },
 
-  async getSellerOrders(_: Request, res: Response) {
+  async getSellerOrders(_: AuthRequest, res: Response) {
     res.status(501).json({
       status: 'error',
       message: 'Récupération des commandes vendeur non implémentée.'
@@ -313,7 +313,7 @@ export const marketplaceController = {
     return;
   },
 
-  async updateOrderStatus(_: Request, res: Response) {
+  async updateOrderStatus(_: AuthRequest, res: Response) {
     res.status(501).json({
       status: 'error',
       message: 'Mise à jour du statut de commande non implémentée.'
@@ -321,7 +321,7 @@ export const marketplaceController = {
     return;
   },
 
-  async createOrder(_: Request, res: Response) {
+  async createOrder(_: AuthRequest, res: Response) {
     res.status(501).json({
       status: 'error',
       message: 'Création de commande non implémentée.'
@@ -329,7 +329,7 @@ export const marketplaceController = {
     return;
   },
 
-  async getBuyerOrders(_: Request, res: Response) {
+  async getBuyerOrders(_: AuthRequest, res: Response) {
     res.status(501).json({
       status: 'error',
       message: 'Récupération des commandes acheteur non implémentée.'
@@ -337,7 +337,7 @@ export const marketplaceController = {
     return;
   },
 
-  async getOrder(_: Request, res: Response) {
+  async getOrder(_: AuthRequest, res: Response) {
     res.status(501).json({
       status: 'error',
       message: 'Récupération de la commande non implémentée.'

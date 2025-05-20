@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { logger } from '../utils/logger';
 import { query } from '../config/database';
 import { pdfService } from '../services/pdfService';
@@ -146,7 +146,7 @@ export const paymentController = {
     }
   },
 
-  async downloadInvoice(req: Request, res: Response) {
+  async downloadInvoice(req: AuthRequest, res: Response) {
     try {
       const userId = req.user?.id;
       const { id } = req.params;
@@ -181,7 +181,7 @@ export const paymentController = {
     }
   },
 
-  async handleWebhook(req: Request, res: Response) {
+  async handleWebhook(req: AuthRequest, res: Response) {
     try {
       // CinetPay envoie généralement les données en JSON (parfois en x-www-form-urlencoded)
       const body = req.body;

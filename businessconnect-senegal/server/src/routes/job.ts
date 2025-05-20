@@ -2,11 +2,13 @@ import express from 'express';
 import { body } from 'express-validator';
 import { jobController } from '../controllers/jobController';
 import { authMiddleware } from '../middleware/authMiddleware';
+import { AuthRequest } from '../types/user';
+import { Response } from 'express';
 
 const router = express.Router();
 
 // Routes publiques
-router.get('/', async (req, res): Promise<void> => {
+router.get('/', async (req: AuthRequest, res: Response): Promise<void> => {
   await jobController.getAllJobs(req, res);
 });
 router.get('/:id', async (req, res): Promise<void> => {
