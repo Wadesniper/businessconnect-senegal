@@ -2,6 +2,7 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useSubscription } from '../hooks/useSubscription';
+import { hasPremiumAccess } from '../utils/premiumAccess';
 
 interface ProtectedRouteProps {
   element: React.ReactElement;
@@ -20,7 +21,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element, requiresSubscr
     return <Navigate to="/login" replace />;
   }
 
-  if (requiresSubscription && !hasActiveSubscription) {
+  if (requiresSubscription && !hasPremiumAccess(user, hasActiveSubscription)) {
     return <Navigate to="/subscription" replace />;
   }
 
