@@ -128,11 +128,11 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                   onSelect(template);
                 }}
                 style={{
-                  border: selected?.id === template.id ? '2px solid #1890ff' : undefined,
+                  border: selected?.id === template.id ? '3px solid #1890ff' : '1px solid #eee',
+                  boxShadow: selected?.id === template.id ? '0 0 0 2px #1890ff33' : '0 4px 18px #1890ff11',
                   cursor: isPremium ? 'pointer' : 'not-allowed',
                   borderRadius: 10,
-                  boxShadow: '0 4px 18px #1890ff11',
-                  transition: 'box-shadow 0.2s',
+                  transition: 'box-shadow 0.2s, border 0.2s',
                   overflow: 'hidden',
                   background: '#fff',
                   minHeight: 320
