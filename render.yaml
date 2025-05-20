@@ -3,7 +3,6 @@ services:
     name: businessconnect-senegal-api
     env: node
     buildCommand: npm install
-    startCommand: node src/index.js
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
