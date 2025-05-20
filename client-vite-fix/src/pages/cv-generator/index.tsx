@@ -62,11 +62,10 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
           firstName: '',
           lastName: '',
           title: '',
-          contactInfo: {
-            email: '',
-            phone: '',
-            address: ''
-          }
+          email: '',
+          phone: '',
+          address: '',
+          // autres champs éventuels (photo, linkedin...)
         },
         experience: [],
         education: [],
