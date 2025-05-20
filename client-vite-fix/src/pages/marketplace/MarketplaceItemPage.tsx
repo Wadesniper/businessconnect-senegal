@@ -159,15 +159,21 @@ const MarketplaceItemPage: React.FC = () => {
 
                     <Title level={4}>Contact</Title>
                     <Space direction="vertical">
-                      <Space>
-                        <MailOutlined />
-                        <Text>{item.contactInfo.email}</Text>
-                      </Space>
-                      {item.contactInfo.phone && (
-                        <Space>
-                          <PhoneOutlined />
-                          <Text>{item.contactInfo.phone}</Text>
-                        </Space>
+                      {item.contactInfo ? (
+                        <>
+                          <Space>
+                            <MailOutlined />
+                            <Text>{item.contactInfo.email}</Text>
+                          </Space>
+                          {item.contactInfo.phone && (
+                            <Space>
+                              <PhoneOutlined />
+                              <Text>{item.contactInfo.phone}</Text>
+                            </Space>
+                          )}
+                        </>
+                      ) : (
+                        <Text type="secondary">Contact non renseigné</Text>
                       )}
                     </Space>
 
