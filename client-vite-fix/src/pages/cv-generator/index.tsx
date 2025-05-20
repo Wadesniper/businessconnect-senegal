@@ -54,6 +54,31 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
   const { hasActiveSubscription } = useSubscription();
   const isPremium = !!hasPremiumAccess(user, hasActiveSubscription);
 
+  const handleSelectTemplate = (template: Template | null) => {
+    setSelectedTemplate(template);
+    if (template) {
+      setCVData({
+        personalInfo: {
+          firstName: '',
+          lastName: '',
+          title: '',
+          contactInfo: {
+            email: '',
+            phone: '',
+            address: ''
+          }
+        },
+        experience: [],
+        education: [],
+        skills: [],
+        languages: [],
+        interests: [],
+        summary: '',
+        ...template.sampleData // si le template fournit des données par défaut
+      });
+    }
+  };
+
   const handleNext = () => {
     if (currentStep === 0) {
       if (!selectedTemplate) {
@@ -103,7 +128,7 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
         return (
           <TemplateSelection
             selected={selectedTemplate}
-            onSelect={setSelectedTemplate}
+            onSelect={handleSelectTemplate}
             isPremium={isPremium}
           />
         );
