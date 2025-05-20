@@ -140,7 +140,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
         zIndex: 1000
       }}>
         {preview}
-        {controls}
+        {!isMiniature && controls}
       </div>
     );
   }
@@ -148,7 +148,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
   return (
     <div style={{ position: 'relative' }}>
       {preview}
-      {controls}
+      {!isMiniature && controls}
     </div>
   );
 };
