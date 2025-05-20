@@ -15,6 +15,10 @@ const DEMO_PROFILES: Record<string, any> = {
       phone: '+221 77 123 45 67',
       photo: '/images/avatars/man-1.png',
       profileImage: '/images/avatars/man-1.png',
+      address: 'Dakar, Sénégal',
+      linkedin: 'linkedin.com/in/mamadoundiaye',
+      portfolio: 'mamadoufinance.com',
+      summary: 'Expert en finance, gestion de portefeuille, analyse financière et reporting.'
     },
     summary: 'Expert en finance et gestion de portefeuille.',
     experience: [
@@ -22,10 +26,20 @@ const DEMO_PROFILES: Record<string, any> = {
         company: 'Société Générale Sénégal',
         title: 'Analyste',
         years: '2021-2023',
-        description: 'Analyse financière et gestion de risques.',
-        achievements: [],
+        description: 'Analyse financière, gestion de risques, reporting mensuel, optimisation des investissements.',
+        achievements: ['Optimisation du portefeuille de 20%', 'Mise en place d’un reporting automatisé'],
         startDate: '2021',
         endDate: '2023',
+        current: false
+      },
+      {
+        company: 'BNP Paribas',
+        title: 'Assistant Analyste',
+        years: '2019-2021',
+        description: 'Support à l’équipe d’analyse, préparation de dossiers de crédit, suivi des indicateurs.',
+        achievements: ['Automatisation de la collecte de données'],
+        startDate: '2019',
+        endDate: '2021',
         current: false
       }
     ],
@@ -37,19 +51,30 @@ const DEMO_PROFILES: Record<string, any> = {
         startDate: '2017',
         endDate: '2021',
         description: 'Formation en finance, gestion de portefeuille, analyse financière.'
+      },
+      {
+        degree: 'Licence Économie',
+        field: 'Économie',
+        institution: 'UCAD',
+        startDate: '2014',
+        endDate: '2017',
+        description: 'Bases solides en économie et gestion.'
       }
     ],
     skills: [
       { name: 'Gestion', level: 'Avancé' },
       { name: 'Analyse', level: 'Avancé' },
-      { name: 'Excel', level: 'Intermédiaire' }
+      { name: 'Excel', level: 'Intermédiaire' },
+      { name: 'Reporting', level: 'Avancé' },
+      { name: 'Anglais', level: 'Intermédiaire' }
     ],
     languages: [
       { name: 'Français', level: 'Courant' },
       { name: 'Anglais', level: 'Intermédiaire' }
     ],
     certifications: [
-      { name: 'Certification Finance', issuer: 'UCAD', date: '2021' }
+      { name: 'Certification Finance', issuer: 'UCAD', date: '2021' },
+      { name: 'Excel Avancé', issuer: 'Microsoft', date: '2020' }
     ],
   },
   marketing: {
@@ -61,6 +86,10 @@ const DEMO_PROFILES: Record<string, any> = {
       phone: '+221 77 234 56 78',
       photo: '/images/avatars/woman-1.png',
       profileImage: '/images/avatars/woman-1.png',
+      address: 'Dakar, Sénégal',
+      linkedin: 'linkedin.com/in/fatouba',
+      portfolio: 'fatoucom.com',
+      summary: 'Passionnée par le marketing digital, la communication et la gestion de projets.'
     },
     summary: 'Passionnée par le marketing digital et la communication.',
     experience: [
@@ -68,10 +97,20 @@ const DEMO_PROFILES: Record<string, any> = {
         company: 'Orange Sénégal',
         title: 'Community Manager',
         years: '2020-2023',
-        description: 'Gestion des réseaux sociaux et campagnes.',
-        achievements: [],
+        description: 'Gestion des réseaux sociaux, animation de communauté, création de contenus, reporting.',
+        achievements: ['+30% d’engagement sur Instagram', 'Lancement de 2 campagnes virales'],
         startDate: '2020',
         endDate: '2023',
+        current: false
+      },
+      {
+        company: 'Publicis Dakar',
+        title: 'Assistante Chef de Projet',
+        years: '2018-2020',
+        description: 'Coordination de projets, suivi client, rédaction de briefs, veille concurrentielle.',
+        achievements: ['Gestion de 5 projets simultanés'],
+        startDate: '2018',
+        endDate: '2020',
         current: false
       }
     ],
@@ -88,14 +127,17 @@ const DEMO_PROFILES: Record<string, any> = {
     skills: [
       { name: 'Réseaux sociaux', level: 'Avancé' },
       { name: 'Créativité', level: 'Avancé' },
-      { name: 'Stratégie', level: 'Intermédiaire' }
+      { name: 'Stratégie', level: 'Intermédiaire' },
+      { name: 'Gestion de projet', level: 'Avancé' },
+      { name: 'Photoshop', level: 'Intermédiaire' }
     ],
     languages: [
       { name: 'Français', level: 'Courant' },
       { name: 'Anglais', level: 'Débutant' }
     ],
     certifications: [
-      { name: 'Certification Marketing Digital', issuer: 'ISM Dakar', date: '2019' }
+      { name: 'Certification Marketing Digital', issuer: 'ISM Dakar', date: '2019' },
+      { name: 'Google Analytics', issuer: 'Google', date: '2021' }
     ],
   },
   health: {
@@ -107,6 +149,9 @@ const DEMO_PROFILES: Record<string, any> = {
       phone: '+221 77 345 67 89',
       photo: '/images/avatars/woman-2.png',
       profileImage: '/images/avatars/woman-2.png',
+      address: 'Thiès, Sénégal',
+      linkedin: 'linkedin.com/in/awadiop',
+      summary: 'Professionnelle de santé expérimentée, attentive et rigoureuse.'
     },
     summary: 'Professionnelle de santé expérimentée.',
     experience: [
@@ -114,8 +159,8 @@ const DEMO_PROFILES: Record<string, any> = {
         company: 'Hôpital Principal',
         title: 'Infirmière',
         years: '2019-2023',
-        description: 'Soins et accompagnement des patients.',
-        achievements: [],
+        description: 'Soins, accompagnement des patients, gestion des urgences, formation des stagiaires.',
+        achievements: ['Formation de 10 stagiaires', 'Mise en place d’un protocole d’hygiène'],
         startDate: '2019',
         endDate: '2023',
         current: false
@@ -128,13 +173,14 @@ const DEMO_PROFILES: Record<string, any> = {
         institution: 'ENSP Dakar',
         startDate: '2015',
         endDate: '2018',
-        description: 'Formation en soins infirmiers et accompagnement des patients.'
+        description: 'Formation en soins infirmiers, accompagnement des patients, gestion des situations d’urgence.'
       }
     ],
     skills: [
       { name: 'Soins', level: 'Avancé' },
       { name: 'Empathie', level: 'Avancé' },
-      { name: 'Organisation', level: 'Intermédiaire' }
+      { name: 'Organisation', level: 'Intermédiaire' },
+      { name: 'Gestion du stress', level: 'Avancé' }
     ],
     languages: [
       { name: 'Français', level: 'Courant' }
@@ -152,10 +198,22 @@ const DEMO_PROFILES: Record<string, any> = {
       phone: '+221 77 456 78 90',
       photo: '/images/avatars/man-2.png',
       profileImage: '/images/avatars/man-2.png',
+      address: 'Saint-Louis, Sénégal',
+      linkedin: 'linkedin.com/in/abdsarr',
+      summary: 'Enseignant passionné par la pédagogie, la transmission et l’innovation.'
     },
     summary: 'Enseignant passionné par la pédagogie.',
     experience: [
-      { company: 'Lycée Blaise Diagne', title: 'Professeur', years: '2015-2023', description: 'Enseignement des mathématiques.', achievements: [] }
+      {
+        company: 'Lycée Blaise Diagne',
+        title: 'Professeur',
+        years: '2015-2023',
+        description: 'Enseignement des mathématiques, préparation au bac, suivi individualisé.',
+        achievements: ['100% de réussite au bac 2022', 'Création d’un club de maths'],
+        startDate: '2015',
+        endDate: '2023',
+        current: false
+      }
     ],
     education: [
       {
@@ -164,19 +222,22 @@ const DEMO_PROFILES: Record<string, any> = {
         institution: 'FASTEF',
         startDate: '2012',
         endDate: '2015',
-        description: 'Formation en pédagogie et enseignement des mathématiques.'
+        description: 'Formation en pédagogie, enseignement des mathématiques, innovation éducative.'
       }
     ],
     skills: [
       { name: 'Pédagogie', level: 'Avancé' },
       { name: 'Mathématiques', level: 'Avancé' },
-      { name: 'Patience', level: 'Avancé' }
+      { name: 'Patience', level: 'Avancé' },
+      { name: 'Innovation', level: 'Intermédiaire' }
     ],
     languages: [
       { name: 'Français', level: 'Courant' },
       { name: 'Anglais', level: 'Débutant' }
     ],
-    certifications: [],
+    certifications: [
+      { name: 'CAPES', issuer: 'FASTEF', date: '2015' }
+    ],
   },
   commerce: {
     personalInfo: {
