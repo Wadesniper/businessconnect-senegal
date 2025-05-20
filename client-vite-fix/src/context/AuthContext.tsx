@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authService } from '../services/authService';
-import { User, UserRegistrationData } from '../types/user';
+import type { User, UserRegistrationData } from '../types/user';
 
 interface AuthContextType {
   user: User | null;
@@ -15,8 +15,15 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  // Initialisation immédiate depuis le localStorage
+  const localUser = (() => {
+    try {
+      const u = localStorage.getItem('user');
+      return u ? JSON.parse(u) : null;
+    } catch { return null; }
+  })();
+  const [user, setUser] = useState<User | null>(localUser);
+  const [loading, setLoading] = useState(!localUser); // pas de loading si user local
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -32,10 +39,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (token) {
         const userData = await authService.getCurrentUser();
         setUser(userData);
+        localStorage.setItem('user', JSON.stringify(userData));
       }
     } catch (error) {
       console.error('Erreur lors de la vérification de l\'authentification:', error);
       authService.removeToken();
+      setUser(null);
+      localStorage.removeItem('user');
     } finally {
       setLoading(false);
     }
@@ -48,6 +58,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (response && response.token && response.user) {
         authService.setToken(response.token);
         setUser(response.user);
+        localStorage.setItem('user', JSON.stringify(response.user));
       } else {
         throw new Error('Erreur lors de la connexion');
       }
@@ -63,6 +74,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await authService.logout();
       authService.removeToken();
       setUser(null);
+      localStorage.removeItem('user');
     } catch (error) {
       setError('Erreur lors de la déconnexion');
       throw error;
