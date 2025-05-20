@@ -164,7 +164,7 @@ const MarketplaceItemPage: React.FC = () => {
                         <>
                           <Space>
                             <MailOutlined />
-                            <Text>{item.contactInfo.email}</Text>
+                            <Text>{item.contactInfo.email ?? ''}</Text>
                           </Space>
                           {item.contactInfo.phone && (
                             <Space>

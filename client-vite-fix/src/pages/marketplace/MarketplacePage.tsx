@@ -291,7 +291,7 @@ const MarketplacePage: React.FC = () => {
             </Form.Item>
 
             <Form.Item
-              name="contactInfo.email"
+              name={['contactInfo', 'email']}
               label="Email"
               rules={[
                 { required: true, message: 'Veuillez saisir un email' },
@@ -301,7 +301,7 @@ const MarketplacePage: React.FC = () => {
               <Input placeholder="Email" />
             </Form.Item>
             <Form.Item
-              name="contactInfo.phone"
+              name={['contactInfo', 'phone']}
               label="Téléphone (optionnel)"
             >
               <Input placeholder="Téléphone (optionnel)" />

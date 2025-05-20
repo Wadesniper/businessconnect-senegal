@@ -127,7 +127,7 @@ const Home: React.FC = () => {
           >
             <Space direction="vertical" size={8} style={{ width: '100%' }}>
               <Typography.Title level={4} style={{ margin: 0, color: '#457b9d' }}>{item.title}</Typography.Title>
-              <Typography.Text strong style={{ color: '#1d3557' }}>{item.contactInfo.email}</Typography.Text>
+              <Typography.Text strong style={{ color: '#1d3557' }}>{item.contactInfo?.email ?? ''}</Typography.Text>
               <Typography.Text type="secondary">{item.location}</Typography.Text>
             </Space>
           </Card>
