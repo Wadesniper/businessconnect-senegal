@@ -10,6 +10,7 @@ import { useSubscription } from '../../hooks/useSubscription';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { hasPremiumAccess } from '../../utils/premiumAccess';
+import type { Template } from '../../types/cv';
 
 const { Content } = Layout;
 const { Title: AntTitle } = Typography;
@@ -53,15 +54,6 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
   const { user } = useAuth();
   const { hasActiveSubscription } = useSubscription();
   const isPremium = !!hasPremiumAccess(user, hasActiveSubscription);
-  const hasReset = React.useRef(false);
-
-  React.useEffect(() => {
-    if (!hasReset.current && user?.id) {
-      setSelectedTemplate(null);
-      setCurrentStep(0);
-      hasReset.current = true;
-    }
-  }, [user?.id]);
 
   const handleSelectTemplate = (template: Template | null) => {
     setSelectedTemplate(template);
