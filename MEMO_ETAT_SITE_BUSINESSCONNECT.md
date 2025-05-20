@@ -1151,3 +1151,14 @@ Testé et validé : le site complet fonctionne en production, sans version minim
 - ✅ Traçabilité assurée dans ce mémo.
 
 ---
+
+## [2025-05-20] Amélioration UX générateur de CV et robustesse prod
+
+- **Galerie de modèles** : chaque carte affiche désormais un aperçu miniature complet du CV (avec données d'exemple réalistes), comme sur cvparfait. Plus aucun cadre vide.
+- **Sélection intuitive** : bouton "Commencer mon CV avec ce modèle" directement sous chaque carte sélectionnée.
+- **Robustesse premium/admin/abonné** : accès garanti, aucune régression, aucune version minimaliste, tout le site complet passe en prod.
+- **Correction linter** : imports TypeScript corrigés, preview miniature sans prop non supportée.
+- **Aucune suppression de code ou fonctionnalité essentielle** : tout le site reste complet, UX premium maintenue.
+- **Conformité déploiement** : aucune perturbation du backend ou frontend, tout fonctionne en prod comme en local.
+
+---

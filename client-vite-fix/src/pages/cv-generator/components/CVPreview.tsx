@@ -22,6 +22,27 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
 
   const TemplateComponent = template.component;
 
+  // Sécurisation des données pour éviter les crashs
+  const safeData = {
+    personalInfo: {
+      firstName: data?.personalInfo?.firstName || '',
+      lastName: data?.personalInfo?.lastName || '',
+      title: data?.personalInfo?.title || '',
+      email: data?.personalInfo?.email || '',
+      phone: data?.personalInfo?.phone || '',
+      address: data?.personalInfo?.address || '',
+      photo: data?.personalInfo?.photo || '',
+      summary: data?.personalInfo?.summary || '',
+    },
+    experience: Array.isArray(data?.experience) ? data.experience : [],
+    education: Array.isArray(data?.education) ? data.education : [],
+    skills: Array.isArray(data?.skills) ? data.skills : [],
+    languages: Array.isArray(data?.languages) ? data.languages : [],
+    certifications: Array.isArray(data?.certifications) ? data.certifications : [],
+    projects: Array.isArray(data?.projects) ? data.projects : [],
+    interests: Array.isArray(data?.interests) ? data.interests : [],
+  };
+
   const previewStyle = {
     transform: `scale(${zoom / 100})`,
     transformOrigin: 'top center',
@@ -78,7 +99,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
       ...previewStyle
     }}>
       <TemplateComponent 
-        data={data} 
+        data={safeData} 
         customization={customization}
       />
       {!isPremium && (

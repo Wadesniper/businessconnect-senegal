@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Steps, Button, message, Layout, Typography, Spin } from 'antd';
+import { Steps, Button, message, Layout, Typography, Spin, Row, Col, Card } from 'antd';
 import TemplateSelection from './components/TemplateSelection';
 import CVForm from './components/CVForm';
 import CustomizationForm from './components/CustomizationForm';
@@ -16,25 +16,36 @@ const { Content } = Layout;
 const { Title: AntTitle } = Typography;
 
 const steps = [
-  {
-    title: 'Modèle',
-    description: 'Choisissez votre template'
-  },
-  {
-    title: 'Informations',
-    description: 'Remplissez vos informations'
-  },
-  {
-    title: 'Personnalisation',
-    description: 'Personnalisez le design'
-  },
-  {
-    title: 'Aperçu & Export',
-    description: 'Prévisualisez et exportez'
-  }
+  { title: 'Modèle', key: 'template' },
+  { title: 'Infos perso', key: 'personal' },
+  { title: 'Expérience', key: 'experience' },
+  { title: 'Formation', key: 'education' },
+  { title: 'Compétences', key: 'skills' },
+  { title: 'Aperçu', key: 'preview' },
 ];
 
 type CVGeneratorProps = { isSubscribed?: boolean };
+
+// Fonction utilitaire pour un CVData vide mais typé
+const emptyCVData = {
+  personalInfo: {
+    firstName: '',
+    lastName: '',
+    title: '',
+    email: '',
+    phone: '',
+    address: '',
+    photo: '',
+    summary: '',
+  },
+  experience: [],
+  education: [],
+  skills: [],
+  languages: [],
+  certifications: [],
+  projects: [],
+  interests: [],
+};
 
 const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
   const {
@@ -79,24 +90,8 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
     }
   };
 
-  const handleNext = () => {
-    if (currentStep === 0) {
-      if (!selectedTemplate) {
-        message.error('Veuillez sélectionner un modèle');
-        return;
-      }
-      message.success('Template sélectionné avec succès !');
-    }
-    if (currentStep === 1 && !isValid) {
-      message.error('Veuillez remplir correctement tous les champs obligatoires');
-      return;
-    }
-    setCurrentStep(currentStep + 1);
-  };
-
-  const handlePrev = () => {
-    setCurrentStep(currentStep - 1);
-  };
+  const handleNext = () => setCurrentStep(currentStep + 1);
+  const handlePrev = () => setCurrentStep(currentStep - 1);
 
   const handleExport = async (format: 'pdf' | 'docx') => {
     try {
@@ -151,31 +146,14 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
         );
       case 3:
         return (
-          <div>
-            <div ref={previewRef}>
-              <CVPreview
-                data={cvData!}
-                template={selectedTemplate!}
-                customization={customization}
-                isPremium={isPremium}
-              />
-            </div>
-            <div style={{ marginTop: 20, display: 'flex', gap: 10 }}>
-              <Button 
-                type="primary" 
-                onClick={() => handleExport('pdf')}
-                loading={isExporting}
-              >
-                Exporter en PDF
-              </Button>
-              <Button 
-                onClick={() => handleExport('docx')}
-                loading={isExporting}
-              >
-                Exporter en Word
-              </Button>
-            </div>
-          </div>
+          <Card style={{ marginTop: 24 }}>
+            <CVPreview
+              data={cvData || emptyCVData}
+              template={selectedTemplate}
+              customization={customization}
+              isPremium={isPremium}
+            />
+          </Card>
         );
       default:
         return null;
@@ -183,34 +161,34 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
   };
 
   return (
-    <Layout style={{ minHeight: '100vh', backgroundColor: '#fff' }}>
-      <Content style={{ padding: '0', maxWidth: 1200, margin: '0 auto' }}>
-        <Steps
-          current={currentStep}
-          items={steps}
-          style={{ marginBottom: 40, marginTop: 0 }}
-        />
-        <div style={{ marginBottom: 40 }}>
+    <div style={{ maxWidth: 1200, margin: '0 auto', padding: 24 }}>
+      <Steps current={currentStep} items={steps} style={{ marginBottom: 32 }} />
+      <Row gutter={32}>
+        <Col xs={24} md={14}>
           {renderStepContent()}
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 50 }}>
-          {currentStep > 0 && (
-            <Button onClick={handlePrev}>
-              Précédent
-            </Button>
-          )}
-          {currentStep < steps.length - 1 && (
-            <Button 
-              type="primary" 
-              onClick={handleNext}
-              disabled={currentStep === 0 && !selectedTemplate}
-            >
-              Suivant
-            </Button>
-          )}
-        </div>
-      </Content>
-    </Layout>
+          <div style={{ marginTop: 32, display: 'flex', gap: 16 }}>
+            {currentStep > 0 && <Button onClick={handlePrev}>Précédent</Button>}
+            {currentStep < steps.length - 1 && <Button type="primary" onClick={handleNext}>Suivant</Button>}
+          </div>
+        </Col>
+        <Col xs={24} md={10}>
+          <Card>
+            {selectedTemplate ? (
+              <CVPreview
+                data={cvData || emptyCVData}
+                template={selectedTemplate}
+                customization={customization}
+                isPremium={isPremium}
+              />
+            ) : (
+              <div style={{ textAlign: 'center', color: '#aaa', padding: 32 }}>
+                Sélectionnez un modèle pour voir l'aperçu
+              </div>
+            )}
+          </Card>
+        </Col>
+      </Row>
+    </div>
   );
 };
 
