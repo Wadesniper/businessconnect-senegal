@@ -130,6 +130,7 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
             selected={selectedTemplate}
             onSelect={handleSelectTemplate}
             isPremium={isPremium}
+            onContinue={handleNext}
           />
         );
       case 1:

@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { CVData, CustomizationOptions, Template } from '../../../types/cv';
+import React, { createContext, useContext, useState } from 'react';
+import type { ReactNode } from 'react';
+import type { CVData, CustomizationOptions, Template } from '../../../types/cv';
 
 interface CVContextType {
   cvData: CVData | null;
@@ -13,7 +14,7 @@ interface CVContextType {
   isValid: boolean;
 }
 
-const defaultCustomization: CustomizationOptions = {
+export const defaultCustomization: CustomizationOptions = {
   primaryColor: '#1a237e',
   secondaryColor: '#f50057',
   fontFamily: 'Roboto, Arial, sans-serif',

@@ -8,6 +8,8 @@ import { DEMO_PROFILES } from '../CVPreviewGallery';
 import styles from './TemplateSelection.module.css';
 import { useAuth } from '../../../hooks/useAuth';
 import { hasPremiumAccess } from '../../../utils/premiumAccess';
+import CVPreview from './CVPreview';
+import { defaultCustomization } from '../context/CVContext';
 
 const { Text } = Typography;
 const { Search } = Input;
@@ -16,6 +18,7 @@ const { Option } = Select;
 interface TemplateSelectionProps {
   selected: Template | null;
   onSelect: (template: Template | null) => void;
+  onContinue?: () => void;
   isSubscribed?: boolean;
   isPremium: boolean;
 }
@@ -23,6 +26,7 @@ interface TemplateSelectionProps {
 const TemplateSelection: React.FC<TemplateSelectionProps> = ({
   selected,
   onSelect,
+  onContinue,
   isSubscribed = false,
   isPremium
 }) => {
@@ -114,6 +118,17 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                         borderTopRightRadius: 8
                       }}
                     />
+                    {/* Aperçu miniature du CV */}
+                    <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 2, background: 'rgba(255,255,255,0.0)' }}>
+                      <div style={{ transform: 'scale(0.25)', transformOrigin: 'top left', width: '400px', height: '600px', pointerEvents: 'none' }}>
+                        <CVPreview
+                          data={DEMO_PROFILES[template.id] || {}}
+                          template={template}
+                          customization={defaultCustomization}
+                          isPremium={true}
+                        />
+                      </div>
+                    </div>
                   </div>
                 }
                 onClick={() => {
@@ -166,6 +181,13 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                     </>
                   }
                 />
+                {selected?.id === template.id && isPremium && (
+                  <div style={{ textAlign: 'center', marginTop: 18 }}>
+                    <Button type="primary" size="large" onClick={onContinue}>
+                      Commencer mon CV avec ce modèle
+                    </Button>
+                  </div>
+                )}
               </Card>
             </Col>
           ))}
