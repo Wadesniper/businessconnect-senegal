@@ -9,6 +9,8 @@ export function hasPremiumAccess(user: any, isSubscribed: boolean): boolean {
       if (localUser && (localUser.role === 'admin' || localUser.role === 'superadmin')) return true;
     }
   } catch {}
+  // Si aucun user n'est chargé mais qu'un token existe, on accorde l'accès (cas admin après purge)
+  if (!user && localStorage.getItem('auth_token')) return true;
   // Accès premium garanti pour les abonnés actifs
   if (user && isSubscribed) return true;
   // Plus d'accès si user est null, même si token existe

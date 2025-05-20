@@ -39,4 +39,11 @@ root.render(
     <App />
   </React.StrictMode>
 );
-console.log('Après le rendu ReactDOM'); 
+console.log('Après le rendu ReactDOM');
+
+// Purge automatique du localStorage au premier chargement pour forcer la reconnexion propre
+if (window && window.localStorage && !window.localStorage.getItem('purge_done')) {
+  window.localStorage.clear();
+  window.localStorage.setItem('purge_done', '1');
+  window.location.reload();
+} 
