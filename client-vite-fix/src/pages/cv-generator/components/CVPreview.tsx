@@ -48,8 +48,8 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
   // Dimensions A4
   const baseA4Width = 794; // px
   const baseA4Height = 1123; // px
-  // Pour 2 pages max
-  const maxPages = 2;
+  // Forcer 1 seule page A4
+  const maxPages = 1;
   const maxA4Height = baseA4Height * maxPages;
 
   // Calcul du scale automatique pour tenir dans la fenêtre
@@ -87,7 +87,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
         transition: 'transform 0.3s ease',
       };
 
-  const controls = (
+  const controls = !isMiniature && (
     <div style={{ 
       position: 'fixed', 
       bottom: 20, 
@@ -161,9 +161,6 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
       padding: 0,
       margin: '0 auto',
       fontSize: undefined,
-      transform: `scale(${autoScale * (zoom / 100)})`,
-      transformOrigin: 'top center',
-      transition: 'transform 0.3s ease',
       position: 'relative',
       pointerEvents: 'auto' as const,
       display: 'flex',
@@ -232,7 +229,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
   }
 
   return (
-    <div style={{ position: 'relative', width: '100%', minHeight: '90vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div className="cv-preview-root" style={{ position: 'relative', width: '100%', minHeight: '90vh', display: 'flex', alignItems: 'center', justifyContent: 'center', overflowX: 'auto', overflowY: 'hidden' }}>
       {preview}
       {!isMiniature && controls}
     </div>
