@@ -143,7 +143,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
         padding: 0,
       }}
     >
-      <div style={previewStyle}>
+      <div style={{ width: '100%', height: '100%', fontSize: 13, overflow: 'hidden', padding: 0, margin: 0 }}>
         <TemplateComponent
           data={safeData}
           customization={customization}
@@ -152,24 +152,23 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
       </div>
     </div>
   ) : (
-    <div style={{
-      width: baseA4Width,
-      height: maxA4Height,
-      background: '#fff',
-      borderRadius: 12,
-      boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
-      padding: 0,
-      margin: '0 auto',
-      fontSize: undefined,
-      position: 'relative',
-      pointerEvents: 'auto' as const,
-      display: 'flex',
-      flexDirection: 'column',
-      overflow: 'hidden',
-      alignItems: 'center',
-      justifyContent: 'flex-start',
-    }}>
-      <div style={{ width: '100%', height: '100%', overflow: 'hidden', padding: 0 }}>
+    <div
+      className="cv-preview-root"
+      style={{
+        width: baseA4Width,
+        height: baseA4Height,
+        background: '#fff',
+        borderRadius: 12,
+        boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
+        margin: '0 auto',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        position: 'relative',
+      }}
+    >
+      <div style={{ width: '100%', height: '100%', fontSize: 13, overflow: 'hidden', padding: 0, margin: 0 }}>
         <TemplateComponent
           data={safeData}
           customization={customization}
