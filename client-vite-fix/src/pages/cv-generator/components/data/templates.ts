@@ -16,6 +16,7 @@ import AgroTemplate from '../templates/AgroTemplate';
 import HumanTemplate from '../templates/HumanTemplate';
 import BankTemplate from '../templates/BankTemplate';
 import TechModernTemplate from '../templates/TechModernTemplate';
+import { DEMO_PROFILES } from '../../CVPreviewGallery';
 
 export interface CVTemplateConfig {
   id: string;
@@ -43,7 +44,7 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     previewImage: '/images/cv-templates/finance-preview.png',
     features: ['Design moderne', 'Couleurs professionnelles', 'Sections personnalisables'],
     profileImage: '/images/avatars/man-1.png',
-    sampleData: {},
+    sampleData: DEMO_PROFILES.finance,
   },
   {
     id: 'marketing',
@@ -56,7 +57,7 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     previewImage: '/images/cv-templates/marketing-preview.png',
     features: ['Couleurs vives', 'Mise en avant des compétences', 'Design attractif'],
     profileImage: '/images/avatars/woman-1.png',
-    sampleData: {},
+    sampleData: DEMO_PROFILES.marketing,
   },
   {
     id: 'health',
@@ -69,7 +70,7 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     previewImage: '/images/cv-templates/health-preview.png',
     features: ['Palette bleu/vert', 'Sections certifications', 'Design épuré'],
     profileImage: '/images/avatars/woman-2.png',
-    sampleData: {},
+    sampleData: DEMO_PROFILES.health,
   },
   {
     id: 'education',
@@ -82,7 +83,7 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     previewImage: '/images/cv-templates/education-preview.png',
     features: ['Sections pédagogie', 'Expérience détaillée', 'Design doux'],
     profileImage: '/images/avatars/man-2.png',
-    sampleData: {},
+    sampleData: DEMO_PROFILES.education,
   },
   {
     id: 'commerce',
@@ -95,7 +96,7 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     previewImage: '/images/cv-templates/commerce-preview.png',
     features: ['Accent sur les résultats', 'Design dynamique', 'Sections réalisations'],
     profileImage: '/images/avatars/man-3.png',
-    sampleData: {},
+    sampleData: DEMO_PROFILES.commerce,
   },
   {
     id: 'admin',
@@ -108,7 +109,7 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     previewImage: '/images/cv-templates/admin-preview.png',
     features: ['Sections gestion', 'Design sobre', 'Mise en avant des compétences RH'],
     profileImage: '/images/avatars/woman-3.png',
-    sampleData: {},
+    sampleData: DEMO_PROFILES.admin,
   },
   {
     id: 'tech',
@@ -121,7 +122,7 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     previewImage: '/images/cv-templates/tech-preview.png',
     features: ['Sections projets', 'Compétences techniques', 'Design moderne'],
     profileImage: '/images/avatars/man-4.png',
-    sampleData: {},
+    sampleData: DEMO_PROFILES.tech,
   },
   {
     id: 'logistics',
@@ -134,7 +135,7 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     previewImage: '/images/cv-templates/logistics-preview.png',
     features: ['Sections logistique', 'Design structuré', 'Mise en avant des certifications'],
     profileImage: '/images/avatars/man-5.png',
-    sampleData: {},
+    sampleData: DEMO_PROFILES.logistics,
   },
   {
     id: 'btp',
@@ -147,7 +148,7 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     previewImage: '/images/cv-templates/btp-preview.png',
     features: ['Expérience chantiers', 'Design robuste', 'Sections certifications'],
     profileImage: '/images/avatars/man-1.png',
-    sampleData: {},
+    sampleData: DEMO_PROFILES.btp,
   },
   {
     id: 'art',
@@ -160,7 +161,7 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     previewImage: '/images/cv-templates/art-preview.png',
     features: ['Palette créative', 'Portfolio intégré', 'Design original'],
     profileImage: '/images/avatars/woman-4.png',
-    sampleData: {},
+    sampleData: DEMO_PROFILES.art,
   },
   {
     id: 'hotel',
@@ -173,7 +174,7 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     previewImage: '/images/cv-templates/hotel-preview.png',
     features: ['Expérience accueil', 'Design chaleureux', 'Sections langues'],
     profileImage: '/images/avatars/woman-5.png',
-    sampleData: {},
+    sampleData: DEMO_PROFILES.hotel,
   },
   {
     id: 'law',
@@ -186,7 +187,7 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     previewImage: '/images/cv-templates/law-preview.png',
     features: ['Sections juridiques', 'Design sérieux', 'Mise en avant des diplômes'],
     profileImage: '/images/avatars/man-1.png',
-    sampleData: {},
+    sampleData: DEMO_PROFILES.law,
   },
   {
     id: 'com',
@@ -199,7 +200,7 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     previewImage: '/images/cv-templates/com-preview.png',
     features: ['Sections médias', 'Design dynamique', 'Portfolio'],
     profileImage: '/images/avatars/woman-1.png',
-    sampleData: {},
+    sampleData: DEMO_PROFILES.com,
   },
   {
     id: 'agro',
@@ -212,7 +213,7 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     previewImage: '/images/cv-templates/agro-preview.png',
     features: ['Expérience terrain', 'Design nature', 'Sections certifications'],
     profileImage: '/images/avatars/man-2.png',
-    sampleData: {},
+    sampleData: DEMO_PROFILES.agro,
   },
   {
     id: 'human',
@@ -225,7 +226,7 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     previewImage: '/images/cv-templates/human-preview.png',
     features: ['Sections engagement', 'Design doux', 'Mise en avant des langues'],
     profileImage: '/images/avatars/woman-2.png',
-    sampleData: {},
+    sampleData: DEMO_PROFILES.human,
   },
   {
     id: 'bank',
@@ -238,7 +239,7 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     previewImage: '/images/cv-templates/bank-preview.png',
     features: ['Sections finance', 'Design premium', 'Mise en avant des certifications'],
     profileImage: '/images/avatars/man-3.png',
-    sampleData: {},
+    sampleData: DEMO_PROFILES.bank,
   },
   {
     id: 'tech-modern',
@@ -251,6 +252,6 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     previewImage: '/images/cv-templates/tech-modern-preview.png',
     features: ['Design épuré', 'Sections projets', 'Palette tech'],
     profileImage: '/images/avatars/man-4.png',
-    sampleData: {},
+    sampleData: DEMO_PROFILES['tech-modern'] || DEMO_PROFILES.tech,
   },
 ]; 
