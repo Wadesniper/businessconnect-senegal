@@ -168,7 +168,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
         position: 'relative',
       }}
     >
-      <div style={{ width: '100%', height: '100%', fontSize: 13, overflow: 'hidden', padding: 0, margin: 0 }}>
+      <div style={{ width: '100%', height: '100%', fontSize: 12, overflow: 'hidden', padding: 8, margin: 0 }}>
         <TemplateComponent
           data={safeData}
           customization={customization}
