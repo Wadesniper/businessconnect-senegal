@@ -87,45 +87,6 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
         transition: 'transform 0.3s ease',
       };
 
-  const controls = !isMiniature && (
-    <div style={{ 
-      position: 'fixed', 
-      bottom: 20, 
-      left: '50%', 
-      transform: 'translateX(-50%)',
-      background: 'white',
-      padding: '10px 20px',
-      borderRadius: '8px',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '16px',
-      zIndex: 1000
-    }}>
-      <Button 
-        icon={<ZoomOutOutlined />} 
-        onClick={() => handleZoomChange(Math.max(50, zoom - 10))}
-      />
-      <Slider 
-        value={zoom} 
-        onChange={handleZoomChange} 
-        min={50} 
-        max={200} 
-        style={{ width: 200 }} 
-      />
-      <Button 
-        icon={<ZoomInOutlined />} 
-        onClick={() => handleZoomChange(Math.min(200, zoom + 10))}
-      />
-      <Button 
-        icon={<EyeOutlined />} 
-        onClick={() => setShowFullscreen(!showFullscreen)}
-      >
-        {showFullscreen ? 'Réduire' : 'Plein écran'}
-      </Button>
-    </div>
-  );
-
   const preview = isMiniature ? (
     <div
       style={{
@@ -143,7 +104,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
         padding: 0,
       }}
     >
-      <div style={{ width: '100%', height: '100%', fontSize: 13, overflow: 'hidden', padding: 0, margin: 0 }}>
+      <div style={{ width: '100%', height: '100%', fontSize: 11, overflow: 'hidden', padding: 8, margin: 0 }}>
         <TemplateComponent
           data={safeData}
           customization={customization}
@@ -168,7 +129,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
         position: 'relative',
       }}
     >
-      <div style={{ width: '100%', height: '100%', fontSize: 12, overflow: 'hidden', padding: 8, margin: 0 }}>
+      <div style={{ width: '100%', height: '100%', fontSize: 11, overflow: 'hidden', padding: 8, margin: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
         <TemplateComponent
           data={safeData}
           customization={customization}
@@ -198,28 +159,6 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
     </div>
   );
 
-  if (showFullscreen && !isMiniature) {
-    return (
-      <div style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: '#f0f2f5',
-        padding: '40px',
-        overflow: 'auto',
-        zIndex: 1000,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}>
-        {preview}
-        {controls}
-      </div>
-    );
-  }
-
   if (isMiniature) {
     // DEBUG : Affiche les données reçues pour la miniature
     // @ts-ignore
@@ -230,7 +169,6 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
   return (
     <div className="cv-preview-root" style={{ position: 'relative', width: '100%', minHeight: '90vh', display: 'flex', alignItems: 'center', justifyContent: 'center', overflowX: 'auto', overflowY: 'hidden' }}>
       {preview}
-      {!isMiniature && controls}
     </div>
   );
 };
