@@ -135,7 +135,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
         alignItems: 'center',
         justifyContent: 'center',
         background: '#fff',
-        overflow: 'visible',
+        overflow: 'hidden',
         position: 'relative',
         margin: '0 auto',
         boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
@@ -169,12 +169,16 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
       display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
     }}>
-      <TemplateComponent
-        data={safeData}
-        customization={customization}
-        isMiniature={false}
-      />
+      <div style={{ width: '100%', height: '100%', overflow: 'hidden', padding: 0 }}>
+        <TemplateComponent
+          data={safeData}
+          customization={customization}
+          isMiniature={false}
+        />
+      </div>
       {!isPremium && (
         <div style={{
           position: 'absolute',

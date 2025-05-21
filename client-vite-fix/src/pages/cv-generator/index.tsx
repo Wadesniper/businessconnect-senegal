@@ -17,10 +17,14 @@ const { Title: AntTitle } = Typography;
 
 const steps = [
   { title: 'Modèle', key: 'template' },
-  { title: 'Infos perso', key: 'personal' },
+  { title: 'Informations personnelles', key: 'personalInfo' },
   { title: 'Expérience', key: 'experience' },
   { title: 'Formation', key: 'education' },
   { title: 'Compétences', key: 'skills' },
+  { title: 'Langues', key: 'languages' },
+  { title: 'Certifications', key: 'certifications' },
+  { title: 'Projets', key: 'projects' },
+  { title: "Centres d'intérêt", key: 'interests' },
   { title: 'Aperçu', key: 'preview' },
 ];
 
@@ -118,57 +122,53 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
         </div>
       );
     }
-    switch (currentStep) {
-      case 0:
-        return (
-          <TemplateSelection
-            selected={selectedTemplate}
-            onSelect={handleSelectTemplate}
-            isPremium={isPremium}
-            onContinue={handleNext}
-          />
-        );
-      case 1:
-        return (
-          <CVWizard
-            initialData={cvData || emptyCVData}
-            onSubmit={setCVData}
-          />
-        );
-      case 2:
-        return (
-          <CustomizationForm
-            options={customization}
-            onChange={setCustomization}
-            isPremium={isPremium}
-          />
-        );
-      case 3:
-        return (
-          <Card style={{ marginTop: 24 }}>
-            {selectedTemplate ? (
-              <>
-                <CVPreview
-                  data={cvData || emptyCVData}
-                  template={selectedTemplate}
-                  customization={customization}
-                  isPremium={isPremium}
-                />
-                <div style={{ marginTop: 24, display: 'flex', gap: 16 }}>
-                  <Button type="primary" onClick={() => handleExport('pdf')}>Exporter en PDF</Button>
-                  <Button onClick={() => handleExport('docx')}>Exporter en Word</Button>
-                </div>
-              </>
-            ) : (
-              <div style={{ textAlign: 'center', padding: 32 }}>
-                <Typography.Text type="secondary">Veuillez sélectionner un modèle de CV pour afficher l'aperçu.</Typography.Text>
-              </div>
-            )}
-          </Card>
-        );
-      default:
-        return null;
+    if (currentStep === 0) {
+      return (
+        <TemplateSelection
+          selected={selectedTemplate}
+          onSelect={handleSelectTemplate}
+          isPremium={isPremium}
+          onContinue={handleNext}
+        />
+      );
     }
+    if (currentStep > 0 && currentStep < steps.length - 1) {
+      // Étapes du wizard multi-pages
+      return (
+        <CVWizard
+          initialData={cvData || emptyCVData}
+          onSubmit={setCVData}
+          currentStep={currentStep - 1}
+          setCurrentStep={step => setCurrentStep(step + 1)}
+          totalSteps={steps.length - 2}
+        />
+      );
+    }
+    if (currentStep === steps.length - 1) {
+      return (
+        <Card style={{ marginTop: 24 }}>
+          {selectedTemplate ? (
+            <>
+              <CVPreview
+                data={cvData || emptyCVData}
+                template={selectedTemplate}
+                customization={customization}
+                isPremium={isPremium}
+              />
+              <div style={{ marginTop: 24, display: 'flex', gap: 16 }}>
+                <Button type="primary" onClick={() => handleExport('pdf')}>Exporter en PDF</Button>
+                <Button onClick={() => handleExport('docx')}>Exporter en Word</Button>
+              </div>
+            </>
+          ) : (
+            <div style={{ textAlign: 'center', padding: 32 }}>
+              <Typography.Text type="secondary">Veuillez sélectionner un modèle de CV pour afficher l'aperçu.</Typography.Text>
+            </div>
+          )}
+        </Card>
+      );
+    }
+    return null;
   };
 
   return (
