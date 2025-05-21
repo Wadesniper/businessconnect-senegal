@@ -47,7 +47,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
   // Ratio A4 : largeur/hauteur = 210/297 ≈ 0.707
   const A4_RATIO = 210 / 297;
   const MINIATURE_WIDTH = 180; // px, largeur de la miniature dans la carte
-  const MINIATURE_HEIGHT = MINIATURE_WIDTH / A4_RATIO;
+  const MINIATURE_HEIGHT = 255; // px, hauteur stricte pour ratio A4
 
   // Calcul du scale pour que le contenu A4 tienne dans la miniature
   const baseA4Width = 794; // px (A4 à 96dpi)
@@ -60,13 +60,13 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
         height: `${baseA4Height}px`,
         transform: `scale(${scaleMiniature})`,
         transformOrigin: 'top left',
-        pointerEvents: 'none' as const,
-        overflow: 'hidden',
         background: '#fff',
         borderRadius: 12,
         boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
         margin: 0,
         padding: 0,
+        overflow: 'visible',
+        pointerEvents: 'none' as const,
       }
     : {
         transform: `scale(${zoom / 100})`,
@@ -121,10 +121,13 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'transparent',
-        overflow: 'hidden',
+        background: '#fff',
+        overflow: 'visible',
         position: 'relative',
         margin: '0 auto',
+        boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
+        borderRadius: 12,
+        padding: 0,
       }}
     >
       <div style={previewStyle}>
