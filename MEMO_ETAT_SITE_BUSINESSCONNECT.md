@@ -885,3 +885,23 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 ---
 
 ## [Date : Suppression logo B et titre principal galerie CV]
+
+## [Date : Refonte formulaire CV multi-étapes UX premium]
+
+- Découpage du formulaire de création de CV en étapes distinctes (inspiré des meilleurs générateurs comme CVParfait) : Informations personnelles, Expérience, Formation, Compétences, Langues, Certifications, Projets, Centres d'intérêt.
+- Création d'un composant React par section, validation et navigation fluide (Suivant/Précédent).
+- Sauvegarde progressive des données à chaque étape, aucune perte de saisie.
+- Aucune suppression de code ou fonctionnalité essentielle, backend et frontend intacts, site complet maintenu.
+- Statut : En cours d'intégration, build et déploiement garantis.
+
+## [Date : Refonte complète du générateur de CV – Formulaire multi-étapes premium]
+
+- Passage du générateur de CV à un système multi-étapes inspiré des meilleurs standards (CVParfait, etc.) :
+  - Saisie des informations personnelles, expérience, formation, compétences, langues, certifications, projets, centres d'intérêt, etc. dans des étapes distinctes.
+  - Un composant React par section, validation et navigation fluide (Suivant/Précédent), sauvegarde progressive des données.
+  - Intégration d'un wizard orchestrateur (CVWizard) pour la gestion de l'ensemble du flux.
+  - Aperçu du CV toujours centré, non tronqué, tenant sur une ou deux pages maximum, avec export PDF/Word premium.
+- Correction de tous les linter errors sur les formulaires (typages stricts, robustesse face aux anciennes données, aucune perte de fonctionnalité).
+- Aucune suppression de code ou fonctionnalité essentielle, backend et frontend intacts, site complet maintenu.
+- Build, tests et UX garantis sur la version complète du site (aucune version minimaliste).
+- Statut : Intégré, testé, prêt pour la production.

@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Steps, Button, message, Layout, Typography, Spin, Row, Col, Card } from 'antd';
 import TemplateSelection from './components/TemplateSelection';
-import CVForm from './components/CVForm';
-import CustomizationForm from './components/CustomizationForm';
+import CVWizard from './components/CVWizard';
 import CVPreview from './components/CVPreview';
 import { CVProvider, useCV } from './context/CVContext';
 import { exportCV } from './services/documentExport';
@@ -11,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { hasPremiumAccess } from '../../utils/premiumAccess';
 import type { Template } from '../../types/cv';
+import CustomizationForm from './components/CustomizationForm';
 
 const { Content } = Layout;
 const { Title: AntTitle } = Typography;
@@ -130,10 +130,9 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
         );
       case 1:
         return (
-          <CVForm
-            data={cvData}
-            onChange={setCVData}
-            isPremium={isPremium}
+          <CVWizard
+            initialData={cvData || emptyCVData}
+            onSubmit={setCVData}
           />
         );
       case 2:
@@ -147,12 +146,24 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
       case 3:
         return (
           <Card style={{ marginTop: 24 }}>
-            <CVPreview
-              data={cvData || emptyCVData}
-              template={selectedTemplate}
-              customization={customization}
-              isPremium={isPremium}
-            />
+            {selectedTemplate ? (
+              <>
+                <CVPreview
+                  data={cvData || emptyCVData}
+                  template={selectedTemplate}
+                  customization={customization}
+                  isPremium={isPremium}
+                />
+                <div style={{ marginTop: 24, display: 'flex', gap: 16 }}>
+                  <Button type="primary" onClick={() => handleExport('pdf')}>Exporter en PDF</Button>
+                  <Button onClick={() => handleExport('docx')}>Exporter en Word</Button>
+                </div>
+              </>
+            ) : (
+              <div style={{ textAlign: 'center', padding: 32 }}>
+                <Typography.Text type="secondary">Veuillez sélectionner un modèle de CV pour afficher l'aperçu.</Typography.Text>
+              </div>
+            )}
           </Card>
         );
       default:

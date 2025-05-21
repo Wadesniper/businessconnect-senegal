@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Avatar, Typography, Divider, Tag, Space, Button, Slider } from 'antd';
 import { ZoomInOutlined, ZoomOutOutlined, DownloadOutlined, EyeOutlined } from '@ant-design/icons';
 import type { CVData, Template, CustomizationOptions } from '../../../types/cv';
@@ -16,6 +16,7 @@ interface CVPreviewProps {
 const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, isPremium, isMiniature = false }) => {
   const [zoom, setZoom] = useState(100);
   const [showFullscreen, setShowFullscreen] = useState(false);
+  const [autoScale, setAutoScale] = useState(1);
 
   const handleZoomChange = (value: number) => {
     setZoom(value);
@@ -44,21 +45,33 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
     interests: Array.isArray(data?.interests) ? data.interests : [],
   };
 
-  // Ratio A4 : largeur/hauteur = 210/297 ≈ 0.707
-  const A4_RATIO = 210 / 297;
-  const MINIATURE_WIDTH = 180; // px, largeur de la miniature dans la carte
-  const MINIATURE_HEIGHT = 255; // px, hauteur stricte pour ratio A4
-
-  // Calcul du scale pour que le contenu A4 tienne dans la miniature
-  const baseA4Width = 794; // px (A4 à 96dpi)
+  // Dimensions A4
+  const baseA4Width = 794; // px
   const baseA4Height = 1123; // px
-  const scaleMiniature = isMiniature ? Math.min(MINIATURE_WIDTH / baseA4Width, MINIATURE_HEIGHT / baseA4Height) : zoom / 100;
+  // Pour 2 pages max
+  const maxPages = 2;
+  const maxA4Height = baseA4Height * maxPages;
+
+  // Calcul du scale automatique pour tenir dans la fenêtre
+  useEffect(() => {
+    if (isMiniature) return;
+    const handleResize = () => {
+      const maxW = Math.min(window.innerWidth - 64, 900); // padding
+      const maxH = window.innerHeight * 0.9;
+      const scaleW = maxW / baseA4Width;
+      const scaleH = maxH / maxA4Height;
+      setAutoScale(Math.min(scaleW, scaleH, 1));
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isMiniature]);
 
   const previewStyle = isMiniature
     ? {
         width: `${baseA4Width}px`,
         height: `${baseA4Height}px`,
-        transform: `scale(${scaleMiniature})`,
+        transform: `scale(${autoScale * (zoom / 100)})`,
         transformOrigin: 'top left',
         background: '#fff',
         borderRadius: 12,
@@ -69,7 +82,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
         pointerEvents: 'none' as const,
       }
     : {
-        transform: `scale(${zoom / 100})`,
+        transform: `scale(${autoScale * (zoom / 100)})`,
         transformOrigin: 'top center',
         transition: 'transform 0.3s ease',
       };
@@ -116,8 +129,8 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
   const preview = isMiniature ? (
     <div
       style={{
-        width: MINIATURE_WIDTH,
-        height: MINIATURE_HEIGHT,
+        width: `${baseA4Width}px`,
+        height: `${baseA4Height}px`,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -140,16 +153,22 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
     </div>
   ) : (
     <div style={{
+      width: baseA4Width,
+      height: maxA4Height,
       background: '#fff',
       borderRadius: 12,
       boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
-      padding: 32,
-      maxWidth: 900,
+      padding: 0,
       margin: '0 auto',
       fontSize: undefined,
-      ...previewStyle,
+      transform: `scale(${autoScale * (zoom / 100)})`,
+      transformOrigin: 'top center',
+      transition: 'transform 0.3s ease',
       position: 'relative',
       pointerEvents: 'auto' as const,
+      display: 'flex',
+      flexDirection: 'column',
+      overflow: 'hidden',
     }}>
       <TemplateComponent
         data={safeData}
@@ -209,7 +228,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
   }
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div style={{ position: 'relative', width: '100%', minHeight: '90vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       {preview}
       {!isMiniature && controls}
     </div>
