@@ -126,9 +126,9 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                   >
                     <div
                       style={{
-                        width: 420,
-                        height: 595,
-                        transform: 'scale(0.6)',
+                        width: 794,
+                        height: 1123,
+                        transform: 'scale(0.31)',
                         transformOrigin: 'top left',
                         pointerEvents: 'none',
                         background: '#fff',
