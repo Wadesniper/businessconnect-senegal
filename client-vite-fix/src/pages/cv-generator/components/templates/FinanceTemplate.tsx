@@ -1,17 +1,8 @@
 import React from 'react';
-import { Typography, Row, Col, Tag, Timeline, Card, Avatar, Rate } from 'antd';
-import { 
-  LinkedinOutlined, 
-  GlobalOutlined,
-  PhoneOutlined,
-  MailOutlined,
-  EnvironmentOutlined,
-  BankOutlined
-} from '@ant-design/icons';
+import { Avatar } from 'antd';
+import { LinkedinOutlined, PhoneOutlined, MailOutlined, EnvironmentOutlined } from '@ant-design/icons';
 import type { CVData } from '../../../../types/cv';
 import '../../styles/FinanceTemplate.css';
-
-const { Title, Text, Paragraph } = Typography;
 
 interface FinanceTemplateProps {
   data: CVData;
@@ -37,200 +28,86 @@ const FinanceTemplate: React.FC<FinanceTemplateProps> = ({ data, isMiniature = f
     <div
       className="finance-cv-template"
       style={{
-        padding: isMiniature ? 12 : 40,
-        fontSize: isMiniature ? 10 : 16,
-        borderRadius: isMiniature ? 8 : 16,
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'row',
+        fontSize: 11,
         background: '#fff',
-        minHeight: isMiniature ? 0 : undefined,
+        borderRadius: 12,
+        boxSizing: 'border-box',
+        padding: 0,
       }}
     >
-      {/* En-tête */}
-      <div className="finance-header" style={{
-        padding: isMiniature ? 8 : 32,
-        borderRadius: isMiniature ? 6 : 8,
-        marginBottom: isMiniature ? 12 : 32,
-      }}>
-        <Row gutter={isMiniature ? 8 : 24} align="middle">
-          <Col xs={24} md={8} className="finance-avatar-container" style={{ textAlign: 'center' }}>
-            <Avatar
-              src={data.personalInfo.photo || '/images/avatars/man-1.png'}
-              size={isMiniature ? 48 : 120}
-              className="finance-avatar"
-              style={{ border: isMiniature ? '2px solid #fff' : '4px solid #fff', marginBottom: isMiniature ? 4 : 16 }}
-            />
-          </Col>
-          <Col xs={24} md={16} className="finance-header-content">
-            <Title level={isMiniature ? 5 : 2} className="finance-name" style={{ fontSize: isMiniature ? 14 : 28, margin: 0 }}>
-              {data.personalInfo.firstName} {data.personalInfo.lastName}
-            </Title>
-            <Title level={isMiniature ? 5 : 3} className="finance-title" style={{ fontSize: isMiniature ? 11 : 20, margin: 0 }}>
-              {data.personalInfo.title}
-            </Title>
-            <div className="finance-contact-info" style={{ gap: isMiniature ? 4 : 16, fontSize: isMiniature ? 9 : 14 }}>
-              <Text><MailOutlined /> {personalInfo.email}</Text>
-              <Text><PhoneOutlined /> {personalInfo.phone}</Text>
-              <Text><EnvironmentOutlined /> {personalInfo.address}</Text>
-              {personalInfo.linkedin && (
-                <a href={personalInfo.linkedin} target="_blank" rel="noopener noreferrer">
-                  <LinkedinOutlined /> {personalInfo.linkedin}
-                </a>
-              )}
-            </div>
-          </Col>
-        </Row>
-      </div>
-
-      <div className="finance-content">
-        {/* Résumé */}
-        <section className="finance-section" style={{ marginBottom: isMiniature ? 8 : 32 }}>
-          <div className="finance-section-header">
-            <BankOutlined className="finance-section-icon" />
-            <Title level={isMiniature ? 5 : 4} style={{ fontSize: isMiniature ? 11 : 18 }}>Profil Professionnel</Title>
-          </div>
-          <Card className="finance-card" style={{ padding: isMiniature ? 6 : 16, fontSize: isMiniature ? 9 : 14 }}>
-            <Paragraph>{summary}</Paragraph>
-          </Card>
-        </section>
-
-        {/* Expérience */}
-        <section className="finance-section" style={{ marginBottom: isMiniature ? 8 : 32 }}>
-          <div className="finance-section-header">
-            <BankOutlined className="finance-section-icon" />
-            <Title level={isMiniature ? 5 : 4} style={{ fontSize: isMiniature ? 11 : 18 }}>Expérience Professionnelle</Title>
-          </div>
-          <Timeline className="finance-timeline">
-            {experience.map((exp, index) => (
-              <Timeline.Item 
-                key={index}
-                dot={<div className="finance-timeline-dot" />}
-              >
-                <Card className="finance-card" style={{ padding: isMiniature ? 6 : 16, fontSize: isMiniature ? 9 : 14 }}>
-                  <Title level={isMiniature ? 5 : 5} className="finance-experience-title" style={{ fontSize: isMiniature ? 10 : 16 }}>
-                    {exp.title}
-                  </Title>
-                  <Text strong className="finance-company" style={{ fontSize: isMiniature ? 9 : 14 }}>
-                    {exp.company}
-                  </Text>
-                  <br />
-                  <Text type="secondary" className="finance-date" style={{ fontSize: isMiniature ? 9 : 12 }}>
-                    {exp.startDate} - {exp.current ? 'Présent' : exp.endDate}
-                  </Text>
-                  <ul className="finance-description-list" style={{ fontSize: isMiniature ? 9 : 13 }}>
-                    {exp.description && <li>{exp.description}</li>}
-                  </ul>
-                  {exp.achievements && (
-                    <div className="finance-achievements">
-                      <Text strong style={{ fontSize: isMiniature ? 9 : 13 }}>Réalisations clés :</Text>
-                      <ul>
-                        {exp.achievements.map((achievement, i) => (
-                          <li key={i}>{achievement}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </Card>
-              </Timeline.Item>
-            ))}
-          </Timeline>
-        </section>
-
-        {/* Compétences */}
-        <section className="finance-section" style={{ marginBottom: isMiniature ? 8 : 32 }}>
-          <div className="finance-section-header">
-            <BankOutlined className="finance-section-icon" />
-            <Title level={isMiniature ? 5 : 4} style={{ fontSize: isMiniature ? 11 : 18 }}>Compétences</Title>
-          </div>
-          <Row gutter={[isMiniature ? 4 : 16, isMiniature ? 4 : 16]}>
-            {skills.map((skill, index) => (
-              <Col xs={24} md={12} key={index} style={{ marginBottom: isMiniature ? 2 : 8 }}>
-                <Card className="finance-card" title={skill.name} style={{ padding: isMiniature ? 4 : 12, fontSize: isMiniature ? 9 : 13 }}>
-                  <Rate disabled style={{ fontSize: isMiniature ? 10 : 16 }} defaultValue={typeof skill.level === 'number' ? skill.level : skill.level === 'Débutant' ? 1 : skill.level === 'Intermédiaire' ? 2 : skill.level === 'Avancé' ? 3 : skill.level === 'Expert' ? 4 : 0} />
-                </Card>
-              </Col>
-            ))}
-          </Row>
-        </section>
-
-        {/* Formation */}
-        <section className="finance-section" style={{ marginBottom: isMiniature ? 8 : 32 }}>
-          <div className="finance-section-header">
-            <BankOutlined className="finance-section-icon" />
-            <Title level={isMiniature ? 5 : 4} style={{ fontSize: isMiniature ? 11 : 18 }}>Formation</Title>
-          </div>
-          <Timeline>
-            {education.map((edu, index) => (
-              <Timeline.Item 
-                key={index}
-                dot={<div className="finance-timeline-dot" />}
-              >
-                <Card className="finance-card" style={{ padding: isMiniature ? 6 : 16, fontSize: isMiniature ? 9 : 14 }}>
-                  <Title level={isMiniature ? 5 : 5} style={{ fontSize: isMiniature ? 10 : 16 }}>{edu.degree} en {edu.field}</Title>
-                  <Text strong style={{ fontSize: isMiniature ? 9 : 14 }}>{edu.institution}</Text>
-                  <br />
-                  <Text type="secondary" style={{ fontSize: isMiniature ? 9 : 12 }}>{edu.startDate} - {edu.endDate}</Text>
-                  {edu.description && (
-                    <Paragraph className="finance-education-description" style={{ fontSize: isMiniature ? 9 : 13 }}>
-                      {edu.description}
-                    </Paragraph>
-                  )}
-                </Card>
-              </Timeline.Item>
-            ))}
-          </Timeline>
-        </section>
-
-        {/* Certifications */}
+      {/* Colonne gauche */}
+      <div style={{ width: '32%', background: '#17406a', color: '#fff', borderRadius: '12px 0 0 12px', padding: '24px 12px 24px 24px', display: 'flex', flexDirection: 'column', gap: 16, height: '100%' }}>
+        <div style={{ textAlign: 'center', marginBottom: 16 }}>
+          <Avatar src={data.personalInfo.photo || '/images/avatars/man-1.png'} size={80} style={{ border: '3px solid #fff', marginBottom: 8 }} />
+          <div style={{ fontWeight: 700, fontSize: 16, marginTop: 8 }}>{data.personalInfo.firstName} {data.personalInfo.lastName}</div>
+          <div style={{ fontSize: 12 }}>{data.personalInfo.title}</div>
+        </div>
+        <div style={{ fontSize: 11, marginBottom: 12 }}>
+          <div style={{ marginBottom: 4 }}><MailOutlined /> {personalInfo.email}</div>
+          <div style={{ marginBottom: 4 }}><PhoneOutlined /> {personalInfo.phone}</div>
+          <div style={{ marginBottom: 4 }}><EnvironmentOutlined /> {personalInfo.address}</div>
+          {personalInfo.linkedin && <div><LinkedinOutlined /> {personalInfo.linkedin}</div>}
+        </div>
+        <div style={{ marginBottom: 12 }}>
+          <div style={{ fontWeight: 600, fontSize: 12, marginBottom: 4 }}>Compétences</div>
+          <ul style={{ paddingLeft: 16, margin: 0 }}>
+            {skills.slice(0, 5).map((skill, i) => <li key={i}>{skill.name}</li>)}
+          </ul>
+        </div>
+        <div style={{ marginBottom: 12 }}>
+          <div style={{ fontWeight: 600, fontSize: 12, marginBottom: 4 }}>Langues</div>
+          <ul style={{ paddingLeft: 16, margin: 0 }}>
+            {languages.slice(0, 3).map((lang, i) => <li key={i}>{lang.name} - {lang.level}</li>)}
+          </ul>
+        </div>
         {certifications && certifications.length > 0 && (
-          <section className="finance-section" style={{ marginBottom: isMiniature ? 8 : 32 }}>
-            <div className="finance-section-header">
-              <BankOutlined className="finance-section-icon" />
-              <Title level={isMiniature ? 5 : 4} style={{ fontSize: isMiniature ? 11 : 18 }}>Certifications</Title>
-            </div>
-            <Row gutter={[isMiniature ? 4 : 16, isMiniature ? 4 : 16]}>
-              {certifications.map((cert, index) => {
-                if (typeof cert === 'string') {
-                  return (
-                    <Col key={index} xs={24} sm={12} style={{ marginBottom: isMiniature ? 2 : 8 }}>
-                      <Card className="finance-card finance-certification-card" style={{ padding: isMiniature ? 4 : 12, fontSize: isMiniature ? 9 : 13 }}>
-                        <Title level={isMiniature ? 5 : 5} style={{ fontSize: isMiniature ? 10 : 16 }}>{cert}</Title>
-                      </Card>
-                    </Col>
-                  );
-                } else {
-                  return (
-                    <Col key={index} xs={24} sm={12} style={{ marginBottom: isMiniature ? 2 : 8 }}>
-                      <Card className="finance-card finance-certification-card" style={{ padding: isMiniature ? 4 : 12, fontSize: isMiniature ? 9 : 13 }}>
-                        <Title level={isMiniature ? 5 : 5} style={{ fontSize: isMiniature ? 10 : 16 }}>{cert.name}</Title>
-                        <Text style={{ fontSize: isMiniature ? 9 : 13 }}>{cert.issuer}</Text>
-                        <br />
-                        <Text type="secondary" style={{ fontSize: isMiniature ? 9 : 12 }}>{cert.date}</Text>
-                      </Card>
-                    </Col>
-                  );
-                }
-              })}
-            </Row>
-          </section>
-        )}
-
-        {/* Langues */}
-        <section className="finance-section" style={{ marginBottom: isMiniature ? 8 : 32 }}>
-          <div className="finance-section-header">
-            <BankOutlined className="finance-section-icon" />
-            <Title level={isMiniature ? 5 : 4} style={{ fontSize: isMiniature ? 11 : 18 }}>Langues</Title>
+          <div style={{ marginBottom: 12 }}>
+            <div style={{ fontWeight: 600, fontSize: 12, marginBottom: 4 }}>Certifications</div>
+            <ul style={{ paddingLeft: 16, margin: 0 }}>
+              {certifications.slice(0, 3).map((cert, i) => typeof cert === 'string' ? <li key={i}>{cert}</li> : <li key={i}>{cert.name}</li>)}
+            </ul>
           </div>
-          <Card className="finance-card" style={{ padding: isMiniature ? 6 : 16, fontSize: isMiniature ? 9 : 14 }}>
-            <Row gutter={[isMiniature ? 4 : 16, isMiniature ? 4 : 16]}>
-              {languages.map((lang, index) => (
-                <Col key={index} style={{ marginBottom: isMiniature ? 2 : 8 }}>
-                  <Tag color="blue" className="finance-language-tag" style={{ fontSize: isMiniature ? 9 : 13 }}>
-                    {lang.name} - {lang.level}
-                  </Tag>
-                </Col>
-              ))}
-            </Row>
-          </Card>
-        </section>
+        )}
+      </div>
+      {/* Colonne droite */}
+      <div style={{ width: '68%', padding: '24px 24px 24px 16px', display: 'flex', flexDirection: 'column', gap: 12, height: '100%' }}>
+        <div style={{ marginBottom: 8 }}>
+          <div style={{ fontWeight: 700, fontSize: 18, color: '#17406a', marginBottom: 4 }}>Profil</div>
+          <div style={{ fontSize: 11 }}>{summary}</div>
+        </div>
+        <div style={{ marginBottom: 8 }}>
+          <div style={{ fontWeight: 700, fontSize: 16, color: '#17406a', marginBottom: 4 }}>Expérience</div>
+          <ul style={{ paddingLeft: 16, margin: 0 }}>
+            {experience.slice(0, 3).map((exp, i) => (
+              <li key={i} style={{ marginBottom: 6 }}>
+                <div style={{ fontWeight: 600 }}>{exp.title} <span style={{ fontWeight: 400, color: '#888' }}>@ {exp.company}</span></div>
+                <div style={{ fontSize: 10, color: '#888' }}>{exp.startDate} - {exp.current ? 'Présent' : exp.endDate}</div>
+                <div style={{ fontSize: 11 }}>{exp.description}</div>
+                {exp.achievements && exp.achievements.length > 0 && (
+                  <ul style={{ paddingLeft: 16, margin: 0 }}>
+                    {exp.achievements.slice(0, 2).map((ach, j) => <li key={j} style={{ fontSize: 10 }}>{ach}</li>)}
+                  </ul>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <div style={{ fontWeight: 700, fontSize: 16, color: '#17406a', marginBottom: 4 }}>Formation</div>
+          <ul style={{ paddingLeft: 16, margin: 0 }}>
+            {education.slice(0, 2).map((edu, i) => (
+              <li key={i} style={{ marginBottom: 6 }}>
+                <div style={{ fontWeight: 600 }}>{edu.degree} en {edu.field}</div>
+                <div style={{ fontSize: 10, color: '#888' }}>{edu.institution} — {edu.startDate} - {edu.endDate}</div>
+                {edu.description && <div style={{ fontSize: 11 }}>{edu.description}</div>}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );
