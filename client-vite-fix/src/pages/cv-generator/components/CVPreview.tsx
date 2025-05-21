@@ -198,6 +198,13 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
     );
   }
 
+  if (isMiniature) {
+    // DEBUG : Affiche les données reçues pour la miniature
+    // @ts-ignore
+    window._lastMiniatureData = data;
+    console.log('[CVPreview][miniature] Données reçues :', data);
+  }
+
   return (
     <div style={{ position: 'relative' }}>
       {preview}
