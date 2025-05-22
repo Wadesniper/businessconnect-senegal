@@ -118,8 +118,8 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                     style={{
                       position: 'relative',
                       background: '#fff',
-                      width: 252,
-                      height: 357,
+                      width: 240,
+                      height: 340,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -136,12 +136,13 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                         src={template.previewImage}
                         alt={template.name + ' preview'}
                         style={{
-                          width: '100%',
-                          height: '100%',
+                          width: '98%',
+                          height: '98%',
                           objectFit: 'contain',
-                          borderRadius: 12,
+                          borderRadius: 10,
                           display: 'block',
                           background: '#fff',
+                          margin: 'auto',
                         }}
                       />
                     ) : (
