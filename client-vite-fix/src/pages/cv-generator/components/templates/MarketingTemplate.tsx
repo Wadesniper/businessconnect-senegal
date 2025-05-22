@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography, Row, Col, Tag, Timeline, Card, Avatar, Rate } from 'antd';
 import { MailOutlined, PhoneOutlined, EnvironmentOutlined, LinkedinOutlined, GlobalOutlined, BulbOutlined } from '@ant-design/icons';
-import { CVData } from '../../../../types/cv';
+import type { CVData } from '../../../../types/cv';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -24,6 +24,8 @@ const MarketingTemplate: React.FC<MarketingTemplateProps> = ({ data, isMiniature
   const skills = Array.isArray(data.skills) ? data.skills : [];
   const certifications = Array.isArray(data.certifications) ? data.certifications : [];
   const languages = Array.isArray(data.languages) ? data.languages : [];
+  const interests = Array.isArray(data.interests) ? data.interests : [];
+  const projects = Array.isArray(data.projects) ? data.projects : [];
 
   // Styles dynamiques
   const padding = isMiniature ? 12 : 32;
@@ -39,7 +41,7 @@ const MarketingTemplate: React.FC<MarketingTemplateProps> = ({ data, isMiniature
   const cardPadding = isMiniature ? 6 : 16;
   const cardFontSize = isMiniature ? 9 : 14;
   const tagFontSize = isMiniature ? 9 : 16;
-  const rowGutter = isMiniature ? [4, 4] : [16, 16];
+  const rowGutter: [number, number] = isMiniature ? [4, 4] : [16, 16];
   const timelineCardPadding = isMiniature ? 4 : 16;
   const timelineCardFontSize = isMiniature ? 9 : 14;
 
@@ -94,7 +96,7 @@ const MarketingTemplate: React.FC<MarketingTemplateProps> = ({ data, isMiniature
       {/* Compétences */}
       <section style={{ marginBottom: sectionMargin }}>
         <Title level={isMiniature ? 5 : 4} style={{ color: '#fa8c16', fontSize: isMiniature ? 11 : 18 }}>Compétences Clés</Title>
-        <Row gutter={rowGutter}>
+        <Row gutter={rowGutter as [number, number]}>
           {skills.map((skill, idx) => (
             <Col xs={24} sm={12} md={8} key={idx} style={{ marginBottom: isMiniature ? 2 : 8 }}>
               <Card style={{ background: '#fffbe6', border: '1px solid #ffe58f', padding: cardPadding, fontSize: cardFontSize }}>
@@ -126,7 +128,7 @@ const MarketingTemplate: React.FC<MarketingTemplateProps> = ({ data, isMiniature
       {certifications && certifications.length > 0 && (
         <section style={{ marginBottom: sectionMargin }}>
           <Title level={isMiniature ? 5 : 4} style={{ color: '#fa8c16', fontSize: isMiniature ? 11 : 18 }}>Certifications</Title>
-          <Row gutter={rowGutter}>
+          <Row gutter={rowGutter as [number, number]}>
             {certifications.map((cert, idx) => {
               if (typeof cert === 'string') {
                 return (
@@ -155,7 +157,7 @@ const MarketingTemplate: React.FC<MarketingTemplateProps> = ({ data, isMiniature
       {/* Langues */}
       <section>
         <Title level={isMiniature ? 5 : 4} style={{ color: '#fa8c16', fontSize: isMiniature ? 11 : 18 }}>Langues</Title>
-        <Row gutter={rowGutter}>
+        <Row gutter={rowGutter as [number, number]}>
           {languages.map((lang, idx) => (
             <Col key={idx} xs={12} sm={8} md={6} style={{ marginBottom: isMiniature ? 2 : 8 }}>
               <Tag color="gold" style={{ fontSize: tagFontSize }}>{lang.name} - {lang.level}</Tag>
@@ -163,6 +165,52 @@ const MarketingTemplate: React.FC<MarketingTemplateProps> = ({ data, isMiniature
           ))}
         </Row>
       </section>
+
+      {/* Centres d'intérêt */}
+      {interests && interests.length > 0 && (
+        <section style={{ marginBottom: sectionMargin }}>
+          <Title level={isMiniature ? 5 : 4} style={{ color: '#fa8c16', fontSize: isMiniature ? 11 : 18 }}>Centres d'intérêt</Title>
+          <Row gutter={rowGutter as [number, number]}>
+            {interests.map((interest, idx) => (
+              <Col key={idx} xs={24} sm={12} md={8} style={{ marginBottom: isMiniature ? 2 : 8 }}>
+                <Card style={{ background: '#fffbe6', border: '1px solid #ffe58f', padding: cardPadding, fontSize: cardFontSize }}>
+                  <Text style={{ fontSize: isMiniature ? 10 : 16 }}>{interest}</Text>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        </section>
+      )}
+
+      {/* Projets */}
+      {projects && projects.length > 0 && (
+        <section style={{ marginBottom: sectionMargin }}>
+          <Title level={isMiniature ? 5 : 4} style={{ color: '#fa8c16', fontSize: isMiniature ? 11 : 18 }}>Projets</Title>
+          <Row gutter={rowGutter as [number, number]}>
+            {projects.map((proj, idx) => {
+              if (typeof proj === 'string') {
+                return (
+                  <Col key={idx} xs={24} sm={12} md={8} style={{ marginBottom: isMiniature ? 2 : 8 }}>
+                    <Card style={{ background: '#fffbe6', border: '1px solid #ffe58f', padding: cardPadding, fontSize: cardFontSize }}>
+                      <Text style={{ fontSize: isMiniature ? 10 : 16 }}>{proj}</Text>
+                    </Card>
+                  </Col>
+                );
+              } else {
+                return (
+                  <Col key={idx} xs={24} sm={12} md={8} style={{ marginBottom: isMiniature ? 2 : 8 }}>
+                    <Card style={{ background: '#fffbe6', border: '1px solid #ffe58f', padding: cardPadding, fontSize: cardFontSize }}>
+                      <Text strong style={{ fontSize: isMiniature ? 10 : 16 }}>{proj.name}</Text><br/>
+                      <Text style={{ fontSize: isMiniature ? 9 : 13 }}>{proj.description}</Text><br/>
+                      <Text type="secondary" style={{ fontSize: isMiniature ? 9 : 12 }}>{(proj as any).year || proj.startDate || ''}</Text>
+                    </Card>
+                  </Col>
+                );
+              }
+            })}
+          </Row>
+        </section>
+      )}
     </div>
   );
 };
