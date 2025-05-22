@@ -1,9 +1,7 @@
 import React from 'react';
-import { Typography, Row, Col, Tag, Timeline, Card, Avatar, Rate } from 'antd';
+import { Row, Col, Tag, Timeline, Card, Avatar, Rate } from 'antd';
 import { MailOutlined, PhoneOutlined, EnvironmentOutlined, LinkedinOutlined, GlobalOutlined, HighlightOutlined } from '@ant-design/icons';
 import type { CVData } from '../../../../types/cv';
-
-const { Title, Text, Paragraph } = Typography;
 
 interface ArtTemplateProps {
   data: CVData;
@@ -17,6 +15,7 @@ const ArtTemplate: React.FC<ArtTemplateProps> = ({ data, isMiniature = false }) 
     linkedin: (data.personalInfo as any).linkedin || '',
     portfolio: (data.personalInfo as any).portfolio || '',
     summary: (data.personalInfo as any).summary || '',
+    profileImage: (data.personalInfo as any).profileImage || '',
   };
   const summary = personalInfo.summary || (data as any).summary || '';
   const experience = Array.isArray(data.experience) ? data.experience : [];
@@ -61,7 +60,7 @@ const ArtTemplate: React.FC<ArtTemplateProps> = ({ data, isMiniature = false }) 
     }}>
       {/* Colonne gauche */}
       <div style={{ width: '36%', background: '#f5f7f6', padding: '32px 16px 32px 32px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18, height: '100%' }}>
-        <Avatar src={personalInfo.photo || '/images/avatars/woman-4.png'} size={110} style={{ border: '4px solid #fff', marginBottom: 12, boxShadow: '0 2px 8px #0001' }} />
+        <Avatar src={personalInfo.photo || personalInfo.profileImage || '/images/avatars/woman-4.png'} size={110} style={{ border: '4px solid #fff', marginBottom: 12, boxShadow: '0 2px 8px #0001' }} />
         <div style={{ fontWeight: 700, fontSize: 22, color: '#222', textAlign: 'center', marginBottom: 2 }}>{personalInfo.firstName} {personalInfo.lastName}</div>
         <div style={{ fontSize: 14, color: '#555', textAlign: 'center', marginBottom: 10 }}>{personalInfo.title}</div>
         <div style={{ background: '#d2e6d6', borderRadius: 12, padding: '12px 14px', fontSize: 12, color: '#222', marginBottom: 10, width: '100%' }}>
@@ -93,7 +92,7 @@ const ArtTemplate: React.FC<ArtTemplateProps> = ({ data, isMiniature = false }) 
                 if (typeof cert === 'string') {
                   return <li key={i}>{cert}</li>;
                 } else {
-                  return <li key={i}>{cert.name} <span style={{ color: '#888', fontSize: 11 }}>({cert.date || cert.year || ''})</span></li>;
+                  return <li key={i}>{cert.name} <span style={{ color: '#888', fontSize: 11 }}>({cert.date || ''})</span></li>;
                 }
               })}
             </ul>
@@ -151,7 +150,7 @@ const ArtTemplate: React.FC<ArtTemplateProps> = ({ data, isMiniature = false }) 
                   return (
                     <li key={i}>
                       <div style={{ fontWeight: 600 }}>{proj.name}</div>
-                      <div style={{ fontSize: 11, color: '#888' }}>{proj.year || proj.startDate || ''}</div>
+                      <div style={{ fontSize: 11, color: '#888' }}>{((proj as any).year ? (proj as any).year : (proj.startDate || ''))}</div>
                       <div style={{ fontSize: 12 }}>{proj.description}</div>
                     </li>
                   );
