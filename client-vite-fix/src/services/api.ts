@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import { discussionsData, Discussion as ForumDiscussion, Reply as ForumReply } from '../data/forumData';
+import { discussionsData } from '../data/forumData';
 import { message } from 'antd';
 import { authService } from './authService';
 
@@ -109,11 +109,11 @@ api.interceptors.response.use(
 
 // Mock des appels API pour le forum en attendant l'implémentation backend
 const forumApi = {
-  getDiscussions: (): Promise<{ data: ForumDiscussion[] }> => {
+  getDiscussions: (): Promise<{ data: Discussion[] }> => {
     return Promise.resolve({ data: discussionsData });
   },
 
-  getDiscussion: (id: string): Promise<{ data: ForumDiscussion }> => {
+  getDiscussion: (id: string): Promise<{ data: Discussion }> => {
     const discussion = discussionsData.find(d => d.id === id);
     if (discussion) {
       return Promise.resolve({ data: discussion });
@@ -121,8 +121,8 @@ const forumApi = {
     return Promise.reject(new Error('Discussion non trouvée'));
   },
 
-  createDiscussion: (data: DiscussionData): Promise<{ data: ForumDiscussion }> => {
-    const newDiscussion: ForumDiscussion = {
+  createDiscussion: (data: DiscussionData): Promise<{ data: Discussion }> => {
+    const newDiscussion: Discussion = {
       id: String(discussionsData.length + 1),
       ...data,
       createdAt: new Date().toISOString(),
@@ -134,10 +134,10 @@ const forumApi = {
     return Promise.resolve({ data: newDiscussion });
   },
 
-  addReply: (discussionId: string, data: ReplyData): Promise<{ data: ForumReply }> => {
+  addReply: (discussionId: string, data: ReplyData): Promise<{ data: Reply }> => {
     const discussion = discussionsData.find(d => d.id === discussionId);
     if (discussion) {
-      const newReply: ForumReply = {
+      const newReply: Reply = {
         id: `${discussionId}-${discussion.replies.length + 1}`,
         ...data,
         createdAt: new Date().toISOString(),

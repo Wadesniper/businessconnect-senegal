@@ -6,11 +6,12 @@ import CVPreview from './components/CVPreview';
 import { CVProvider, useCV } from './context/CVContext';
 import { exportCV } from './services/documentExport';
 import { useSubscription } from '../../hooks/useSubscription';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { hasPremiumAccess } from '../../utils/premiumAccess';
 import type { Template } from '../../types/cv';
 import CustomizationForm from './components/CustomizationForm';
+import { CV_TEMPLATES } from './components/data/templates';
 
 const { Content } = Layout;
 const { Title: AntTitle } = Typography;
@@ -69,6 +70,21 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
   const { user } = useAuth();
   const { hasActiveSubscription } = useSubscription();
   const isPremium = !!hasPremiumAccess(user, hasActiveSubscription);
+  const location = useLocation();
+
+  // Lecture du paramètre template dans l'URL
+  React.useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const templateId = params.get('template');
+    if (templateId) {
+      const tpl = CV_TEMPLATES.find(t => t.id === templateId);
+      if (tpl) {
+        setSelectedTemplate(tpl);
+        setCVData(tpl.sampleData || emptyCVData);
+        setCurrentStep(steps.length - 1); // Aller directement à l'étape Aperçu
+      }
+    }
+  }, [location.search]);
 
   const handleSelectTemplate = (template: Template | null) => {
     setSelectedTemplate(template);
@@ -138,9 +154,6 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
         <CVWizard
           initialData={cvData || emptyCVData}
           onSubmit={setCVData}
-          currentStep={currentStep - 1}
-          setCurrentStep={step => setCurrentStep(step + 1)}
-          totalSteps={steps.length - 2}
         />
       );
     }
@@ -172,7 +185,7 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
   };
 
   return (
-    <div style={{ maxWidth: 1200, margin: '0 auto', padding: 24 }}>
+    <div style={{ maxWidth: 1200, minWidth: 820, margin: '0 auto', padding: 24 }}>
       <Steps current={currentStep} items={steps} style={{ marginBottom: 32 }} />
       <Row gutter={32}>
         <Col xs={24}>
