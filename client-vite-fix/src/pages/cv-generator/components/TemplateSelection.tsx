@@ -136,12 +136,13 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                         src={template.previewImage}
                         alt={template.name + ' preview'}
                         style={{
-                          width: '100%',
                           height: '100%',
+                          width: 'auto',
                           objectFit: 'contain',
                           borderRadius: 6,
                           display: 'block',
                           background: '#fff',
+                          margin: '0 auto',
                         }}
                       />
                     ) : (
@@ -264,23 +265,31 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
         destroyOnClose
       >
         {previewTemplate && (
-          <div ref={modalContentRef} style={{ background: '#fff', borderRadius: 16, boxShadow: '0 4px 24px #0002', padding: 0, margin: 0, width: 794, height: 1123, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', overflowY: 'auto', overflowX: 'hidden' }}>
-            <CVPreview
-              data={DEMO_PROFILES[previewTemplate.id] || {
-                personalInfo: { firstName: '', lastName: '', title: '', email: '', phone: '', address: '', photo: '', summary: '' },
-                experience: [],
-                education: [],
-                skills: [],
-                languages: [],
-                certifications: [],
-                projects: [],
-                interests: [],
-              }}
-              template={previewTemplate}
-              customization={defaultCustomization}
-              isPremium={true}
-              isMiniature={true}
-            />
+          <div ref={modalContentRef} style={{ background: '#fff', borderRadius: 16, boxShadow: '0 4px 24px #0002', padding: 0, margin: 0, width: 794, height: 1123, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+            {previewTemplate.previewImage ? (
+              <img
+                src={previewTemplate.previewImage}
+                alt={previewTemplate.name + ' preview'}
+                style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: 12, display: 'block', background: '#fff' }}
+              />
+            ) : (
+              <CVPreview
+                data={DEMO_PROFILES[previewTemplate.id] || {
+                  personalInfo: { firstName: '', lastName: '', title: '', email: '', phone: '', address: '', photo: '', summary: '' },
+                  experience: [],
+                  education: [],
+                  skills: [],
+                  languages: [],
+                  certifications: [],
+                  projects: [],
+                  interests: [],
+                }}
+                template={previewTemplate}
+                customization={defaultCustomization}
+                isPremium={true}
+                isMiniature={true}
+              />
+            )}
           </div>
         )}
       </Modal>
