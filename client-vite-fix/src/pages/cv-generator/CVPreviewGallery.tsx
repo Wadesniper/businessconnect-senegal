@@ -830,7 +830,7 @@ const DEMO_PROFILES: Record<string, any> = {
         institution: 'Ecole des Arts',
         startDate: '2017',
         endDate: '2019',
-        description: 'Design graphique, direction artistique, illustration, projet de fin d'études sur l'identité visuelle des ONG africaines.'
+        description: 'Design graphique, direction artistique, illustration, projet de fin d\'études sur l\'identité visuelle des ONG africaines.'
       },
       {
         degree: 'Licence Design',
@@ -838,7 +838,7 @@ const DEMO_PROFILES: Record<string, any> = {
         institution: 'Ecole des Arts',
         startDate: '2014',
         endDate: '2017',
-        description: 'Formation en design graphique, illustration, histoire de l'art.'
+        description: 'Formation en design graphique, illustration, histoire de l\'art.'
       }
     ],
     skills: [
