@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Card, Typography, Row, Col, Select, Input, Empty, Tag, Tooltip, Button, Modal } from 'antd';
 import { LockOutlined, StarOutlined } from '@ant-design/icons';
 import type { Template } from '../../../types/cv';
@@ -36,6 +36,13 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
   const navigate = useNavigate();
   const { user } = useAuth();
   const [previewTemplate, setPreviewTemplate] = useState<Template | null>(null);
+  const modalContentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (previewTemplate && modalContentRef.current) {
+      modalContentRef.current.scrollTop = 0;
+    }
+  }, [previewTemplate]);
 
   // Extraction des catégories uniques
   const categories = useMemo(() => {
@@ -124,42 +131,56 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                     }}
                     className={styles.cvMiniature}
                   >
-                    <div
-                      style={{
-                        width: 794,
-                        height: 1123,
-                        transform: 'scale(0.31)',
-                        transformOrigin: 'top left',
-                        pointerEvents: 'none',
-                        background: '#fff',
-                        borderRadius: 12,
-                        boxShadow: '0 2px 8px #0001',
-                        border: '1px solid #eee',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        overflow: 'hidden',
-                        padding: 0,
-                      }}
-                      className={styles.cvMiniature}
-                    >
-                      <CVPreview
-                        data={DEMO_PROFILES[template.id] || {
-                          personalInfo: { firstName: '', lastName: '', title: '', email: '', phone: '', address: '', photo: '', summary: '' },
-                          experience: [],
-                          education: [],
-                          skills: [],
-                          languages: [],
-                          certifications: [],
-                          projects: [],
-                          interests: [],
+                    {template.previewImage ? (
+                      <img
+                        src={template.previewImage}
+                        alt={template.name + ' preview'}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          borderRadius: 12,
+                          display: 'block',
                         }}
-                        template={template}
-                        customization={defaultCustomization}
-                        isPremium={true}
-                        isMiniature={true}
                       />
-                    </div>
+                    ) : (
+                      <div
+                        style={{
+                          width: 794,
+                          height: 1123,
+                          transform: 'scale(0.31)',
+                          transformOrigin: 'top left',
+                          pointerEvents: 'none',
+                          background: '#fff',
+                          borderRadius: 12,
+                          boxShadow: '0 2px 8px #0001',
+                          border: '1px solid #eee',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          overflow: 'hidden',
+                          padding: 0,
+                        }}
+                        className={styles.cvMiniature}
+                      >
+                        <CVPreview
+                          data={DEMO_PROFILES[template.id] || {
+                            personalInfo: { firstName: '', lastName: '', title: '', email: '', phone: '', address: '', photo: '', summary: '' },
+                            experience: [],
+                            education: [],
+                            skills: [],
+                            languages: [],
+                            certifications: [],
+                            projects: [],
+                            interests: [],
+                          }}
+                          template={template}
+                          customization={defaultCustomization}
+                          isPremium={true}
+                          isMiniature={true}
+                        />
+                      </div>
+                    )}
                   </div>
                 }
                 onClick={() => {
@@ -236,18 +257,28 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
         open={!!previewTemplate}
         onCancel={() => setPreviewTemplate(null)}
         footer={null}
-        width={480}
+        width={900}
         style={{ top: 40, display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-        bodyStyle={{ padding: 0, background: '#f7faff', borderRadius: 16, maxHeight: '90vh', overflowY: 'auto', overflowX: 'hidden', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+        bodyStyle={{ padding: 0, background: '#f7faff', borderRadius: 16, maxHeight: '90vh', overflowY: 'auto', overflowX: 'auto', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
         destroyOnClose
       >
         {previewTemplate && (
-          <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 4px 24px #0002', padding: 0, margin: 0, width: 420, height: 595, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div ref={modalContentRef} style={{ background: '#fff', borderRadius: 16, boxShadow: '0 4px 24px #0002', padding: 0, margin: 0, width: 794, height: 1123, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'auto' }}>
             <CVPreview
-              data={DEMO_PROFILES[previewTemplate.id] || {}}
+              data={DEMO_PROFILES[previewTemplate.id] || {
+                personalInfo: { firstName: '', lastName: '', title: '', email: '', phone: '', address: '', photo: '', summary: '' },
+                experience: [],
+                education: [],
+                skills: [],
+                languages: [],
+                certifications: [],
+                projects: [],
+                interests: [],
+              }}
               template={previewTemplate}
               customization={defaultCustomization}
               isPremium={true}
+              isMiniature={true}
             />
           </div>
         )}
