@@ -47,11 +47,6 @@ const MarketingTemplate: React.FC<MarketingTemplateProps> = ({ data, isMiniature
 
   return (
     <div style={{ background: 'linear-gradient(135deg, #fffbe6 0%, #ffe7ba 100%)', borderRadius, boxShadow, padding }}>
-      {/* DEBUG VISUEL */}
-      <div style={{ background: '#faad14', color: '#fff', fontWeight: 700, textAlign: 'center', padding: 6, borderRadius: 8, marginBottom: 12 }}>
-        VERSION RECONSTRUITE - MARKETING PREMIUM
-      </div>
-
       {/* En-tête */}
       <Row gutter={isMiniature ? 8 : 24} align="middle" style={{ marginBottom: sectionMargin }}>
         <Col xs={24} md={7} style={{ textAlign: 'center' }}>
