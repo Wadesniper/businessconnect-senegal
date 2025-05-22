@@ -782,22 +782,22 @@ const DEMO_PROFILES: Record<string, any> = {
       lastName: 'Diallo',
       title: 'Directrice Artistique',
       email: 'seynabou.diallo@email.com',
-      phone: '+221 77 234 12 34',
-      photo: '/images/avatars/woman-5.png',
-      profileImage: '/images/avatars/woman-5.png',
+      phone: '+221 77 987 65 43',
+      photo: '/images/avatars/woman-4.png',
+      profileImage: '/images/avatars/woman-4.png',
       address: 'Dakar, Sénégal',
       linkedin: 'linkedin.com/in/seynaboudiallo',
-      portfolio: 'seynabouart.com',
-      summary: "Directrice artistique avec 9 ans d'expérience, experte en design graphique, illustration, direction créative et gestion de projets artistiques. Forte capacité à innover et à piloter des équipes créatives."
+      portfolio: 'seynaboudesign.com',
+      summary: "Directrice artistique avec 9 ans d'expérience, experte en design graphique, illustration, direction créative et gestion de projets artistiques. Forte capacité à innover et à piloter des équipes créatives. Lauréate de plusieurs prix internationaux."
     },
-    summary: "Directrice artistique, experte en design graphique, illustration et direction créative.",
+    summary: "Directrice artistique, experte en design graphique, illustration, direction créative et gestion de projets artistiques.",
     experience: [
       {
         company: 'Studio Dakar',
         title: 'Directrice Artistique',
         years: '2020-2024',
         description: "Direction de projets créatifs, conception d'identités visuelles, management d'une équipe de 6 graphistes.",
-        achievements: ["Prix Design Afrique 2022", "Création de 10 identités de marque", "Organisation d'une exposition"],
+        achievements: ["Prix Design Afrique 2022", "Création de 10 identités de marque", "Lancement d'une collection d'affiches primée"],
         startDate: '2020',
         endDate: '2024',
         current: true,
@@ -806,8 +806,8 @@ const DEMO_PROFILES: Record<string, any> = {
         company: 'Agence Baobab',
         title: 'Graphiste Senior',
         years: '2017-2020',
-        description: 'Création de visuels, illustrations, supports de communication.',
-        achievements: ['Campagne nationale primée', 'Formation de 3 juniors'],
+        description: 'Création de visuels, illustrations, supports de communication, gestion de projets clients.',
+        achievements: ['Campagne nationale primée', 'Formation de 3 juniors', "Exposition collective à Dakar Art Week"],
         startDate: '2017',
         endDate: '2020',
         current: false,
@@ -816,8 +816,8 @@ const DEMO_PROFILES: Record<string, any> = {
         company: 'Ecole des Arts',
         title: 'Assistante Graphiste',
         years: '2014-2017',
-        description: 'Soutien aux projets étudiants, création d\'affiches, gestion de l\'atelier.',
-        achievements: ['Exposition collective', 'Création de supports pédagogiques'],
+        description: "Soutien aux projets étudiants, création d'affiches, gestion de l'atelier, animation d'ateliers créatifs.",
+        achievements: ['Exposition collective', 'Création de supports pédagogiques', 'Ateliers pour enfants'],
         startDate: '2014',
         endDate: '2017',
         current: false,
@@ -830,7 +830,7 @@ const DEMO_PROFILES: Record<string, any> = {
         institution: 'Ecole des Arts',
         startDate: '2017',
         endDate: '2019',
-        description: 'Design graphique, direction artistique, illustration.'
+        description: 'Design graphique, direction artistique, illustration, projet de fin d'études sur l'identité visuelle des ONG africaines.'
       },
       {
         degree: 'Licence Design',
@@ -838,7 +838,7 @@ const DEMO_PROFILES: Record<string, any> = {
         institution: 'Ecole des Arts',
         startDate: '2014',
         endDate: '2017',
-        description: 'Formation en design graphique et illustration.'
+        description: 'Formation en design graphique, illustration, histoire de l'art.'
       }
     ],
     skills: [
@@ -847,16 +847,32 @@ const DEMO_PROFILES: Record<string, any> = {
       { name: 'Illustration', level: 'Avancé' },
       { name: 'Créativité', level: 'Avancé' },
       { name: 'Gestion de projet', level: 'Avancé' },
-      { name: 'Adobe Suite', level: 'Avancé' }
+      { name: 'Adobe Suite', level: 'Avancé' },
+      { name: 'Photographie', level: 'Intermédiaire' },
+      { name: 'Animation digitale', level: 'Intermédiaire' }
     ],
     languages: [
       { name: 'Français', level: 'Bilingue' },
-      { name: 'Anglais', level: 'Intermédiaire' }
+      { name: 'Anglais', level: 'Intermédiaire' },
+      { name: 'Espagnol', level: 'Débutant' }
     ],
     certifications: [
       { name: 'Certification Adobe', issuer: 'Adobe', date: '2020' },
-      { name: 'Prix Design Afrique', issuer: 'Design Awards', date: '2022' }
+      { name: 'Prix Design Afrique', issuer: 'Design Awards', date: '2022' },
+      { name: 'Certificat UX/UI', issuer: 'Coursera', date: '2021' }
     ],
+    interests: [
+      'Peinture contemporaine',
+      'Voyages culturels',
+      'Photographie urbaine',
+      'Musique jazz',
+      'Bénévolat artistique'
+    ],
+    projects: [
+      { name: 'Affiches pour Dakar Art Week', description: 'Création d\'une série d\'affiches pour un événement artistique international.', year: '2023' },
+      { name: 'Identité visuelle ONG Femmes Solidaires', description: 'Conception de la charte graphique et du logo pour une ONG.', year: '2022' },
+      { name: "Exposition 'Couleurs d'Afrique'", description: 'Organisation et participation à une exposition collective.', year: '2021' }
+    ]
   },
   hotel: {
     personalInfo: {
