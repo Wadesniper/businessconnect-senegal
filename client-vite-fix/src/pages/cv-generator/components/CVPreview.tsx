@@ -34,6 +34,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
       phone: data?.personalInfo?.phone || '',
       address: data?.personalInfo?.address || '',
       photo: data?.personalInfo?.photo || '',
+      profileImage: (data?.personalInfo as any)?.profileImage || '',
       summary: data?.personalInfo?.summary || '',
     },
     experience: Array.isArray(data?.experience) ? data.experience : [],
