@@ -138,9 +138,10 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                         style={{
                           width: '100%',
                           height: '100%',
-                          objectFit: 'cover',
+                          objectFit: 'contain',
                           borderRadius: 12,
                           display: 'block',
+                          background: '#fff',
                         }}
                       />
                     ) : (
@@ -263,7 +264,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
         destroyOnClose
       >
         {previewTemplate && (
-          <div ref={modalContentRef} style={{ background: '#fff', borderRadius: 16, boxShadow: '0 4px 24px #0002', padding: 0, margin: 0, width: 794, height: 1123, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'auto' }}>
+          <div ref={modalContentRef} style={{ background: '#fff', borderRadius: 16, boxShadow: '0 4px 24px #0002', padding: 0, margin: 0, width: 794, height: 1123, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', overflowY: 'auto', overflowX: 'hidden' }}>
             <CVPreview
               data={DEMO_PROFILES[previewTemplate.id] || {
                 personalInfo: { firstName: '', lastName: '', title: '', email: '', phone: '', address: '', photo: '', summary: '' },
