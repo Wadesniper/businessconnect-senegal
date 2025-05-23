@@ -151,6 +151,11 @@ export interface CVData {
     endDate?: string;
   }>;
   interests?: string[];
+  references?: Array<{
+    name: string;
+    position?: string;
+    contact?: string;
+  }>;
 }
 
 export interface CustomizationOptions {

@@ -25,7 +25,7 @@ const LogisticsTemplate: React.FC<LogisticsTemplateProps> = ({ data, isMiniature
   const education = Array.isArray(data.education) ? data.education : [];
   const skills = Array.isArray(data.skills) ? data.skills : [];
   const languages = Array.isArray(data.languages) ? data.languages : [];
-  const references = Array.isArray((data as any).references) ? (data as any).references : [];
+  const references = Array.isArray(data.references) ? data.references : [];
 
   return (
     <div style={{ width: 794, height: 1123, background: blanc, fontFamily: 'Montserrat, Arial, sans-serif', display: 'flex', flexDirection: 'row', borderRadius: 18, overflow: 'hidden', boxShadow: '0 4px 24px #0002' }}>
