@@ -33,9 +33,11 @@ const EducationTemplate: React.FC<EducationTemplateProps> = ({ data, isMiniature
       <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: 120, background: bleu, borderTopLeftRadius: 18, zIndex: 1 }} />
       {/* Colonne noire traversante, au-dessus de la bande bleue à gauche */}
       <div style={{ position: 'absolute', top: 0, left: 0, width: 240, height: '100%', background: noir, color: blanc, zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 18px' }}>
-        {/* Espace pour la photo */}
-        <div style={{ height: 60 }} />
-        <div style={{ fontSize: 12, marginBottom: 18, textAlign: 'center', lineHeight: 1.5, marginTop: 60 }}>{summary}</div>
+        {/* Photo de profil centrée dans le bandeau noir */}
+        <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', height: 120, marginBottom: 18 }}>
+          <Avatar src={personalInfo.photo || '/images/avatars/man-2.png'} size={110} style={{ border: '4px solid #fff', boxShadow: '0 2px 8px #0001', background: '#eee' }} />
+        </div>
+        <div style={{ fontSize: 12, marginBottom: 18, textAlign: 'center', lineHeight: 1.5 }}>{summary}</div>
         <div style={{ width: '100%', marginBottom: 18 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}><MailOutlined /> <span>{personalInfo.email}</span></div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}><PhoneOutlined /> <span>{personalInfo.phone}</span></div>
@@ -55,10 +57,6 @@ const EducationTemplate: React.FC<EducationTemplateProps> = ({ data, isMiniature
             <div key={idx} style={{ fontSize: 12, color: '#b0b0b0', marginBottom: 4 }}>{skill.name}</div>
           ))}
         </div>
-      </div>
-      {/* Photo de profil parfaitement centrée sur la croix */}
-      <div style={{ position: 'absolute', top: 10, left: 145, zIndex: 3, width: 130, display: 'flex', justifyContent: 'center' }}>
-        <Avatar src={personalInfo.photo || '/images/avatars/man-2.png'} size={120} style={{ border: '6px solid #fff', boxShadow: '0 2px 8px #0001', background: '#eee' }} />
       </div>
       {/* Nom et titre dans la bande bleue, à droite de la photo, avec marge */}
       <div style={{ position: 'absolute', top: 38, left: 290, zIndex: 4, display: 'flex', flexDirection: 'column', justifyContent: 'center', height: 70, marginLeft: 20 }}>
