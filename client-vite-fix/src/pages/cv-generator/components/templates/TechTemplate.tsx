@@ -14,8 +14,8 @@ const jaune = '#d6a85a';
 const gris = '#e9e9e9';
 
 const hexagonStyle = {
-  width: 120,
-  height: 120,
+  width: 150,
+  height: 150,
   background: jaune,
   clipPath: 'polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0% 50%)',
   display: 'flex',
@@ -46,7 +46,7 @@ const TechTemplate: React.FC<TechTemplateProps> = ({ data, isMiniature = false }
       <div style={{ width: '34%', background: bleuFonce, color: blanc, padding: '0 0 0 0', display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100%' }}>
         {/* Hexagone photo */}
         <div style={hexagonStyle as React.CSSProperties}>
-          <img src={personalInfo.photo || '/images/avatars/man-4.png'} alt="avatar" style={{ width: 90, height: 90, borderRadius: '50%', objectFit: 'cover', border: '4px solid #fff' }} />
+          <img src={personalInfo.photo || '/images/avatars/man-4.png'} alt="avatar" style={{ width: 115, height: 115, borderRadius: '50%', objectFit: 'cover', border: '4px solid #fff' }} />
         </div>
         {/* Nom et titre */}
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
@@ -62,7 +62,7 @@ const TechTemplate: React.FC<TechTemplateProps> = ({ data, isMiniature = false }
         )}
         {/* Contact */}
         <div style={{ margin: '0 24px 24px 24px', background: '#232b38', borderRadius: 12, padding: 16, boxShadow: '0 2px 8px #0001' }}>
-          <div style={{ fontWeight: 600, fontSize: 18, color: jaune, marginBottom: 8 }}>My Contact</div>
+          <div style={{ fontWeight: 600, fontSize: 18, color: jaune, marginBottom: 8 }}>Mes contacts</div>
           <div style={{ fontSize: 14, color: gris, display: 'flex', flexDirection: 'column', gap: 8 }}>
             <span><PhoneOutlined /> {personalInfo.phone}</span>
             <span><MailOutlined /> {personalInfo.email}</span>
@@ -95,7 +95,7 @@ const TechTemplate: React.FC<TechTemplateProps> = ({ data, isMiniature = false }
         {experience.length > 0 && (
           <div style={{ marginBottom: 32 }}>
             <div style={{ fontWeight: 700, fontSize: 22, color: bleuFonce, marginBottom: 16, display: 'flex', alignItems: 'center' }}>
-              Work Experiences
+              Expériences professionnelles
               <div style={{ width: 32, height: 8, background: jaune, marginLeft: 12, clipPath: 'polygon(0 0, 100% 0, 80% 100%, 0% 100%)' }} />
             </div>
             {experience.map((exp, idx) => (
@@ -114,7 +114,7 @@ const TechTemplate: React.FC<TechTemplateProps> = ({ data, isMiniature = false }
         {education.length > 0 && (
           <div style={{ marginBottom: 32 }}>
             <div style={{ fontWeight: 700, fontSize: 22, color: bleuFonce, marginBottom: 16, display: 'flex', alignItems: 'center' }}>
-              Education
+              Formation
               <div style={{ width: 32, height: 8, background: jaune, marginLeft: 12, clipPath: 'polygon(0 0, 100% 0, 80% 100%, 0% 100%)' }} />
             </div>
             {education.map((edu, idx) => (
@@ -130,10 +130,10 @@ const TechTemplate: React.FC<TechTemplateProps> = ({ data, isMiniature = false }
         {achievements.length > 0 && (
           <div style={{ marginBottom: 32 }}>
             <div style={{ fontWeight: 700, fontSize: 22, color: bleuFonce, marginBottom: 16, display: 'flex', alignItems: 'center' }}>
-              Achievement
+              Réalisations
               <div style={{ width: 32, height: 8, background: jaune, marginLeft: 12, clipPath: 'polygon(0 0, 100% 0, 80% 100%, 0% 100%)' }} />
             </div>
-            {achievements.map((ach, idx) => (
+            {achievements.map((ach: { title: string; description: string }, idx: number) => (
               <div key={idx} style={{ background: blanc, borderRadius: 10, boxShadow: '0 2px 8px #0001', padding: 18, marginBottom: 18 }}>
                 <div style={{ fontWeight: 600, fontSize: 16, color: bleuFonce }}>{ach.title}</div>
                 <div style={{ fontSize: 14, color: '#888' }}>{ach.description}</div>
