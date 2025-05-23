@@ -167,8 +167,8 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     sampleData: {
       ...DEMO_PROFILES.logistics,
       references: [
-        { name: 'Bailey Dupont', position: 'Directeur Logistique, Wardeo Inc.', contact: 'bailey.dupont@wardeo.com' },
-        { name: 'Harumi Kobayashi', position: 'CEO, Wardeo Inc.', contact: 'harumi.kobayashi@wardeo.com' }
+        { name: 'Bailey Dupont', position: 'Directeur Logistique, Wardeo Inc.', contact: 'bailey.dupont@wardeo.com / +33 6 12 34 56 78' },
+        { name: 'Harumi Kobayashi', position: 'CEO, Wardeo Inc.', contact: 'harumi.kobayashi@wardeo.com / +81 90 1234 5678' }
       ]
     }
   },
