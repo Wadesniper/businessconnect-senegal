@@ -51,7 +51,7 @@ const CommerceTemplate: React.FC<CommerceTemplateProps> = ({ data, isMiniature =
         <Avatar src={personalInfo.photo || '/images/avatars/man-3.png'} size={120} style={{ border: '4px solid #fff', marginBottom: 18, boxShadow: '0 2px 8px #0001' }} />
         {/* Education */}
         <div style={{ width: '100%', marginBottom: 24 }}>
-          <div style={{ fontWeight: 700, fontSize: 16, color: '#232323', marginBottom: 8, background: '#fff', padding: '6px 12px', borderRadius: 8, textAlign: 'center' }}>EDUCATION</div>
+          <div style={{ fontWeight: 700, fontSize: 16, color: '#232323', marginBottom: 8, background: '#fff', padding: '6px 12px', borderRadius: 8, textAlign: 'center' }}>FORMATION</div>
           {education.map((edu, idx) => (
             <div key={idx} style={{ marginBottom: 10 }}>
               <div style={{ fontWeight: 600, fontSize: 13 }}>{edu.institution}</div>
@@ -62,14 +62,14 @@ const CommerceTemplate: React.FC<CommerceTemplateProps> = ({ data, isMiniature =
         </div>
         {/* Langue */}
         <div style={{ width: '100%', marginBottom: 24 }}>
-          <div style={{ fontWeight: 700, fontSize: 16, color: '#232323', marginBottom: 8, background: '#fff', padding: '6px 12px', borderRadius: 8, textAlign: 'center' }}>LANGUE</div>
+          <div style={{ fontWeight: 700, fontSize: 16, color: '#232323', marginBottom: 8, background: '#fff', padding: '6px 12px', borderRadius: 8, textAlign: 'center' }}>LANGUES</div>
           {languages.map((lang, idx) => (
             <div key={idx} style={{ fontSize: 13, color: '#232323', marginBottom: 4 }}>{lang.name} <span style={{ color: '#888', fontSize: 12 }}>({lang.level})</span></div>
           ))}
         </div>
         {/* Skill Summary */}
         <div style={{ width: '100%', marginBottom: 24 }}>
-          <div style={{ fontWeight: 700, fontSize: 16, color: '#232323', marginBottom: 8, background: '#fff', padding: '6px 12px', borderRadius: 8, textAlign: 'center' }}>SKILL SUMMARY</div>
+          <div style={{ fontWeight: 700, fontSize: 16, color: '#232323', marginBottom: 8, background: '#fff', padding: '6px 12px', borderRadius: 8, textAlign: 'center' }}>COMPÉTENCES</div>
           {skills.map((skill, idx) => (
             <div key={idx} style={{ marginBottom: 10 }}>
               <div style={{ fontSize: 13, color: '#232323', marginBottom: 2 }}>{skill.name}</div>
@@ -87,7 +87,7 @@ const CommerceTemplate: React.FC<CommerceTemplateProps> = ({ data, isMiniature =
         </div>
         {/* Expérience */}
         <div style={{ marginBottom: 24 }}>
-          <div style={{ fontWeight: 700, fontSize: 18, color: '#232323', marginBottom: 10, background: '#ededed', padding: '6px 12px', borderRadius: 8, display: 'inline-block' }}>WORK EXPERIENCE</div>
+          <div style={{ fontWeight: 700, fontSize: 18, color: '#232323', marginBottom: 10, background: '#ededed', padding: '6px 12px', borderRadius: 8, display: 'inline-block' }}>EXPÉRIENCE PROFESSIONNELLE</div>
           {experience.map((exp, idx) => (
             <div key={idx} style={{ marginBottom: 18 }}>
               <div style={{ fontWeight: 700, fontSize: 15, color: '#232323' }}>{exp.title}</div>
@@ -138,7 +138,7 @@ const CommerceTemplate: React.FC<CommerceTemplateProps> = ({ data, isMiniature =
         )}
         {/* Expertise */}
         <div style={{ marginBottom: 24 }}>
-          <div style={{ fontWeight: 700, fontSize: 18, color: '#232323', marginBottom: 10, background: '#ededed', padding: '6px 12px', borderRadius: 8, display: 'inline-block' }}>EXPERTISE</div>
+          <div style={{ fontWeight: 700, fontSize: 18, color: '#232323', marginBottom: 10, background: '#ededed', padding: '6px 12px', borderRadius: 8, display: 'inline-block' }}>DOMAINES D'EXPERTISE</div>
           <ul style={{ margin: 0, paddingLeft: 20, color: '#232323', fontSize: 14 }}>
             {skills.map((skill, idx) => (
               <li key={idx}>{skill.name}</li>
