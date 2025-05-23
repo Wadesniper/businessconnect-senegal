@@ -127,14 +127,25 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     id: 'tech',
     name: 'Tech / Informatique',
     component: TechTemplate,
-    description: 'CV moderne pour développeur, ingénieur, data',
+    description: 'CV moderne et graphique pour développeur, ingénieur, IT',
     premium: true,
     category: 'Tech',
     thumbnail: '/images/cv-templates/tech-preview.png',
     previewImage: '/images/cv-templates/tech-preview.png',
-    features: ['Sections projets', 'Compétences techniques', 'Design moderne'],
+    features: [
+      'Design hexagonal et graphique',
+      'Sections dynamiques',
+      'Expertise avec icônes',
+      'Expériences et achievements en chevrons',
+      'Lisibilité optimale'
+    ],
     profileImage: '/images/avatars/man-4.png',
-    sampleData: DEMO_PROFILES.tech,
+    sampleData: {
+      ...DEMO_PROFILES.tech,
+      achievements: [
+        { title: 'Studio Showcase', description: 'Intégration et design d’une plateforme de gestion de projets web, primée pour son UX.' }
+      ]
+    }
   },
   {
     id: 'logistics',
