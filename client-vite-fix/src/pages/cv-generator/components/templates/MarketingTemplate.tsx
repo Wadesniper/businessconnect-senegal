@@ -45,17 +45,17 @@ const MarketingTemplate: React.FC<MarketingTemplateProps> = ({ data, isMiniature
   return (
     <div style={{ background: mainBlue, color: white, borderRadius: 18, height: 1123, minHeight: 1123, maxHeight: 1123, fontFamily: 'Montserrat, Arial, sans-serif', boxShadow: '0 4px 24px #0002', padding: 0, overflow: 'visible', display: 'flex', flexDirection: 'row', width: 794 }}>
       {/* Colonne gauche */}
-      <div style={{ background: accentBlue, width: 270, padding: 0, display: 'flex', flexDirection: 'column', minHeight: '100%', height: '100%' }}>
+      <div style={{ background: accentBlue, width: 320, padding: 0, display: 'flex', flexDirection: 'column', minHeight: '100%', height: '100%' }}>
         {/* Header horizontal */}
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', padding: '32px 18px 16px 18px', borderBottom: `1px solid ${gray}`, minHeight: 120 }}>
           <Avatar src={personalInfo.photo || '/images/avatars/woman-1.png'} size={90} style={{ border: '2px solid #fff', marginRight: 14, boxShadow: '0 2px 8px #0001', flexShrink: 0 }} />
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', minWidth: 0 }}>
-            <div style={{ fontSize: 19, fontWeight: 700, letterSpacing: 1, color: white, lineHeight: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{personalInfo.firstName} {personalInfo.lastName}</div>
-            <div style={{ fontSize: 13, color: lightBlue, fontWeight: 500, marginBottom: 6, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{personalInfo.title}</div>
+            <div style={{ fontSize: 19, fontWeight: 700, letterSpacing: 1, color: white, lineHeight: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 220 }}>{personalInfo.firstName} {personalInfo.lastName}</div>
+            <div style={{ fontSize: 13, color: lightBlue, fontWeight: 500, marginBottom: 6, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 220 }}>{personalInfo.title}</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2, width: '100%' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 4, width: '100%' }}>
                 <MailOutlined style={{ color: mainBlue, fontSize: 13 }} />
-                <span style={{ color: mainBlue, background: white, borderRadius: 4, padding: '1px 4px', fontWeight: 600, fontSize: 11, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 140, display: 'inline-block' }}>{personalInfo.email}</span>
+                <span style={{ color: mainBlue, background: white, borderRadius: 4, padding: '1px 4px', fontWeight: 600, fontSize: 11, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 220, display: 'inline-block' }}>{personalInfo.email}</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 4, width: '100%' }}>
                 <PhoneOutlined style={{ color: mainBlue, fontSize: 13 }} />
@@ -63,15 +63,15 @@ const MarketingTemplate: React.FC<MarketingTemplateProps> = ({ data, isMiniature
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 4, width: '100%' }}>
                 <EnvironmentOutlined style={{ color: mainBlue, fontSize: 13 }} />
-                <span style={{ color: mainBlue, background: white, borderRadius: 4, padding: '1px 4px', fontWeight: 600, fontSize: 11, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 140, display: 'inline-block' }}>{personalInfo.address}</span>
+                <span style={{ color: mainBlue, background: white, borderRadius: 4, padding: '1px 4px', fontWeight: 600, fontSize: 11, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 220, display: 'inline-block' }}>{personalInfo.address}</span>
               </div>
               {personalInfo.linkedin && <div style={{ display: 'flex', alignItems: 'center', gap: 4, width: '100%' }}>
                 <LinkedinOutlined style={{ color: mainBlue, fontSize: 13 }} />
-                <span style={{ color: mainBlue, background: white, borderRadius: 4, padding: '1px 4px', fontWeight: 600, fontSize: 11, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 140, display: 'inline-block' }}>{personalInfo.linkedin}</span>
+                <span style={{ color: mainBlue, background: white, borderRadius: 4, padding: '1px 4px', fontWeight: 600, fontSize: 11, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 220, display: 'inline-block' }}>{personalInfo.linkedin}</span>
               </div>}
               {personalInfo.portfolio && <div style={{ display: 'flex', alignItems: 'center', gap: 4, width: '100%' }}>
                 <GlobalOutlined style={{ color: mainBlue, fontSize: 13 }} />
-                <span style={{ color: mainBlue, background: white, borderRadius: 4, padding: '1px 4px', fontWeight: 600, fontSize: 11, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 140, display: 'inline-block' }}>{personalInfo.portfolio}</span>
+                <span style={{ color: mainBlue, background: white, borderRadius: 4, padding: '1px 4px', fontWeight: 600, fontSize: 11, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 220, display: 'inline-block' }}>{personalInfo.portfolio}</span>
               </div>}
             </div>
           </div>
