@@ -27,21 +27,29 @@ const AdminTemplate: React.FC<AdminTemplateProps> = ({ data, isMiniature = false
   const skills = Array.isArray(data.skills) ? data.skills : [];
   const certifications = Array.isArray(data.certifications) ? data.certifications : [];
   const languages = Array.isArray(data.languages) ? data.languages : [];
-  const references = Array.isArray((data as any).references) ? (data as any).references : [];
+  const references = Array.isArray((data as any).references) && (data as any).references.length > 0
+    ? (data as any).references
+    : [
+        { name: 'Fatou Ndiaye', position: 'Directrice RH, Sonatel', contact: 'fatou.ndiaye@sonatel.sn / +221 77 123 45 67' },
+        { name: 'Mamadou Diop', position: 'Consultant RH, ISM Dakar', contact: 'mamadou.diop@ism.edu.sn / +221 77 987 65 43' }
+      ];
 
   return (
-    <div style={{ width: 794, height: 1123, background: grisClair, borderRadius: 18, overflow: 'hidden', fontFamily: 'Montserrat, Arial, sans-serif', boxShadow: '0 4px 24px #0002', display: 'flex', flexDirection: 'row' }}>
+    <div style={{ width: 794, height: 1123, background: grisClair, borderRadius: 18, overflow: 'hidden', fontFamily: 'Montserrat, Arial, sans-serif', boxShadow: '0 4px 24px #0002', display: 'flex', flexDirection: 'column' }}>
+      {/* Bandeau horizontal contacts + photo */}
+      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', background: bleuFonce, borderRadius: '0 0 32px 32px', padding: '0 0 0 36px', height: 110, boxShadow: '0 2px 8px #0001' }}>
+        <Avatar src={personalInfo.photo || '/images/avatars/woman-3.png'} size={80} style={{ border: '4px solid #fff', marginRight: 32, boxShadow: '0 2px 8px #0001' }} />
+        <div style={{ display: 'flex', flex: 1, alignItems: 'center', height: '100%' }}>
+          <div style={{ display: 'flex', flexDirection: 'row', gap: 32, width: '100%', justifyContent: 'space-evenly' }}>
+            <div style={{ display: 'flex', alignItems: 'center', color: blanc, fontSize: 15, gap: 8 }}><PhoneOutlined /> {personalInfo.phone}</div>
+            <div style={{ display: 'flex', alignItems: 'center', color: blanc, fontSize: 15, gap: 8 }}><MailOutlined /> {personalInfo.email}</div>
+            {personalInfo.portfolio && <div style={{ display: 'flex', alignItems: 'center', color: blanc, fontSize: 15, gap: 8 }}><GlobalOutlined /> {personalInfo.portfolio}</div>}
+            <div style={{ display: 'flex', alignItems: 'center', color: blanc, fontSize: 15, gap: 8 }}><EnvironmentOutlined /> {personalInfo.address}</div>
+          </div>
+        </div>
+      </div>
       {/* Colonne gauche */}
       <div style={{ width: '32%', background: bleuFonce, color: blanc, padding: '36px 18px 24px 18px', display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100%' }}>
-        {/* Photo de profil */}
-        <Avatar src={personalInfo.photo || '/images/avatars/woman-3.png'} size={110} style={{ border: '4px solid #fff', marginBottom: 18, boxShadow: '0 2px 8px #0001' }} />
-        {/* Contacts */}
-        <div style={{ width: '100%', marginBottom: 24, display: 'flex', flexDirection: 'column', gap: 6 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><PhoneOutlined /> <span>{personalInfo.phone}</span></div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><MailOutlined /> <span>{personalInfo.email}</span></div>
-          {personalInfo.portfolio && <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><GlobalOutlined /> <span>{personalInfo.portfolio}</span></div>}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><EnvironmentOutlined /> <span>{personalInfo.address}</span></div>
-        </div>
         {/* Education */}
         <div style={{ width: '100%', marginBottom: 24 }}>
           <div style={{ fontWeight: 700, fontSize: 16, color: blanc, marginBottom: 8, background: bleuClair, padding: '6px 12px', borderRadius: 8, textAlign: 'center' }}>FORMATION</div>
