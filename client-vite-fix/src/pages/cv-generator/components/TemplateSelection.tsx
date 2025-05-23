@@ -136,9 +136,9 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                         src={template.previewImage}
                         alt={template.name + ' preview'}
                         style={{
+                          width: '100%',
                           height: '100%',
-                          width: 'auto',
-                          objectFit: 'contain',
+                          objectFit: 'cover',
                           borderRadius: 6,
                           display: 'block',
                           background: '#fff',
@@ -270,7 +270,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
               <img
                 src={previewTemplate.previewImage}
                 alt={previewTemplate.name + ' preview'}
-                style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: 12, display: 'block', background: '#fff' }}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 12, display: 'block', background: '#fff' }}
               />
             ) : (
               <CVPreview
