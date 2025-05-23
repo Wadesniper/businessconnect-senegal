@@ -905,3 +905,60 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Aucune suppression de code ou fonctionnalité essentielle, backend et frontend intacts, site complet maintenu.
 - Build, tests et UX garantis sur la version complète du site (aucune version minimaliste).
 - Statut : Intégré, testé, prêt pour la production.
+
+---
+
+## [RÈGLE MÉTIER – Refonte des templates de CV : adaptation langue et cohérence des champs]
+
+- Lors de la refonte ou création de tout template de CV (ex : Art, Finance, etc.), il est **obligatoire d'adapter la langue** : tous les titres, labels, sections et contenus doivent être en **français** (jamais en anglais, même si le modèle d'origine est en anglais ou issu d'un exemple international).
+- Il faut garantir une **cohérence stricte** entre les champs du générateur (formulaire multi-étapes) et l'affichage sur le CV : chaque donnée saisie dans le générateur doit se retrouver de façon claire, fidèle et structurée dans le rendu du template (pas d'oubli, pas de champ fantôme, pas de section non reliée).
+- Cette règle s'applique à **tous les templates** lors de leur refonte ou création, pour assurer l'uniformité, la qualité UX et la conformité métier sur toute la galerie de modèles.
+- Exemple : si le modèle d'origine comporte des titres ou sections en anglais (ex : "Professional Experience", "Skills"), il faut systématiquement les traduire (ex : "Expérience professionnelle", "Compétences") et adapter la structure pour refléter exactement les champs du générateur.
+- **À respecter impérativement pour chaque refonte ou ajout de template.**
+
+---
+
+## [Refonte des templates de CV sectoriels]
+
+- Tous les templates de CV doivent être adaptés en français (titres, labels, sections, etc.).
+- L'affichage de chaque template doit être cohérent avec les champs du générateur de CV : chaque champ saisi par l'utilisateur doit apparaître dans le CV si renseigné (ex : référence, portfolio, certifications, etc.).
+- La structure visuelle doit suivre le modèle fourni pour chaque secteur (ex : disposition, couleurs, alignement, pas de troncature, tout visible).
+- Responsive, lisibilité et UX premium exigés.
+- Cette règle s'applique à tous les templates lors de leur refonte.
+
+### Exigences métier à respecter pour la refonte des templates de CV
+
+1. **Langue** :
+   - Tous les titres, labels, sections et contenus doivent être en français (jamais en anglais, même si le modèle d'origine est en anglais ou issu d'un exemple international).
+2. **Cohérence des champs** :
+   - Chaque champ du générateur (formulaire multi-étapes) doit apparaître dans le rendu du CV si renseigné (ex : projets, centres d'intérêt, certifications, langues, portfolio, référence, etc.).
+   - Aucun champ ne doit être omis si l'utilisateur a saisi une information.
+   - Les sections peuvent être masquées si elles sont vides, mais jamais omises si des données existent.
+3. **Respect du modèle visuel** :
+   - La structure visuelle du template doit suivre fidèlement le modèle fourni (disposition, couleurs, alignement, effets graphiques, etc.).
+   - Les images d'aperçu (vignettes et preview) doivent être au format 794x1123px, bien centrées, nettes, et occuper tout le cadre sans déformation ni crop inapproprié.
+4. **Aucune troncature** :
+   - Aucun champ ne doit être tronqué ou masqué (nom, titre, email, etc.), même en cas de texte long.
+   - Les colonnes doivent être élargies ou le style adapté pour garantir la lisibilité.
+5. **Responsive et UX premium** :
+   - Le rendu doit être parfaitement lisible sur tous les écrans (desktop, tablette, mobile).
+   - L'expérience utilisateur doit être fluide, moderne et professionnelle.
+6. **Conformité technique** :
+   - Le template doit passer le build sans erreur, respecter les typages TypeScript, et ne jamais provoquer de bug d'affichage ou de crash.
+   - Les imports d'images, polices et styles doivent être corrects.
+7. **Aucune section fantôme** :
+   - Il ne doit jamais y avoir de section affichée sans correspondance dans le générateur ou sans données saisies.
+8. **Traçabilité** :
+   - Toute modification ou refonte doit être documentée dans ce mémo, avec la date, le template concerné et la nature de la correction.
+
+---
+
+## [Cohérence champs générateur / rendu CV]
+
+- Chaque template de CV doit afficher toutes les sections correspondant aux champs du générateur (ex : projets, centres d'intérêt, certifications, langues, etc.).
+- Si l'utilisateur renseigne une information dans le formulaire, elle doit obligatoirement apparaître dans le CV final, quel que soit le modèle choisi.
+- Cette cohérence est obligatoire pour tous les templates existants et à venir, même si le modèle visuel de base n'affiche pas certaines sections.
+- Les sections peuvent être masquées si elles sont vides, mais jamais omises si des données existent.
+- Cette règle garantit que le générateur de CV est fiable, exhaustif et professionnel.
+
+---
