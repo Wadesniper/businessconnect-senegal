@@ -34,8 +34,10 @@ const FinanceTemplate: React.FC<FinanceTemplateProps> = ({ data, isMiniature = f
         {/* Photo */}
         <Avatar src={personalInfo.photo || '/images/avatars/man-1.png'} size={110} style={{ border: '4px solid #fff', marginBottom: 24 }} />
         {/* Nom et titre */}
-        <div style={{ fontWeight: 900, fontSize: 22, letterSpacing: 1, lineHeight: 1, textTransform: 'capitalize', marginBottom: 4 }}>{personalInfo.firstName} {personalInfo.lastName}</div>
-        <div style={{ fontSize: 15, color: '#bcd0f7', fontWeight: 500, marginBottom: 18, textTransform: 'uppercase' }}>{personalInfo.title}</div>
+        <div style={{ width: '100%', textAlign: 'center', padding: '0 24px' }}>
+          <div style={{ fontWeight: 900, fontSize: 22, letterSpacing: 1, lineHeight: 1, textTransform: 'capitalize', marginBottom: 4 }}>{personalInfo.firstName} {personalInfo.lastName}</div>
+          <div style={{ fontSize: 15, color: '#bcd0f7', fontWeight: 500, marginBottom: 18, textTransform: 'uppercase' }}>{personalInfo.title}</div>
+        </div>
         {/* Résumé */}
         {summary && <div style={{ fontSize: 13, color: blanc, margin: '0 24px 24px 24px', textAlign: 'center' }}>{summary}</div>}
         {/* Bloc Informations */}
@@ -75,11 +77,11 @@ const FinanceTemplate: React.FC<FinanceTemplateProps> = ({ data, isMiniature = f
         )}
       </div>
       {/* Colonne droite */}
-      <div style={{ width: '67%', background: blanc, color: bleu, display: 'flex', flexDirection: 'column', padding: '48px 40px 32px 40px', gap: 32 }}>
+      <div style={{ width: '67%', background: blanc, color: bleu, display: 'flex', flexDirection: 'column', padding: '48px 0 32px 0', gap: 32 }}>
         {/* Expériences professionnelles */}
         {experience.length > 0 && (
-          <div>
-            <div style={{ fontWeight: 700, fontSize: 16, color: blanc, background: bleu, padding: '8px 24px', borderRadius: 8, marginBottom: 18, display: 'inline-block', letterSpacing: 1, textTransform: 'uppercase' }}>EXPÉRIENCES PROFESSIONNELLES</div>
+          <div style={{ width: '100%', padding: '0 40px' }}>
+            <div style={{ fontWeight: 700, fontSize: 16, color: blanc, background: bleu, padding: '12px 0', borderRadius: '0 12px 12px 0', marginBottom: 18, width: '100%', textAlign: 'left', letterSpacing: 1, textTransform: 'uppercase', boxSizing: 'border-box', paddingLeft: 32 }}>{'EXPÉRIENCES PROFESSIONNELLES'}</div>
             {experience.map((exp, idx) => (
               <div key={idx} style={{ marginBottom: 18 }}>
                 <div style={{ fontWeight: 700, fontSize: 15, color: bleu }}>{exp.title}</div>
@@ -93,8 +95,8 @@ const FinanceTemplate: React.FC<FinanceTemplateProps> = ({ data, isMiniature = f
         )}
         {/* Formations */}
         {education.length > 0 && (
-          <div>
-            <div style={{ fontWeight: 700, fontSize: 16, color: blanc, background: bleu, padding: '8px 24px', borderRadius: 8, marginBottom: 18, display: 'inline-block', letterSpacing: 1, textTransform: 'uppercase' }}>FORMATIONS</div>
+          <div style={{ width: '100%', padding: '0 40px' }}>
+            <div style={{ fontWeight: 700, fontSize: 16, color: blanc, background: bleu, padding: '12px 0', borderRadius: '0 12px 12px 0', marginBottom: 18, width: '100%', textAlign: 'left', letterSpacing: 1, textTransform: 'uppercase', boxSizing: 'border-box', paddingLeft: 32 }}>{'FORMATIONS'}</div>
             {education.map((edu, idx) => (
               <div key={idx} style={{ marginBottom: 14 }}>
                 <div style={{ fontWeight: 700, fontSize: 14, color: bleu }}>{edu.degree}</div>
