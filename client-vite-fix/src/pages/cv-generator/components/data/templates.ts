@@ -143,7 +143,7 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     sampleData: {
       ...DEMO_PROFILES.tech,
       achievements: [
-        { title: 'Studio Showcase', description: 'Intégration et design d’une plateforme de gestion de projets web, primée pour son UX.' }
+        { title: 'Studio Showcase', description: "Intégration et design d\"une plateforme de gestion de projets web, primée pour son UX." }
       ]
     }
   },
@@ -151,14 +151,26 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     id: 'logistics',
     name: 'Logistique / Transport',
     component: LogisticsTemplate,
-    description: 'CV pour supply chain, gestion de flotte',
+    description: 'CV moderne et épuré pour les métiers de la logistique, supply chain et transport',
     premium: true,
     category: 'Logistique',
     thumbnail: '/images/cv-templates/logistics-preview.png',
     previewImage: '/images/cv-templates/logistics-preview.png',
-    features: ['Sections logistique', 'Design structuré', 'Mise en avant des certifications'],
+    features: [
+      'Design bleu/blanc moderne',
+      'Barres latérales pour les titres',
+      'Expérience professionnelle en cartes',
+      'Références dynamiques',
+      'Lisibilité optimale'
+    ],
     profileImage: '/images/avatars/man-5.png',
-    sampleData: DEMO_PROFILES.logistics,
+    sampleData: {
+      ...DEMO_PROFILES.logistics,
+      references: [
+        { name: 'Bailey Dupont', position: 'Directeur Logistique, Wardeo Inc.', contact: 'bailey.dupont@wardeo.com' },
+        { name: 'Harumi Kobayashi', position: 'CEO, Wardeo Inc.', contact: 'harumi.kobayashi@wardeo.com' }
+      ]
+    }
   },
   {
     id: 'btp',
