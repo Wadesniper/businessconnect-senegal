@@ -70,14 +70,14 @@ const HotelTemplate: React.FC<HotelTemplateProps> = ({ data, isMiniature = false
           {/* À propos */}
           {summary && (
             <div>
-              <div style={{ fontWeight: 700, fontSize: 16, color: marron, background: beige, padding: '6px 12px', borderRadius: 8, marginBottom: 8 }}>ABOUT ME</div>
+              <div style={{ fontWeight: 700, fontSize: 16, color: marron, background: beige, padding: '6px 12px', borderRadius: 8, marginBottom: 8 }}>À PROPOS</div>
               <div style={{ fontSize: 14, color: gris }}>{summary}</div>
             </div>
           )}
-          {/* Education */}
+          {/* Formation */}
           {education.length > 0 && (
             <div>
-              <div style={{ fontWeight: 700, fontSize: 16, color: marron, background: beige, padding: '6px 12px', borderRadius: 8, marginBottom: 8 }}>EDUCATION</div>
+              <div style={{ fontWeight: 700, fontSize: 16, color: marron, background: beige, padding: '6px 12px', borderRadius: 8, marginBottom: 8 }}>FORMATION</div>
               {education.map((edu, idx) => (
                 <div key={idx} style={{ marginBottom: 10 }}>
                   <div style={{ fontWeight: 600, fontSize: 13 }}>{edu.institution}</div>
@@ -90,7 +90,7 @@ const HotelTemplate: React.FC<HotelTemplateProps> = ({ data, isMiniature = false
           {/* Langues avec barres */}
           {languages.length > 0 && (
             <div>
-              <div style={{ fontWeight: 700, fontSize: 16, color: marron, background: beige, padding: '6px 12px', borderRadius: 8, marginBottom: 8 }}>LANGUAGE SKILL</div>
+              <div style={{ fontWeight: 700, fontSize: 16, color: marron, background: beige, padding: '6px 12px', borderRadius: 8, marginBottom: 8 }}>LANGUES</div>
               {languages.map((lang, idx) => (
                 <div key={idx} style={{ marginBottom: 10 }}>
                   <div style={{ fontSize: 13, color: marron, marginBottom: 2 }}>{lang.name}</div>
@@ -105,12 +105,12 @@ const HotelTemplate: React.FC<HotelTemplateProps> = ({ data, isMiniature = false
           {/* Expérience */}
           {experience.length > 0 && (
             <div>
-              <div style={{ fontWeight: 700, fontSize: 16, color: marron, background: beige, padding: '6px 12px', borderRadius: 8, marginBottom: 8 }}>EXPERIENCE</div>
+              <div style={{ fontWeight: 700, fontSize: 16, color: marron, background: beige, padding: '6px 12px', borderRadius: 8, marginBottom: 8 }}>EXPÉRIENCE</div>
               {experience.map((exp, idx) => (
                 <div key={idx} style={{ marginBottom: 16, display: 'flex', flexDirection: 'column', gap: 2 }}>
                   <div style={{ fontWeight: 700, fontSize: 14, color: marron }}>{exp.title}</div>
                   <div style={{ fontSize: 13, color: gris }}>{exp.company}</div>
-                  <div style={{ fontSize: 12, color: marron }}>{exp.startDate} - {exp.current ? 'Present' : exp.endDate}</div>
+                  <div style={{ fontSize: 12, color: marron }}>{exp.startDate} - {exp.current ? 'Présent' : exp.endDate}</div>
                   <div style={{ fontSize: 13, color: gris }}>{exp.description}</div>
                 </div>
               ))}
@@ -119,7 +119,7 @@ const HotelTemplate: React.FC<HotelTemplateProps> = ({ data, isMiniature = false
           {/* Compétences avec barres */}
           {skills.length > 0 && (
             <div>
-              <div style={{ fontWeight: 700, fontSize: 16, color: marron, background: beige, padding: '6px 12px', borderRadius: 8, marginBottom: 8 }}>SKILL</div>
+              <div style={{ fontWeight: 700, fontSize: 16, color: marron, background: beige, padding: '6px 12px', borderRadius: 8, marginBottom: 8 }}>COMPÉTENCES</div>
               {skills.map((skill, idx) => (
                 <div key={idx} style={{ marginBottom: 10 }}>
                   <div style={{ fontSize: 13, color: marron, marginBottom: 2 }}>{skill.name}</div>
