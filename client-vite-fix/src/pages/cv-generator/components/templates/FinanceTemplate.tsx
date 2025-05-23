@@ -23,6 +23,13 @@ const FinanceTemplate: React.FC<FinanceTemplateProps> = ({ data, isMiniature = f
   const skills = Array.isArray(data.skills) ? data.skills : [];
   const certifications = Array.isArray(data.certifications) ? data.certifications : [];
   const languages = Array.isArray(data.languages) ? data.languages : [];
+  const interests = Array.isArray(data.interests) ? data.interests : [];
+  const references = Array.isArray(data.references) ? data.references : [];
+
+  // Ajout des couleurs manquantes
+  const bleuFonce = '#2D3142';
+  const grisClair = '#f5f6fa';
+  const bleuClair = '#4F5D75';
 
   return (
     <div
@@ -126,15 +133,28 @@ const FinanceTemplate: React.FC<FinanceTemplateProps> = ({ data, isMiniature = f
           </div>
         )}
         {/* Section Centres d'intérêt */}
-        {Array.isArray(data.interests) && data.interests.length > 0 && (
+        {interests.length > 0 && (
           <div style={{ marginTop: 8 }}>
             <div style={{ fontWeight: 700, fontSize: 16, color: '#17406a', marginBottom: 4 }}>Centres d'intérêt</div>
             <ul style={{ paddingLeft: 16, margin: 0 }}>
-              {data.interests.map((interest, i) => (
-                <li key={i} style={{ fontSize: 11 }}>{typeof interest === 'string' ? interest : (interest && typeof interest === 'object' && 'name' in interest ? interest.name : '')}</li>
+              {interests.map((interest, i) => (
+                <li key={i} style={{ fontSize: 11 }}>{typeof interest === 'string' ? interest : (interest && typeof interest === 'object' && (interest as any).name ? (interest as any).name : '')}</li>
               ))}
             </ul>
           </div>
+        )}
+        {/* Références */}
+        {references.length > 0 && (
+          <section style={{ marginBottom: 24 }}>
+            <div style={{ fontWeight: 700, fontSize: 18, color: bleuFonce, marginBottom: 10, background: grisClair, padding: '6px 12px', borderRadius: 8, display: 'inline-block' }}>RÉFÉRENCES</div>
+            {references.map((ref: any, idx: number) => (
+              <div key={idx} style={{ fontSize: 13, color: bleuClair, marginBottom: 6 }}>
+                <div style={{ fontWeight: 600 }}>{ref.name}</div>
+                {ref.position && <div style={{ fontSize: 12 }}>{ref.position}</div>}
+                {ref.contact && <div style={{ fontSize: 12, color: '#888' }}>{ref.contact}</div>}
+              </div>
+            ))}
+          </section>
         )}
       </div>
     </div>

@@ -163,6 +163,19 @@ const HealthTemplate: React.FC<HealthTemplateProps> = ({ data, isMiniature = fal
             </ul>
           </div>
         )}
+        {/* Section Références dynamique (tableau) */}
+        {Array.isArray(data.references) && data.references.length > 0 && (
+          <div style={{ width: '100%', marginBottom: 18 }}>
+            <div style={{ ...sectionTitle, fontSize: 13, color: roseFonce, marginBottom: 6 }}>RÉFÉRENCES</div>
+            {data.references.map((ref: any, idx: number) => (
+              <div key={idx} style={{ color: gris, fontSize: 13, marginBottom: 6 }}>
+                <div style={{ fontWeight: 600 }}>{ref.name}</div>
+                {ref.position && <div style={{ fontSize: 12 }}>{ref.position}</div>}
+                {ref.contact && <div style={{ fontSize: 12, color: '#888' }}>{ref.contact}</div>}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

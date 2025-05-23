@@ -27,9 +27,7 @@ const AdminTemplate: React.FC<AdminTemplateProps> = ({ data, isMiniature = false
   const skills = Array.isArray(data.skills) ? data.skills : [];
   const certifications = Array.isArray(data.certifications) ? data.certifications : [];
   const languages = Array.isArray(data.languages) ? data.languages : [];
-  const references = Array.isArray((data as any).references) && (data as any).references.length > 0
-    ? (data as any).references
-    : [];
+  const references = Array.isArray(data.references) ? data.references : [];
 
   return (
     <div style={{ width: 794, height: 1123, background: blanc, fontFamily: 'Montserrat, Arial, sans-serif', display: 'flex', flexDirection: 'column' }}>

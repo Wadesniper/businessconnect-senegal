@@ -127,15 +127,15 @@ const ArtTemplate: React.FC<ArtTemplateProps> = ({ data, isMiniature = false }) 
             <div>
               <div style={{ fontWeight: 700, fontSize: 16, color: bleu, marginBottom: 8, background: gris, padding: '6px 12px', borderRadius: 8, display: 'inline-block' }}>CENTRES D'INTÉRÊT</div>
               {interests.map((interest, idx) => (
-                <div key={idx} style={{ fontSize: 13, color: bleu, marginBottom: 6 }}>{typeof interest === 'string' ? interest : (interest && typeof interest === 'object' && 'name' in interest ? interest.name : '')}</div>
+                <div key={idx} style={{ fontSize: 13, color: bleu, marginBottom: 6 }}>{typeof interest === 'string' ? interest : (interest && typeof interest === 'object' && (interest as any).name ? (interest as any).name : '')}</div>
               ))}
             </div>
           )}
           {/* Références */}
-          {(references && references.length > 0) && (
+          {Array.isArray(data.references) && data.references.length > 0 && (
             <div>
               <div style={{ fontWeight: 700, fontSize: 16, color: bleu, marginBottom: 8, background: gris, padding: '6px 12px', borderRadius: 8, display: 'inline-block' }}>RÉFÉRENCES</div>
-              {references.map((ref: any, idx: number) => (
+              {data.references.map((ref: any, idx: number) => (
                 <div key={idx} style={{ fontSize: 13, color: bleu, marginBottom: 6 }}>
                   <div style={{ fontWeight: 600 }}>{ref.name}</div>
                   {ref.position && <div style={{ fontSize: 12 }}>{ref.position}</div>}

@@ -163,6 +163,20 @@ const BankTemplate: React.FC<BankTemplateProps> = ({ data, isMiniature = false }
           ))}
         </Row>
       </section>
+
+      {/* Section Références dynamique */}
+      {Array.isArray(data.references) && data.references.length > 0 && (
+        <div style={{ marginTop: 24 }}>
+          <div style={{ fontWeight: 700, fontSize: 18, color: '#0d47a1', marginBottom: 8 }}>RÉFÉRENCES</div>
+          {data.references.map((ref: any, idx: number) => (
+            <div key={idx} style={{ fontSize: 14, color: '#0d47a1', marginBottom: 8 }}>
+              <div style={{ fontWeight: 600 }}>{ref.name}</div>
+              {ref.position && <div style={{ fontSize: 13 }}>{ref.position}</div>}
+              {ref.contact && <div style={{ fontSize: 12, color: '#888' }}>{ref.contact}</div>}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
