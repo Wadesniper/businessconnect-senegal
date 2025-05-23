@@ -44,6 +44,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
     certifications: Array.isArray(data?.certifications) ? data.certifications : [],
     projects: Array.isArray(data?.projects) ? data.projects : [],
     interests: Array.isArray(data?.interests) ? data.interests : [],
+    references: Array.isArray(data?.references) ? data.references : [],
   };
 
   // Dimensions A4
