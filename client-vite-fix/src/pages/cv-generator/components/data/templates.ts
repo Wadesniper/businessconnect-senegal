@@ -102,14 +102,26 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     id: 'admin',
     name: 'Administration / RH',
     component: AdminTemplate,
-    description: 'CV pour gestion, RH, administration',
+    description: 'CV moderne et professionnel pour les métiers RH et administratifs',
     premium: true,
     category: 'Administration',
     thumbnail: '/images/cv-templates/admin-preview.png',
     previewImage: '/images/cv-templates/admin-preview.png',
-    features: ['Sections gestion', 'Design sobre', 'Mise en avant des compétences RH'],
+    features: [
+      'Design épuré et moderne',
+      'Mise en page professionnelle',
+      'Sections bien structurées',
+      'Parfait pour les profils RH',
+      'Lisibilité optimale'
+    ],
     profileImage: '/images/avatars/woman-3.png',
-    sampleData: DEMO_PROFILES.admin,
+    sampleData: {
+      ...DEMO_PROFILES.admin,
+      personalInfo: {
+        ...DEMO_PROFILES.admin.personalInfo,
+        title: 'Responsable Ressources Humaines',
+      }
+    }
   },
   {
     id: 'tech',
