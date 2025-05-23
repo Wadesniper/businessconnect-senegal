@@ -29,9 +29,9 @@ const EducationTemplate: React.FC<EducationTemplateProps> = ({ data, isMiniature
 
   return (
     <div style={{ position: 'relative', width: 794, height: 1123, background: gris, borderRadius: 18, overflow: 'hidden', fontFamily: 'Montserrat, Arial, sans-serif', boxShadow: '0 4px 24px #0002' }}>
-      {/* Bande bleue traversante, arrondie à gauche */}
+      {/* Bande bleue traversante, arrondie à gauche, derrière la colonne noire */}
       <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: 120, background: bleu, borderTopLeftRadius: 18, zIndex: 1 }} />
-      {/* Colonne noire traversante, au-dessus de la bande bleue */}
+      {/* Colonne noire traversante, au-dessus de la bande bleue à gauche */}
       <div style={{ position: 'absolute', top: 0, left: 0, width: 240, height: '100%', background: noir, color: blanc, zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 18px' }}>
         {/* Espace pour la photo */}
         <div style={{ height: 60 }} />
@@ -56,12 +56,12 @@ const EducationTemplate: React.FC<EducationTemplateProps> = ({ data, isMiniature
           ))}
         </div>
       </div>
-      {/* Photo de profil centrée sur l'intersection, posée sur la bande bleue */}
-      <div style={{ position: 'absolute', top: 15, left: 120, zIndex: 3, width: 120, display: 'flex', justifyContent: 'center' }}>
-        <Avatar src={personalInfo.photo || '/images/avatars/man-2.png'} size={110} style={{ border: '6px solid #fff', boxShadow: '0 2px 8px #0001', background: '#eee' }} />
+      {/* Photo de profil parfaitement centrée sur la croix */}
+      <div style={{ position: 'absolute', top: 10, left: 145, zIndex: 3, width: 130, display: 'flex', justifyContent: 'center' }}>
+        <Avatar src={personalInfo.photo || '/images/avatars/man-2.png'} size={120} style={{ border: '6px solid #fff', boxShadow: '0 2px 8px #0001', background: '#eee' }} />
       </div>
-      {/* Nom et titre dans la bande bleue, à droite de la photo */}
-      <div style={{ position: 'absolute', top: 38, left: 250, zIndex: 4, display: 'flex', flexDirection: 'column', justifyContent: 'center', height: 70 }}>
+      {/* Nom et titre dans la bande bleue, à droite de la photo, avec marge */}
+      <div style={{ position: 'absolute', top: 38, left: 290, zIndex: 4, display: 'flex', flexDirection: 'column', justifyContent: 'center', height: 70, marginLeft: 20 }}>
         <div style={{ fontWeight: 700, fontSize: 28, color: blanc, letterSpacing: 1 }}>{personalInfo.firstName} {personalInfo.lastName}</div>
         <div style={{ fontSize: 16, color: '#e0e0e0', marginTop: 2 }}>{personalInfo.title}</div>
       </div>
