@@ -227,7 +227,8 @@ const DEMO_PROFILES: Record<string, any> = {
       profileImage: '/images/avatars/woman-2.png',
       address: 'Thiès, Sénégal',
       linkedin: 'linkedin.com/in/awadiop',
-      summary: "Infirmière coordinatrice avec 8 ans d'expérience en milieu hospitalier, experte en gestion des urgences, soins intensifs, formation et accompagnement des patients. Forte capacité à travailler en équipe pluridisciplinaire et à gérer des situations complexes."
+      summary: "Infirmière coordinatrice avec 8 ans d'expérience en milieu hospitalier, experte en gestion des urgences, soins intensifs, formation et accompagnement des patients. Forte capacité à travailler en équipe pluridisciplinaire et à gérer des situations complexes.",
+      reference: 'Dr. Fatou Sarr, Médecin Chef, Hôpital Principal, fatou.sarr@email.com',
     },
     summary: "Infirmière coordinatrice, experte en gestion des urgences, soins intensifs et formation.",
     experience: [

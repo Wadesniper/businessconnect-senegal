@@ -1,28 +1,35 @@
 import React from 'react';
-import { Typography, Row, Col, Tag, Timeline, Card, Avatar, Rate } from 'antd';
-import { MailOutlined, PhoneOutlined, EnvironmentOutlined, LinkedinOutlined, GlobalOutlined, MedicineBoxOutlined } from '@ant-design/icons';
+import { Avatar } from 'antd';
+import { MailOutlined, PhoneOutlined, EnvironmentOutlined } from '@ant-design/icons';
 import type { CVData } from '../../../../types/cv';
-
-const { Title, Text, Paragraph } = Typography;
 
 interface HealthTemplateProps {
   data: CVData;
   isMiniature?: boolean;
 }
 
+const rose = '#fbeeee';
+const roseFonce = '#e6bfcf';
+const noir = '#222';
+const gris = '#666';
+const blanc = '#fff';
+
+const sectionTitle = {
+  color: roseFonce,
+  fontWeight: 700,
+  fontSize: 16,
+  letterSpacing: 1,
+  marginBottom: 8,
+  textTransform: 'uppercase' as const,
+};
+
 const HealthTemplate: React.FC<HealthTemplateProps> = ({ data, isMiniature = false }) => {
-  // Sécurisation des accès aux champs potentiellement absents
   const personalInfo = {
-    firstName: data.personalInfo.firstName || '',
-    lastName: data.personalInfo.lastName || '',
-    title: data.personalInfo.title || '',
-    email: data.personalInfo.email || '',
-    phone: data.personalInfo.phone || '',
-    address: data.personalInfo.address || '',
-    photo: data.personalInfo.photo || '',
-    summary: data.personalInfo.summary || '',
+    ...data.personalInfo,
     linkedin: (data.personalInfo as any).linkedin || '',
     portfolio: (data.personalInfo as any).portfolio || '',
+    summary: (data.personalInfo as any).summary || '',
+    reference: (data.personalInfo as any).reference || '',
   };
   const summary = personalInfo.summary || '';
   const experience = Array.isArray(data.experience) ? data.experience : [];
@@ -32,125 +39,103 @@ const HealthTemplate: React.FC<HealthTemplateProps> = ({ data, isMiniature = fal
   const languages = Array.isArray(data.languages) ? data.languages : [];
 
   return (
-    <div style={{ background: 'linear-gradient(135deg, #e6fffb 0%, #bae7ff 100%)', borderRadius: 16, boxShadow: '0 4px 24px rgba(24, 144, 255, 0.08)', padding: isMiniature ? 8 : 32, fontSize: isMiniature ? 11 : undefined }}>
-      {/* En-tête */}
-      <Row gutter={isMiniature ? 8 : 24} align="middle" style={{ marginBottom: isMiniature ? 12 : 32 }}>
-        <Col xs={24} md={7} style={{ textAlign: 'center' }}>
-          <Avatar
-            src={personalInfo.photo || '/images/avatars/woman-2.png'}
-            size={isMiniature ? 56 : 160}
-            style={{ border: `4px solid #13c2c2`, marginBottom: isMiniature ? 6 : 16 }}
-          />
-          <Title level={isMiniature ? 5 : 3} style={{ color: '#08979c', margin: 0 }}>
-            {personalInfo.firstName} {personalInfo.lastName}
-          </Title>
-          <Text style={{ color: '#006d75' }}>{personalInfo.title}</Text>
-        </Col>
-        <Col xs={24} md={17}>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: isMiniature ? 4 : 16 }}>
-            <Tag color="cyan" style={isMiniature ? { fontSize: 10, padding: '2px 6px' } : {}}><MailOutlined /> {personalInfo.email}</Tag>
-            <Tag color="blue" style={isMiniature ? { fontSize: 10, padding: '2px 6px' } : {}}><PhoneOutlined /> {personalInfo.phone}</Tag>
-            <Tag color="geekblue" style={isMiniature ? { fontSize: 10, padding: '2px 6px' } : {}}><EnvironmentOutlined /> {personalInfo.address}</Tag>
-            {personalInfo.linkedin && <Tag color="geekblue" style={isMiniature ? { fontSize: 10, padding: '2px 6px' } : {}}><LinkedinOutlined /> {personalInfo.linkedin}</Tag>}
-            {personalInfo.portfolio && <Tag color="purple" style={isMiniature ? { fontSize: 10, padding: '2px 6px' } : {}}><GlobalOutlined /> {personalInfo.portfolio}</Tag>}
+    <div style={{ display: 'flex', flexDirection: 'row', width: 794, minHeight: 1123, background: blanc, borderRadius: 18, boxShadow: '0 4px 24px #0002', fontFamily: 'Montserrat, Arial, sans-serif', overflow: 'hidden' }}>
+      {/* Colonne gauche */}
+      <div style={{ background: rose, width: 270, padding: '32px 18px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Avatar src={personalInfo.photo || '/images/avatars/woman-2.png'} size={90} style={{ border: `2px solid ${roseFonce}`, marginBottom: 16 }} />
+        <div style={{ fontSize: 22, fontWeight: 700, color: noir, marginBottom: 2, textAlign: 'center' }}>{personalInfo.firstName} {personalInfo.lastName}</div>
+        <div style={{ fontSize: 13, color: gris, fontWeight: 500, marginBottom: 16, textAlign: 'center' }}>{personalInfo.title}</div>
+        {/* Contacts */}
+        <div style={{ width: '100%', marginBottom: 18 }}>
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: 6 }}>
+            <MailOutlined style={{ color: roseFonce, fontSize: 14, marginRight: 6 }} />
+            <span style={{ color: noir, fontSize: 13, fontWeight: 500 }}>{personalInfo.email}</span>
           </div>
-          <Paragraph style={{ marginTop: isMiniature ? 8 : 24, fontSize: isMiniature ? 11 : 16, color: '#006d75' }}>{summary}</Paragraph>
-        </Col>
-      </Row>
-
-      {/* Expérience */}
-      <section style={{ marginBottom: isMiniature ? 10 : 32 }}>
-        <Title level={isMiniature ? 5 : 4} style={{ color: '#13c2c2' }}><MedicineBoxOutlined /> Expérience Santé</Title>
-        <Timeline>
-          {experience.map((exp, idx) => (
-            <Timeline.Item key={idx} color="#13c2c2">
-              <Card style={{ borderLeft: '4px solid #13c2c2', marginBottom: isMiniature ? 6 : 16, padding: isMiniature ? 6 : 16 }}>
-                <Title level={isMiniature ? 5 : 5} style={{ color: '#08979c' }}>{exp.title}</Title>
-                <Text strong>{exp.company}</Text> <Text type="secondary">{exp.startDate} - {exp.current ? 'Présent' : exp.endDate}</Text>
-                <Paragraph style={{ fontSize: isMiniature ? 10 : undefined }}>{exp.description}</Paragraph>
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: 6 }}>
+            <PhoneOutlined style={{ color: roseFonce, fontSize: 14, marginRight: 6 }} />
+            <span style={{ color: noir, fontSize: 13, fontWeight: 500 }}>{personalInfo.phone}</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: 6 }}>
+            <EnvironmentOutlined style={{ color: roseFonce, fontSize: 14, marginRight: 6 }} />
+            <span style={{ color: noir, fontSize: 13, fontWeight: 500 }}>{personalInfo.address}</span>
+          </div>
+        </div>
+        {/* Compétences */}
+        <div style={{ width: '100%', marginBottom: 18 }}>
+          <div style={{ ...sectionTitle, fontSize: 13, color: roseFonce, marginBottom: 6 }}>COMPÉTENCES</div>
+          <ul style={{ paddingLeft: 18, margin: 0 }}>
+            {skills.map((skill, idx) => (
+              <li key={idx} style={{ color: gris, fontSize: 13, marginBottom: 2 }}>{skill.name}</li>
+            ))}
+          </ul>
+        </div>
+        {/* Formation */}
+        <div style={{ width: '100%', marginBottom: 18 }}>
+          <div style={{ ...sectionTitle, fontSize: 13, color: roseFonce, marginBottom: 6 }}>FORMATION</div>
+          <ul style={{ paddingLeft: 18, margin: 0 }}>
+            {education.map((edu, idx) => (
+              <li key={idx} style={{ color: gris, fontSize: 13, marginBottom: 2 }}>{edu.degree} en {edu.field} <br /><span style={{ color: roseFonce }}>{edu.institution}</span></li>
+            ))}
+          </ul>
+        </div>
+        {/* Référence */}
+        {personalInfo.reference && (
+          <div style={{ width: '100%', marginBottom: 18 }}>
+            <div style={{ ...sectionTitle, fontSize: 13, color: roseFonce, marginBottom: 6 }}>RÉFÉRENCE</div>
+            <div style={{ color: gris, fontSize: 13 }}>{personalInfo.reference}</div>
+          </div>
+        )}
+      </div>
+      {/* Colonne droite */}
+      <div style={{ flex: 1, background: blanc, padding: '36px 36px 36px 36px', display: 'flex', flexDirection: 'column' }}>
+        {/* Résumé */}
+        {summary && (
+          <div style={{ marginBottom: 24 }}>
+            <div style={{ ...sectionTitle, color: roseFonce, fontSize: 16, marginBottom: 8 }}>À PROPOS DE MOI</div>
+            <div style={{ color: gris, fontSize: 14, lineHeight: 1.6 }}>{summary}</div>
+          </div>
+        )}
+        {/* Expérience */}
+        {experience.length > 0 && (
+          <div style={{ marginBottom: 24 }}>
+            <div style={{ ...sectionTitle, color: roseFonce, fontSize: 16, marginBottom: 8 }}>EXPÉRIENCE</div>
+            {experience.map((exp, idx) => (
+              <div key={idx} style={{ marginBottom: 14 }}>
+                <div style={{ fontWeight: 700, fontSize: 15, color: roseFonce }}>{exp.title}</div>
+                <div style={{ color: gris, fontSize: 13, fontWeight: 500 }}>{exp.company} <span style={{ color: noir, fontWeight: 400 }}>• {exp.startDate} - {exp.current ? 'Présent' : exp.endDate}</span></div>
+                <div style={{ color: gris, fontSize: 13, marginTop: 2 }}>{exp.description}</div>
                 {exp.achievements && exp.achievements.length > 0 && (
-                  <ul style={isMiniature ? { margin: 0, paddingLeft: 14 } : {}}>
+                  <ul style={{ color: roseFonce, fontSize: 12, marginTop: 3, marginBottom: 0, paddingLeft: 16 }}>
                     {exp.achievements.map((ach, i) => <li key={i}>{ach}</li>)}
                   </ul>
                 )}
-              </Card>
-            </Timeline.Item>
-          ))}
-        </Timeline>
-      </section>
-
-      {/* Compétences */}
-      <section style={{ marginBottom: isMiniature ? 10 : 32 }}>
-        <Title level={isMiniature ? 5 : 4} style={{ color: '#13c2c2' }}>Compétences Clés</Title>
-        <Row gutter={[isMiniature ? 4 : 16, isMiniature ? 4 : 16]}>
-          {skills.map((skill, idx) => (
-            <Col xs={24} sm={12} md={8} key={idx} style={isMiniature ? { marginBottom: 2 } : {}}>
-              <Card style={{ background: '#e6fffb', border: '1px solid #87e8de', padding: isMiniature ? 4 : 12 }}>
-                <Text strong style={isMiniature ? { fontSize: 10 } : {}}>{skill.name}</Text>
-                <Rate disabled defaultValue={typeof skill.level === 'number' ? skill.level : skill.level === 'Débutant' ? 1 : skill.level === 'Intermédiaire' ? 2 : skill.level === 'Avancé' ? 3 : skill.level === 'Expert' ? 4 : 0} style={isMiniature ? { fontSize: 10 } : {}} />
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </section>
-
-      {/* Formation */}
-      <section style={{ marginBottom: isMiniature ? 10 : 32 }}>
-        <Title level={isMiniature ? 5 : 4} style={{ color: '#13c2c2' }}>Formation</Title>
-        <Timeline>
-          {education.map((edu, idx) => (
-            <Timeline.Item key={idx} color="#13c2c2">
-              <Card style={{ background: '#e6fffb', border: '1px solid #87e8de', padding: isMiniature ? 4 : 12 }}>
-                <Title level={isMiniature ? 5 : 5}>{edu.degree} en {edu.field}</Title>
-                <Text strong>{edu.institution}</Text> <Text type="secondary">{edu.startDate} - {edu.endDate}</Text>
-                <Paragraph style={{ fontSize: isMiniature ? 10 : undefined }}>{edu.description}</Paragraph>
-              </Card>
-            </Timeline.Item>
-          ))}
-        </Timeline>
-      </section>
-
-      {/* Certifications */}
-      {certifications && certifications.length > 0 && (
-        <section style={{ marginBottom: isMiniature ? 10 : 32 }}>
-          <Title level={isMiniature ? 5 : 4} style={{ color: '#13c2c2' }}>Certifications</Title>
-          <Row gutter={[isMiniature ? 4 : 16, isMiniature ? 4 : 16]}>
-            {certifications.map((cert, idx) => {
-              if (typeof cert === 'string') {
-                return (
-                  <Col key={idx} xs={24} sm={12} md={8} style={isMiniature ? { marginBottom: 2 } : {}}>
-                    <Card style={{ background: '#e6fffb', border: '1px solid #87e8de', padding: isMiniature ? 4 : 12 }}>
-                      <Text style={isMiniature ? { fontSize: 10 } : {}}>{cert}</Text>
-                    </Card>
-                  </Col>
-                );
-              } else {
-                return (
-                  <Col key={idx} xs={24} sm={12} md={8} style={isMiniature ? { marginBottom: 2 } : {}}>
-                    <Card style={{ background: '#e6fffb', border: '1px solid #87e8de', padding: isMiniature ? 4 : 12 }}>
-                      <Text strong style={isMiniature ? { fontSize: 10 } : {}}>{cert.name}</Text><br/>
-                      <Text style={isMiniature ? { fontSize: 10 } : {}}>{cert.issuer}</Text><br/>
-                      <Text type="secondary" style={isMiniature ? { fontSize: 10 } : {}}>{cert.date}</Text>
-                    </Card>
-                  </Col>
-                );
-              }
-            })}
-          </Row>
-        </section>
-      )}
-
-      {/* Langues */}
-      <section>
-        <Title level={isMiniature ? 5 : 4} style={{ color: '#13c2c2' }}>Langues</Title>
-        <Row gutter={[isMiniature ? 4 : 16, isMiniature ? 4 : 16]}>
-          {languages.map((lang, idx) => (
-            <Col key={idx} xs={12} sm={8} md={6} style={isMiniature ? { marginBottom: 2 } : {}}>
-              <Tag color="cyan" style={isMiniature ? { fontSize: 10, padding: '2px 6px' } : {}}>{lang.name} - {lang.level}</Tag>
-            </Col>
-          ))}
-        </Row>
-      </section>
+              </div>
+            ))}
+          </div>
+        )}
+        {/* Certifications */}
+        {certifications.length > 0 && (
+          <div style={{ marginBottom: 24 }}>
+            <div style={{ ...sectionTitle, color: roseFonce, fontSize: 16, marginBottom: 8 }}>CERTIFICATIONS</div>
+            <ul style={{ paddingLeft: 18, margin: 0 }}>
+              {certifications.map((cert, idx) => (
+                <li key={idx} style={{ color: gris, fontSize: 13, marginBottom: 2 }}>{typeof cert === 'string' ? cert : cert.name}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {/* Langues */}
+        {languages.length > 0 && (
+          <div style={{ marginBottom: 24 }}>
+            <div style={{ ...sectionTitle, color: roseFonce, fontSize: 16, marginBottom: 8 }}>LANGUES</div>
+            <ul style={{ paddingLeft: 18, margin: 0, display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+              {languages.map((lang, idx) => (
+                <li key={idx} style={{ color: gris, fontSize: 13, marginBottom: 2 }}>{lang.name} - {lang.level}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
