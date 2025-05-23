@@ -4,157 +4,113 @@ import { LinkedinOutlined, PhoneOutlined, MailOutlined, EnvironmentOutlined } fr
 import type { CVData } from '../../../../types/cv';
 import '../../styles/FinanceTemplate.css';
 
+const noir = '#232323';
+const jaune = '#FFD600';
+const gris = '#b0b0b0';
+const blanc = '#fff';
+
 interface FinanceTemplateProps {
   data: CVData;
   isMiniature?: boolean;
 }
 
 const FinanceTemplate: React.FC<FinanceTemplateProps> = ({ data, isMiniature = false }) => {
-  // Sécurisation des accès aux champs potentiellement absents
   const personalInfo = {
     ...data.personalInfo,
     linkedin: (data.personalInfo as any).linkedin || '',
-    portfolio: (data.personalInfo as any).portfolio || '',
     summary: (data.personalInfo as any).summary || '',
   };
   const summary = personalInfo.summary || (data as any).summary || '';
   const experience = Array.isArray(data.experience) ? data.experience : [];
   const education = Array.isArray(data.education) ? data.education : [];
   const skills = Array.isArray(data.skills) ? data.skills : [];
-  const certifications = Array.isArray(data.certifications) ? data.certifications : [];
+  const techSkills = Array.isArray((data as any).technicalSkills) ? (data as any).technicalSkills : [];
   const languages = Array.isArray(data.languages) ? data.languages : [];
   const interests = Array.isArray(data.interests) ? data.interests : [];
   const references = Array.isArray(data.references) ? data.references : [];
 
-  // Ajout des couleurs manquantes
-  const bleuFonce = '#2D3142';
-  const grisClair = '#f5f6fa';
-  const bleuClair = '#4F5D75';
-
   return (
-    <div
-      className="finance-cv-template"
-      style={{
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'row',
-        fontSize: 11,
-        background: '#fff',
-        borderRadius: 12,
-        boxSizing: 'border-box',
-        padding: 0,
-      }}
-    >
-      {/* Colonne gauche */}
-      <div style={{ width: '32%', background: '#17406a', color: '#fff', borderRadius: '12px 0 0 12px', padding: '24px 12px 24px 24px', display: 'flex', flexDirection: 'column', gap: 16, height: '100%' }}>
-        <div style={{ textAlign: 'center', marginBottom: 16 }}>
-          <Avatar src={data.personalInfo.photo || '/images/avatars/man-1.png'} size={80} style={{ border: '3px solid #fff', marginBottom: 8 }} />
-          <div style={{ fontWeight: 700, fontSize: 16, marginTop: 8 }}>{data.personalInfo.firstName} {data.personalInfo.lastName}</div>
-          <div style={{ fontSize: 12 }}>{data.personalInfo.title}</div>
+    <div style={{ width: 794, height: 1123, background: blanc, borderRadius: 18, overflow: 'hidden', fontFamily: 'Montserrat, Arial, sans-serif', boxShadow: '0 4px 24px #0002', display: 'flex', flexDirection: 'row' }}>
+      {/* Colonne gauche jaune */}
+      <div style={{ width: '32%', background: jaune, color: noir, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-start', padding: '0 0 0 0', position: 'relative' }}>
+        {/* Bandeau noir incliné */}
+        <div style={{ width: '120%', height: 120, background: noir, color: blanc, transform: 'skewY(-7deg)', position: 'absolute', top: 0, left: -30, zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', padding: '32px 0 0 32px' }}>
+          <div style={{ fontWeight: 900, fontSize: 28, letterSpacing: 1, lineHeight: 1, textTransform: 'uppercase', marginBottom: 8 }}>{personalInfo.firstName} {personalInfo.lastName}</div>
+          <div style={{ fontSize: 16, color: jaune, fontWeight: 500, letterSpacing: 2, textTransform: 'uppercase' }}>{personalInfo.title}</div>
         </div>
-        <div style={{ fontSize: 11, marginBottom: 12 }}>
-          <div style={{ marginBottom: 4 }}><MailOutlined /> {personalInfo.email}</div>
-          <div style={{ marginBottom: 4 }}><PhoneOutlined /> {personalInfo.phone}</div>
-          <div style={{ marginBottom: 4 }}><EnvironmentOutlined /> {personalInfo.address}</div>
-          {personalInfo.linkedin && <div><LinkedinOutlined /> {personalInfo.linkedin}</div>}
+        {/* Bloc profil personnel */}
+        <div style={{ marginTop: 140, width: '100%', padding: '0 24px' }}>
+          <div style={{ fontWeight: 700, fontSize: 14, color: noir, background: jaune, padding: '6px 12px', borderRadius: 8, marginBottom: 8, display: 'inline-block', letterSpacing: 1 }}>PROFIL PERSONNEL</div>
+          <div style={{ fontSize: 13, color: noir, marginBottom: 18 }}>{summary}</div>
         </div>
-        <div style={{ marginBottom: 12 }}>
-          <div style={{ fontWeight: 600, fontSize: 12, marginBottom: 4 }}>Compétences</div>
-          <ul style={{ paddingLeft: 16, margin: 0 }}>
-            {skills.slice(0, 5).map((skill, i) => <li key={i}>{skill.name}</li>)}
-          </ul>
-        </div>
-        <div style={{ marginBottom: 12 }}>
-          <div style={{ fontWeight: 600, fontSize: 12, marginBottom: 4 }}>Langues</div>
-          <ul style={{ paddingLeft: 16, margin: 0 }}>
-            {languages.slice(0, 3).map((lang, i) => <li key={i}>{lang.name} - {lang.level}</li>)}
-          </ul>
-        </div>
-        {certifications && certifications.length > 0 && (
-          <div style={{ marginBottom: 12 }}>
-            <div style={{ fontWeight: 600, fontSize: 12, marginBottom: 4 }}>Certifications</div>
-            <ul style={{ paddingLeft: 16, margin: 0 }}>
-              {certifications.slice(0, 3).map((cert, i) => typeof cert === 'string' ? <li key={i}>{cert}</li> : <li key={i}>{cert.name}</li>)}
+        {/* Compétences */}
+        {skills.length > 0 && (
+          <div style={{ width: '100%', padding: '0 24px', marginBottom: 18 }}>
+            <div style={{ fontWeight: 700, fontSize: 14, color: noir, background: jaune, padding: '6px 12px', borderRadius: 8, marginBottom: 8, display: 'inline-block', letterSpacing: 1 }}>COMPÉTENCES</div>
+            <ul style={{ paddingLeft: 18, margin: 0 }}>
+              {skills.map((skill, i) => <li key={i} style={{ fontSize: 13 }}>{skill.name}</li>)}
             </ul>
           </div>
         )}
+        {/* Contacts */}
+        <div style={{ width: '100%', padding: '0 24px', marginBottom: 18 }}>
+          <div style={{ fontWeight: 700, fontSize: 14, color: noir, background: jaune, padding: '6px 12px', borderRadius: 8, marginBottom: 8, display: 'inline-block', letterSpacing: 1 }}>CONTACTEZ-MOI</div>
+          <div style={{ fontSize: 13, marginBottom: 6 }}><EnvironmentOutlined /> {personalInfo.address}</div>
+          <div style={{ fontSize: 13, marginBottom: 6 }}><MailOutlined /> {personalInfo.email}</div>
+          <div style={{ fontSize: 13, marginBottom: 6 }}><PhoneOutlined /> {personalInfo.phone}</div>
+          {personalInfo.linkedin && <div style={{ fontSize: 13, marginBottom: 6 }}><LinkedinOutlined /> {personalInfo.linkedin}</div>}
+        </div>
       </div>
-      {/* Colonne droite */}
-      <div style={{ width: '68%', padding: '24px 24px 24px 16px', display: 'flex', flexDirection: 'column', gap: 12, height: '100%' }}>
-        <div style={{ marginBottom: 8 }}>
-          <div style={{ fontWeight: 700, fontSize: 18, color: '#17406a', marginBottom: 4 }}>Profil</div>
-          <div style={{ fontSize: 11 }}>{summary}</div>
-        </div>
-        <div style={{ marginBottom: 8 }}>
-          <div style={{ fontWeight: 700, fontSize: 16, color: '#17406a', marginBottom: 4 }}>Expérience</div>
-          <ul style={{ paddingLeft: 16, margin: 0 }}>
-            {experience.slice(0, 3).map((exp, i) => (
-              <li key={i} style={{ marginBottom: 6 }}>
-                <div style={{ fontWeight: 600 }}>{exp.title} <span style={{ fontWeight: 400, color: '#888' }}>@ {exp.company}</span></div>
-                <div style={{ fontSize: 10, color: '#888' }}>{exp.startDate} - {exp.current ? 'Présent' : exp.endDate}</div>
-                <div style={{ fontSize: 11 }}>{exp.description}</div>
-                {exp.achievements && exp.achievements.length > 0 && (
-                  <ul style={{ paddingLeft: 16, margin: 0 }}>
-                    {exp.achievements.slice(0, 2).map((ach, j) => <li key={j} style={{ fontSize: 10 }}>{ach}</li>)}
-                  </ul>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div>
-          <div style={{ fontWeight: 700, fontSize: 16, color: '#17406a', marginBottom: 4 }}>Formation</div>
-          <ul style={{ paddingLeft: 16, margin: 0 }}>
-            {education.slice(0, 2).map((edu, i) => (
-              <li key={i} style={{ marginBottom: 6 }}>
-                <div style={{ fontWeight: 600 }}>{edu.degree} en {edu.field}</div>
-                <div style={{ fontSize: 10, color: '#888' }}>{edu.institution} — {edu.startDate} - {edu.endDate}</div>
-                {edu.description && <div style={{ fontSize: 11 }}>{edu.description}</div>}
-              </li>
-            ))}
-          </ul>
-        </div>
-        {/* Section Projets */}
-        {Array.isArray(data.projects) && data.projects.length > 0 && (
-          <div style={{ marginTop: 8 }}>
-            <div style={{ fontWeight: 700, fontSize: 16, color: '#17406a', marginBottom: 4 }}>Projets</div>
-            <ul style={{ paddingLeft: 16, margin: 0 }}>
-              {data.projects.map((proj, i) => (
-                <li key={i} style={{ marginBottom: 6 }}>
-                  <div style={{ fontWeight: 600 }}>{typeof proj === 'string' ? proj : proj.name}</div>
-                  {typeof proj !== 'string' && proj.description && <div style={{ fontSize: 11 }}>{proj.description}</div>}
-                  {typeof proj !== 'string' && (proj.startDate || proj.endDate) && (
-                    <div style={{ fontSize: 10, color: '#888' }}>{proj.startDate}{proj.endDate ? ` - ${proj.endDate}` : ''}</div>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-        {/* Section Centres d'intérêt */}
-        {interests.length > 0 && (
-          <div style={{ marginTop: 8 }}>
-            <div style={{ fontWeight: 700, fontSize: 16, color: '#17406a', marginBottom: 4 }}>Centres d'intérêt</div>
-            <ul style={{ paddingLeft: 16, margin: 0 }}>
-              {interests.map((interest, i) => (
-                <li key={i} style={{ fontSize: 11 }}>{typeof interest === 'string' ? interest : (interest && typeof interest === 'object' && (interest as any).name ? (interest as any).name : '')}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-        {/* Références */}
-        {references.length > 0 && (
-          <section style={{ marginBottom: 24 }}>
-            <div style={{ fontWeight: 700, fontSize: 18, color: bleuFonce, marginBottom: 10, background: grisClair, padding: '6px 12px', borderRadius: 8, display: 'inline-block' }}>RÉFÉRENCES</div>
-            {references.map((ref: any, idx: number) => (
-              <div key={idx} style={{ fontSize: 13, color: bleuClair, marginBottom: 6 }}>
-                <div style={{ fontWeight: 600 }}>{ref.name}</div>
-                {ref.position && <div style={{ fontSize: 12 }}>{ref.position}</div>}
-                {ref.contact && <div style={{ fontSize: 12, color: '#888' }}>{ref.contact}</div>}
+      {/* Colonne droite blanche */}
+      <div style={{ width: '68%', background: blanc, color: noir, display: 'flex', flexDirection: 'column', padding: '48px 40px 32px 40px', gap: 24 }}>
+        {/* Expérience professionnelle */}
+        {experience.length > 0 && (
+          <div>
+            <div style={{ fontWeight: 700, fontSize: 16, color: blanc, background: noir, padding: '6px 18px', borderRadius: 8, marginBottom: 12, display: 'inline-block', letterSpacing: 1 }}>EXPÉRIENCE PROFESSIONNELLE</div>
+            {experience.map((exp, idx) => (
+              <div key={idx} style={{ marginBottom: 18 }}>
+                <div style={{ fontWeight: 700, fontSize: 15, color: noir }}>{exp.title}</div>
+                <div style={{ fontSize: 13, color: gris }}>{exp.company}</div>
+                <div style={{ fontSize: 12, color: noir }}>{exp.startDate} - {exp.current ? 'Présent' : exp.endDate}</div>
+                <div style={{ fontSize: 13, color: gris }}>{exp.description}</div>
               </div>
             ))}
-          </section>
+          </div>
+        )}
+        {/* Formation antérieure */}
+        {education.length > 0 && (
+          <div>
+            <div style={{ fontWeight: 700, fontSize: 16, color: blanc, background: noir, padding: '6px 18px', borderRadius: 8, marginBottom: 12, display: 'inline-block', letterSpacing: 1 }}>FORMATION ANTÉRIEURE</div>
+            {education.map((edu, idx) => (
+              <div key={idx} style={{ marginBottom: 14 }}>
+                <div style={{ fontWeight: 700, fontSize: 14, color: noir }}>{edu.institution}</div>
+                <div style={{ fontSize: 13, color: gris }}>{edu.degree}{edu.field ? `, ${edu.field}` : ''}</div>
+                <div style={{ fontSize: 12, color: noir }}>{edu.startDate} - {edu.endDate}</div>
+              </div>
+            ))}
+          </div>
+        )}
+        {/* Compétences techniques */}
+        {techSkills.length > 0 && (
+          <div>
+            <div style={{ fontWeight: 700, fontSize: 16, color: noir, background: jaune, padding: '6px 18px', borderRadius: 8, marginBottom: 12, display: 'inline-block', letterSpacing: 1 }}>COMPÉTENCES TECHNIQUES</div>
+            {techSkills.map((skill: any, idx: number) => (
+              <div key={idx} style={{ fontSize: 13, color: noir, marginBottom: 8 }}>{skill.name}</div>
+            ))}
+          </div>
+        )}
+        {/* Références dynamiques */}
+        {references.length > 0 && (
+          <div>
+            <div style={{ fontWeight: 700, fontSize: 16, color: noir, background: jaune, padding: '6px 18px', borderRadius: 8, marginBottom: 12, display: 'inline-block', letterSpacing: 1 }}>RÉFÉRENCES</div>
+            {references.map((ref: any, idx: number) => (
+              <div key={idx} style={{ fontSize: 13, color: noir, marginBottom: 6 }}>
+                <div style={{ fontWeight: 600 }}>{ref.name}</div>
+                {ref.position && <div style={{ fontSize: 12 }}>{ref.position}</div>}
+                {ref.contact && <div style={{ fontSize: 12, color: gris }}>{ref.contact}</div>}
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </div>
