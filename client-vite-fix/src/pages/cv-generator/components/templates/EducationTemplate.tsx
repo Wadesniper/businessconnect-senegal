@@ -100,6 +100,30 @@ const EducationTemplate: React.FC<EducationTemplateProps> = ({ data, isMiniature
             ))}
           </div>
         )}
+        {/* Projets */}
+        {Array.isArray(data.projects) && data.projects.length > 0 && (
+          <div style={{ marginBottom: 28 }}>
+            <div style={{ fontWeight: 700, fontSize: 18, color: bleu, marginBottom: 10 }}>Projets</div>
+            {data.projects.map((proj, idx) => (
+              <div key={idx} style={{ fontSize: 13, color: '#232323', marginBottom: 8 }}>
+                <div style={{ fontWeight: 600 }}>{typeof proj === 'string' ? proj : proj.name}</div>
+                {typeof proj !== 'string' && proj.description && <div style={{ fontSize: 12 }}>{proj.description}</div>}
+                {typeof proj !== 'string' && (proj.startDate || proj.endDate) && (
+                  <div style={{ fontSize: 11, color: '#888' }}>{proj.startDate}{proj.endDate ? ` - ${proj.endDate}` : ''}</div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+        {/* Centres d'intérêt */}
+        {Array.isArray(data.interests) && data.interests.length > 0 && (
+          <div style={{ marginBottom: 28 }}>
+            <div style={{ fontWeight: 700, fontSize: 18, color: bleu, marginBottom: 10 }}>Centres d'intérêt</div>
+            {data.interests.map((interest, idx) => (
+              <div key={idx} style={{ fontSize: 13, color: '#232323', marginBottom: 6 }}>{typeof interest === 'string' ? interest : (interest && typeof interest === 'object' && 'name' in interest ? interest.name : '')}</div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

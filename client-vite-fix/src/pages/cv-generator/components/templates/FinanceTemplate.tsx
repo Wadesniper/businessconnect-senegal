@@ -108,6 +108,34 @@ const FinanceTemplate: React.FC<FinanceTemplateProps> = ({ data, isMiniature = f
             ))}
           </ul>
         </div>
+        {/* Section Projets */}
+        {Array.isArray(data.projects) && data.projects.length > 0 && (
+          <div style={{ marginTop: 8 }}>
+            <div style={{ fontWeight: 700, fontSize: 16, color: '#17406a', marginBottom: 4 }}>Projets</div>
+            <ul style={{ paddingLeft: 16, margin: 0 }}>
+              {data.projects.map((proj, i) => (
+                <li key={i} style={{ marginBottom: 6 }}>
+                  <div style={{ fontWeight: 600 }}>{typeof proj === 'string' ? proj : proj.name}</div>
+                  {typeof proj !== 'string' && proj.description && <div style={{ fontSize: 11 }}>{proj.description}</div>}
+                  {typeof proj !== 'string' && (proj.startDate || proj.endDate) && (
+                    <div style={{ fontSize: 10, color: '#888' }}>{proj.startDate}{proj.endDate ? ` - ${proj.endDate}` : ''}</div>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {/* Section Centres d'intérêt */}
+        {Array.isArray(data.interests) && data.interests.length > 0 && (
+          <div style={{ marginTop: 8 }}>
+            <div style={{ fontWeight: 700, fontSize: 16, color: '#17406a', marginBottom: 4 }}>Centres d'intérêt</div>
+            <ul style={{ paddingLeft: 16, margin: 0 }}>
+              {data.interests.map((interest, i) => (
+                <li key={i} style={{ fontSize: 11 }}>{typeof interest === 'string' ? interest : (interest && typeof interest === 'object' && 'name' in interest ? interest.name : '')}</li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );

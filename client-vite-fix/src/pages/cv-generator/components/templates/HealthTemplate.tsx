@@ -135,6 +135,34 @@ const HealthTemplate: React.FC<HealthTemplateProps> = ({ data, isMiniature = fal
             </ul>
           </div>
         )}
+        {/* Projets */}
+        {Array.isArray(data.projects) && data.projects.length > 0 && (
+          <div style={{ marginBottom: 24 }}>
+            <div style={{ ...sectionTitle, color: roseFonce, fontSize: 16, marginBottom: 8 }}>PROJETS</div>
+            <ul style={{ paddingLeft: 18, margin: 0 }}>
+              {data.projects.map((proj, i) => (
+                <li key={i} style={{ color: gris, fontSize: 13, marginBottom: 2 }}>
+                  <div style={{ fontWeight: 600 }}>{typeof proj === 'string' ? proj : proj.name}</div>
+                  {typeof proj !== 'string' && proj.description && <div style={{ fontSize: 12 }}>{proj.description}</div>}
+                  {typeof proj !== 'string' && (proj.startDate || proj.endDate) && (
+                    <div style={{ fontSize: 11, color: '#888' }}>{proj.startDate}{proj.endDate ? ` - ${proj.endDate}` : ''}</div>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {/* Centres d'intérêt */}
+        {Array.isArray(data.interests) && data.interests.length > 0 && (
+          <div style={{ marginBottom: 24 }}>
+            <div style={{ ...sectionTitle, color: roseFonce, fontSize: 16, marginBottom: 8 }}>CENTRES D'INTÉRÊT</div>
+            <ul style={{ paddingLeft: 18, margin: 0 }}>
+              {data.interests.map((interest, i) => (
+                <li key={i} style={{ fontSize: 13 }}>{typeof interest === 'string' ? interest : (interest && typeof interest === 'object' && 'name' in interest ? interest.name : '')}</li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );
