@@ -97,70 +97,75 @@ const WindowTemplate: React.FC<WindowTemplateProps> = ({ data, isMiniature = fal
           <div style={{ borderTop: borderStyle, padding: '14px 0 0 0', fontSize: 14, color: grisTexte, marginTop: 12 }}>{personalInfo.summary}</div>
         )}
       </CardWindow>
-      {/* Grille sections masonry : grid auto-flow dense */}
+      {/* Grille sections stricte 2 colonnes, alignement parfait */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-        gridAutoFlow: 'dense',
+        gridTemplateColumns: '1fr 1fr',
         gap: 24,
         margin: '0 24px 0 24px',
         alignItems: 'start',
       }}>
-        {/* Expérience */}
-        {experience.length > 0 && (
-          <CardWindow title="Expérience">
-            {experience.map((exp, idx) => (
-              <div key={idx} style={{ marginBottom: 18 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div style={{ fontWeight: 700, fontSize: 15, color: noir }}>{exp.title}</div>
-                  <div style={{ fontSize: 13, color: grisTexte }}>{exp.startDate} - {exp.current ? 'Présent' : exp.endDate}</div>
+        {/* Ligne 1 */}
+        <div>
+          {experience.length > 0 && (
+            <CardWindow title="Expérience">
+              {experience.map((exp, idx) => (
+                <div key={idx} style={{ marginBottom: 18 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ fontWeight: 700, fontSize: 15, color: noir }}>{exp.title}</div>
+                    <div style={{ fontSize: 13, color: grisTexte }}>{exp.startDate} - {exp.current ? 'Présent' : exp.endDate}</div>
+                  </div>
+                  <div style={{ fontSize: 13, color: grisTexte }}>{exp.company}{exp.location ? `, ${exp.location}` : ''}</div>
+                  {exp.description && <div style={{ fontSize: 13, color: grisTexte, marginTop: 2 }}>{exp.description}</div>}
+                  {Array.isArray(exp.achievements) && exp.achievements.length > 0 && (
+                    <ul style={{ fontSize: 13, color: noir, margin: '6px 0 0 0', paddingLeft: 18 }}>
+                      {exp.achievements.map((ach, i) => <li key={i}>{ach}</li>)}
+                    </ul>
+                  )}
                 </div>
-                <div style={{ fontSize: 13, color: grisTexte }}>{exp.company}{exp.location ? `, ${exp.location}` : ''}</div>
-                {exp.description && <div style={{ fontSize: 13, color: grisTexte, marginTop: 2 }}>{exp.description}</div>}
-                {Array.isArray(exp.achievements) && exp.achievements.length > 0 && (
-                  <ul style={{ fontSize: 13, color: noir, margin: '6px 0 0 0', paddingLeft: 18 }}>
-                    {exp.achievements.map((ach, i) => <li key={i}>{ach}</li>)}
-                  </ul>
-                )}
-              </div>
-            ))}
-          </CardWindow>
-        )}
-        {/* Formation */}
-        {education.length > 0 && (
-          <CardWindow title="Formation">
-            {education.map((edu, idx) => (
-              <div key={idx} style={{ marginBottom: 18 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div style={{ fontWeight: 700, fontSize: 15, color: noir }}>{edu.degree}</div>
-                  <div style={{ fontSize: 13, color: grisTexte }}>{edu.startDate} - {edu.endDate}</div>
+              ))}
+            </CardWindow>
+          )}
+        </div>
+        <div>
+          {education.length > 0 && (
+            <CardWindow title="Formation">
+              {education.map((edu, idx) => (
+                <div key={idx} style={{ marginBottom: 18 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ fontWeight: 700, fontSize: 15, color: noir }}>{edu.degree}</div>
+                    <div style={{ fontSize: 13, color: grisTexte }}>{edu.startDate} - {edu.endDate}</div>
+                  </div>
+                  <div style={{ fontSize: 13, color: grisTexte }}>{edu.institution}{edu.field ? `, ${edu.field}` : ''}</div>
+                  {edu.description && <div style={{ fontSize: 13, color: grisTexte, marginTop: 2 }}>{edu.description}</div>}
                 </div>
-                <div style={{ fontSize: 13, color: grisTexte }}>{edu.institution}{edu.field ? `, ${edu.field}` : ''}</div>
-                {edu.description && <div style={{ fontSize: 13, color: grisTexte, marginTop: 2 }}>{edu.description}</div>}
-              </div>
-            ))}
-          </CardWindow>
-        )}
-        {/* Compétences */}
-        {skills.length > 0 && (
-          <CardWindow title="Compétences">
-            <ul style={{ paddingLeft: 0, margin: 0, listStyle: 'none' }}>
-              {skills.map((skill, idx) => (
-                <li key={idx} style={{ fontSize: 13, color: noir, marginBottom: 6 }}>{skill.name}</li>
               ))}
-            </ul>
-          </CardWindow>
-        )}
-        {/* Certifications */}
-        {certifications.length > 0 && (
-          <CardWindow title="Certifications">
-            <ul style={{ fontSize: 13, color: noir, margin: 0, paddingLeft: 18 }}>
-              {certifications.map((cert: any, idx: number) => (
-                <li key={idx}>{typeof cert === 'string' ? cert : `${cert.name}${cert.issuer ? ' - ' + cert.issuer : ''}${cert.date ? ' (' + cert.date + ')' : ''}`}</li>
-              ))}
-            </ul>
-          </CardWindow>
-        )}
+            </CardWindow>
+          )}
+        </div>
+        {/* Ligne 2 */}
+        <div>
+          {skills.length > 0 && (
+            <CardWindow title="Compétences">
+              <ul style={{ paddingLeft: 0, margin: 0, listStyle: 'none' }}>
+                {skills.map((skill, idx) => (
+                  <li key={idx} style={{ fontSize: 13, color: noir, marginBottom: 6 }}>{skill.name}</li>
+                ))}
+              </ul>
+            </CardWindow>
+          )}
+        </div>
+        <div>
+          {certifications.length > 0 && (
+            <CardWindow title="Certifications">
+              <ul style={{ fontSize: 13, color: noir, margin: 0, paddingLeft: 18 }}>
+                {certifications.map((cert: any, idx: number) => (
+                  <li key={idx}>{typeof cert === 'string' ? cert : `${cert.name}${cert.issuer ? ' - ' + cert.issuer : ''}${cert.date ? ' (' + cert.date + ')' : ''}`}</li>
+                ))}
+              </ul>
+            </CardWindow>
+          )}
+        </div>
       </div>
     </div>
   );
