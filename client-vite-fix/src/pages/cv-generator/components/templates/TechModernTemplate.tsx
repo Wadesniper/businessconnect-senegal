@@ -1,10 +1,12 @@
 import React from 'react';
-import { Avatar, Progress, Tag, Typography, Space, Rate } from 'antd';
-import { GithubOutlined, LinkedinOutlined, GlobalOutlined, MailOutlined, PhoneOutlined, EnvironmentOutlined } from '@ant-design/icons';
+import { MailOutlined, PhoneOutlined, EnvironmentOutlined, LinkedinOutlined, GlobalOutlined, StarOutlined, HeartOutlined, CameraOutlined } from '@ant-design/icons';
 import type { CVData } from '../../../../types/cv';
-import { formatDate } from '../../../../utils/dateUtils';
 
-const { Title, Text, Paragraph } = Typography;
+const vertFonce = '#4b6c5c';
+const vertClair = '#eaf3ee';
+const blanc = '#fff';
+const gris = '#e5e7eb';
+const grisTexte = '#6b7280';
 
 interface TechModernTemplateProps {
   data: CVData;
@@ -12,243 +14,161 @@ interface TechModernTemplateProps {
 }
 
 const TechModernTemplate: React.FC<TechModernTemplateProps> = ({ data, isMiniature = false }) => {
+  const personalInfo = {
+    ...data.personalInfo,
+    linkedin: (data.personalInfo as any).linkedin || '',
+    portfolio: (data.personalInfo as any).portfolio || '',
+    summary: (data.personalInfo as any).summary || '',
+  };
+  const summary = personalInfo.summary || '';
+  const experience = Array.isArray(data.experience) ? data.experience : [];
+  const education = Array.isArray(data.education) ? data.education : [];
+  const skills = Array.isArray(data.skills) ? data.skills : [];
+  const interests = Array.isArray((data as any).interests) ? (data as any).interests : [];
+  const languages = Array.isArray(data.languages) ? data.languages : [];
+  const certifications = Array.isArray(data.certifications) ? data.certifications : [];
+
+  // Pictos pour centres d'intérêt (exemple)
+  const interestIcons: Record<string, React.ReactNode> = {
+    photographie: <CameraOutlined />,
+    jeux: <CameraOutlined />,
+    sport: <StarOutlined />,
+    musique: <HeartOutlined />,
+  };
+
   return (
-    <div style={{
-      padding: isMiniature ? 8 : 20,
-      display: 'grid',
-      gridTemplateColumns: isMiniature ? '1fr' : '300px 1fr',
-      gap: isMiniature ? 8 : 20,
-      fontSize: isMiniature ? 10 : 16,
-      borderRadius: isMiniature ? 8 : 16,
-      background: '#fff',
-      minHeight: isMiniature ? 0 : undefined,
-    }}>
-      {/* Sidebar */}
-      <aside style={{ backgroundColor: 'var(--primary-color)', color: 'white', padding: isMiniature ? 8 : 20, borderRadius: isMiniature ? 8 : 16 }}>
-        <div style={{ textAlign: 'center', marginBottom: isMiniature ? 8 : 20 }}>
-          <Avatar
-            size={isMiniature ? 48 : 150}
-            src={data.personalInfo.photo || undefined}
-            style={{ marginBottom: isMiniature ? 4 : 10 }}
-          >
-            {data.personalInfo.firstName?.[0]}{data.personalInfo.lastName?.[0]}
-          </Avatar>
-          <Title level={isMiniature ? 5 : 3} style={{ color: 'white', margin: 0, fontSize: isMiniature ? 14 : 24 }}>
-            {data.personalInfo.firstName} {data.personalInfo.lastName}
-          </Title>
-          <Text style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: isMiniature ? 10 : 16 }}>
-            {data.personalInfo.title}
-          </Text>
+    <div style={{ width: 794, height: 1123, background: blanc, fontFamily: 'Montserrat, Arial, sans-serif', display: 'flex', flexDirection: 'row', borderRadius: 18, overflow: 'hidden', boxShadow: '0 4px 24px #0002' }}>
+      {/* Colonne gauche */}
+      <div style={{ width: '32%', background: vertFonce, color: blanc, padding: '0 0 0 0', display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100%' }}>
+        {/* Photo */}
+        <div style={{ width: 140, height: 140, borderRadius: 18, overflow: 'hidden', marginTop: 32, marginBottom: 18, boxShadow: '0 2px 8px #0003' }}>
+          <img src={personalInfo.photo || '/images/avatars/man-4.png'} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </div>
-
-        <div style={{ marginBottom: isMiniature ? 8 : 20 }}>
-          <Title level={isMiniature ? 5 : 4} style={{ color: 'white', fontSize: isMiniature ? 11 : 18 }}>Contact</Title>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: isMiniature ? 4 : 10, fontSize: isMiniature ? 9 : 14 }}>
-            <Text style={{ color: 'white' }}>
-              <MailOutlined style={{ marginRight: '8px' }} />
-              {data.personalInfo.email}
-            </Text>
-            <Text style={{ color: 'white' }}>
-              <PhoneOutlined style={{ marginRight: '8px' }} />
-              {data.personalInfo.phone}
-            </Text>
-            <Text style={{ color: 'white' }}>
-              <EnvironmentOutlined style={{ marginRight: '8px' }} />
-              {data.personalInfo.address}
-            </Text>
-            {data.personalInfo.linkedin && (
-              <Text style={{ color: 'white' }}>
-                <LinkedinOutlined style={{ marginRight: '8px' }} />
-                {data.personalInfo.linkedin}
-              </Text>
-            )}
-            {data.personalInfo.portfolio && (
-              <Text style={{ color: 'white' }}>
-                <GlobalOutlined style={{ marginRight: '8px' }} />
-                {data.personalInfo.portfolio}
-              </Text>
-            )}
-          </div>
+        {/* Coordonnées */}
+        <div style={{ width: '80%', marginBottom: 24 }}>
+          <div style={{ fontWeight: 700, fontSize: 15, color: blanc, marginBottom: 8, letterSpacing: 1, textTransform: 'uppercase', background: vertFonce, padding: '4px 16px', borderRadius: 8, display: 'inline-block' }}>Coordonnées</div>
+          <div style={{ height: 2, width: 32, background: blanc, opacity: 0.12, marginBottom: 12, borderRadius: 2 }} />
+          {personalInfo.phone && <div style={{ fontSize: 14, color: blanc, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}><PhoneOutlined style={{ fontSize: 18, color: blanc, marginRight: 8 }} /> {personalInfo.phone}</div>}
+          {personalInfo.email && <div style={{ fontSize: 14, color: blanc, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}><MailOutlined style={{ fontSize: 18, color: blanc, marginRight: 8 }} /> {personalInfo.email}</div>}
+          {personalInfo.address && <div style={{ fontSize: 14, color: blanc, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}><EnvironmentOutlined style={{ fontSize: 18, color: blanc, marginRight: 8 }} /> {personalInfo.address}</div>}
+          {personalInfo.portfolio && <div style={{ fontSize: 14, color: blanc, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}><GlobalOutlined style={{ fontSize: 18, color: blanc, marginRight: 8 }} /> {personalInfo.portfolio}</div>}
+          {personalInfo.linkedin && <div style={{ fontSize: 14, color: blanc, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}><LinkedinOutlined style={{ fontSize: 18, color: blanc, marginRight: 8 }} /> {personalInfo.linkedin}</div>}
         </div>
-
-        <div style={{ marginBottom: isMiniature ? 8 : 20 }}>
-          <Title level={isMiniature ? 5 : 4} style={{ color: 'white', fontSize: isMiniature ? 11 : 18 }}>Compétences</Title>
-          {data.skills.map(skill => (
-            <div key={skill.id} style={{ marginBottom: isMiniature ? 4 : 10 }}>
-              <Text style={{ color: 'white', display: 'block', marginBottom: isMiniature ? 2 : 5, fontSize: isMiniature ? 10 : 16 }}>
-                {skill.name}
-              </Text>
-              <Progress
-                percent={typeof skill.level === 'number' ? skill.level * 20 : skill.level === 'Débutant' ? 20 : skill.level === 'Intermédiaire' ? 40 : skill.level === 'Avancé' ? 60 : skill.level === 'Expert' ? 80 : skill.level === 'Maître' ? 100 : 0}
-                showInfo={false}
-                strokeColor="var(--secondary-color)"
-                trailColor="rgba(255, 255, 255, 0.2)"
-                style={{ height: isMiniature ? 4 : 8 }}
-              />
-            </div>
-          ))}
-        </div>
-
-        <div style={{ marginBottom: isMiniature ? 8 : 20 }}>
-          <Title level={isMiniature ? 5 : 4} style={{ color: 'white', fontSize: isMiniature ? 11 : 18 }}>Langues</Title>
-          {data.languages.map(language => (
-            <div key={language.id} style={{ marginBottom: isMiniature ? 4 : 10 }}>
-              <Text style={{ color: 'white', display: 'block', fontSize: isMiniature ? 10 : 16 }}>
-                {language.name} - {language.level}
-              </Text>
-            </div>
-          ))}
-        </div>
-      </aside>
-
-      {/* Main Content */}
-      <main style={{ padding: isMiniature ? 8 : 20 }}>
-        <div style={{ marginBottom: isMiniature ? 10 : 30 }}>
-          <Title level={isMiniature ? 5 : 4}>À propos</Title>
-          <Paragraph style={{ fontSize: isMiniature ? 10 : 16 }}>{data.summary}</Paragraph>
-        </div>
-
-        <div style={{ marginBottom: isMiniature ? 10 : 30 }}>
-          <Title level={isMiniature ? 5 : 4}>Expérience professionnelle</Title>
-          {data.experience.map(exp => (
-            <div key={exp.id} style={{ marginBottom: isMiniature ? 6 : 20 }}>
-              <Title level={isMiniature ? 5 : 5} style={{ marginBottom: isMiniature ? 2 : 5, fontSize: isMiniature ? 10 : 16 }}>{exp.title}</Title>
-              <Text strong style={{ fontSize: isMiniature ? 9 : 14 }}>{exp.company}</Text>
-              <br />
-              <Text type="secondary" style={{ fontSize: isMiniature ? 9 : 12 }}>
-                {formatDate(exp.startDate)} - {exp.current ? 'Présent' : formatDate(exp.endDate || '')}
-              </Text>
-              <ul style={{ marginTop: isMiniature ? 4 : 10, fontSize: isMiniature ? 9 : 13 }}>
-                {exp.description && <li>{exp.description}</li>}
-              </ul>
-              {exp.achievements && exp.achievements.length > 0 && (
-                <>
-                  <Text strong style={{ fontSize: isMiniature ? 9 : 13 }}>Réalisations :</Text>
-                  <ul>
-                    {exp.achievements.map((achievement, index) => (
-                      <li key={index}>{achievement}</li>
-                    ))}
-                  </ul>
-                </>
-              )}
-            </div>
-          ))}
-        </div>
-
-        <div style={{ marginBottom: isMiniature ? 10 : 30 }}>
-          <Title level={isMiniature ? 5 : 4}>Formation</Title>
-          {data.education.map(edu => (
-            <div key={edu.id} style={{ marginBottom: isMiniature ? 6 : 20 }}>
-              <Title level={isMiniature ? 5 : 5} style={{ marginBottom: isMiniature ? 2 : 5, fontSize: isMiniature ? 10 : 16 }}>{edu.degree}</Title>
-              <Text strong style={{ fontSize: isMiniature ? 9 : 14 }}>{edu.institution}</Text>
-              <br />
-              <Text type="secondary" style={{ fontSize: isMiniature ? 9 : 12 }}>
-                {typeof edu.startDate === 'string'
-                  ? formatDate(edu.startDate)
-                  : edu.startDate
-                    ? formatDate(String(edu.startDate))
-                    : ''}
-                {' - '}
-                {typeof edu.endDate === 'string'
-                  ? formatDate(edu.endDate)
-                  : edu.endDate
-                    ? formatDate(String(edu.endDate))
-                    : ''}
-              </Text>
-              {edu.description && (
-                <p style={{ marginTop: isMiniature ? 4 : 10, fontSize: isMiniature ? 9 : 13 }}>{edu.description}</p>
-              )}
-              {edu.achievements && edu.achievements.length > 0 && (
-                <>
-                  <Text strong style={{ fontSize: isMiniature ? 9 : 13 }}>Réalisations :</Text>
-                  <ul>
-                    {edu.achievements.map((achievement, index) => (
-                      <li key={index}>{achievement}</li>
-                    ))}
-                  </ul>
-                </>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {data.certifications.length > 0 && (
-          <div style={{ marginBottom: isMiniature ? 8 : 30 }}>
-            <Title level={isMiniature ? 5 : 4}>Certifications</Title>
-            {data.certifications.map((cert, index) => {
-              if (typeof cert === 'string') {
-                return (
-                  <div key={index} style={{ marginBottom: isMiniature ? 4 : 10 }}>
-                    <Text strong style={{ fontSize: isMiniature ? 10 : 16 }}>{cert}</Text>
-                  </div>
-                );
-              } else {
-                return (
-                  <div key={cert.id || index} style={{ marginBottom: isMiniature ? 4 : 10 }}>
-                    <Text strong style={{ fontSize: isMiniature ? 10 : 16 }}>{cert.name}</Text>
-                    <br />
-                    <Text type="secondary" style={{ fontSize: isMiniature ? 9 : 13 }}>{cert.issuer} - {cert.date}</Text>
-                    {cert.description && (
-                      <Paragraph style={{ marginTop: isMiniature ? 4 : 8, fontSize: isMiniature ? 9 : 13 }}>{cert.description}</Paragraph>
-                    )}
-                  </div>
-                );
-              }
-            })}
+        {/* Compétences */}
+        {skills.length > 0 && (
+          <div style={{ width: '80%', marginBottom: 24 }}>
+            <div style={{ fontWeight: 700, fontSize: 15, color: blanc, marginBottom: 8, letterSpacing: 1, textTransform: 'uppercase', background: vertFonce, padding: '4px 16px', borderRadius: 8, display: 'inline-block' }}>Compétences</div>
+            <div style={{ height: 2, width: 32, background: blanc, opacity: 0.12, marginBottom: 12, borderRadius: 2 }} />
+            <ul style={{ paddingLeft: 0, margin: 0, listStyle: 'none' }}>
+              {skills.map((skill, i) => (
+                <li key={i} style={{ display: 'flex', alignItems: 'center', fontSize: 13, color: blanc, marginBottom: 7, gap: 8 }}>
+                  <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: blanc, marginRight: 8, flexShrink: 0 }} />
+                  {skill.name}
+                </li>
+              ))}
+            </ul>
           </div>
         )}
-
-        {data.projects.length > 0 && (
-          <div style={{ marginBottom: isMiniature ? 8 : 30 }}>
-            <Title level={isMiniature ? 5 : 4}>Projets</Title>
-            {data.projects.map(project => (
-              <div key={project.id} style={{ marginBottom: isMiniature ? 6 : 20 }}>
-                <Title level={isMiniature ? 5 : 5} style={{ marginBottom: isMiniature ? 2 : 5, fontSize: isMiniature ? 10 : 16 }}>{project.name}</Title>
-                <Paragraph style={{ fontSize: isMiniature ? 9 : 13 }}>{project.description}</Paragraph>
-                <div>
-                  {project.technologies.map((tech, index) => (
-                    <Tag key={index} color="blue">{tech}</Tag>
-                  ))}
+        {/* Centres d'intérêt */}
+        {interests.length > 0 && (
+          <div style={{ width: '80%', marginBottom: 24 }}>
+            <div style={{ fontWeight: 700, fontSize: 15, color: blanc, marginBottom: 8, letterSpacing: 1, textTransform: 'uppercase', background: vertFonce, padding: '4px 16px', borderRadius: 8, display: 'inline-block' }}>Centres d'intérêt</div>
+            <div style={{ height: 2, width: 32, background: blanc, opacity: 0.12, marginBottom: 12, borderRadius: 2 }} />
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+              {interests.map((interest: any, i: number) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', fontSize: 13, color: blanc, background: 'rgba(255,255,255,0.08)', borderRadius: 8, padding: '4px 10px', gap: 8 }}>
+                  {interestIcons[(interest.name || '').toLowerCase()] || <StarOutlined />} {interest.name}
                 </div>
-                {project.url && (
-                  <a href={project.url} target="_blank" rel="noopener noreferrer">
-                    <GithubOutlined /> Voir le projet
-                  </a>
+              ))}
+            </div>
+          </div>
+        )}
+        {/* Langues */}
+        {languages.length > 0 && (
+          <div style={{ width: '80%', marginBottom: 24 }}>
+            <div style={{ fontWeight: 700, fontSize: 15, color: blanc, marginBottom: 8, letterSpacing: 1, textTransform: 'uppercase', background: vertFonce, padding: '4px 16px', borderRadius: 8, display: 'inline-block' }}>Langues</div>
+            <div style={{ height: 2, width: 32, background: blanc, opacity: 0.12, marginBottom: 12, borderRadius: 2 }} />
+            <ul style={{ paddingLeft: 0, margin: 0, listStyle: 'none' }}>
+              {languages.map((lang, i) => (
+                <li key={i} style={{ display: 'flex', alignItems: 'center', fontSize: 13, color: blanc, marginBottom: 7, gap: 8 }}>
+                  <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: blanc, marginRight: 8, flexShrink: 0 }} />
+                  {lang.name} - {lang.level}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+      {/* Colonne droite */}
+      <div style={{ width: '68%', background: blanc, padding: '48px 40px 40px 40px', display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
+        {/* Header nom/titre + pictos */}
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontWeight: 900, fontSize: 32, color: vertFonce, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 4 }}>{personalInfo.firstName} {personalInfo.lastName}</div>
+            <div style={{ fontSize: 18, color: vertFonce, fontWeight: 500, textTransform: 'capitalize' }}>{personalInfo.title}</div>
+          </div>
+          {/* Pictos tech (exemple) */}
+          <div style={{ display: 'flex', gap: 16 }}>
+            <svg width="38" height="38" fill="none" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#4b6c5c"/><path d="M7 17V7h10v10H7zm2-2h6V9H9v6z" fill="#fff"/></svg>
+            <svg width="38" height="38" fill="none" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#4b6c5c"/><path d="M8 17V7h8v10H8zm2-2h4V9h-4v6z" fill="#fff"/></svg>
+          </div>
+        </div>
+        {/* À propos */}
+        {summary && (
+          <div style={{ marginBottom: 32 }}>
+            <div style={{ fontWeight: 700, fontSize: 18, color: vertFonce, background: '#d6eadd', padding: '4px 16px', borderRadius: 8, display: 'inline-block', marginBottom: 10 }}>À propos</div>
+            <div style={{ fontSize: 15, color: grisTexte, marginTop: 6 }}>{summary}</div>
+          </div>
+        )}
+        {/* Expériences professionnelles */}
+        {experience.length > 0 && (
+          <div style={{ marginBottom: 32 }}>
+            <div style={{ fontWeight: 700, fontSize: 18, color: vertFonce, background: '#d6eadd', padding: '4px 16px', borderRadius: 8, display: 'inline-block', marginBottom: 10 }}>Expériences professionnelles</div>
+            {experience.map((exp, idx) => (
+              <div key={idx} style={{ background: blanc, borderRadius: 10, boxShadow: '0 2px 8px #0001', padding: 18, marginBottom: 18, borderLeft: `4px solid ${vertFonce}` }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ fontWeight: 600, fontSize: 16, color: vertFonce }}>{exp.title}</div>
+                  <div style={{ fontSize: 14, color: vertFonce }}>{exp.startDate} {exp.endDate ? `- ${exp.endDate}` : ''}</div>
+                </div>
+                <div style={{ fontWeight: 500, fontSize: 15, color: grisTexte, marginBottom: 4 }}>{exp.company}{exp.location ? `, ${exp.location}` : ''}</div>
+                <div style={{ fontSize: 14, color: grisTexte }}>{exp.description}</div>
+                {Array.isArray(exp.achievements) && exp.achievements.length > 0 && (
+                  <ul style={{ fontSize: 13, color: vertFonce, margin: '8px 0 0 0', paddingLeft: 18 }}>
+                    {exp.achievements.map((ach, i) => <li key={i}>{ach}</li>)}
+                  </ul>
                 )}
               </div>
             ))}
           </div>
         )}
-
-        {data.interests.length > 0 && (
-          <div>
-            <Title level={4}>Centres d'intérêt</Title>
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-              {data.interests.map((interest, index) => {
-                if (typeof interest === 'string') {
-                  return <Tag key={index}>{interest}</Tag>;
-                } else {
-                  return <Tag key={interest.id || index}>{interest.name}</Tag>;
-                }
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* Section Références dynamique */}
-        {Array.isArray(data.references) && data.references.length > 0 && (
-          <div style={{ marginTop: 24 }}>
-            <div style={{ fontWeight: 700, fontSize: 18, color: '#263238', marginBottom: 8 }}>RÉFÉRENCES</div>
-            {data.references.map((ref: any, idx: number) => (
-              <div key={idx} style={{ fontSize: 14, color: '#263238', marginBottom: 8 }}>
-                <div style={{ fontWeight: 600 }}>{ref.name}</div>
-                {ref.position && <div style={{ fontSize: 13 }}>{ref.position}</div>}
-                {ref.contact && <div style={{ fontSize: 12, color: '#888' }}>{ref.contact}</div>}
+        {/* Formations */}
+        {education.length > 0 && (
+          <div style={{ marginBottom: 32 }}>
+            <div style={{ fontWeight: 700, fontSize: 18, color: vertFonce, background: '#d6eadd', padding: '4px 16px', borderRadius: 8, display: 'inline-block', marginBottom: 10 }}>Formations</div>
+            {education.map((edu, idx) => (
+              <div key={idx} style={{ background: blanc, borderRadius: 10, boxShadow: '0 2px 8px #0001', padding: 18, marginBottom: 18, borderLeft: `4px solid ${vertFonce}` }}>
+                <div style={{ fontWeight: 600, fontSize: 16, color: vertFonce }}>{edu.degree}</div>
+                <div style={{ fontSize: 15, color: grisTexte, marginBottom: 4 }}>{edu.institution}{edu.field ? `, ${edu.field}` : ''}</div>
+                <div style={{ fontSize: 13, color: grisTexte }}>{edu.startDate} - {edu.endDate}</div>
+                {edu.description && (
+                  <div style={{ fontSize: 13, color: grisTexte, marginTop: 6 }}>{edu.description}</div>
+                )}
               </div>
             ))}
           </div>
         )}
-      </main>
+        {/* Certifications */}
+        {certifications.length > 0 && (
+          <div style={{ marginBottom: 32 }}>
+            <div style={{ fontWeight: 700, fontSize: 18, color: vertFonce, background: '#d6eadd', padding: '4px 16px', borderRadius: 8, display: 'inline-block', marginBottom: 10 }}>Certifications</div>
+            <ul style={{ paddingLeft: 18, margin: 0 }}>
+              {certifications.map((cert: any, idx: number) => (
+                <li key={idx} style={{ fontSize: 14, color: vertFonce, marginBottom: 8, fontWeight: 500 }}>{typeof cert === 'string' ? cert : `${cert.name}${cert.issuer ? ' - ' + cert.issuer : ''}${cert.date ? ' (' + cert.date + ')' : ''}`}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

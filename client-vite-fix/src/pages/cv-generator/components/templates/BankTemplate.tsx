@@ -35,7 +35,7 @@ const BankTemplate: React.FC<BankTemplateProps> = ({ data, isMiniature = false }
         <div style={{ width: 140, height: 140, display: 'flex', alignItems: 'center', justifyContent: 'center', marginLeft: 32 }}>
           <img src={personalInfo.photo || '/images/avatars/man-4.png'} alt="avatar" style={{ width: 120, height: 120, borderRadius: '50%', objectFit: 'cover', border: '4px solid #fff', background: '#fff', boxShadow: '0 2px 8px #0001' }} />
         </div>
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '32px 48px 32px 32px' }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '32px 48px 32px 32px', marginTop: 18 }}>
           <div style={{ fontWeight: 900, fontSize: 32, color: blanc, letterSpacing: 1, lineHeight: 1, textTransform: 'uppercase', marginBottom: 8 }}>{personalInfo.firstName} {personalInfo.lastName}</div>
           <div style={{ fontSize: 18, color: blanc, fontWeight: 500, marginBottom: 12, textTransform: 'capitalize' }}>{personalInfo.title}</div>
           {summary && <div style={{ fontSize: 15, color: blanc, fontWeight: 400, lineHeight: 1.5 }}>{summary}</div>}
