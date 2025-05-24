@@ -238,8 +238,8 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                 />
                 {selected?.id === template.id && isPremium && (
                   <div style={{ textAlign: 'center', marginTop: 18 }}>
-                    <Button type="primary" size="large" onClick={onContinue}>
-                      Commencer mon CV avec ce modèle
+                    <Button type="primary" size="large" onClick={onContinue} style={{ width: '100%' }}>
+                      Utiliser ce modèle
                     </Button>
                   </div>
                 )}
