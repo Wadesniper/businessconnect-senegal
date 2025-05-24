@@ -31,14 +31,14 @@ const AgroTemplate: React.FC<AgroTemplateProps> = ({ data, isMiniature = false }
   return (
     <div style={{ width: 794, background: blanc, borderRadius: 18, overflow: 'hidden', fontFamily: 'Montserrat, Arial, sans-serif', boxShadow: '0 4px 24px #0002', display: 'flex', flexDirection: 'column' }}>
       {/* Header bandeau vert foncé */}
-      <div style={{ width: '100%', background: vertFonce, minHeight: 140, display: 'flex', flexDirection: 'row', alignItems: 'center', padding: '0 0 0 0', position: 'relative' }}>
-        <div style={{ width: 160, height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center', marginLeft: 32 }}>
-          <Avatar src={personalInfo.photo || '/images/avatars/man-5.png'} size={110} style={{ border: '4px solid #fff', boxShadow: '0 2px 8px #0001', background: '#fff' }} />
+      <div style={{ width: '100%', background: vertFonce, minHeight: 140, display: 'flex', flexDirection: 'row', alignItems: 'center', padding: 0, position: 'relative', zIndex: 2 }}>
+        <div style={{ width: 160, height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center', marginLeft: 32, zIndex: 3 }}>
+          <Avatar src={personalInfo.photo || '/images/avatars/man-1.png'} size={110} style={{ border: '4px solid #fff', boxShadow: '0 2px 8px #0001', background: '#fff' }} />
         </div>
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '32px 48px 32px 32px' }}>
-          <div style={{ fontWeight: 900, fontSize: 32, color: blanc, letterSpacing: 1, lineHeight: 1, textTransform: 'uppercase', marginBottom: 8 }}>{personalInfo.firstName} {personalInfo.lastName}</div>
-          <div style={{ fontSize: 18, color: blanc, fontWeight: 500, marginBottom: 12, textTransform: 'capitalize' }}>{personalInfo.title}</div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, marginTop: 8 }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '32px 48px 32px 32px', zIndex: 3 }}>
+          <div style={{ fontWeight: 900, fontSize: 34, color: blanc, letterSpacing: 1, lineHeight: 1, textTransform: 'uppercase', marginBottom: 6 }}>{personalInfo.firstName} {personalInfo.lastName}</div>
+          <div style={{ fontSize: 19, color: blanc, fontWeight: 500, marginBottom: 10, textTransform: 'capitalize' }}>{personalInfo.title}</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, marginTop: 6 }}>
             <div style={{ fontSize: 14, color: blanc, display: 'flex', alignItems: 'center', gap: 8 }}><PhoneOutlined /> {personalInfo.phone}</div>
             <div style={{ fontSize: 14, color: blanc, display: 'flex', alignItems: 'center', gap: 8 }}><MailOutlined /> {personalInfo.email}</div>
             <div style={{ fontSize: 14, color: blanc, display: 'flex', alignItems: 'center', gap: 8 }}><EnvironmentOutlined /> {personalInfo.address}</div>
@@ -54,14 +54,20 @@ const AgroTemplate: React.FC<AgroTemplateProps> = ({ data, isMiniature = false }
           {/* Informations */}
           {summary && (
             <div>
-              <div style={{ fontWeight: 700, fontSize: 15, color: vertFonce, marginBottom: 10, letterSpacing: 1, textTransform: 'uppercase' }}>Informations</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                <span style={{ fontWeight: 700, fontSize: 15, color: vertFonce, letterSpacing: 1, textTransform: 'uppercase' }}>Informations</span>
+                <span style={{ flex: 1, height: 2, background: vertClair, borderRadius: 1, marginLeft: 8, minWidth: 40 }} />
+              </div>
               <div style={{ fontSize: 13, color: grisTexte }}>{summary}</div>
             </div>
           )}
           {/* Compétences */}
           {skills.length > 0 && (
             <div>
-              <div style={{ fontWeight: 700, fontSize: 15, color: vertFonce, marginBottom: 10, letterSpacing: 1, textTransform: 'uppercase' }}>Compétences</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                <span style={{ fontWeight: 700, fontSize: 15, color: vertFonce, letterSpacing: 1, textTransform: 'uppercase' }}>Compétences</span>
+                <span style={{ flex: 1, height: 2, background: vertClair, borderRadius: 1, marginLeft: 8, minWidth: 40 }} />
+              </div>
               <ul style={{ paddingLeft: 0, margin: 0, listStyle: 'none' }}>
                 {skills.map((skill, i) => (
                   <li key={i} style={{ display: 'flex', alignItems: 'center', fontSize: 13, color: vertFonce, marginBottom: 7, gap: 8 }}>
@@ -75,7 +81,10 @@ const AgroTemplate: React.FC<AgroTemplateProps> = ({ data, isMiniature = false }
           {/* Intérêts */}
           {interests.length > 0 && (
             <div>
-              <div style={{ fontWeight: 700, fontSize: 15, color: vertFonce, marginBottom: 10, letterSpacing: 1, textTransform: 'uppercase' }}>Intérêts</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                <span style={{ fontWeight: 700, fontSize: 15, color: vertFonce, letterSpacing: 1, textTransform: 'uppercase' }}>Intérêts</span>
+                <span style={{ flex: 1, height: 2, background: vertClair, borderRadius: 1, marginLeft: 8, minWidth: 40 }} />
+              </div>
               <ul style={{ paddingLeft: 0, margin: 0, listStyle: 'none' }}>
                 {interests.map((interest: any, i: number) => (
                   <li key={i} style={{ display: 'flex', alignItems: 'center', fontSize: 13, color: vertFonce, marginBottom: 7, gap: 8 }}>
@@ -89,7 +98,10 @@ const AgroTemplate: React.FC<AgroTemplateProps> = ({ data, isMiniature = false }
           {/* Langues */}
           {languages.length > 0 && (
             <div>
-              <div style={{ fontWeight: 700, fontSize: 15, color: vertFonce, marginBottom: 10, letterSpacing: 1, textTransform: 'uppercase' }}>Langues</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                <span style={{ fontWeight: 700, fontSize: 15, color: vertFonce, letterSpacing: 1, textTransform: 'uppercase' }}>Langues</span>
+                <span style={{ flex: 1, height: 2, background: vertClair, borderRadius: 1, marginLeft: 8, minWidth: 40 }} />
+              </div>
               <ul style={{ paddingLeft: 0, margin: 0, listStyle: 'none' }}>
                 {languages.map((lang, i) => (
                   <li key={i} style={{ display: 'flex', alignItems: 'center', fontSize: 13, color: vertFonce, marginBottom: 7, gap: 8 }}>
@@ -106,7 +118,10 @@ const AgroTemplate: React.FC<AgroTemplateProps> = ({ data, isMiniature = false }
           {/* Expériences professionnelles */}
           {experience.length > 0 && (
             <div>
-              <div style={{ fontWeight: 700, fontSize: 16, color: vertFonce, marginBottom: 18, textTransform: 'uppercase', letterSpacing: 1 }}>Expériences professionnelles</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 18 }}>
+                <span style={{ fontWeight: 700, fontSize: 16, color: vertFonce, textTransform: 'uppercase', letterSpacing: 1 }}>Expériences professionnelles</span>
+                <span style={{ flex: 1, height: 2, background: vertClair, borderRadius: 1, marginLeft: 8, minWidth: 40 }} />
+              </div>
               {experience.map((exp, idx) => (
                 <div key={idx} style={{ background: blanc, borderRadius: 12, boxShadow: '0 2px 8px #0001', padding: '18px 24px', marginBottom: 18, border: `1px solid ${gris}` }}>
                   <div style={{ fontWeight: 700, fontSize: 15, color: vertFonce }}>{exp.title}</div>
@@ -125,7 +140,10 @@ const AgroTemplate: React.FC<AgroTemplateProps> = ({ data, isMiniature = false }
           {/* Formations */}
           {education.length > 0 && (
             <div>
-              <div style={{ fontWeight: 700, fontSize: 16, color: vertFonce, marginBottom: 18, textTransform: 'uppercase', letterSpacing: 1 }}>Formations</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 18 }}>
+                <span style={{ fontWeight: 700, fontSize: 16, color: vertFonce, textTransform: 'uppercase', letterSpacing: 1 }}>Formations</span>
+                <span style={{ flex: 1, height: 2, background: vertClair, borderRadius: 1, marginLeft: 8, minWidth: 40 }} />
+              </div>
               {education.map((edu, idx) => (
                 <div key={idx} style={{ background: blanc, borderRadius: 12, boxShadow: '0 2px 8px #0001', padding: '18px 24px', marginBottom: 18, border: `1px solid ${gris}` }}>
                   <div style={{ fontWeight: 700, fontSize: 14, color: vertFonce }}>{edu.degree}</div>

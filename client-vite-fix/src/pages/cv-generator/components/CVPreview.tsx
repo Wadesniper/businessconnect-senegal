@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, Avatar, Typography, Divider, Tag, Space, Button, Slider } from 'antd';
 import { ZoomInOutlined, ZoomOutOutlined, DownloadOutlined, EyeOutlined } from '@ant-design/icons';
 import type { CVData, Template, CustomizationOptions } from '../../../types/cv';
@@ -17,6 +17,8 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
   const [zoom, setZoom] = useState(100);
   const [showFullscreen, setShowFullscreen] = useState(false);
   const [autoScale, setAutoScale] = useState(1);
+  const [needsScroll, setNeedsScroll] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const handleZoomChange = (value: number) => {
     setZoom(value);
@@ -69,6 +71,19 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
     return () => window.removeEventListener('resize', handleResize);
   }, [isMiniature]);
 
+  // Mesure la hauteur réelle du CV après rendu
+  useEffect(() => {
+    if (isMiniature) return;
+    const checkHeight = () => {
+      if (contentRef.current) {
+        setNeedsScroll(contentRef.current.scrollHeight > baseA4Height);
+      }
+    };
+    checkHeight();
+    window.addEventListener('resize', checkHeight);
+    return () => window.removeEventListener('resize', checkHeight);
+  }, [data, template, customization, isMiniature]);
+
   const previewStyle = isMiniature
     ? {
         width: `${baseA4Width}px`,
@@ -119,8 +134,8 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
       className="cv-preview-root"
       style={{
         width: baseA4Width,
-        maxHeight: '80vh',
-        overflowY: 'auto',
+        maxHeight: needsScroll ? '80vh' : undefined,
+        overflowY: needsScroll ? 'auto' : 'hidden',
         background: '#fff',
         borderRadius: 12,
         boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
@@ -132,7 +147,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
         position: 'relative',
       }}
     >
-      <div style={{ width: '100%', minHeight: baseA4Height, fontSize: 11, overflow: 'visible', padding: 8, margin: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+      <div ref={contentRef} style={{ width: '100%', minHeight: baseA4Height, fontSize: 11, overflow: 'visible', padding: 8, margin: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
         <TemplateComponent
           data={safeData}
           customization={customization}
