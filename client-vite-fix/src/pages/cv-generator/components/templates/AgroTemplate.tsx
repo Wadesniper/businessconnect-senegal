@@ -1,9 +1,13 @@
 import React from 'react';
-import { Typography, Row, Col, Tag, Timeline, Card, Avatar, Rate } from 'antd';
-import { MailOutlined, PhoneOutlined, EnvironmentOutlined, LinkedinOutlined, GlobalOutlined, FieldTimeOutlined } from '@ant-design/icons';
+import { Avatar } from 'antd';
+import { MailOutlined, PhoneOutlined, EnvironmentOutlined, LinkedinOutlined, GlobalOutlined } from '@ant-design/icons';
 import type { CVData } from '../../../../types/cv';
 
-const { Title, Text, Paragraph } = Typography;
+const vertFonce = '#237804';
+const vertClair = '#52c41a';
+const blanc = '#fff';
+const gris = '#e5e7eb';
+const grisTexte = '#6b7280';
 
 interface AgroTemplateProps {
   data: CVData;
@@ -11,7 +15,6 @@ interface AgroTemplateProps {
 }
 
 const AgroTemplate: React.FC<AgroTemplateProps> = ({ data, isMiniature = false }) => {
-  // Sécurisation des accès aux champs potentiellement absents
   const personalInfo = {
     ...data.personalInfo,
     linkedin: (data.personalInfo as any).linkedin || '',
@@ -22,161 +25,119 @@ const AgroTemplate: React.FC<AgroTemplateProps> = ({ data, isMiniature = false }
   const experience = Array.isArray(data.experience) ? data.experience : [];
   const education = Array.isArray(data.education) ? data.education : [];
   const skills = Array.isArray(data.skills) ? data.skills : [];
-  const certifications = Array.isArray(data.certifications) ? data.certifications : [];
   const languages = Array.isArray(data.languages) ? data.languages : [];
-
-  // Styles dynamiques
-  const padding = isMiniature ? 12 : 32;
-  const borderRadius = isMiniature ? 8 : 16;
-  const boxShadow = isMiniature ? '0 2px 8px rgba(82, 196, 26, 0.08)' : '0 4px 24px rgba(82, 196, 26, 0.08)';
-  const avatarSize = isMiniature ? 48 : 160;
-  const avatarBorder = isMiniature ? '2px solid #52c41a' : '4px solid #52c41a';
-  const avatarMargin = isMiniature ? 4 : 16;
-  const titleLevel = isMiniature ? 5 : 3;
-  const titleFontSize = isMiniature ? 14 : 28;
-  const subtitleFontSize = isMiniature ? 11 : 16;
-  const sectionMargin = isMiniature ? 8 : 32;
-  const cardPadding = isMiniature ? 6 : 16;
-  const cardFontSize = isMiniature ? 9 : 14;
-  const tagFontSize = isMiniature ? 9 : 16;
-  const rowGutter: [number, number] = isMiniature ? [4, 4] : [16, 16];
-  const timelineCardPadding = isMiniature ? 4 : 16;
-  const timelineCardFontSize = isMiniature ? 9 : 14;
+  const interests = Array.isArray((data as any).interests) ? (data as any).interests : [];
 
   return (
-    <div style={{ background: 'linear-gradient(135deg, #f6ffed 0%, #fffbe6 100%)', borderRadius: borderRadius, boxShadow: boxShadow, padding: padding }}>
-      {/* En-tête */}
-      <Row gutter={rowGutter} align="middle" style={{ marginBottom: sectionMargin }}>
-        <Col xs={24} md={7} style={{ textAlign: 'center' }}>
-          <Avatar
-            src={personalInfo.photo || '/images/avatars/man-5.png'}
-            size={avatarSize}
-            style={{ border: avatarBorder, marginBottom: avatarMargin }}
-          />
-          <Title level={titleLevel} style={{ color: '#237804', margin: 0 }}>
-            {personalInfo.firstName} {personalInfo.lastName}
-          </Title>
-          <Text style={{ color: '#135200', fontSize: subtitleFontSize }}>{personalInfo.title}</Text>
-        </Col>
-        <Col xs={24} md={17}>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
-            <Tag color="green"><MailOutlined /> {personalInfo.email}</Tag>
-            <Tag color="gold"><PhoneOutlined /> {personalInfo.phone}</Tag>
-            <Tag color="lime"><EnvironmentOutlined /> {personalInfo.address}</Tag>
-            {personalInfo.linkedin && <Tag color="geekblue"><LinkedinOutlined /> {personalInfo.linkedin}</Tag>}
-            {personalInfo.portfolio && <Tag color="purple"><GlobalOutlined /> {personalInfo.portfolio}</Tag>}
-          </div>
-          <Paragraph style={{ marginTop: 24, fontSize: cardFontSize, color: '#135200' }}>{summary}</Paragraph>
-        </Col>
-      </Row>
-
-      {/* Expérience */}
-      <section style={{ marginBottom: sectionMargin }}>
-        <Title level={4} style={{ color: '#52c41a' }}><FieldTimeOutlined /> Expérience Agroalimentaire / Agriculture</Title>
-        <Timeline>
-          {experience.map((exp, idx) => (
-            <Timeline.Item key={idx} color="#52c41a">
-              <Card style={{ borderLeft: '4px solid #52c41a', marginBottom: 16 }}>
-                <Title level={5} style={{ color: '#237804' }}>{exp.title}</Title>
-                <Text strong>{exp.company}</Text> <Text type="secondary">{exp.startDate} - {exp.current ? 'Présent' : exp.endDate}</Text>
-                <Paragraph>{exp.description}</Paragraph>
-                {exp.achievements && exp.achievements.length > 0 && (
-                  <ul>
-                    {exp.achievements.map((ach, i) => <li key={i}>{ach}</li>)}
-                  </ul>
-                )}
-              </Card>
-            </Timeline.Item>
-          ))}
-        </Timeline>
-      </section>
-
-      {/* Compétences */}
-      <section style={{ marginBottom: sectionMargin }}>
-        <Title level={4} style={{ color: '#52c41a' }}>Compétences Clés</Title>
-        <Row gutter={rowGutter}>
-          {skills.map((skill, idx) => (
-            <Col xs={24} sm={12} md={8} key={idx}>
-              <Card style={{ background: '#f6ffed', border: '1px solid #b7eb8f' }}>
-                <Text strong>{skill.name}</Text>
-                <Rate disabled defaultValue={typeof skill.level === 'number' ? skill.level : skill.level === 'Débutant' ? 1 : skill.level === 'Intermédiaire' ? 2 : skill.level === 'Avancé' ? 3 : skill.level === 'Expert' ? 4 : 0} />
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </section>
-
-      {/* Formation */}
-      <section style={{ marginBottom: sectionMargin }}>
-        <Title level={4} style={{ color: '#52c41a' }}>Formation</Title>
-        <Timeline>
-          {education.map((edu, idx) => (
-            <Timeline.Item key={idx} color="#52c41a">
-              <Card style={{ background: '#f6ffed', border: '1px solid #b7eb8f' }}>
-                <Title level={5}>{edu.degree} en {edu.field}</Title>
-                <Text strong>{edu.institution}</Text> <Text type="secondary">{edu.startDate} - {edu.endDate}</Text>
-                <Paragraph>{edu.description}</Paragraph>
-              </Card>
-            </Timeline.Item>
-          ))}
-        </Timeline>
-      </section>
-
-      {/* Certifications */}
-      {certifications && certifications.length > 0 && (
-        <section style={{ marginBottom: sectionMargin }}>
-          <Title level={4} style={{ color: '#52c41a' }}>Certifications</Title>
-          <Row gutter={rowGutter}>
-            {certifications.map((cert, idx) => {
-              if (typeof cert === 'string') {
-                return (
-                  <Col key={idx} xs={24} sm={12} md={8}>
-                    <Card style={{ background: '#f6ffed', border: '1px solid #b7eb8f' }}>
-                      <Text>{cert}</Text>
-                    </Card>
-                  </Col>
-                );
-              } else {
-                return (
-                  <Col key={idx} xs={24} sm={12} md={8}>
-                    <Card style={{ background: '#f6ffed', border: '1px solid #b7eb8f' }}>
-                      <Text strong>{cert.name}</Text><br/>
-                      <Text>{cert.issuer}</Text><br/>
-                      <Text type="secondary">{cert.date}</Text>
-                    </Card>
-                  </Col>
-                );
-              }
-            })}
-          </Row>
-        </section>
-      )}
-
-      {/* Langues */}
-      <section>
-        <Title level={4} style={{ color: '#52c41a' }}>Langues</Title>
-        <Row gutter={rowGutter}>
-          {languages.map((lang, idx) => (
-            <Col key={idx} xs={12} sm={8} md={6}>
-              <Tag color="green" style={{ fontSize: tagFontSize }}>{lang.name} - {lang.level}</Tag>
-            </Col>
-          ))}
-        </Row>
-      </section>
-
-      {/* Section Références dynamique */}
-      {Array.isArray(data.references) && data.references.length > 0 && (
-        <div style={{ marginTop: 24 }}>
-          <div style={{ fontWeight: 700, fontSize: 18, color: '#388e3c', marginBottom: 8 }}>RÉFÉRENCES</div>
-          {data.references.map((ref: any, idx: number) => (
-            <div key={idx} style={{ fontSize: 14, color: '#388e3c', marginBottom: 8 }}>
-              <div style={{ fontWeight: 600 }}>{ref.name}</div>
-              {ref.position && <div style={{ fontSize: 13 }}>{ref.position}</div>}
-              {ref.contact && <div style={{ fontSize: 12, color: '#888' }}>{ref.contact}</div>}
-            </div>
-          ))}
+    <div style={{ width: 794, background: blanc, borderRadius: 18, overflow: 'hidden', fontFamily: 'Montserrat, Arial, sans-serif', boxShadow: '0 4px 24px #0002', display: 'flex', flexDirection: 'column' }}>
+      {/* Header bandeau vert foncé */}
+      <div style={{ width: '100%', background: vertFonce, minHeight: 140, display: 'flex', flexDirection: 'row', alignItems: 'center', padding: '0 0 0 0', position: 'relative' }}>
+        <div style={{ width: 160, height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center', marginLeft: 32 }}>
+          <Avatar src={personalInfo.photo || '/images/avatars/man-5.png'} size={110} style={{ border: '4px solid #fff', boxShadow: '0 2px 8px #0001', background: '#fff' }} />
         </div>
-      )}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '32px 48px 32px 32px' }}>
+          <div style={{ fontWeight: 900, fontSize: 32, color: blanc, letterSpacing: 1, lineHeight: 1, textTransform: 'uppercase', marginBottom: 8 }}>{personalInfo.firstName} {personalInfo.lastName}</div>
+          <div style={{ fontSize: 18, color: blanc, fontWeight: 500, marginBottom: 12, textTransform: 'capitalize' }}>{personalInfo.title}</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, marginTop: 8 }}>
+            <div style={{ fontSize: 14, color: blanc, display: 'flex', alignItems: 'center', gap: 8 }}><PhoneOutlined /> {personalInfo.phone}</div>
+            <div style={{ fontSize: 14, color: blanc, display: 'flex', alignItems: 'center', gap: 8 }}><MailOutlined /> {personalInfo.email}</div>
+            <div style={{ fontSize: 14, color: blanc, display: 'flex', alignItems: 'center', gap: 8 }}><EnvironmentOutlined /> {personalInfo.address}</div>
+            {personalInfo.linkedin && <div style={{ fontSize: 14, color: blanc, display: 'flex', alignItems: 'center', gap: 8 }}><LinkedinOutlined /> {personalInfo.linkedin}</div>}
+            {personalInfo.portfolio && <div style={{ fontSize: 14, color: blanc, display: 'flex', alignItems: 'center', gap: 8 }}><GlobalOutlined /> {personalInfo.portfolio}</div>}
+          </div>
+        </div>
+      </div>
+      {/* Deux colonnes principales */}
+      <div style={{ display: 'flex', flexDirection: 'row', flex: 1, background: blanc, minHeight: 600 }}>
+        {/* Colonne gauche */}
+        <div style={{ width: '32%', background: blanc, color: vertFonce, display: 'flex', flexDirection: 'column', padding: '32px 0 0 32px', gap: 32 }}>
+          {/* Informations */}
+          {summary && (
+            <div>
+              <div style={{ fontWeight: 700, fontSize: 15, color: vertFonce, marginBottom: 10, letterSpacing: 1, textTransform: 'uppercase' }}>Informations</div>
+              <div style={{ fontSize: 13, color: grisTexte }}>{summary}</div>
+            </div>
+          )}
+          {/* Compétences */}
+          {skills.length > 0 && (
+            <div>
+              <div style={{ fontWeight: 700, fontSize: 15, color: vertFonce, marginBottom: 10, letterSpacing: 1, textTransform: 'uppercase' }}>Compétences</div>
+              <ul style={{ paddingLeft: 0, margin: 0, listStyle: 'none' }}>
+                {skills.map((skill, i) => (
+                  <li key={i} style={{ display: 'flex', alignItems: 'center', fontSize: 13, color: vertFonce, marginBottom: 7, gap: 8 }}>
+                    <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: vertFonce, marginRight: 8, flexShrink: 0 }} />
+                    {skill.name}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {/* Intérêts */}
+          {interests.length > 0 && (
+            <div>
+              <div style={{ fontWeight: 700, fontSize: 15, color: vertFonce, marginBottom: 10, letterSpacing: 1, textTransform: 'uppercase' }}>Intérêts</div>
+              <ul style={{ paddingLeft: 0, margin: 0, listStyle: 'none' }}>
+                {interests.map((interest: any, i: number) => (
+                  <li key={i} style={{ display: 'flex', alignItems: 'center', fontSize: 13, color: vertFonce, marginBottom: 7, gap: 8 }}>
+                    <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: vertFonce, marginRight: 8, flexShrink: 0 }} />
+                    {typeof interest === 'string' ? interest : (interest && typeof interest === 'object' && (interest as any).name ? (interest as any).name : '')}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {/* Langues */}
+          {languages.length > 0 && (
+            <div>
+              <div style={{ fontWeight: 700, fontSize: 15, color: vertFonce, marginBottom: 10, letterSpacing: 1, textTransform: 'uppercase' }}>Langues</div>
+              <ul style={{ paddingLeft: 0, margin: 0, listStyle: 'none' }}>
+                {languages.map((lang, i) => (
+                  <li key={i} style={{ display: 'flex', alignItems: 'center', fontSize: 13, color: vertFonce, marginBottom: 7, gap: 8 }}>
+                    <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: vertFonce, marginRight: 8, flexShrink: 0 }} />
+                    {lang.name} - {lang.level}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+        {/* Colonne droite */}
+        <div style={{ width: '68%', background: blanc, color: vertFonce, display: 'flex', flexDirection: 'column', padding: '32px 48px 32px 48px', gap: 32 }}>
+          {/* Expériences professionnelles */}
+          {experience.length > 0 && (
+            <div>
+              <div style={{ fontWeight: 700, fontSize: 16, color: vertFonce, marginBottom: 18, textTransform: 'uppercase', letterSpacing: 1 }}>Expériences professionnelles</div>
+              {experience.map((exp, idx) => (
+                <div key={idx} style={{ background: blanc, borderRadius: 12, boxShadow: '0 2px 8px #0001', padding: '18px 24px', marginBottom: 18, border: `1px solid ${gris}` }}>
+                  <div style={{ fontWeight: 700, fontSize: 15, color: vertFonce }}>{exp.title}</div>
+                  <div style={{ fontSize: 13, color: grisTexte }}>{exp.company}</div>
+                  <div style={{ fontSize: 12, color: vertClair }}>{exp.startDate} - {exp.current ? 'Présent' : exp.endDate}</div>
+                  <div style={{ fontSize: 13, color: grisTexte, marginTop: 8 }}>{exp.description}</div>
+                  {Array.isArray(exp.achievements) && exp.achievements.length > 0 && (
+                    <ul style={{ fontSize: 13, color: vertFonce, margin: '8px 0 0 0', paddingLeft: 18 }}>
+                      {exp.achievements.map((ach, i) => <li key={i}>{ach}</li>)}
+                    </ul>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+          {/* Formations */}
+          {education.length > 0 && (
+            <div>
+              <div style={{ fontWeight: 700, fontSize: 16, color: vertFonce, marginBottom: 18, textTransform: 'uppercase', letterSpacing: 1 }}>Formations</div>
+              {education.map((edu, idx) => (
+                <div key={idx} style={{ background: blanc, borderRadius: 12, boxShadow: '0 2px 8px #0001', padding: '18px 24px', marginBottom: 18, border: `1px solid ${gris}` }}>
+                  <div style={{ fontWeight: 700, fontSize: 14, color: vertFonce }}>{edu.degree}</div>
+                  <div style={{ fontSize: 13, color: grisTexte }}>{edu.institution}</div>
+                  <div style={{ fontSize: 12, color: vertClair }}>{edu.startDate} - {edu.endDate}</div>
+                  {edu.description && <div style={{ fontSize: 13, color: grisTexte, marginTop: 8 }}>{edu.description}</div>}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
