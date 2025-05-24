@@ -44,11 +44,11 @@ const BankTemplate: React.FC<BankTemplateProps> = ({ data, isMiniature = false }
       {/* Deux colonnes principales */}
       <div style={{ display: 'flex', flexDirection: 'row', flex: 1, background: blanc }}>
         {/* Colonne gauche */}
-        <div style={{ width: '34%', background: bleuClair, color: bleuFonce, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px 0 32px 0', gap: 32 }}>
+        <div style={{ width: '30%', background: bleuClair, color: bleuFonce, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '24px 0 18px 0', gap: 18 }}>
           {/* Contact */}
           <div style={{ width: '80%', marginBottom: 24 }}>
-            <div style={{ fontWeight: 700, fontSize: 15, color: bleuFonce, marginBottom: 8, letterSpacing: 1, textTransform: 'uppercase', background: blanc, padding: '4px 16px', borderRadius: 8, display: 'inline-block' }}>Contact</div>
-            <div style={{ height: 2, width: 32, background: bleuFonce, opacity: 0.12, marginBottom: 12, borderRadius: 2 }} />
+            <div style={{ fontWeight: 700, fontSize: 14, color: bleuFonce, marginBottom: 6, letterSpacing: 1, textTransform: 'uppercase', background: blanc, padding: '3px 12px', borderRadius: 8, display: 'inline-block' }}>Contact</div>
+            <div style={{ height: 2, width: 24, background: bleuFonce, opacity: 0.12, marginBottom: 8, borderRadius: 2 }} />
             {personalInfo.phone && <div style={{ fontSize: 14, color: grisTexte, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}><PhoneOutlined style={{ fontSize: 18, color: bleuFonce, marginRight: 8 }} /> {personalInfo.phone}</div>}
             {personalInfo.email && <div style={{ fontSize: 14, color: grisTexte, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}><MailOutlined style={{ fontSize: 18, color: bleuFonce, marginRight: 8 }} /> {personalInfo.email}</div>}
             {personalInfo.portfolio && <div style={{ fontSize: 14, color: grisTexte, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}><GlobalOutlined style={{ fontSize: 18, color: bleuFonce, marginRight: 8 }} /> {personalInfo.portfolio}</div>}
@@ -102,13 +102,13 @@ const BankTemplate: React.FC<BankTemplateProps> = ({ data, isMiniature = false }
           )}
         </div>
         {/* Colonne droite */}
-        <div style={{ width: '66%', background: blanc, color: bleuFonce, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-start', padding: '40px 40px 32px 40px', gap: 32 }}>
+        <div style={{ width: '70%', background: blanc, color: bleuFonce, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-start', padding: '28px 24px 18px 24px', gap: 18 }}>
           {/* Expérience */}
           {experience.length > 0 && (
-            <div style={{ width: '100%', marginBottom: 24 }}>
-              <div style={{ fontWeight: 700, fontSize: 16, color: bleuFonce, marginBottom: 14, textTransform: 'uppercase', letterSpacing: 1, background: bleuClair, padding: '4px 16px', borderRadius: 8, display: 'inline-block' }}>Expérience</div>
+            <div style={{ width: '100%', marginBottom: 16 }}>
+              <div style={{ fontWeight: 700, fontSize: 15, color: bleuFonce, marginBottom: 10, textTransform: 'uppercase', letterSpacing: 1, background: bleuClair, padding: '3px 12px', borderRadius: 8, display: 'inline-block' }}>Expérience</div>
               {experience.map((exp, idx) => (
-                <div key={idx} style={{ background: bleuClair, borderRadius: 14, boxShadow: '0 2px 8px #0001', padding: '18px 24px', marginBottom: 18, border: `1px solid ${gris}` }}>
+                <div key={idx} style={{ background: bleuClair, borderRadius: 10, boxShadow: '0 2px 8px #0001', padding: '10px 14px', marginBottom: 10, border: `1px solid ${gris}` }}>
                   <div style={{ fontWeight: 700, fontSize: 15, color: bleuFonce }}>{exp.title}</div>
                   <div style={{ fontSize: 13, color: grisTexte }}>{exp.company}{exp.location ? ` / ${exp.location}` : ''}</div>
                   <div style={{ fontSize: 12, color: bleuFonce, opacity: 0.7 }}>{exp.startDate} - {exp.current ? 'Présent' : exp.endDate}</div>

@@ -41,8 +41,8 @@ const TechModernTemplate: React.FC<TechModernTemplateProps> = ({ data, isMiniatu
       {/* Colonne gauche */}
       <div style={{ width: '32%', background: vertFonce, color: blanc, padding: '0 0 0 0', display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100%' }}>
         {/* Photo */}
-        <div style={{ width: 140, height: 140, borderRadius: 18, overflow: 'hidden', marginTop: 32, marginBottom: 18, boxShadow: '0 2px 8px #0003' }}>
-          <img src={personalInfo.photo || '/images/avatars/man-4.png'} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        <div style={{ width: 160, height: 160, borderRadius: '50%', overflow: 'hidden', marginTop: 28, marginBottom: 18, boxShadow: '0 2px 8px #0003', border: '6px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <img src={personalInfo.photo || '/images/avatars/man-4.png'} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
         </div>
         {/* Coordonnées */}
         <div style={{ width: '80%', marginBottom: 24 }}>
@@ -125,11 +125,11 @@ const TechModernTemplate: React.FC<TechModernTemplateProps> = ({ data, isMiniatu
             <div style={{ fontSize: 18, color: vertFonce, fontWeight: 500, textTransform: 'capitalize' }}>{personalInfo.title}</div>
           </div>
           {/* Laptop dessin SVG */}
-          <div style={{ marginLeft: 24 }}>
-            <svg width="64" height="48" viewBox="0 0 64 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="6" y="8" width="52" height="28" rx="4" fill="#eaf3ee" stroke="#4b6c5c" strokeWidth="2" />
-              <rect x="2" y="38" width="60" height="6" rx="3" fill="#eaf3ee" stroke="#4b6c5c" strokeWidth="2" />
-              <rect x="18" y="14" width="28" height="10" rx="2" fill="#fff" />
+          <div style={{ marginLeft: 24, transform: 'rotate(-12deg)' }}>
+            <svg width="90" height="64" viewBox="0 0 90 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="10" y="12" width="70" height="36" rx="6" fill="#eaf3ee" stroke="#4b6c5c" strokeWidth="3" />
+              <rect x="4" y="52" width="82" height="8" rx="4" fill="#eaf3ee" stroke="#4b6c5c" strokeWidth="3" />
+              <rect x="28" y="22" width="34" height="14" rx="3" fill="#fff" />
             </svg>
           </div>
         </div>
@@ -173,15 +173,17 @@ const TechModernTemplate: React.FC<TechModernTemplateProps> = ({ data, isMiniatu
           </div>
         )}
         {/* Clavier dessin SVG décoratif */}
-        <div style={{ position: 'absolute', bottom: 16, right: 16, opacity: 0.18, zIndex: 0 }}>
-          <svg width="120" height="36" viewBox="0 0 120 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="2" y="6" width="116" height="24" rx="6" fill="#eaf3ee" stroke="#4b6c5c" strokeWidth="2" />
-            <rect x="10" y="12" width="12" height="8" rx="2" fill="#fff" />
-            <rect x="26" y="12" width="12" height="8" rx="2" fill="#fff" />
-            <rect x="42" y="12" width="12" height="8" rx="2" fill="#fff" />
-            <rect x="58" y="12" width="12" height="8" rx="2" fill="#fff" />
-            <rect x="74" y="12" width="12" height="8" rx="2" fill="#fff" />
-            <rect x="90" y="12" width="12" height="8" rx="2" fill="#fff" />
+        <div style={{ position: 'absolute', bottom: 16, right: 16, opacity: 0.3, zIndex: 0, transform: 'rotate(8deg)' }}>
+          <svg width="180" height="48" viewBox="0 0 180 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4" y="10" width="172" height="28" rx="8" fill="#eaf3ee" stroke="#4b6c5c" strokeWidth="3" />
+            {/* touches */}
+            <rect x="16" y="18" width="18" height="8" rx="2" fill="#fff" />
+            <rect x="38" y="18" width="18" height="8" rx="2" fill="#fff" />
+            <rect x="60" y="18" width="18" height="8" rx="2" fill="#fff" />
+            <rect x="82" y="18" width="18" height="8" rx="2" fill="#fff" />
+            <rect x="104" y="18" width="18" height="8" rx="2" fill="#fff" />
+            <rect x="126" y="18" width="18" height="8" rx="2" fill="#fff" />
+            <rect x="148" y="18" width="18" height="8" rx="2" fill="#fff" />
           </svg>
         </div>
       </div>
