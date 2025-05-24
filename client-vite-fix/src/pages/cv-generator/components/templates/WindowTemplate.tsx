@@ -97,70 +97,69 @@ const WindowTemplate: React.FC<WindowTemplateProps> = ({ data, isMiniature = fal
           <div style={{ borderTop: borderStyle, padding: '14px 0 0 0', fontSize: 14, color: grisTexte, marginTop: 12 }}>{personalInfo.summary}</div>
         )}
       </CardWindow>
-      {/* Grille sections fluide : flex-wrap */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, margin: '0 24px 0 24px', alignItems: 'flex-start' }}>
+      {/* Grille sections masonry : grid auto-flow dense */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+        gridAutoFlow: 'dense',
+        gap: 24,
+        margin: '0 24px 0 24px',
+        alignItems: 'start',
+      }}>
         {/* Expérience */}
         {experience.length > 0 && (
-          <div style={{ flex: '1 1 320px', minWidth: 320, maxWidth: 'calc(50% - 12px)' }}>
-            <CardWindow title="Expérience">
-              {experience.map((exp, idx) => (
-                <div key={idx} style={{ marginBottom: 18 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ fontWeight: 700, fontSize: 15, color: noir }}>{exp.title}</div>
-                    <div style={{ fontSize: 13, color: grisTexte }}>{exp.startDate} - {exp.current ? 'Présent' : exp.endDate}</div>
-                  </div>
-                  <div style={{ fontSize: 13, color: grisTexte }}>{exp.company}{exp.location ? `, ${exp.location}` : ''}</div>
-                  {exp.description && <div style={{ fontSize: 13, color: grisTexte, marginTop: 2 }}>{exp.description}</div>}
-                  {Array.isArray(exp.achievements) && exp.achievements.length > 0 && (
-                    <ul style={{ fontSize: 13, color: noir, margin: '6px 0 0 0', paddingLeft: 18 }}>
-                      {exp.achievements.map((ach, i) => <li key={i}>{ach}</li>)}
-                    </ul>
-                  )}
+          <CardWindow title="Expérience">
+            {experience.map((exp, idx) => (
+              <div key={idx} style={{ marginBottom: 18 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ fontWeight: 700, fontSize: 15, color: noir }}>{exp.title}</div>
+                  <div style={{ fontSize: 13, color: grisTexte }}>{exp.startDate} - {exp.current ? 'Présent' : exp.endDate}</div>
                 </div>
-              ))}
-            </CardWindow>
-          </div>
+                <div style={{ fontSize: 13, color: grisTexte }}>{exp.company}{exp.location ? `, ${exp.location}` : ''}</div>
+                {exp.description && <div style={{ fontSize: 13, color: grisTexte, marginTop: 2 }}>{exp.description}</div>}
+                {Array.isArray(exp.achievements) && exp.achievements.length > 0 && (
+                  <ul style={{ fontSize: 13, color: noir, margin: '6px 0 0 0', paddingLeft: 18 }}>
+                    {exp.achievements.map((ach, i) => <li key={i}>{ach}</li>)}
+                  </ul>
+                )}
+              </div>
+            ))}
+          </CardWindow>
         )}
         {/* Formation */}
         {education.length > 0 && (
-          <div style={{ flex: '1 1 320px', minWidth: 320, maxWidth: 'calc(50% - 12px)' }}>
-            <CardWindow title="Formation">
-              {education.map((edu, idx) => (
-                <div key={idx} style={{ marginBottom: 18 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ fontWeight: 700, fontSize: 15, color: noir }}>{edu.degree}</div>
-                    <div style={{ fontSize: 13, color: grisTexte }}>{edu.startDate} - {edu.endDate}</div>
-                  </div>
-                  <div style={{ fontSize: 13, color: grisTexte }}>{edu.institution}{edu.field ? `, ${edu.field}` : ''}</div>
-                  {edu.description && <div style={{ fontSize: 13, color: grisTexte, marginTop: 2 }}>{edu.description}</div>}
+          <CardWindow title="Formation">
+            {education.map((edu, idx) => (
+              <div key={idx} style={{ marginBottom: 18 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ fontWeight: 700, fontSize: 15, color: noir }}>{edu.degree}</div>
+                  <div style={{ fontSize: 13, color: grisTexte }}>{edu.startDate} - {edu.endDate}</div>
                 </div>
-              ))}
-            </CardWindow>
-          </div>
+                <div style={{ fontSize: 13, color: grisTexte }}>{edu.institution}{edu.field ? `, ${edu.field}` : ''}</div>
+                {edu.description && <div style={{ fontSize: 13, color: grisTexte, marginTop: 2 }}>{edu.description}</div>}
+              </div>
+            ))}
+          </CardWindow>
         )}
         {/* Compétences */}
         {skills.length > 0 && (
-          <div style={{ flex: '1 1 320px', minWidth: 320, maxWidth: 'calc(50% - 12px)' }}>
-            <CardWindow title="Compétences">
-              <ul style={{ paddingLeft: 0, margin: 0, listStyle: 'none' }}>
-                {skills.map((skill, idx) => (
-                  <li key={idx} style={{ fontSize: 13, color: noir, marginBottom: 6 }}>{skill.name}</li>
-                ))}
-              </ul>
-            </CardWindow>
-          </div>
+          <CardWindow title="Compétences">
+            <ul style={{ paddingLeft: 0, margin: 0, listStyle: 'none' }}>
+              {skills.map((skill, idx) => (
+                <li key={idx} style={{ fontSize: 13, color: noir, marginBottom: 6 }}>{skill.name}</li>
+              ))}
+            </ul>
+          </CardWindow>
         )}
         {/* Certifications */}
         {certifications.length > 0 && (
-          <div style={{ flex: '1 1 320px', minWidth: 320, maxWidth: 'calc(50% - 12px)' }}>
-            <CardWindow title="Certifications">
-              <ul style={{ fontSize: 13, color: noir, margin: 0, paddingLeft: 18 }}>
-                {certifications.map((cert: any, idx: number) => (
-                  <li key={idx}>{typeof cert === 'string' ? cert : `${cert.name}${cert.issuer ? ' - ' + cert.issuer : ''}${cert.date ? ' (' + cert.date + ')' : ''}`}</li>
-                ))}
-              </ul>
-            </CardWindow>
-          </div>
+          <CardWindow title="Certifications">
+            <ul style={{ fontSize: 13, color: noir, margin: 0, paddingLeft: 18 }}>
+              {certifications.map((cert: any, idx: number) => (
+                <li key={idx}>{typeof cert === 'string' ? cert : `${cert.name}${cert.issuer ? ' - ' + cert.issuer : ''}${cert.date ? ' (' + cert.date + ')' : ''}`}</li>
+              ))}
+            </ul>
+          </CardWindow>
         )}
       </div>
     </div>
