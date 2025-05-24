@@ -135,8 +135,8 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
       className="cv-preview-root"
       style={{
         width: baseA4Width,
-        maxHeight: needsScroll ? '80vh' : undefined,
-        overflowY: needsScroll ? 'auto' : 'hidden',
+        height: baseA4Height,
+        overflow: 'hidden',
         background: '#fff',
         borderRadius: 12,
         boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
@@ -148,7 +148,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
         position: 'relative',
       }}
     >
-      <div ref={contentRef} style={{ width: '100%', minHeight: baseA4Height, fontSize: 11, overflow: 'visible', padding: 8, margin: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+      <div style={{ width: '100%', height: '100%', fontSize: 11, overflow: 'hidden', padding: 8, margin: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
         <TemplateComponent
           data={safeData}
           customization={customization}
