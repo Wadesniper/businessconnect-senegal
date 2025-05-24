@@ -126,8 +126,10 @@ const TechModernTemplate: React.FC<TechModernTemplateProps> = ({ data, isMiniatu
           </div>
           {/* Laptop dessin SVG */}
           <div style={{ marginLeft: 24, transform: 'rotate(-12deg)' }}>
-            {/* Laptop SVG isométrique amélioré */}
+            {/* Laptop SVG isométrique optimisé */}
             <svg width="90" height="90" viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {/* Ombre portée */}
+              <ellipse cx="45" cy="84" rx="32" ry="6" fill="#000" opacity="0.10" />
               <g stroke="#4b6c5c" strokeWidth="2" fill="#fff">
                 {/* Base du laptop */}
                 <polygon points="15,65 75,65 87,80 3,80" />
@@ -139,6 +141,8 @@ const TechModernTemplate: React.FC<TechModernTemplateProps> = ({ data, isMiniatu
                 <rect x="25" y="18" width="40" height="28" rx="3" fill="none" />
                 {/* Contenu écran */}
                 <rect x="29" y="22" width="32" height="20" rx="2" fill="#b6e3c6" stroke="none" />
+                {/* Charnière (ligne fine) */}
+                <line x1="25" y1="46" x2="65" y2="65" stroke="#4b6c5c" strokeWidth="1.2" opacity="0.5" />
                 {/* Clavier (touches) */}
                 <g strokeWidth="1" fill="#eaf3ee">
                   {Array.from({length: 2}).map((_, row) => (
