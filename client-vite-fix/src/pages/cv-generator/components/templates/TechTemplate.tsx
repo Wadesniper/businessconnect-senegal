@@ -1,31 +1,17 @@
 import React from 'react';
-import { MailOutlined, PhoneOutlined, EnvironmentOutlined, GlobalOutlined } from '@ant-design/icons';
+import { MailOutlined, PhoneOutlined, EnvironmentOutlined, LinkedinOutlined, GlobalOutlined, StarOutlined, HeartOutlined, CameraOutlined } from '@ant-design/icons';
 import type { CVData } from '../../../../types/cv';
+
+const vertFonce = '#4b6c5c';
+const vertClair = '#eaf3ee';
+const blanc = '#fff';
+const gris = '#e5e7eb';
+const grisTexte = '#6b7280';
 
 interface TechTemplateProps {
   data: CVData;
   isMiniature?: boolean;
 }
-
-const bleuFonce = '#232b38';
-const grisClair = '#f5f6fa';
-const blanc = '#fff';
-const jaune = '#d6a85a';
-const gris = '#e9e9e9';
-
-const hexagonStyle = {
-  width: 150,
-  height: 150,
-  background: jaune,
-  clipPath: 'polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0% 50%)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  margin: '0 auto',
-  marginTop: 24,
-  marginBottom: 16,
-  boxShadow: '0 4px 16px #0002',
-};
 
 const TechTemplate: React.FC<TechTemplateProps> = ({ data, isMiniature = false }) => {
   const personalInfo = {
@@ -38,118 +24,126 @@ const TechTemplate: React.FC<TechTemplateProps> = ({ data, isMiniature = false }
   const experience = Array.isArray(data.experience) ? data.experience : [];
   const education = Array.isArray(data.education) ? data.education : [];
   const skills = Array.isArray(data.skills) ? data.skills : [];
-  const achievements = Array.isArray((data as any).achievements) ? (data as any).achievements : [];
+  const interests = Array.isArray((data as any).interests) ? (data as any).interests : [];
+  const languages = Array.isArray(data.languages) ? data.languages : [];
+
+  // Pictos pour centres d'intérêt (exemple)
+  const interestIcons: Record<string, React.ReactNode> = {
+    photographie: <CameraOutlined />,
+    jeux: <CameraOutlined />,
+    sport: <StarOutlined />,
+    musique: <HeartOutlined />,
+  };
 
   return (
     <div style={{ width: 794, height: 1123, background: blanc, fontFamily: 'Montserrat, Arial, sans-serif', display: 'flex', flexDirection: 'row', borderRadius: 18, overflow: 'hidden', boxShadow: '0 4px 24px #0002' }}>
       {/* Colonne gauche */}
-      <div style={{ width: '34%', background: bleuFonce, color: blanc, padding: '0 0 0 0', display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100%' }}>
-        {/* Hexagone photo */}
-        <div style={hexagonStyle as React.CSSProperties}>
-          <img src={personalInfo.photo || '/images/avatars/man-4.png'} alt="avatar" style={{ width: 115, height: 115, borderRadius: '50%', objectFit: 'cover', border: '4px solid #fff' }} />
+      <div style={{ width: '32%', background: vertFonce, color: blanc, padding: '0 0 0 0', display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100%' }}>
+        {/* Photo */}
+        <div style={{ width: 140, height: 140, borderRadius: 18, overflow: 'hidden', marginTop: 32, marginBottom: 18, boxShadow: '0 2px 8px #0003' }}>
+          <img src={personalInfo.photo || '/images/avatars/man-4.png'} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </div>
-        {/* Nom et titre */}
-        <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <div style={{ fontWeight: 700, fontSize: 28, color: blanc, letterSpacing: 1 }}>{personalInfo.firstName} <br />{personalInfo.lastName}</div>
-          <div style={{ fontSize: 16, color: gris, fontWeight: 500, marginTop: 2 }}>{personalInfo.title}</div>
+        {/* Coordonnées */}
+        <div style={{ width: '80%', marginBottom: 24 }}>
+          <div style={{ fontWeight: 700, fontSize: 15, color: blanc, marginBottom: 8, letterSpacing: 1, textTransform: 'uppercase', background: vertFonce, padding: '4px 16px', borderRadius: 8, display: 'inline-block' }}>Coordonnées</div>
+          <div style={{ height: 2, width: 32, background: blanc, opacity: 0.12, marginBottom: 12, borderRadius: 2 }} />
+          {personalInfo.phone && <div style={{ fontSize: 14, color: blanc, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}><PhoneOutlined style={{ fontSize: 18, color: blanc, marginRight: 8 }} /> {personalInfo.phone}</div>}
+          {personalInfo.email && <div style={{ fontSize: 14, color: blanc, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}><MailOutlined style={{ fontSize: 18, color: blanc, marginRight: 8 }} /> {personalInfo.email}</div>}
+          {personalInfo.address && <div style={{ fontSize: 14, color: blanc, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}><EnvironmentOutlined style={{ fontSize: 18, color: blanc, marginRight: 8 }} /> {personalInfo.address}</div>}
+          {personalInfo.portfolio && <div style={{ fontSize: 14, color: blanc, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}><GlobalOutlined style={{ fontSize: 18, color: blanc, marginRight: 8 }} /> {personalInfo.portfolio}</div>}
+          {personalInfo.linkedin && <div style={{ fontSize: 14, color: blanc, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}><LinkedinOutlined style={{ fontSize: 18, color: blanc, marginRight: 8 }} /> {personalInfo.linkedin}</div>}
         </div>
-        {/* Description */}
-        {summary && (
-          <div style={{ margin: '0 24px 24px 24px', background: '#232b38', borderRadius: 12, padding: 16, boxShadow: '0 2px 8px #0001' }}>
-            <div style={{ fontWeight: 600, fontSize: 18, color: jaune, marginBottom: 8 }}>Description</div>
-            <div style={{ fontSize: 14, color: gris }}>{summary}</div>
+        {/* Compétences */}
+        {skills.length > 0 && (
+          <div style={{ width: '80%', marginBottom: 24 }}>
+            <div style={{ fontWeight: 700, fontSize: 15, color: blanc, marginBottom: 8, letterSpacing: 1, textTransform: 'uppercase', background: vertFonce, padding: '4px 16px', borderRadius: 8, display: 'inline-block' }}>Compétences</div>
+            <div style={{ height: 2, width: 32, background: blanc, opacity: 0.12, marginBottom: 12, borderRadius: 2 }} />
+            <ul style={{ paddingLeft: 0, margin: 0, listStyle: 'none' }}>
+              {skills.map((skill, i) => (
+                <li key={i} style={{ display: 'flex', alignItems: 'center', fontSize: 13, color: blanc, marginBottom: 7, gap: 8 }}>
+                  <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: blanc, marginRight: 8, flexShrink: 0 }} />
+                  {skill.name}
+                </li>
+              ))}
+            </ul>
           </div>
         )}
-        {/* Contact */}
-        <div style={{ margin: '0 24px 24px 24px', background: '#232b38', borderRadius: 12, padding: 16, boxShadow: '0 2px 8px #0001' }}>
-          <div style={{ fontWeight: 600, fontSize: 18, color: jaune, marginBottom: 8 }}>Mes contacts</div>
-          <div style={{ fontSize: 14, color: gris, display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <span><PhoneOutlined /> {personalInfo.phone}</span>
-            <span><MailOutlined /> {personalInfo.email}</span>
-            <span><EnvironmentOutlined /> {personalInfo.address}</span>
-            {personalInfo.portfolio && <span><GlobalOutlined /> {personalInfo.portfolio}</span>}
-          </div>
-        </div>
-        {/* Expertise */}
-        {skills.length > 0 && (
-          <div style={{ margin: '0 24px 24px 24px', background: '#232b38', borderRadius: 12, padding: 16, boxShadow: '0 2px 8px #0001' }}>
-            <div style={{ fontWeight: 600, fontSize: 18, color: jaune, marginBottom: 8 }}>Expertise</div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, justifyContent: 'center' }}>
-              {skills.map((skill, idx) => (
-                <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: 80 }}>
-                  {/* Placeholder icône */}
-                  <div style={{ width: 40, height: 40, background: gris, borderRadius: '50%', marginBottom: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', color: bleuFonce, fontSize: 22 }}>
-                    <span role="img" aria-label="icon">💡</span>
-                  </div>
-                  <span style={{ fontSize: 13, color: gris }}>{skill.name}</span>
+        {/* Centres d'intérêt */}
+        {interests.length > 0 && (
+          <div style={{ width: '80%', marginBottom: 24 }}>
+            <div style={{ fontWeight: 700, fontSize: 15, color: blanc, marginBottom: 8, letterSpacing: 1, textTransform: 'uppercase', background: vertFonce, padding: '4px 16px', borderRadius: 8, display: 'inline-block' }}>Centres d'intérêt</div>
+            <div style={{ height: 2, width: 32, background: blanc, opacity: 0.12, marginBottom: 12, borderRadius: 2 }} />
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+              {interests.map((interest: any, i: number) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', fontSize: 13, color: blanc, background: 'rgba(255,255,255,0.08)', borderRadius: 8, padding: '4px 10px', gap: 8 }}>
+                  {interestIcons[(interest.name || '').toLowerCase()] || <StarOutlined />} {interest.name}
                 </div>
               ))}
             </div>
           </div>
         )}
+        {/* Langues */}
+        {languages.length > 0 && (
+          <div style={{ width: '80%', marginBottom: 24 }}>
+            <div style={{ fontWeight: 700, fontSize: 15, color: blanc, marginBottom: 8, letterSpacing: 1, textTransform: 'uppercase', background: vertFonce, padding: '4px 16px', borderRadius: 8, display: 'inline-block' }}>Langues</div>
+            <div style={{ height: 2, width: 32, background: blanc, opacity: 0.12, marginBottom: 12, borderRadius: 2 }} />
+            <ul style={{ paddingLeft: 0, margin: 0, listStyle: 'none' }}>
+              {languages.map((lang, i) => (
+                <li key={i} style={{ display: 'flex', alignItems: 'center', fontSize: 13, color: blanc, marginBottom: 7, gap: 8 }}>
+                  <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: blanc, marginRight: 8, flexShrink: 0 }} />
+                  {lang.name} - {lang.level}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
       {/* Colonne droite */}
-      <div style={{ width: '66%', background: grisClair, padding: '48px 40px 40px 40px', display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
-        {/* Nom et titre (mobile/miniature) */}
-        {/* Work Experiences */}
+      <div style={{ width: '68%', background: vertClair, padding: '48px 40px 40px 40px', display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
+        {/* Header nom/titre + pictos */}
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontWeight: 900, fontSize: 32, color: vertFonce, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 4 }}>{personalInfo.firstName} {personalInfo.lastName}</div>
+            <div style={{ fontSize: 18, color: vertFonce, fontWeight: 500, textTransform: 'capitalize' }}>{personalInfo.title}</div>
+          </div>
+          {/* Pictos tech (exemple) */}
+          <div style={{ display: 'flex', gap: 16 }}>
+            <svg width="38" height="38" fill="none" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#4b6c5c"/><path d="M7 17V7h10v10H7zm2-2h6V9H9v6z" fill="#fff"/></svg>
+            <svg width="38" height="38" fill="none" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#4b6c5c"/><path d="M8 17V7h8v10H8zm2-2h4V9h-4v6z" fill="#fff"/></svg>
+          </div>
+        </div>
+        {/* À propos */}
+        {summary && (
+          <div style={{ marginBottom: 32 }}>
+            <div style={{ fontWeight: 700, fontSize: 18, color: vertFonce, background: '#d6eadd', padding: '4px 16px', borderRadius: 8, display: 'inline-block', marginBottom: 10 }}>À propos</div>
+            <div style={{ fontSize: 15, color: grisTexte, marginTop: 6 }}>{summary}</div>
+          </div>
+        )}
+        {/* Expériences professionnelles */}
         {experience.length > 0 && (
           <div style={{ marginBottom: 32 }}>
-            <div style={{ fontWeight: 700, fontSize: 22, color: bleuFonce, marginBottom: 16, display: 'flex', alignItems: 'center' }}>
-              Expériences professionnelles
-              <div style={{ width: 32, height: 8, background: jaune, marginLeft: 12, clipPath: 'polygon(0 0, 100% 0, 80% 100%, 0% 100%)' }} />
-            </div>
+            <div style={{ fontWeight: 700, fontSize: 18, color: vertFonce, background: '#d6eadd', padding: '4px 16px', borderRadius: 8, display: 'inline-block', marginBottom: 10 }}>Expériences professionnelles</div>
             {experience.map((exp, idx) => (
-              <div key={idx} style={{ background: blanc, borderRadius: 10, boxShadow: '0 2px 8px #0001', padding: 18, marginBottom: 18 }}>
+              <div key={idx} style={{ background: blanc, borderRadius: 10, boxShadow: '0 2px 8px #0001', padding: 18, marginBottom: 18, borderLeft: `4px solid ${vertFonce}` }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div style={{ fontWeight: 600, fontSize: 16, color: bleuFonce }}>{exp.company}</div>
-                  <div style={{ fontSize: 14, color: bleuFonce }}>{exp.startDate} {exp.endDate ? `- ${exp.endDate}` : ''}</div>
+                  <div style={{ fontWeight: 600, fontSize: 16, color: vertFonce }}>{exp.title}</div>
+                  <div style={{ fontSize: 14, color: vertFonce }}>{exp.startDate} {exp.endDate ? `- ${exp.endDate}` : ''}</div>
                 </div>
-                <div style={{ fontWeight: 500, fontSize: 15, color: '#555', marginBottom: 4 }}>{exp.title}</div>
-                <div style={{ fontSize: 14, color: '#888' }}>{exp.description}</div>
+                <div style={{ fontWeight: 500, fontSize: 15, color: grisTexte, marginBottom: 4 }}>{exp.company}{exp.location ? `, ${exp.location}` : ''}</div>
+                <div style={{ fontSize: 14, color: grisTexte }}>{exp.description}</div>
               </div>
             ))}
           </div>
         )}
-        {/* Education */}
+        {/* Formations */}
         {education.length > 0 && (
           <div style={{ marginBottom: 32 }}>
-            <div style={{ fontWeight: 700, fontSize: 22, color: bleuFonce, marginBottom: 16, display: 'flex', alignItems: 'center' }}>
-              Formation
-              <div style={{ width: 32, height: 8, background: jaune, marginLeft: 12, clipPath: 'polygon(0 0, 100% 0, 80% 100%, 0% 100%)' }} />
-            </div>
+            <div style={{ fontWeight: 700, fontSize: 18, color: vertFonce, background: '#d6eadd', padding: '4px 16px', borderRadius: 8, display: 'inline-block', marginBottom: 10 }}>Formations</div>
             {education.map((edu, idx) => (
-              <div key={idx} style={{ background: blanc, borderRadius: 10, boxShadow: '0 2px 8px #0001', padding: 18, marginBottom: 18 }}>
-                <div style={{ fontWeight: 600, fontSize: 16, color: bleuFonce }}>{edu.institution}</div>
-                <div style={{ fontSize: 15, color: '#555', marginBottom: 4 }}>{edu.degree}{edu.field ? `, ${edu.field}` : ''}</div>
-                <div style={{ fontSize: 13, color: '#888' }}>{edu.startDate} - {edu.endDate}</div>
-              </div>
-            ))}
-          </div>
-        )}
-        {/* Achievement */}
-        {achievements.length > 0 && (
-          <div style={{ marginBottom: 32 }}>
-            <div style={{ fontWeight: 700, fontSize: 22, color: bleuFonce, marginBottom: 16, display: 'flex', alignItems: 'center' }}>
-              Réalisations
-              <div style={{ width: 32, height: 8, background: jaune, marginLeft: 12, clipPath: 'polygon(0 0, 100% 0, 80% 100%, 0% 100%)' }} />
-            </div>
-            {achievements.map((ach: { title: string; description: string }, idx: number) => (
-              <div key={idx} style={{ background: blanc, borderRadius: 10, boxShadow: '0 2px 8px #0001', padding: 18, marginBottom: 18 }}>
-                <div style={{ fontWeight: 600, fontSize: 16, color: bleuFonce }}>{ach.title}</div>
-                <div style={{ fontSize: 14, color: '#888' }}>{ach.description}</div>
-              </div>
-            ))}
-          </div>
-        )}
-        {/* Section Références dynamique */}
-        {Array.isArray(data.references) && data.references.length > 0 && (
-          <div style={{ marginTop: 24 }}>
-            <div style={{ fontWeight: 700, fontSize: 18, color: '#263238', marginBottom: 8 }}>RÉFÉRENCES</div>
-            {data.references.map((ref: any, idx: number) => (
-              <div key={idx} style={{ fontSize: 14, color: '#263238', marginBottom: 8 }}>
-                <div style={{ fontWeight: 600 }}>{ref.name}</div>
-                {ref.position && <div style={{ fontSize: 13 }}>{ref.position}</div>}
-                {ref.contact && <div style={{ fontSize: 12, color: '#888' }}>{ref.contact}</div>}
+              <div key={idx} style={{ background: blanc, borderRadius: 10, boxShadow: '0 2px 8px #0001', padding: 18, marginBottom: 18, borderLeft: `4px solid ${vertFonce}` }}>
+                <div style={{ fontWeight: 600, fontSize: 16, color: vertFonce }}>{edu.degree}</div>
+                <div style={{ fontSize: 15, color: grisTexte, marginBottom: 4 }}>{edu.institution}{edu.field ? `, ${edu.field}` : ''}</div>
+                <div style={{ fontSize: 13, color: grisTexte }}>{edu.startDate} - {edu.endDate}</div>
               </div>
             ))}
           </div>

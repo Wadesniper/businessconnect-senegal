@@ -52,27 +52,37 @@ const MarketingTemplate: React.FC<MarketingTemplateProps> = ({ data, isMiniature
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', minWidth: 0 }}>
             <div style={{ fontSize: 19, fontWeight: 700, letterSpacing: 1, color: white, lineHeight: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 220 }}>{personalInfo.firstName} {personalInfo.lastName}</div>
             <div style={{ fontSize: 13, color: lightBlue, fontWeight: 500, marginBottom: 6, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 220 }}>{personalInfo.title}</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 2, width: '100%' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 4, width: '100%' }}>
-                <MailOutlined style={{ color: mainBlue, fontSize: 13 }} />
-                <span style={{ color: mainBlue, background: white, borderRadius: 4, padding: '1px 4px', fontWeight: 600, fontSize: 11, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 220, display: 'inline-block' }}>{personalInfo.email}</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 4, width: '100%' }}>
-                <PhoneOutlined style={{ color: mainBlue, fontSize: 13 }} />
-                <span style={{ color: mainBlue, background: white, borderRadius: 4, padding: '1px 4px', fontWeight: 600, fontSize: 11 }}>{personalInfo.phone}</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 4, width: '100%' }}>
-                <EnvironmentOutlined style={{ color: mainBlue, fontSize: 13 }} />
-                <span style={{ color: mainBlue, background: white, borderRadius: 4, padding: '1px 4px', fontWeight: 600, fontSize: 11, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 220, display: 'inline-block' }}>{personalInfo.address}</span>
-              </div>
-              {personalInfo.linkedin && <div style={{ display: 'flex', alignItems: 'center', gap: 4, width: '100%' }}>
-                <LinkedinOutlined style={{ color: mainBlue, fontSize: 13 }} />
-                <span style={{ color: mainBlue, background: white, borderRadius: 4, padding: '1px 4px', fontWeight: 600, fontSize: 11, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 220, display: 'inline-block' }}>{personalInfo.linkedin}</span>
-              </div>}
-              {personalInfo.portfolio && <div style={{ display: 'flex', alignItems: 'center', gap: 4, width: '100%' }}>
-                <GlobalOutlined style={{ color: mainBlue, fontSize: 13 }} />
-                <span style={{ color: mainBlue, background: white, borderRadius: 4, padding: '1px 4px', fontWeight: 600, fontSize: 11, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 220, display: 'inline-block' }}>{personalInfo.portfolio}</span>
-              </div>}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 2, width: '100%', marginTop: 2 }}>
+              {personalInfo.email && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                  <MailOutlined style={{ color: white, fontSize: 15 }} />
+                  <span style={{ color: white, fontWeight: 600, fontSize: 13, letterSpacing: 0.2 }}>{personalInfo.email}</span>
+                </div>
+              )}
+              {personalInfo.phone && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                  <PhoneOutlined style={{ color: white, fontSize: 15 }} />
+                  <span style={{ color: white, fontWeight: 600, fontSize: 13 }}>{personalInfo.phone}</span>
+                </div>
+              )}
+              {personalInfo.address && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                  <EnvironmentOutlined style={{ color: white, fontSize: 15 }} />
+                  <span style={{ color: white, fontWeight: 600, fontSize: 13 }}>{personalInfo.address}</span>
+                </div>
+              )}
+              {personalInfo.linkedin && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                  <LinkedinOutlined style={{ color: lightBlue, fontSize: 15 }} />
+                  <span style={{ color: lightBlue, fontWeight: 600, fontSize: 13 }}>{personalInfo.linkedin}</span>
+                </div>
+              )}
+              {personalInfo.portfolio && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                  <GlobalOutlined style={{ color: lightBlue, fontSize: 15 }} />
+                  <span style={{ color: lightBlue, fontWeight: 600, fontSize: 13 }}>{personalInfo.portfolio}</span>
+                </div>
+              )}
             </div>
           </div>
         </div>

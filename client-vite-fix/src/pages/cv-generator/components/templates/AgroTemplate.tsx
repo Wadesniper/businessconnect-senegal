@@ -112,6 +112,23 @@ const AgroTemplate: React.FC<AgroTemplateProps> = ({ data, isMiniature = false }
               </ul>
             </div>
           )}
+          {/* Formations déplacées ici */}
+          {education.length > 0 && (
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                <span style={{ fontWeight: 700, fontSize: 15, color: vertFonce, letterSpacing: 1, textTransform: 'uppercase' }}>Formations</span>
+                <span style={{ flex: 1, height: 2, background: vertClair, borderRadius: 1, marginLeft: 8, minWidth: 40 }} />
+              </div>
+              {education.map((edu, idx) => (
+                <div key={idx} style={{ background: blanc, borderRadius: 12, boxShadow: '0 2px 8px #0001', padding: '14px 18px', marginBottom: 14, border: `1px solid ${gris}` }}>
+                  <div style={{ fontWeight: 700, fontSize: 14, color: vertFonce }}>{edu.degree}</div>
+                  <div style={{ fontSize: 13, color: grisTexte }}>{edu.institution}</div>
+                  <div style={{ fontSize: 12, color: vertClair }}>{edu.startDate} - {edu.endDate}</div>
+                  {edu.description && <div style={{ fontSize: 13, color: grisTexte, marginTop: 6 }}>{edu.description}</div>}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
         {/* Colonne droite */}
         <div style={{ width: '68%', background: blanc, color: vertFonce, display: 'flex', flexDirection: 'column', padding: '32px 48px 32px 48px', gap: 32 }}>
@@ -133,23 +150,6 @@ const AgroTemplate: React.FC<AgroTemplateProps> = ({ data, isMiniature = false }
                       {exp.achievements.map((ach, i) => <li key={i}>{ach}</li>)}
                     </ul>
                   )}
-                </div>
-              ))}
-            </div>
-          )}
-          {/* Formations */}
-          {education.length > 0 && (
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 18 }}>
-                <span style={{ fontWeight: 700, fontSize: 16, color: vertFonce, textTransform: 'uppercase', letterSpacing: 1 }}>Formations</span>
-                <span style={{ flex: 1, height: 2, background: vertClair, borderRadius: 1, marginLeft: 8, minWidth: 40 }} />
-              </div>
-              {education.map((edu, idx) => (
-                <div key={idx} style={{ background: blanc, borderRadius: 12, boxShadow: '0 2px 8px #0001', padding: '18px 24px', marginBottom: 18, border: `1px solid ${gris}` }}>
-                  <div style={{ fontWeight: 700, fontSize: 14, color: vertFonce }}>{edu.degree}</div>
-                  <div style={{ fontSize: 13, color: grisTexte }}>{edu.institution}</div>
-                  <div style={{ fontSize: 12, color: vertClair }}>{edu.startDate} - {edu.endDate}</div>
-                  {edu.description && <div style={{ fontSize: 13, color: grisTexte, marginTop: 8 }}>{edu.description}</div>}
                 </div>
               ))}
             </div>
