@@ -126,34 +126,26 @@ const TechModernTemplate: React.FC<TechModernTemplateProps> = ({ data, isMiniatu
           </div>
           {/* Laptop dessin SVG */}
           <div style={{ marginLeft: 24, transform: 'rotate(-12deg)' }}>
-            {/* Laptop SVG isométrique fidèle au modèle fourni */}
-            <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+            {/* Laptop SVG isométrique amélioré */}
+            <svg width="90" height="90" viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
               <g stroke="#4b6c5c" strokeWidth="2" fill="#fff">
                 {/* Base du laptop */}
-                <polygon points="10,45 50,45 58,52 2,52" />
+                <polygon points="15,65 75,65 87,80 3,80" />
                 {/* Pavé tactile */}
-                <rect x="36" y="48" width="8" height="3" rx="0.7" fill="#eaf3ee" />
-                {/* Ecran */}
-                <rect x="15" y="8" width="30" height="22" rx="2" />
+                <rect x="60" y="72" width="12" height="5" rx="1.2" fill="#eaf3ee" />
+                {/* Ecran rapproché */}
+                <rect x="25" y="18" width="40" height="28" rx="3" fill="#eaf3ee" stroke="#4b6c5c" strokeWidth="2" />
                 {/* Contour écran */}
-                <rect x="15" y="8" width="30" height="22" rx="2" fill="none" />
+                <rect x="25" y="18" width="40" height="28" rx="3" fill="none" />
+                {/* Contenu écran */}
+                <rect x="29" y="22" width="32" height="20" rx="2" fill="#b6e3c6" stroke="none" />
                 {/* Clavier (touches) */}
                 <g strokeWidth="1" fill="#eaf3ee">
-                  <rect x="16" y="46" width="3" height="2" />
-                  <rect x="20" y="46" width="3" height="2" />
-                  <rect x="24" y="46" width="3" height="2" />
-                  <rect x="28" y="46" width="3" height="2" />
-                  <rect x="32" y="46" width="3" height="2" />
-                  <rect x="36" y="46" width="3" height="2" />
-                  <rect x="40" y="46" width="3" height="2" />
-                  <rect x="44" y="46" width="3" height="2" />
-                  <rect x="18" y="49" width="3" height="2" />
-                  <rect x="22" y="49" width="3" height="2" />
-                  <rect x="26" y="49" width="3" height="2" />
-                  <rect x="30" y="49" width="3" height="2" />
-                  <rect x="34" y="49" width="3" height="2" />
-                  <rect x="38" y="49" width="3" height="2" />
-                  <rect x="42" y="49" width="3" height="2" />
+                  {Array.from({length: 2}).map((_, row) => (
+                    Array.from({length: 8}).map((_, col) => (
+                      <rect key={row + '-' + col} x={22 + col*6} y={68 + row*4} width="5" height="3" rx="0.7" fill="#eaf3ee" stroke="#4b6c5c" strokeWidth="0.7" />
+                    ))
+                  ))}
                 </g>
               </g>
             </svg>
