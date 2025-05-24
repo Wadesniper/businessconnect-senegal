@@ -41,8 +41,8 @@ const TechModernTemplate: React.FC<TechModernTemplateProps> = ({ data, isMiniatu
       {/* Colonne gauche */}
       <div style={{ width: '32%', background: vertFonce, color: blanc, padding: '0 0 0 0', display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100%' }}>
         {/* Photo */}
-        <div style={{ width: 160, height: 160, borderRadius: '50%', overflow: 'hidden', marginTop: 28, marginBottom: 18, boxShadow: '0 2px 8px #0003', border: '6px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <img src={personalInfo.photo || '/images/avatars/man-4.png'} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+        <div style={{ width: 140, height: 140, borderRadius: 18, overflow: 'hidden', marginTop: 28, marginBottom: 18, boxShadow: '0 2px 8px #0003', border: '6px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <img src={personalInfo.photo || '/images/avatars/man-4.png'} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 18 }} />
         </div>
         {/* Coordonnées */}
         <div style={{ width: '80%', marginBottom: 24 }}>
@@ -100,16 +100,16 @@ const TechModernTemplate: React.FC<TechModernTemplateProps> = ({ data, isMiniatu
         )}
         {/* Formations déplacées ici */}
         {education.length > 0 && (
-          <div style={{ width: '80%', marginBottom: 24 }}>
-            <div style={{ fontWeight: 700, fontSize: 15, color: blanc, marginBottom: 8, letterSpacing: 1, textTransform: 'uppercase', background: vertFonce, padding: '4px 16px', borderRadius: 8, display: 'inline-block' }}>Formations</div>
-            <div style={{ height: 2, width: 32, background: blanc, opacity: 0.12, marginBottom: 12, borderRadius: 2 }} />
+          <div style={{ width: '80%', marginBottom: 14 }}>
+            <div style={{ fontWeight: 700, fontSize: 14, color: blanc, marginBottom: 6, letterSpacing: 1, textTransform: 'uppercase', background: vertFonce, padding: '3px 10px', borderRadius: 8, display: 'inline-block' }}>Formations</div>
+            <div style={{ height: 2, width: 24, background: blanc, opacity: 0.12, marginBottom: 7, borderRadius: 2 }} />
             {education.map((edu, idx) => (
-              <div key={idx} style={{ background: blanc, borderRadius: 10, boxShadow: '0 2px 8px #0001', padding: '14px 18px', marginBottom: 14, borderLeft: `4px solid ${vertFonce}` }}>
-                <div style={{ fontWeight: 700, fontSize: 14, color: vertFonce }}>{edu.degree}</div>
-                <div style={{ fontSize: 13, color: grisTexte }}>{edu.institution}{edu.field ? `, ${edu.field}` : ''}</div>
-                <div style={{ fontSize: 12, color: vertFonce, opacity: 0.7 }}>{edu.startDate} - {edu.endDate}</div>
+              <div key={idx} style={{ background: blanc, borderRadius: 8, boxShadow: '0 2px 8px #0001', padding: '8px 10px', marginBottom: 8, borderLeft: `3px solid ${vertFonce}` }}>
+                <div style={{ fontWeight: 700, fontSize: 13, color: vertFonce }}>{edu.degree}</div>
+                <div style={{ fontSize: 12, color: grisTexte }}>{edu.institution}{edu.field ? `, ${edu.field}` : ''}</div>
+                <div style={{ fontSize: 11, color: vertFonce, opacity: 0.7 }}>{edu.startDate} - {edu.endDate}</div>
                 {edu.description && (
-                  <div style={{ fontSize: 13, color: grisTexte, marginTop: 6 }}>{edu.description}</div>
+                  <div style={{ fontSize: 12, color: grisTexte, marginTop: 4 }}>{edu.description}</div>
                 )}
               </div>
             ))}
@@ -126,10 +126,13 @@ const TechModernTemplate: React.FC<TechModernTemplateProps> = ({ data, isMiniatu
           </div>
           {/* Laptop dessin SVG */}
           <div style={{ marginLeft: 24, transform: 'rotate(-12deg)' }}>
-            <svg width="90" height="64" viewBox="0 0 90 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="10" y="12" width="70" height="36" rx="6" fill="#eaf3ee" stroke="#4b6c5c" strokeWidth="3" />
-              <rect x="4" y="52" width="82" height="8" rx="4" fill="#eaf3ee" stroke="#4b6c5c" strokeWidth="3" />
-              <rect x="28" y="22" width="34" height="14" rx="3" fill="#fff" />
+            {/* Laptop stylisé, perspective */}
+            <svg width="90" height="60" viewBox="0 0 90 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="15" y="10" width="60" height="22" rx="3" fill="#eaf3ee" stroke="#4b6c5c" strokeWidth="2.5" />
+              <rect x="10" y="36" width="70" height="10" rx="4" fill="#eaf3ee" stroke="#4b6c5c" strokeWidth="2.5" />
+              <rect x="30" y="16" width="30" height="8" rx="2" fill="#fff" />
+              {/* base perspective */}
+              <polygon points="10,46 80,46 85,58 5,58" fill="#eaf3ee" stroke="#4b6c5c" strokeWidth="2.5" />
             </svg>
           </div>
         </div>
@@ -173,17 +176,20 @@ const TechModernTemplate: React.FC<TechModernTemplateProps> = ({ data, isMiniatu
           </div>
         )}
         {/* Clavier dessin SVG décoratif */}
-        <div style={{ position: 'absolute', bottom: 16, right: 16, opacity: 0.3, zIndex: 0, transform: 'rotate(8deg)' }}>
-          <svg width="180" height="48" viewBox="0 0 180 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="4" y="10" width="172" height="28" rx="8" fill="#eaf3ee" stroke="#4b6c5c" strokeWidth="3" />
+        <div style={{ position: 'absolute', bottom: 10, right: 10, opacity: 0.3, zIndex: 0, transform: 'rotate(8deg)' }}>
+          {/* Clavier filaire stylisé */}
+          <svg width="200" height="54" viewBox="0 0 200 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+            {/* fil */}
+            <path d="M180 10 Q195 5 198 30" stroke="#4b6c5c" strokeWidth="2" fill="none" />
+            {/* base clavier */}
+            <rect x="10" y="18" width="180" height="24" rx="7" fill="#eaf3ee" stroke="#4b6c5c" strokeWidth="3" />
             {/* touches */}
-            <rect x="16" y="18" width="18" height="8" rx="2" fill="#fff" />
-            <rect x="38" y="18" width="18" height="8" rx="2" fill="#fff" />
-            <rect x="60" y="18" width="18" height="8" rx="2" fill="#fff" />
-            <rect x="82" y="18" width="18" height="8" rx="2" fill="#fff" />
-            <rect x="104" y="18" width="18" height="8" rx="2" fill="#fff" />
-            <rect x="126" y="18" width="18" height="8" rx="2" fill="#fff" />
-            <rect x="148" y="18" width="18" height="8" rx="2" fill="#fff" />
+            <rect x="22" y="26" width="20" height="8" rx="2" fill="#fff" />
+            <rect x="46" y="26" width="20" height="8" rx="2" fill="#fff" />
+            <rect x="70" y="26" width="20" height="8" rx="2" fill="#fff" />
+            <rect x="94" y="26" width="20" height="8" rx="2" fill="#fff" />
+            <rect x="118" y="26" width="20" height="8" rx="2" fill="#fff" />
+            <rect x="142" y="26" width="20" height="8" rx="2" fill="#fff" />
           </svg>
         </div>
       </div>

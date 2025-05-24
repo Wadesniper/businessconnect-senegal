@@ -44,11 +44,11 @@ const BankTemplate: React.FC<BankTemplateProps> = ({ data, isMiniature = false }
       {/* Deux colonnes principales */}
       <div style={{ display: 'flex', flexDirection: 'row', flex: 1, background: blanc }}>
         {/* Colonne gauche */}
-        <div style={{ width: '30%', background: bleuClair, color: bleuFonce, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '24px 0 18px 0', gap: 18 }}>
+        <div style={{ width: '30%', background: bleuClair, color: bleuFonce, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '18px 0 10px 0', gap: 10 }}>
           {/* Contact */}
-          <div style={{ width: '80%', marginBottom: 24 }}>
-            <div style={{ fontWeight: 700, fontSize: 14, color: bleuFonce, marginBottom: 6, letterSpacing: 1, textTransform: 'uppercase', background: blanc, padding: '3px 12px', borderRadius: 8, display: 'inline-block' }}>Contact</div>
-            <div style={{ height: 2, width: 24, background: bleuFonce, opacity: 0.12, marginBottom: 8, borderRadius: 2 }} />
+          <div style={{ width: '80%', marginBottom: 12 }}>
+            <div style={{ fontWeight: 700, fontSize: 13, color: bleuFonce, marginBottom: 4, letterSpacing: 1, textTransform: 'uppercase', background: blanc, padding: '2px 8px', borderRadius: 8, display: 'inline-block' }}>Contact</div>
+            <div style={{ height: 2, width: 18, background: bleuFonce, opacity: 0.12, marginBottom: 5, borderRadius: 2 }} />
             {personalInfo.phone && <div style={{ fontSize: 14, color: grisTexte, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}><PhoneOutlined style={{ fontSize: 18, color: bleuFonce, marginRight: 8 }} /> {personalInfo.phone}</div>}
             {personalInfo.email && <div style={{ fontSize: 14, color: grisTexte, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}><MailOutlined style={{ fontSize: 18, color: bleuFonce, marginRight: 8 }} /> {personalInfo.email}</div>}
             {personalInfo.portfolio && <div style={{ fontSize: 14, color: grisTexte, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}><GlobalOutlined style={{ fontSize: 18, color: bleuFonce, marginRight: 8 }} /> {personalInfo.portfolio}</div>}
