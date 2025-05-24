@@ -126,13 +126,22 @@ const TechModernTemplate: React.FC<TechModernTemplateProps> = ({ data, isMiniatu
           </div>
           {/* Laptop dessin SVG */}
           <div style={{ marginLeft: 24, transform: 'rotate(-12deg)' }}>
-            {/* Laptop stylisé, version initiale simple */}
-            <svg width="90" height="60" viewBox="0 0 90 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="15" y="10" width="60" height="22" rx="3" fill="#eaf3ee" stroke="#4b6c5c" strokeWidth="2.5" />
-              <rect x="10" y="36" width="70" height="10" rx="4" fill="#eaf3ee" stroke="#4b6c5c" strokeWidth="2.5" />
-              <rect x="30" y="16" width="30" height="8" rx="2" fill="#fff" />
-              {/* base perspective */}
-              <polygon points="10,46 80,46 85,58 5,58" fill="#eaf3ee" stroke="#4b6c5c" strokeWidth="2.5" />
+            {/* Laptop isométrique inspiré du modèle fourni */}
+            <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {/* Base */}
+              <polygon points="8,44 52,44 58,52 2,52" fill="#fff" stroke="#4b6c5c" strokeWidth="2" />
+              {/* Clavier (touches) */}
+              {Array.from({length: 4}).map((_, row) => (
+                Array.from({length: 8}).map((_, col) => (
+                  <rect key={row + '-' + col} x={12 + col*4.2} y={46 + row*2.2} width="3.2" height="1.5" rx="0.5" fill="#eaf3ee" stroke="#4b6c5c" strokeWidth="0.4" />
+                ))
+              ))}
+              {/* Pavé tactile */}
+              <rect x="38" y="51" width="8" height="3" rx="0.8" fill="#eaf3ee" stroke="#4b6c5c" strokeWidth="0.7" />
+              {/* Ecran */}
+              <rect x="12" y="8" width="36" height="26" rx="2.5" fill="#fff" stroke="#4b6c5c" strokeWidth="2" />
+              {/* Bordure écran */}
+              <rect x="12" y="8" width="36" height="26" rx="2.5" fill="none" stroke="#4b6c5c" strokeWidth="2" />
             </svg>
           </div>
         </div>
