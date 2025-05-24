@@ -16,6 +16,7 @@ import AgroTemplate from '../templates/AgroTemplate';
 import HumanTemplate from '../templates/HumanTemplate';
 import BankTemplate from '../templates/BankTemplate';
 import TechModernTemplate from '../templates/TechModernTemplate';
+import WindowTemplate from '../templates/WindowTemplate';
 import { DEMO_PROFILES } from '../../CVPreviewGallery';
 
 export interface CVTemplateConfig {
@@ -279,7 +280,7 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
   {
     id: 'tech-modern',
     name: 'Tech Modern',
-    component: TechModernTemplate,
+    component: WindowTemplate,
     description: 'CV tech moderne, design épuré, pour profils IT',
     premium: true,
     category: 'Tech',
