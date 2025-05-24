@@ -98,19 +98,39 @@ const TechModernTemplate: React.FC<TechModernTemplateProps> = ({ data, isMiniatu
             </ul>
           </div>
         )}
+        {/* Formations déplacées ici */}
+        {education.length > 0 && (
+          <div style={{ width: '80%', marginBottom: 24 }}>
+            <div style={{ fontWeight: 700, fontSize: 15, color: blanc, marginBottom: 8, letterSpacing: 1, textTransform: 'uppercase', background: vertFonce, padding: '4px 16px', borderRadius: 8, display: 'inline-block' }}>Formations</div>
+            <div style={{ height: 2, width: 32, background: blanc, opacity: 0.12, marginBottom: 12, borderRadius: 2 }} />
+            {education.map((edu, idx) => (
+              <div key={idx} style={{ background: blanc, borderRadius: 10, boxShadow: '0 2px 8px #0001', padding: '14px 18px', marginBottom: 14, borderLeft: `4px solid ${vertFonce}` }}>
+                <div style={{ fontWeight: 700, fontSize: 14, color: vertFonce }}>{edu.degree}</div>
+                <div style={{ fontSize: 13, color: grisTexte }}>{edu.institution}{edu.field ? `, ${edu.field}` : ''}</div>
+                <div style={{ fontSize: 12, color: vertFonce, opacity: 0.7 }}>{edu.startDate} - {edu.endDate}</div>
+                {edu.description && (
+                  <div style={{ fontSize: 13, color: grisTexte, marginTop: 6 }}>{edu.description}</div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
       {/* Colonne droite */}
-      <div style={{ width: '68%', background: blanc, padding: '48px 40px 40px 40px', display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
-        {/* Header nom/titre + pictos */}
-        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
+      <div style={{ width: '68%', background: blanc, padding: '48px 40px 40px 40px', display: 'flex', flexDirection: 'column', minHeight: '100%', position: 'relative' }}>
+        {/* Header nom/titre + pictos + laptop */}
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24, position: 'relative' }}>
           <div style={{ flex: 1 }}>
             <div style={{ fontWeight: 900, fontSize: 32, color: vertFonce, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 4 }}>{personalInfo.firstName} {personalInfo.lastName}</div>
             <div style={{ fontSize: 18, color: vertFonce, fontWeight: 500, textTransform: 'capitalize' }}>{personalInfo.title}</div>
           </div>
-          {/* Pictos tech (exemple) */}
-          <div style={{ display: 'flex', gap: 16 }}>
-            <svg width="38" height="38" fill="none" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#4b6c5c"/><path d="M7 17V7h10v10H7zm2-2h6V9H9v6z" fill="#fff"/></svg>
-            <svg width="38" height="38" fill="none" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#4b6c5c"/><path d="M8 17V7h8v10H8zm2-2h4V9h-4v6z" fill="#fff"/></svg>
+          {/* Laptop dessin SVG */}
+          <div style={{ marginLeft: 24 }}>
+            <svg width="64" height="48" viewBox="0 0 64 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="6" y="8" width="52" height="28" rx="4" fill="#eaf3ee" stroke="#4b6c5c" strokeWidth="2" />
+              <rect x="2" y="38" width="60" height="6" rx="3" fill="#eaf3ee" stroke="#4b6c5c" strokeWidth="2" />
+              <rect x="18" y="14" width="28" height="10" rx="2" fill="#fff" />
+            </svg>
           </div>
         </div>
         {/* À propos */}
@@ -141,22 +161,6 @@ const TechModernTemplate: React.FC<TechModernTemplateProps> = ({ data, isMiniatu
             ))}
           </div>
         )}
-        {/* Formations */}
-        {education.length > 0 && (
-          <div style={{ marginBottom: 32 }}>
-            <div style={{ fontWeight: 700, fontSize: 18, color: vertFonce, background: '#d6eadd', padding: '4px 16px', borderRadius: 8, display: 'inline-block', marginBottom: 10 }}>Formations</div>
-            {education.map((edu, idx) => (
-              <div key={idx} style={{ background: blanc, borderRadius: 10, boxShadow: '0 2px 8px #0001', padding: 18, marginBottom: 18, borderLeft: `4px solid ${vertFonce}` }}>
-                <div style={{ fontWeight: 600, fontSize: 16, color: vertFonce }}>{edu.degree}</div>
-                <div style={{ fontSize: 15, color: grisTexte, marginBottom: 4 }}>{edu.institution}{edu.field ? `, ${edu.field}` : ''}</div>
-                <div style={{ fontSize: 13, color: grisTexte }}>{edu.startDate} - {edu.endDate}</div>
-                {edu.description && (
-                  <div style={{ fontSize: 13, color: grisTexte, marginTop: 6 }}>{edu.description}</div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
         {/* Certifications */}
         {certifications.length > 0 && (
           <div style={{ marginBottom: 32 }}>
@@ -168,6 +172,18 @@ const TechModernTemplate: React.FC<TechModernTemplateProps> = ({ data, isMiniatu
             </ul>
           </div>
         )}
+        {/* Clavier dessin SVG décoratif */}
+        <div style={{ position: 'absolute', bottom: 16, right: 16, opacity: 0.18, zIndex: 0 }}>
+          <svg width="120" height="36" viewBox="0 0 120 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="6" width="116" height="24" rx="6" fill="#eaf3ee" stroke="#4b6c5c" strokeWidth="2" />
+            <rect x="10" y="12" width="12" height="8" rx="2" fill="#fff" />
+            <rect x="26" y="12" width="12" height="8" rx="2" fill="#fff" />
+            <rect x="42" y="12" width="12" height="8" rx="2" fill="#fff" />
+            <rect x="58" y="12" width="12" height="8" rx="2" fill="#fff" />
+            <rect x="74" y="12" width="12" height="8" rx="2" fill="#fff" />
+            <rect x="90" y="12" width="12" height="8" rx="2" fill="#fff" />
+          </svg>
+        </div>
       </div>
     </div>
   );
