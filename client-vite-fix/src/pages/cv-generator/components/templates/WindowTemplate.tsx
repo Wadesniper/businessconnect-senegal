@@ -58,7 +58,7 @@ const WindowTemplate: React.FC<WindowTemplateProps> = ({ data, isMiniature = fal
         <div style={{ fontWeight: 900, fontSize: 32, color: blanc, letterSpacing: 2, textTransform: 'uppercase', marginTop: 8, textAlign: 'center' }}>{personalInfo.firstName} {personalInfo.lastName}</div>
         <div style={{ fontSize: 18, color: blanc, fontWeight: 500, textTransform: 'uppercase', letterSpacing: 1, textAlign: 'center' }}>{personalInfo.title}</div>
       </div>
-      {/* Bloc Profil horizontal */}
+      {/* Bloc Profil horizontal avec certifications */}
       <CardWindow title="Profil" style={{ margin: '0 24px 24px 24px' }}>
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', gap: 24 }}>
           {/* Photo de profil */}
@@ -90,6 +90,17 @@ const WindowTemplate: React.FC<WindowTemplateProps> = ({ data, isMiniature = fal
                 <div style={{ fontSize: 13, color: grisTexte }}>{languages.map((l: any) => `${l.name} (${l.level})`).join(', ')}</div>
               </div>
             )}
+            {/* Certifications dans le profil */}
+            {certifications.length > 0 && (
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <div style={{ fontSize: 13, color: noir, fontWeight: 700, marginBottom: 2 }}>Certifications</div>
+                <ul style={{ fontSize: 13, color: grisTexte, margin: 0, paddingLeft: 18 }}>
+                  {certifications.map((cert: any, idx: number) => (
+                    <li key={idx}>{typeof cert === 'string' ? cert : `${cert.name}${cert.issuer ? ' - ' + cert.issuer : ''}${cert.date ? ' (' + cert.date + ')' : ''}`}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
         {/* Résumé */}
@@ -97,7 +108,7 @@ const WindowTemplate: React.FC<WindowTemplateProps> = ({ data, isMiniature = fal
           <div style={{ borderTop: borderStyle, padding: '14px 0 0 0', fontSize: 14, color: grisTexte, marginTop: 12 }}>{personalInfo.summary}</div>
         )}
       </CardWindow>
-      {/* Grille sections stricte 2 colonnes, alignement parfait */}
+      {/* Grille sections : colonne gauche = Expérience, colonne droite = Formation puis Compétences */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: '1fr 1fr',
@@ -105,7 +116,7 @@ const WindowTemplate: React.FC<WindowTemplateProps> = ({ data, isMiniature = fal
         margin: '0 24px 0 24px',
         alignItems: 'start',
       }}>
-        {/* Ligne 1 */}
+        {/* Colonne gauche : Expérience */}
         <div>
           {experience.length > 0 && (
             <CardWindow title="Expérience">
@@ -127,6 +138,7 @@ const WindowTemplate: React.FC<WindowTemplateProps> = ({ data, isMiniature = fal
             </CardWindow>
           )}
         </div>
+        {/* Colonne droite : Formation puis Compétences */}
         <div>
           {education.length > 0 && (
             <CardWindow title="Formation">
@@ -142,25 +154,11 @@ const WindowTemplate: React.FC<WindowTemplateProps> = ({ data, isMiniature = fal
               ))}
             </CardWindow>
           )}
-        </div>
-        {/* Ligne 2 */}
-        <div>
           {skills.length > 0 && (
             <CardWindow title="Compétences">
               <ul style={{ paddingLeft: 0, margin: 0, listStyle: 'none' }}>
                 {skills.map((skill, idx) => (
                   <li key={idx} style={{ fontSize: 13, color: noir, marginBottom: 6 }}>{skill.name}</li>
-                ))}
-              </ul>
-            </CardWindow>
-          )}
-        </div>
-        <div>
-          {certifications.length > 0 && (
-            <CardWindow title="Certifications">
-              <ul style={{ fontSize: 13, color: noir, margin: 0, paddingLeft: 18 }}>
-                {certifications.map((cert: any, idx: number) => (
-                  <li key={idx}>{typeof cert === 'string' ? cert : `${cert.name}${cert.issuer ? ' - ' + cert.issuer : ''}${cert.date ? ' (' + cert.date + ')' : ''}`}</li>
                 ))}
               </ul>
             </CardWindow>
