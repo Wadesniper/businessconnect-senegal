@@ -1,29 +1,54 @@
 export interface JobData {
   id: string;
   title: string;
-  company: string;
+  company?: string;
   location: string;
-  type: 'CDI' | 'CDD' | 'Stage' | 'Freelance';
+  type?: 'CDI' | 'CDD' | 'Stage' | 'Freelance' | 'Alternance' | 'Temps partiel';
+  jobType?: string;
+  sector?: string;
   description: string;
   requirements: string[];
-  responsibilities: string[];
+  responsibilities?: string[];
   salary?: {
     min: number;
     max: number;
     currency: string;
   };
   benefits?: string[];
-  skills: string[];
-  status: 'active' | 'inactive';
+  skills?: string[];
+  status?: 'active' | 'inactive';
   createdAt: string;
   updatedAt: string;
   expiresAt?: string;
   applicationsCount?: number;
-  category?: string;
-  sector?: string;
   experienceLevel?: 'junior' | 'intermediaire' | 'senior' | 'expert';
   workLocation?: 'remote' | 'onsite' | 'hybrid';
   companyLogo?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  missions?: string[];
+  employerId?: string;
+  isActive?: boolean;
+  category?: string;
+}
+
+export interface Job {
+  id: string;
+  title: string;
+  company?: string;
+  location: string;
+  jobType: string;
+  sector: string;
+  description: string;
+  missions?: string[];
+  requirements: string[];
+  contactEmail?: string;
+  contactPhone?: string;
+  keywords?: string[];
+  createdAt: string;
+  updatedAt: string;
+  employerId?: string;
+  isActive: boolean;
 }
 
 export interface JobApplication {
@@ -31,7 +56,7 @@ export interface JobApplication {
   jobId: string;
   userId: string;
   jobTitle: string;
-  company: string;
+  company?: string;
   status: 'pending' | 'accepted' | 'rejected' | 'interview';
   coverLetter?: string;
   resumeUrl?: string;
@@ -44,6 +69,32 @@ export interface JobApplication {
     url: string;
     type: string;
   }[];
+  cvUrl?: string;
+}
+
+export interface SavedJob {
+  id: string;
+  jobId: string;
+  userId: string;
+  savedAt: string;
+  job: JobData | Job;
+}
+
+export interface JobAlert {
+  id: string;
+  userId: string;
+  keywords: string[];
+  locations?: string[];
+  jobTypes?: string[];
+  salary?: {
+    min?: number;
+    max?: number;
+    currency?: string;
+  };
+  frequency: 'daily' | 'weekly';
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface JobFilter {
@@ -94,87 +145,6 @@ export interface JobApplicationStats {
   interview: number;
 }
 
-export interface SavedJob {
-  id: string;
-  jobId: string;
-  userId: string;
-  savedAt: string;
-  job: JobData;
-}
-
-export interface JobAlert {
-  id: string;
-  userId: string;
-  keywords: string[];
-  locations?: string[];
-  jobTypes?: string[];
-  salary?: {
-    min?: number;
-    max?: number;
-  };
-  frequency: 'daily' | 'weekly';
-  active: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface Job {
-  id: string;
-  title: string;
-  company?: string;
-  location: string;
-  jobType: string;
-  sector: string;
-  description: string;
-  missions?: string[];
-  requirements: string[];
-  contactEmail?: string;
-  contactPhone?: string;
-  keywords: string[];
-  createdAt: string;
-  updatedAt: string;
-  employerId?: string;
-  isActive: boolean;
-}
-
-export interface JobApplication {
-  id: string;
-  userId: string;
-  jobId: string;
-  jobTitle: string;
-  company?: string;
-  status: 'pending' | 'accepted' | 'rejected';
-  cvUrl?: string;
-  coverLetter?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface SavedJob {
-  id: string;
-  userId: string;
-  jobId: string;
-  job: Job;
-  savedAt: string;
-}
-
-export interface JobAlert {
-  id: string;
-  userId: string;
-  keywords: string[];
-  locations: string[];
-  jobTypes: string[];
-  salary?: {
-    min: number;
-    max: number;
-    currency: string;
-  };
-  frequency: 'daily' | 'weekly';
-  active: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
 export const JOB_TYPES = [
   'CDI',
   'CDD',
@@ -199,6 +169,4 @@ export const JOB_SECTORS = [
 ] as const;
 
 export type JobType = typeof JOB_TYPES[number];
-export type JobSector = typeof JOB_SECTORS[number];
-
-export type { Job, JobApplication, SavedJob, JobAlert, JobType, JobData }; 
+export type JobSector = typeof JOB_SECTORS[number]; 
