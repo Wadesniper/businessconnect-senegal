@@ -52,7 +52,7 @@ const ComTemplate: React.FC<ComTemplateProps> = ({ data, isMiniature = false }) 
   const qualities = Array.isArray((data as any).qualities) ? (data as any).qualities : [];
 
   return (
-    <div style={{ width: 794, height: 1123, background: blanc, borderRadius: 18, overflow: 'hidden', fontFamily: 'Montserrat, Arial, sans-serif', boxShadow: '0 4px 24px #0002', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ width: 794, background: blanc, borderRadius: 18, overflow: 'hidden', fontFamily: 'Montserrat, Arial, sans-serif', boxShadow: '0 4px 24px #0002', display: 'flex', flexDirection: 'column' }}>
       {/* Bandeau aquarelle bleu clair */}
       <div style={{
         width: '100%',
@@ -83,7 +83,7 @@ const ComTemplate: React.FC<ComTemplateProps> = ({ data, isMiniature = false }) 
           <Avatar src={personalInfo.photo || '/images/avatars/woman-1.png'} size={120} style={{ border: '4px solid #fff', boxShadow: '0 2px 8px #0001', background: '#fff' }} />
         </div>
         {/* Infos à droite */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '32px 48px 32px 200px' }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '24px 32px 24px 180px' }}>
           {/* Prénom manuscrit */}
           <div style={{...dancingScriptFont, textTransform: 'capitalize'}}>{personalInfo.firstName}</div>
           {/* Nom en gras */}
@@ -95,7 +95,7 @@ const ComTemplate: React.FC<ComTemplateProps> = ({ data, isMiniature = false }) 
       {/* Deux colonnes principales */}
       <div style={{ display: 'flex', flexDirection: 'row', flex: 1, background: blanc, padding: '0 0 0 0' }}>
         {/* Colonne gauche */}
-        <div style={{ width: '32%', background: '#f4fafd', color: bleuFonce, display: 'flex', flexDirection: 'column', padding: '40px 0 0 32px', gap: 36, minHeight: 'calc(100% - 180px)' }}>
+        <div style={{ width: '32%', background: '#f4fafd', color: bleuFonce, display: 'flex', flexDirection: 'column', padding: '28px 0 0 20px', gap: 24, minHeight: 'calc(100% - 180px)' }}>
           {/* Contact */}
           <div>
             <div style={{ fontWeight: 700, fontSize: 15, color: bleuFonce, marginBottom: 6, letterSpacing: 1, textTransform: 'uppercase' }}>Contact</div>
@@ -138,17 +138,17 @@ const ComTemplate: React.FC<ComTemplateProps> = ({ data, isMiniature = false }) 
           )}
         </div>
         {/* Colonne droite */}
-        <div style={{ width: '68%', background: blanc, color: bleuFonce, display: 'flex', flexDirection: 'column', padding: '40px 48px 40px 48px', gap: 40 }}>
+        <div style={{ width: '68%', background: blanc, color: bleuFonce, display: 'flex', flexDirection: 'column', padding: '28px 28px 28px 28px', gap: 24 }}>
           {/* Expérience professionnelle */}
           {experience.length > 0 && (
             <div>
               <div style={{ fontWeight: 700, fontSize: 16, color: bleuFonce, marginBottom: 18, textTransform: 'uppercase', letterSpacing: 1 }}>Expérience professionnelle</div>
               {experience.map((exp, idx) => (
                 <div key={idx} style={{ background: '#f8fafc', borderRadius: 18, boxShadow: '0 2px 12px #0001', padding: '22px 28px', marginBottom: 28, border: `1.5px solid ${gris}` }}>
-                  <div style={{ fontWeight: 700, fontSize: 16, color: bleuFonce, marginBottom: 2 }}>{exp.title}</div>
-                  <div style={{ fontSize: 14, color: grisTexte, marginBottom: 2 }}>{exp.company}{exp.location ? ` / ${exp.location}` : ''}</div>
-                  <div style={{ fontSize: 13, color: bleuPastel, fontWeight: 600, marginBottom: 6 }}>{exp.startDate} - {exp.current ? 'Présent' : exp.endDate}</div>
-                  <div style={{ fontSize: 14, color: grisTexte, marginTop: 6 }}>{exp.description}</div>
+                  <div style={{ fontWeight: 700, fontSize: 15, color: bleuFonce, marginBottom: 2 }}>{exp.title}</div>
+                  <div style={{ fontSize: 13, color: grisTexte, marginBottom: 2 }}>{exp.company}{exp.location ? ` / ${exp.location}` : ''}</div>
+                  <div style={{ fontSize: 12, color: bleuPastel, fontWeight: 600, marginBottom: 4 }}>{exp.startDate} - {exp.current ? 'Présent' : exp.endDate}</div>
+                  <div style={{ fontSize: 13, color: grisTexte, marginTop: 4 }}>{exp.description}</div>
                   {Array.isArray(exp.achievements) && exp.achievements.length > 0 && (
                     <ul style={{ fontSize: 14, color: bleuFonce, margin: '10px 0 0 0', paddingLeft: 18 }}>
                       {exp.achievements.map((ach, i) => <li key={i}>{ach}</li>)}
@@ -168,10 +168,10 @@ const ComTemplate: React.FC<ComTemplateProps> = ({ data, isMiniature = false }) 
               <div style={{ fontWeight: 700, fontSize: 16, color: bleuFonce, marginBottom: 18, textTransform: 'uppercase', letterSpacing: 1 }}>Formations</div>
               {education.map((edu, idx) => (
                 <div key={idx} style={{ background: '#f8fafc', borderRadius: 18, boxShadow: '0 2px 12px #0001', padding: '22px 28px', marginBottom: 28, border: `1.5px solid ${gris}` }}>
-                  <div style={{ fontWeight: 700, fontSize: 15, color: bleuFonce }}>{edu.degree}</div>
-                  <div style={{ fontSize: 14, color: grisTexte }}>{edu.institution}</div>
-                  <div style={{ fontSize: 13, color: bleuPastel, fontWeight: 600 }}>{edu.startDate} - {edu.endDate}</div>
-                  {edu.description && <div style={{ fontSize: 14, color: grisTexte, marginTop: 8 }}>{edu.description}</div>}
+                  <div style={{ fontWeight: 700, fontSize: 14, color: bleuFonce }}>{edu.degree}</div>
+                  <div style={{ fontSize: 13, color: grisTexte }}>{edu.institution}</div>
+                  <div style={{ fontSize: 12, color: bleuPastel, fontWeight: 600 }}>{edu.startDate} - {edu.endDate}</div>
+                  {edu.description && <div style={{ fontSize: 13, color: grisTexte, marginTop: 6 }}>{edu.description}</div>}
                 </div>
               ))}
             </div>

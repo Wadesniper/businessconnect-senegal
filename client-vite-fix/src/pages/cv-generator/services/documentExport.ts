@@ -1,6 +1,7 @@
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { Document, Paragraph, TextRun, HeadingLevel, Packer, SectionType, IStylesOptions, Table, TableRow, TableCell, WidthType, AlignmentType } from 'docx';
+import { Document, Paragraph, TextRun, HeadingLevel, Packer, SectionType, Table, TableRow, TableCell, WidthType, AlignmentType } from 'docx';
+import type { IStylesOptions } from 'docx';
 import { saveAs } from 'file-saver';
 import type { CVData, Template, CustomizationOptions } from '../../../types/cv';
 import { formatDate } from '../../../utils/dateUtils';
@@ -71,7 +72,7 @@ export const exportToPDF = async (
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       
       const pdf = new jsPDF({
-        orientation: imgHeight > pageHeight ? 'portrait' : 'landscape',
+        orientation: 'portrait',
         unit: 'mm',
         format: 'a4',
       });
@@ -84,42 +85,42 @@ export const exportToPDF = async (
         creator: 'BusinessConnect Sénégal'
       });
 
-      if (imgHeight > pageHeight) {
-        let heightLeft = imgHeight;
-        let position = 0;
-        
-        pdf.addImage(
-          canvas.toDataURL('image/jpeg', 1.0),
-          'JPEG',
-          0,
-          position,
-          imgWidth,
-          imgHeight
-        );
-        heightLeft -= pageHeight;
-        
-        while (heightLeft >= 0) {
-          position = heightLeft - imgHeight;
-          pdf.addPage();
-          pdf.addImage(
-            canvas.toDataURL('image/jpeg', 1.0),
-            'JPEG',
+      let position = 0;
+      let page = 0;
+      let remainingHeight = imgHeight;
+      const pageCanvasHeight = (canvas.width * pageHeight) / imgWidth;
+
+      while (remainingHeight > 0) {
+        // Crée un sous-canvas pour chaque page
+        const pageCanvas = document.createElement('canvas');
+        pageCanvas.width = canvas.width;
+        pageCanvas.height = Math.min(pageCanvasHeight, canvas.height - page * pageCanvasHeight);
+        const ctx = pageCanvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(
+            canvas,
             0,
-            position,
-            imgWidth,
-            imgHeight
+            page * pageCanvasHeight,
+            canvas.width,
+            pageCanvas.height,
+            0,
+            0,
+            canvas.width,
+            pageCanvas.height
           );
-          heightLeft -= pageHeight;
         }
-      } else {
+        const pageImgData = pageCanvas.toDataURL('image/jpeg', 1.0);
+        if (page > 0) pdf.addPage();
         pdf.addImage(
-          canvas.toDataURL('image/jpeg', 1.0),
+          pageImgData,
           'JPEG',
           0,
           0,
           imgWidth,
-          imgHeight
+          (pageCanvas.height * imgWidth) / canvas.width
         );
+        remainingHeight -= pageCanvasHeight;
+        page++;
       }
 
       pdf.save(`${filename}.pdf`);
@@ -162,12 +163,12 @@ export const exportToWord = async (
           }),
           new Paragraph({ text: '' }),
 
-          ...(data.summary ? [
+          ...(data.personalInfo.summary || (data as any).summary ? [
             new Paragraph({
               text: 'Résumé professionnel',
               heading: HeadingLevel.HEADING_2,
             }),
-            new Paragraph({ text: data.summary }),
+            new Paragraph({ text: data.personalInfo.summary || (data as any).summary }),
             new Paragraph({ text: '' }),
           ] : []),
 
@@ -187,11 +188,11 @@ export const exportToWord = async (
             new Paragraph({
               text: `${formatDate(exp.startDate)} - ${exp.current ? 'Présent' : formatDate(exp.endDate || '')}`,
             }),
-            ...(exp.description ? exp.description.map(desc => new Paragraph({ text: desc })) : []),
+            ...(exp.description ? [new Paragraph({ text: exp.description })] : []),
             ...(exp.achievements ? [
-              new Paragraph({ text: 'Réalisations:', bold: true }),
-              ...exp.achievements.map(achievement => 
-                new Paragraph({ 
+              new Paragraph({ text: 'Réalisations:' }),
+              ...exp.achievements.map(achievement =>
+                new Paragraph({
                   text: `• ${achievement}`,
                   bullet: { level: 0 }
                 })
@@ -211,20 +212,20 @@ export const exportToWord = async (
                 ...(edu.field ? [new TextRun(` en ${edu.field}`)] : []),
               ],
             }),
-            new Paragraph({ 
+            new Paragraph({
               children: [
-                new TextRun({ text: edu.school }),
+                new TextRun({ text: edu.institution }),
                 ...(edu.location ? [new TextRun(` - ${edu.location}`)] : []),
               ]
             }),
             new Paragraph({
-              text: `${formatDate(edu.startDate)} - ${formatDate(edu.endDate)}`,
+              text: `${formatDate(edu.startDate || '')} - ${formatDate(edu.endDate || '')}`,
             }),
             ...(edu.description ? [new Paragraph({ text: edu.description })] : []),
             ...(edu.achievements ? [
-              new Paragraph({ text: 'Réalisations:', bold: true }),
-              ...edu.achievements.map(achievement => 
-                new Paragraph({ 
+              new Paragraph({ text: 'Réalisations:' }),
+              ...edu.achievements.map(achievement =>
+                new Paragraph({
                   text: `• ${achievement}`,
                   bullet: { level: 0 }
                 })
@@ -237,39 +238,41 @@ export const exportToWord = async (
             text: 'Compétences',
             heading: HeadingLevel.HEADING_2,
           }),
-          ...data.skills.map(skill => 
+          ...(Array.isArray(data.skills) ? data.skills.map(skill =>
             new Paragraph({
               children: [
                 new TextRun({ text: skill.name, bold: true }),
-                new TextRun(` - Niveau ${skill.level}`),
+                ...(skill.level ? [new TextRun(` - Niveau ${skill.level}`)] : []),
                 ...(skill.category ? [new TextRun(` (${skill.category})`)] : []),
               ],
             })
-          ),
+          ) : []),
           new Paragraph({ text: '' }),
 
           new Paragraph({
             text: 'Langues',
             heading: HeadingLevel.HEADING_2,
           }),
-          ...data.languages.map(lang => 
+          ...(Array.isArray(data.languages) ? data.languages.map(lang =>
             new Paragraph({
               text: `${lang.name} - ${lang.level}`,
             })
-          ),
+          ) : []),
 
           ...(data.certifications && data.certifications.length > 0 ? [
             new Paragraph({
               text: 'Certifications',
               heading: HeadingLevel.HEADING_2,
             }),
-            ...data.certifications.map(cert => 
-              new Paragraph({
-                children: [
-                  new TextRun({ text: cert.name, bold: true }),
-                  new TextRun(` - ${cert.issuer} (${formatDate(cert.date)})`),
-                ],
-              })
+            ...data.certifications.map(cert =>
+              typeof cert === 'string'
+                ? new Paragraph({ text: cert })
+                : new Paragraph({
+                    children: [
+                      new TextRun({ text: cert.name, bold: true }),
+                      new TextRun(` - ${cert.issuer} (${formatDate(cert.date)})`),
+                    ],
+                  })
             ),
           ] : []),
 
@@ -280,13 +283,13 @@ export const exportToWord = async (
             }),
             ...data.projects.flatMap(project => [
               new Paragraph({
-                text: project.title,
+                text: typeof project === 'string' ? project : project.name,
                 heading: HeadingLevel.HEADING_3,
               }),
-              new Paragraph({ text: project.description }),
-              ...(project.technologies ? [
+              ...(typeof project !== 'string' && project.description ? [new Paragraph({ text: project.description })] : []),
+              ...(typeof project !== 'string' && project.technologies ? [
                 new Paragraph({
-                  children: project.technologies.map(tech => 
+                  children: project.technologies.map(tech =>
                     new TextRun({ text: tech, color: customization.primaryColor })
                   ),
                 })
