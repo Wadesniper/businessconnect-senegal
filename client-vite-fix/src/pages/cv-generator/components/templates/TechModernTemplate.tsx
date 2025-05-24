@@ -100,19 +100,21 @@ const TechModernTemplate: React.FC<TechModernTemplateProps> = ({ data, isMiniatu
         )}
         {/* Formations déplacées ici */}
         {education.length > 0 && (
-          <div style={{ width: '80%', marginBottom: 14 }}>
-            <div style={{ fontWeight: 700, fontSize: 14, color: blanc, marginBottom: 6, letterSpacing: 1, textTransform: 'uppercase', background: vertFonce, padding: '3px 10px', borderRadius: 8, display: 'inline-block' }}>Formations</div>
-            <div style={{ height: 2, width: 24, background: blanc, opacity: 0.12, marginBottom: 7, borderRadius: 2 }} />
-            {education.map((edu, idx) => (
-              <div key={idx} style={{ background: blanc, borderRadius: 8, boxShadow: '0 2px 8px #0001', padding: '8px 10px', marginBottom: 8, borderLeft: `3px solid ${vertFonce}` }}>
-                <div style={{ fontWeight: 700, fontSize: 13, color: vertFonce }}>{edu.degree}</div>
-                <div style={{ fontSize: 12, color: grisTexte }}>{edu.institution}{edu.field ? `, ${edu.field}` : ''}</div>
-                <div style={{ fontSize: 11, color: vertFonce, opacity: 0.7 }}>{edu.startDate} - {edu.endDate}</div>
-                {edu.description && (
-                  <div style={{ fontSize: 12, color: grisTexte, marginTop: 4 }}>{edu.description}</div>
-                )}
-              </div>
-            ))}
+          <div style={{ width: '80%', marginBottom: 10 }}>
+            <div style={{ fontWeight: 700, fontSize: 13, color: blanc, marginBottom: 4, letterSpacing: 1, textTransform: 'uppercase', background: vertFonce, padding: '2px 8px', borderRadius: 8, display: 'inline-block' }}>Formations</div>
+            <div style={{ height: 2, width: 16, background: blanc, opacity: 0.12, marginBottom: 4, borderRadius: 2 }} />
+            <ul style={{ paddingLeft: 0, margin: 0, listStyle: 'none' }}>
+              {education.map((edu, idx) => (
+                <li key={idx} style={{ marginBottom: 4 }}>
+                  <div style={{ fontWeight: 600, fontSize: 12, color: blanc }}>{edu.degree}</div>
+                  <div style={{ fontSize: 11, color: grisTexte }}>{edu.institution}{edu.field ? `, ${edu.field}` : ''}</div>
+                  <div style={{ fontSize: 10, color: blanc, opacity: 0.7 }}>{edu.startDate} - {edu.endDate}</div>
+                  {edu.description && (
+                    <div style={{ fontSize: 11, color: grisTexte, marginTop: 2 }}>{edu.description}</div>
+                  )}
+                </li>
+              ))}
+            </ul>
           </div>
         )}
       </div>
@@ -176,20 +178,37 @@ const TechModernTemplate: React.FC<TechModernTemplateProps> = ({ data, isMiniatu
           </div>
         )}
         {/* Clavier dessin SVG décoratif */}
-        <div style={{ position: 'absolute', bottom: 10, right: 10, opacity: 0.3, zIndex: 0, transform: 'rotate(8deg)' }}>
-          {/* Clavier filaire stylisé */}
-          <svg width="200" height="54" viewBox="0 0 200 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <div style={{ position: 'absolute', bottom: 6, right: 6, opacity: 0.32, zIndex: 0, transform: 'rotate(8deg)' }}>
+          {/* Clavier filaire réaliste */}
+          <svg width="210" height="54" viewBox="0 0 210 54" fill="none" xmlns="http://www.w3.org/2000/svg">
             {/* fil */}
-            <path d="M180 10 Q195 5 198 30" stroke="#4b6c5c" strokeWidth="2" fill="none" />
+            <path d="M200 8 Q215 0 208 30" stroke="#4b6c5c" strokeWidth="2.5" fill="none" />
             {/* base clavier */}
-            <rect x="10" y="18" width="180" height="24" rx="7" fill="#eaf3ee" stroke="#4b6c5c" strokeWidth="3" />
-            {/* touches */}
-            <rect x="22" y="26" width="20" height="8" rx="2" fill="#fff" />
-            <rect x="46" y="26" width="20" height="8" rx="2" fill="#fff" />
-            <rect x="70" y="26" width="20" height="8" rx="2" fill="#fff" />
-            <rect x="94" y="26" width="20" height="8" rx="2" fill="#fff" />
-            <rect x="118" y="26" width="20" height="8" rx="2" fill="#fff" />
-            <rect x="142" y="26" width="20" height="8" rx="2" fill="#fff" />
+            <rect x="10" y="18" width="190" height="22" rx="7" fill="#eaf3ee" stroke="#4b6c5c" strokeWidth="3" />
+            {/* rangée 1 */}
+            <rect x="22" y="22" width="18" height="5" rx="1.5" fill="#fff" />
+            <rect x="42" y="22" width="18" height="5" rx="1.5" fill="#fff" />
+            <rect x="62" y="22" width="18" height="5" rx="1.5" fill="#fff" />
+            <rect x="82" y="22" width="18" height="5" rx="1.5" fill="#fff" />
+            <rect x="102" y="22" width="18" height="5" rx="1.5" fill="#fff" />
+            <rect x="122" y="22" width="18" height="5" rx="1.5" fill="#fff" />
+            <rect x="142" y="22" width="18" height="5" rx="1.5" fill="#fff" />
+            <rect x="162" y="22" width="18" height="5" rx="1.5" fill="#fff" />
+            {/* rangée 2 */}
+            <rect x="26" y="29" width="18" height="5" rx="1.5" fill="#fff" />
+            <rect x="46" y="29" width="18" height="5" rx="1.5" fill="#fff" />
+            <rect x="66" y="29" width="18" height="5" rx="1.5" fill="#fff" />
+            <rect x="86" y="29" width="18" height="5" rx="1.5" fill="#fff" />
+            <rect x="106" y="29" width="18" height="5" rx="1.5" fill="#fff" />
+            <rect x="126" y="29" width="18" height="5" rx="1.5" fill="#fff" />
+            <rect x="146" y="29" width="18" height="5" rx="1.5" fill="#fff" />
+            {/* rangée 3 */}
+            <rect x="30" y="36" width="18" height="5" rx="1.5" fill="#fff" />
+            <rect x="50" y="36" width="18" height="5" rx="1.5" fill="#fff" />
+            <rect x="70" y="36" width="18" height="5" rx="1.5" fill="#fff" />
+            <rect x="90" y="36" width="18" height="5" rx="1.5" fill="#fff" />
+            <rect x="110" y="36" width="18" height="5" rx="1.5" fill="#fff" />
+            <rect x="130" y="36" width="18" height="5" rx="1.5" fill="#fff" />
           </svg>
         </div>
       </div>
