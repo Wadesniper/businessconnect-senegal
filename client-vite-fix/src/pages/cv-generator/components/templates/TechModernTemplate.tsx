@@ -100,21 +100,19 @@ const TechModernTemplate: React.FC<TechModernTemplateProps> = ({ data, isMiniatu
         )}
         {/* Formations déplacées ici */}
         {education.length > 0 && (
-          <div style={{ width: '80%', marginBottom: 10 }}>
-            <div style={{ fontWeight: 700, fontSize: 13, color: blanc, marginBottom: 4, letterSpacing: 1, textTransform: 'uppercase', background: vertFonce, padding: '2px 8px', borderRadius: 8, display: 'inline-block' }}>Formations</div>
-            <div style={{ height: 2, width: 16, background: blanc, opacity: 0.12, marginBottom: 4, borderRadius: 2 }} />
-            <ul style={{ paddingLeft: 0, margin: 0, listStyle: 'none' }}>
-              {education.map((edu, idx) => (
-                <li key={idx} style={{ marginBottom: 10, paddingBottom: 8, borderBottom: idx !== education.length - 1 ? '1px solid #eaf3ee' : 'none' }}>
-                  <div style={{ fontWeight: 700, fontSize: 13, color: blanc }}>{edu.degree}</div>
-                  <div style={{ fontSize: 11, color: grisTexte, marginBottom: 2 }}>{edu.institution}{edu.field ? `, ${edu.field}` : ''}</div>
-                  <div style={{ fontSize: 10, color: blanc, opacity: 0.7 }}>{edu.startDate} - {edu.endDate}</div>
-                  {edu.description && (
-                    <div style={{ fontSize: 11, color: grisTexte, marginTop: 2 }}>{edu.description}</div>
-                  )}
-                </li>
-              ))}
-            </ul>
+          <div style={{ width: '80%', marginBottom: 14 }}>
+            <div style={{ fontWeight: 700, fontSize: 14, color: vertFonce, marginBottom: 8, letterSpacing: 1, textTransform: 'uppercase', background: blanc, padding: '4px 16px', borderRadius: 8, display: 'inline-block' }}>Formations</div>
+            <div style={{ height: 2, width: 32, background: vertFonce, opacity: 0.12, marginBottom: 8, borderRadius: 2 }} />
+            {education.map((edu, idx) => (
+              <div key={idx} style={{ background: blanc, borderRadius: 8, boxShadow: '0 2px 8px #0001', padding: '8px 10px', marginBottom: 8, borderLeft: `3px solid ${vertFonce}` }}>
+                <div style={{ fontWeight: 700, fontSize: 13, color: vertFonce }}>{edu.degree}</div>
+                <div style={{ fontSize: 12, color: grisTexte }}>{edu.institution}{edu.field ? `, ${edu.field}` : ''}</div>
+                <div style={{ fontSize: 11, color: vertFonce, opacity: 0.7 }}>{edu.startDate} - {edu.endDate}</div>
+                {edu.description && (
+                  <div style={{ fontSize: 12, color: grisTexte, marginTop: 4 }}>{edu.description}</div>
+                )}
+              </div>
+            ))}
           </div>
         )}
       </div>
@@ -128,18 +126,13 @@ const TechModernTemplate: React.FC<TechModernTemplateProps> = ({ data, isMiniatu
           </div>
           {/* Laptop dessin SVG */}
           <div style={{ marginLeft: 24, transform: 'rotate(-12deg)' }}>
-            {/* Laptop stylisé, perspective fidèle au modèle */}
-            <svg width="100" height="60" viewBox="0 0 100 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-              {/* Écran */}
-              <rect x="25" y="10" width="50" height="16" rx="2.5" fill="#eaf3ee" stroke="#4b6c5c" strokeWidth="2.2" />
-              {/* Charnière */}
-              <rect x="45" y="26" width="10" height="3" rx="1.2" fill="#4b6c5c" opacity="0.18" />
-              {/* Base perspective */}
-              <polygon points="15,29 85,29 95,50 5,50" fill="#eaf3ee" stroke="#4b6c5c" strokeWidth="2.2" />
-              {/* Lignes de touches */}
-              <line x1="22" y1="38" x2="78" y2="38" stroke="#4b6c5c" strokeWidth="1.1" opacity="0.18" />
-              <line x1="25" y1="43" x2="75" y2="43" stroke="#4b6c5c" strokeWidth="1.1" opacity="0.18" />
-              <line x1="28" y1="47" x2="72" y2="47" stroke="#4b6c5c" strokeWidth="1.1" opacity="0.18" />
+            {/* Laptop stylisé, version initiale simple */}
+            <svg width="90" height="60" viewBox="0 0 90 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="15" y="10" width="60" height="22" rx="3" fill="#eaf3ee" stroke="#4b6c5c" strokeWidth="2.5" />
+              <rect x="10" y="36" width="70" height="10" rx="4" fill="#eaf3ee" stroke="#4b6c5c" strokeWidth="2.5" />
+              <rect x="30" y="16" width="30" height="8" rx="2" fill="#fff" />
+              {/* base perspective */}
+              <polygon points="10,46 80,46 85,58 5,58" fill="#eaf3ee" stroke="#4b6c5c" strokeWidth="2.5" />
             </svg>
           </div>
         </div>
