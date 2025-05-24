@@ -76,7 +76,8 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
     if (isMiniature) return;
     const checkHeight = () => {
       if (contentRef.current) {
-        setNeedsScroll(contentRef.current.scrollHeight > baseA4Height);
+        const realHeight = contentRef.current.getBoundingClientRect().height;
+        setNeedsScroll(realHeight > baseA4Height + 2); // +2 pour tolérance de bordure
       }
     };
     checkHeight();
