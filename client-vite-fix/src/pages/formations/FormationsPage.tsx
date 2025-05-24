@@ -21,14 +21,6 @@ const FormationsPage: React.FC = () => {
   const navigate = useNavigate();
   const isPremium = hasPremiumAccess(user, hasActiveSubscription);
   const [search, setSearch] = useState('');
-  const [timeoutReached, setTimeoutReached] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setTimeoutReached(true), TIMEOUT);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const showProfileAlert = Boolean(user) && !isPremium && timeoutReached && loading;
 
   const filteredFormations = formationsData.filter(f =>
     f.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -46,23 +38,6 @@ const FormationsPage: React.FC = () => {
   return (
     <Layout>
       <Content>
-        {showProfileAlert && (
-          <div style={{
-            background: '#fffbe6',
-            border: '1.5px solid #ffe58f',
-            borderRadius: 12,
-            padding: '12px 10px',
-            margin: '0 auto 24px auto',
-            maxWidth: 700,
-            textAlign: 'center',
-            color: '#ad8b00',
-            fontWeight: 600,
-            fontSize: 16,
-            boxShadow: '0 2px 8px #ffe58f33',
-          }}>
-            ⚠️ Impossible de charger votre profil pour le moment. Certaines fonctionnalités peuvent être limitées. Merci de vérifier votre connexion ou de réessayer plus tard.
-          </div>
-        )}
         <div style={{
           background: 'linear-gradient(90deg, #e6f0ff 0%, #f7faff 100%)',
           borderRadius: 24,

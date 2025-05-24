@@ -14,12 +14,6 @@ const SubscriptionSuccess: React.FC = () => {
 
   useEffect(() => {
     const verifyPayment = async () => {
-      if (!user) {
-        setError('Utilisateur non connecté');
-        setLoading(false);
-        return;
-      }
-
       try {
         // Récupérer le token de paiement depuis l'URL
         const params = new URLSearchParams(location.search);
@@ -28,6 +22,12 @@ const SubscriptionSuccess: React.FC = () => {
 
         if (!token || !type) {
           setError('Informations de paiement manquantes');
+          setLoading(false);
+          return;
+        }
+
+        if (!user) {
+          setError('Utilisateur non connecté');
           setLoading(false);
           return;
         }
