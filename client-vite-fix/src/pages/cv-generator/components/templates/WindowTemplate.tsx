@@ -2,8 +2,8 @@ import React from 'react';
 import { MailOutlined, PhoneOutlined, EnvironmentOutlined, LinkedinOutlined, GlobalOutlined } from '@ant-design/icons';
 import type { CVData } from '../../../../types/cv';
 
-const vertFonce = '#4b6c5c';
-const vertClair = '#eaf3ee';
+const roseFonce = '#e9b6c7';
+const roseClair = '#ffe3ef';
 const blanc = '#fff';
 const noir = '#222';
 const gris = '#e5e7eb';
@@ -15,7 +15,19 @@ interface WindowTemplateProps {
 }
 
 const borderStyle = `1.5px solid ${noir}`;
-const shadowStyle = '0 4px 16px #0002';
+const shadowStyle = '0 6px 24px #0003';
+
+const CardWindow: React.FC<{ title: string; children: React.ReactNode; style?: React.CSSProperties }> = ({ title, children, style }) => (
+  <div style={{ background: blanc, border: borderStyle, borderRadius: 12, boxShadow: shadowStyle, marginBottom: 24, position: 'relative', ...style }}>
+    {/* Boutons décoratifs */}
+    <div style={{ position: 'absolute', right: 14, top: 10, display: 'flex', gap: 6, zIndex: 2 }}>
+      <span style={{ width: 16, height: 16, borderRadius: '50%', background: '#ffd6db', border: '2px solid #e57373', display: 'inline-block', textAlign: 'center', fontWeight: 700, fontSize: 12, color: '#b71c1c', lineHeight: '12px', padding: 0 }}>-</span>
+      <span style={{ width: 16, height: 16, borderRadius: '50%', background: '#ffeec2', border: '2px solid #bdb800', display: 'inline-block', textAlign: 'center', fontWeight: 700, fontSize: 12, color: '#bdb800', lineHeight: '12px', padding: 0 }}>×</span>
+    </div>
+    <div style={{ background: roseClair, borderBottom: borderStyle, padding: '8px 18px', fontWeight: 700, fontSize: 16, color: noir, letterSpacing: 1, borderRadius: '12px 12px 0 0' }}>{title}</div>
+    <div style={{ padding: 18 }}>{children}</div>
+  </div>
+);
 
 const WindowTemplate: React.FC<WindowTemplateProps> = ({ data, isMiniature = false }) => {
   const personalInfo = {
@@ -31,9 +43,9 @@ const WindowTemplate: React.FC<WindowTemplateProps> = ({ data, isMiniature = fal
   const interests = Array.isArray((data as any).interests) ? (data as any).interests : [];
 
   return (
-    <div style={{ width: 794, minHeight: 1123, background: blanc, fontFamily: 'Montserrat, Arial, sans-serif', borderRadius: 18, boxShadow: shadowStyle, padding: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', border: borderStyle }}>
+    <div style={{ width: 794, minHeight: 1123, background: blanc, fontFamily: 'Montserrat, Arial, sans-serif', borderRadius: 18, boxShadow: shadowStyle, padding: 0, border: borderStyle }}>
       {/* Header principal effet fenêtre */}
-      <div style={{ width: '100%', background: vertClair, borderRadius: '18px 18px 0 0', borderBottom: borderStyle, boxShadow: '0 6px 0 #222, 0 8px 16px #0001', position: 'relative', minHeight: 80, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: 18 }}>
+      <div style={{ width: '100%', background: roseFonce, borderRadius: '18px 18px 0 0', borderBottom: borderStyle, boxShadow: '0 6px 0 #222, 0 8px 16px #0001', position: 'relative', minHeight: 80, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: 18 }}>
         {/* Boutons fenêtre + flèche */}
         <div style={{ position: 'absolute', left: 24, top: 22, display: 'flex', gap: 8 }}>
           <span style={{ width: 14, height: 14, borderRadius: '50%', background: '#e57373', display: 'inline-block', border: '2px solid #b71c1c' }} />
@@ -41,28 +53,22 @@ const WindowTemplate: React.FC<WindowTemplateProps> = ({ data, isMiniature = fal
           <span style={{ width: 14, height: 14, borderRadius: '50%', background: '#81c784', display: 'inline-block', border: '2px solid #388e3c' }} />
         </div>
         {/* Flèche souris en haut à droite */}
-        <svg width="38" height="38" viewBox="0 0 38 38" style={{ position: 'absolute', right: 18, top: 8 }} fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 4L32 18L20 20L24 34L18 32L14 20L6 4Z" fill={vertFonce} stroke={noir} strokeWidth="2"/></svg>
+        <svg width="38" height="38" viewBox="0 0 38 38" style={{ position: 'absolute', right: 18, top: 8 }} fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 4L32 18L20 20L24 34L18 32L14 20L6 4Z" fill={roseFonce} stroke={noir} strokeWidth="2"/></svg>
         <div style={{ fontWeight: 900, fontSize: 32, color: noir, letterSpacing: 2, textTransform: 'uppercase', marginTop: 8, textAlign: 'center' }}>{personalInfo.firstName} {personalInfo.lastName}</div>
         <div style={{ fontSize: 18, color: noir, fontWeight: 500, textTransform: 'uppercase', letterSpacing: 1, textAlign: 'center' }}>{personalInfo.title}</div>
       </div>
-      {/* Fenêtre PROFIL sur toute la largeur */}
-      <div style={{ width: '92%', background: blanc, border: borderStyle, borderRadius: 8, boxShadow: shadowStyle, marginBottom: 18, overflow: 'hidden' }}>
-        <div style={{ background: vertClair, borderBottom: borderStyle, padding: '8px 18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontWeight: 700, fontSize: 16, color: noir, letterSpacing: 1 }}>
-          PROFIL
-          <span style={{ display: 'flex', gap: 4 }}>
-            <span style={{ width: 8, height: 8, borderRadius: '50%', background: noir, opacity: 0.18 }} />
-            <span style={{ width: 8, height: 8, borderRadius: '50%', background: noir, opacity: 0.18 }} />
-            <span style={{ width: 8, height: 8, borderRadius: '50%', background: noir, opacity: 0.18 }} />
-          </span>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', gap: 24, padding: 24 }}>
+      {/* Bloc Profil horizontal */}
+      <CardWindow title="Profil" style={{ margin: '0 24px 24px 24px' }}>
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', gap: 24 }}>
+          {/* Photo de profil */}
           {personalInfo.photo && (
-            <img src={personalInfo.photo} alt="avatar" style={{ width: 90, height: 90, borderRadius: 10, objectFit: 'cover', boxShadow: '0 2px 8px #0001', border: `2px solid ${vertClair}` }} />
+            <img src={personalInfo.photo} alt="avatar" style={{ width: 100, height: 100, borderRadius: 14, objectFit: 'cover', boxShadow: '0 2px 12px #0004', border: `3px solid ${roseFonce}`, marginRight: 18 }} />
           )}
+          {/* Infos à droite */}
           <div style={{ flex: 1, display: 'flex', flexDirection: 'row', gap: 24 }}>
             {/* Coordonnées */}
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
-              <div style={{ fontSize: 13, color: noir, fontWeight: 700, marginBottom: 2 }}>COORDONNÉES</div>
+              <div style={{ fontSize: 13, color: noir, fontWeight: 700, marginBottom: 2 }}>Coordonnées</div>
               {personalInfo.email && <div style={{ fontSize: 13, color: grisTexte, marginBottom: 2 }}><MailOutlined style={{ marginRight: 6 }} />{personalInfo.email}</div>}
               {personalInfo.phone && <div style={{ fontSize: 13, color: grisTexte, marginBottom: 2 }}><PhoneOutlined style={{ marginRight: 6 }} />{personalInfo.phone}</div>}
               {personalInfo.address && <div style={{ fontSize: 13, color: grisTexte, marginBottom: 2 }}><EnvironmentOutlined style={{ marginRight: 6 }} />{personalInfo.address}</div>}
@@ -72,14 +78,14 @@ const WindowTemplate: React.FC<WindowTemplateProps> = ({ data, isMiniature = fal
             {/* Centres d'intérêt */}
             {interests.length > 0 && (
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
-                <div style={{ fontSize: 13, color: noir, fontWeight: 700, marginBottom: 2 }}>CENTRES D'INTÉRÊT</div>
+                <div style={{ fontSize: 13, color: noir, fontWeight: 700, marginBottom: 2 }}>Centres d'intérêt</div>
                 <div style={{ fontSize: 13, color: grisTexte }}>{interests.map((i: any) => (typeof i === 'string' ? i : i.name)).join(', ')}</div>
               </div>
             )}
             {/* Langues */}
             {languages.length > 0 && (
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
-                <div style={{ fontSize: 13, color: noir, fontWeight: 700, marginBottom: 2 }}>LANGUES</div>
+                <div style={{ fontSize: 13, color: noir, fontWeight: 700, marginBottom: 2 }}>Langues</div>
                 <div style={{ fontSize: 13, color: grisTexte }}>{languages.map((l: any) => `${l.name} (${l.level})`).join(', ')}</div>
               </div>
             )}
@@ -87,19 +93,18 @@ const WindowTemplate: React.FC<WindowTemplateProps> = ({ data, isMiniature = fal
         </div>
         {/* Résumé */}
         {personalInfo.summary && (
-          <div style={{ borderTop: borderStyle, padding: '14px 24px', fontSize: 14, color: grisTexte }}>{personalInfo.summary}</div>
+          <div style={{ borderTop: borderStyle, padding: '14px 0 0 0', fontSize: 14, color: grisTexte, marginTop: 12 }}>{personalInfo.summary}</div>
         )}
-      </div>
-      {/* Grille sections */}
-      <div style={{ width: '92%', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, margin: '0 auto', marginBottom: 18 }}>
+      </CardWindow>
+      {/* Grille sections en dessous : 2 colonnes */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, margin: '0 24px 0 24px' }}>
         {/* Expérience */}
-        <div style={{ background: blanc, border: borderStyle, borderRadius: 8, boxShadow: shadowStyle, overflow: 'hidden' }}>
-          <div style={{ background: vertClair, borderBottom: borderStyle, padding: '8px 18px', fontWeight: 700, fontSize: 16, color: noir, letterSpacing: 1 }}>EXPÉRIENCE</div>
-          <div style={{ padding: 18 }}>
+        {experience.length > 0 && (
+          <CardWindow title="Expérience">
             {experience.map((exp, idx) => (
-              <div key={idx} style={{ marginBottom: 12 }}>
+              <div key={idx} style={{ marginBottom: 18 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div style={{ fontWeight: 700, fontSize: 14, color: noir }}>{exp.title}</div>
+                  <div style={{ fontWeight: 700, fontSize: 15, color: noir }}>{exp.title}</div>
                   <div style={{ fontSize: 13, color: grisTexte }}>{exp.startDate} - {exp.current ? 'Présent' : exp.endDate}</div>
                 </div>
                 <div style={{ fontSize: 13, color: grisTexte }}>{exp.company}{exp.location ? `, ${exp.location}` : ''}</div>
@@ -109,63 +114,46 @@ const WindowTemplate: React.FC<WindowTemplateProps> = ({ data, isMiniature = fal
                     {exp.achievements.map((ach, i) => <li key={i}>{ach}</li>)}
                   </ul>
                 )}
-                {idx < experience.length - 1 && <div style={{ borderBottom: `1px solid ${gris}`, margin: '12px 0' }} />}
               </div>
             ))}
-          </div>
-        </div>
+          </CardWindow>
+        )}
         {/* Formation */}
-        <div style={{ background: blanc, border: borderStyle, borderRadius: 8, boxShadow: shadowStyle, overflow: 'hidden' }}>
-          <div style={{ background: vertClair, borderBottom: borderStyle, padding: '8px 18px', fontWeight: 700, fontSize: 16, color: noir, letterSpacing: 1 }}>FORMATION</div>
-          <div style={{ padding: 18 }}>
+        {education.length > 0 && (
+          <CardWindow title="Formation">
             {education.map((edu, idx) => (
-              <div key={idx} style={{ marginBottom: 12 }}>
+              <div key={idx} style={{ marginBottom: 18 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div style={{ fontWeight: 700, fontSize: 14, color: noir }}>{edu.degree}</div>
+                  <div style={{ fontWeight: 700, fontSize: 15, color: noir }}>{edu.degree}</div>
                   <div style={{ fontSize: 13, color: grisTexte }}>{edu.startDate} - {edu.endDate}</div>
                 </div>
                 <div style={{ fontSize: 13, color: grisTexte }}>{edu.institution}{edu.field ? `, ${edu.field}` : ''}</div>
                 {edu.description && <div style={{ fontSize: 13, color: grisTexte, marginTop: 2 }}>{edu.description}</div>}
-                {idx < education.length - 1 && <div style={{ borderBottom: `1px solid ${gris}`, margin: '12px 0' }} />}
               </div>
             ))}
-          </div>
-        </div>
+          </CardWindow>
+        )}
         {/* Compétences */}
-        <div style={{ background: blanc, border: borderStyle, borderRadius: 8, boxShadow: shadowStyle, overflow: 'hidden', gridColumn: '2/3', gridRow: '2/3' }}>
-          <div style={{ background: vertClair, borderBottom: borderStyle, padding: '8px 18px', fontWeight: 700, fontSize: 16, color: noir, letterSpacing: 1 }}>COMPÉTENCES</div>
-          <div style={{ padding: 18, display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {skills.map((skill, idx) => (
-              <div key={idx} style={{ marginBottom: 6 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div style={{ fontWeight: 600, fontSize: 13, color: noir }}>{skill.name}</div>
-                  {typeof skill.level === 'number' && (
-                    <span style={{ fontSize: 12, color: grisTexte }}>{skill.level}/100</span>
-                  )}
-                </div>
-                {typeof skill.level === 'number' && (
-                  <div style={{ width: '100%', height: 7, background: vertClair, borderRadius: 4, marginTop: 2 }}>
-                    <div style={{ width: `${skill.level}%`, height: 7, background: vertFonce, borderRadius: 4 }} />
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-      {/* Certifications (en bas, pleine largeur si présentes) */}
-      {certifications.length > 0 && (
-        <div style={{ width: '92%', background: blanc, border: borderStyle, borderRadius: 8, boxShadow: shadowStyle, marginBottom: 18, overflow: 'hidden' }}>
-          <div style={{ background: vertClair, borderBottom: borderStyle, padding: '8px 18px', fontWeight: 700, fontSize: 16, color: noir, letterSpacing: 1 }}>CERTIFICATIONS</div>
-          <div style={{ padding: 18 }}>
+        {skills.length > 0 && (
+          <CardWindow title="Compétences">
+            <ul style={{ paddingLeft: 0, margin: 0, listStyle: 'none' }}>
+              {skills.map((skill, idx) => (
+                <li key={idx} style={{ fontSize: 13, color: noir, marginBottom: 6 }}>{skill.name}</li>
+              ))}
+            </ul>
+          </CardWindow>
+        )}
+        {/* Certifications */}
+        {certifications.length > 0 && (
+          <CardWindow title="Certifications">
             <ul style={{ fontSize: 13, color: noir, margin: 0, paddingLeft: 18 }}>
               {certifications.map((cert: any, idx: number) => (
                 <li key={idx}>{typeof cert === 'string' ? cert : `${cert.name}${cert.issuer ? ' - ' + cert.issuer : ''}${cert.date ? ' (' + cert.date + ')' : ''}`}</li>
               ))}
             </ul>
-          </div>
-        </div>
-      )}
+          </CardWindow>
+        )}
+      </div>
     </div>
   );
 };
