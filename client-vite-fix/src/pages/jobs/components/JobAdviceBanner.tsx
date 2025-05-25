@@ -95,14 +95,14 @@ const JobAdviceBanner: React.FC = () => {
   return (
     <div style={{ marginBottom: 32 }}>
       <Title level={4} style={{ marginBottom: 16 }}>Conseils pour votre recherche d&apos;emploi</Title>
-      <Row gutter={[16, 16]}>
+      <Row gutter={[16, 16]} align="stretch">
         {conseils.map((c, idx) => (
-          <Col xs={24} md={6} key={c.titre}>
-            <Card bordered style={{ minHeight: 180 }}>
+          <Col xs={24} md={6} key={c.titre} style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+            <Card bordered style={{ minHeight: 220, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
               <Title level={5} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <PlusCircleOutlined style={{ color: '#1890ff' }} /> {c.titre}
               </Title>
-              <ul style={{ paddingLeft: 18, margin: 0 }}>
+              <ul style={{ paddingLeft: 18, margin: 0, flex: 1 }}>
                 {c.points.map((p, i) => (
                   <li key={i} style={{ marginBottom: 4, fontSize: 15 }}>{p}</li>
                 ))}

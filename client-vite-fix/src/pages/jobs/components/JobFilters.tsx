@@ -28,13 +28,24 @@ const JobFilters: React.FC<JobFiltersProps> = ({
   onWorkLocationChange
 }) => {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-      <label>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        gap: 18,
+        alignItems: 'flex-end',
+        flexWrap: 'wrap',
+        background: 'transparent',
+        padding: 0,
+        marginBottom: 24,
+      }}
+    >
+      <label style={{ minWidth: 180 }}>
         <span style={{ fontWeight: 600 }}>Secteur</span>
         <select
           value={selectedSector || ''}
           onChange={e => onSectorChange(e.target.value || null)}
-          style={{ width: '100%', padding: 8, borderRadius: 8, marginTop: 4 }}
+          style={{ width: '100%', padding: 8, borderRadius: 8, marginTop: 4, background: '#fff', color: '#222', border: '1.5px solid #e3e8f7' }}
         >
           <option value="">Tous secteurs</option>
           {sectors.map((s) => (
@@ -42,12 +53,12 @@ const JobFilters: React.FC<JobFiltersProps> = ({
           ))}
         </select>
       </label>
-      <label>
+      <label style={{ minWidth: 180 }}>
         <span style={{ fontWeight: 600 }}>Type de contrat</span>
         <select
           value={selectedType || ''}
           onChange={e => onTypeChange(e.target.value || null)}
-          style={{ width: '100%', padding: 8, borderRadius: 8, marginTop: 4 }}
+          style={{ width: '100%', padding: 8, borderRadius: 8, marginTop: 4, background: '#fff', color: '#222', border: '1.5px solid #e3e8f7' }}
         >
           <option value="">Tous types</option>
           <option value="CDI">CDI</option>
@@ -58,22 +69,22 @@ const JobFilters: React.FC<JobFiltersProps> = ({
           <option value="Temps partiel">Temps partiel</option>
         </select>
       </label>
-      <label>
+      <label style={{ minWidth: 180 }}>
         <span style={{ fontWeight: 600 }}>Localisation</span>
         <input
           type="text"
           value={selectedLocation || ''}
           onChange={e => onLocationChange(e.target.value || null)}
           placeholder="Ville, région..."
-          style={{ width: '100%', padding: 8, borderRadius: 8, marginTop: 4 }}
+          style={{ width: '100%', padding: 8, borderRadius: 8, marginTop: 4, background: '#fff', color: '#222', border: '1.5px solid #e3e8f7' }}
         />
       </label>
-      <label>
+      <label style={{ minWidth: 180 }}>
         <span style={{ fontWeight: 600 }}>Mode de travail</span>
         <select
           value={workLocation || ''}
           onChange={e => onWorkLocationChange(e.target.value || null)}
-          style={{ width: '100%', padding: 8, borderRadius: 8, marginTop: 4 }}
+          style={{ width: '100%', padding: 8, borderRadius: 8, marginTop: 4, background: '#fff', color: '#222', border: '1.5px solid #e3e8f7' }}
         >
           <option value="">Tous modes</option>
           <option value="onsite">Présentiel</option>
