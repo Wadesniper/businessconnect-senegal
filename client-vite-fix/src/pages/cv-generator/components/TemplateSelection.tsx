@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { Card, Typography, Row, Col, Select, Input, Empty, Tag, Tooltip, Button, Modal } from 'antd';
+import { Card, Typography, Row, Col, Select, Input, Empty, Tag, Tooltip, Button, Modal, Spin } from 'antd';
 import { LockOutlined, StarOutlined } from '@ant-design/icons';
 import type { Template } from '../../../types/cv';
 import { CV_TEMPLATES } from '../components/data/templates';
@@ -37,6 +37,12 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
   const { user } = useAuth();
   const [previewTemplate, setPreviewTemplate] = useState<Template | null>(null);
   const modalContentRef = useRef<HTMLDivElement>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 500);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     if (previewTemplate && modalContentRef.current) {
@@ -63,6 +69,10 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
       return matchesSearch && matchesCategory && matchesPremium;
     });
   }, [searchTerm, selectedCategory, showPremiumOnly]);
+
+  if (loading) {
+    return <div style={{ minHeight: 420, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement de la galerie..." /></div>;
+  }
 
   return (
     <div>
