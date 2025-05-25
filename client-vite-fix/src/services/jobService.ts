@@ -62,6 +62,9 @@ export class JobService {
       jobs = (jobs || []).map((job: any) => ({
         ...job,
         id: job._id || job.id,
+        type: job.type || job.jobType || '',
+        sector: job.sector || '',
+        location: job.location || '',
       }));
       await indexedDBService.saveJobs(jobs);
       return jobs;
@@ -71,6 +74,9 @@ export class JobService {
       jobs = (jobs || []).map((job: any) => ({
         ...job,
         id: job._id || job.id,
+        type: job.type || job.jobType || '',
+        sector: job.sector || '',
+        location: job.location || '',
       }));
       return jobs;
     }
