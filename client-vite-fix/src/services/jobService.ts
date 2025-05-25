@@ -1,6 +1,7 @@
 import type { Job, JobApplication, JobAlert, SavedJob } from '../types/job';
 import { localStorageService } from './localStorageService';
 import { indexedDBService } from './indexedDBService';
+import { endpoints } from '../config/api';
 
 // Cache local pour les offres d'emploi
 class LocalJobStorage {
@@ -54,7 +55,7 @@ export class JobService {
   // Gestion des offres d'emploi
   static async getJobs(): Promise<Job[]> {
     try {
-      const response = await fetch('/api/jobs');
+      const response = await fetch(endpoints.jobs);
       if (!response.ok) {
         throw new Error('Erreur réseau');
       }
