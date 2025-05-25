@@ -104,14 +104,14 @@ const JobDetailsPage: React.FC = () => {
           <Divider sx={{ my: 3 }} />
           <Button
             variant="contained"
-            color={hasActiveSubscription ? 'primary' : 'inherit'}
+            color="primary"
             size="large"
             sx={{ borderRadius: 3, fontWeight: 700, position: 'relative', minWidth: 180 }}
             onClick={handlePostuler}
             disabled={loadingSub}
-            startIcon={hasActiveSubscription ? <CheckCircleIcon color="success" /> : <LockIcon color="disabled" />}
+            startIcon={<CheckCircleIcon color="success" />}
           >
-            {hasActiveSubscription ? 'Postuler' : 'Abonnement requis'}
+            Postuler
           </Button>
           <Button variant="outlined" color="secondary" size="large" sx={{ borderRadius: 3, fontWeight: 700, ml: 2 }} onClick={() => navigate(-1)}>
             Retour aux offres

@@ -88,13 +88,18 @@ const JobCard: React.FC<JobCardProps> = ({ job, user, isSubscribed, onPostuler, 
             fontWeight: 700,
             fontSize: 15,
             cursor: isSubscribed ? 'pointer' : 'not-allowed',
-            flex: 1
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 8
           }}
           onClick={() => onPostuler(job.id)}
           disabled={!isSubscribed}
           aria-label={isSubscribed ? 'Postuler à cette offre' : 'Abonnement requis pour postuler'}
         >
-          {isSubscribed ? 'Postuler' : 'Abonnement requis'}
+          {!isSubscribed && <LockIcon style={{ fontSize: 18, marginRight: 6 }} />}
+          Postuler
         </button>
       </div>
       {(isAdmin || (isEmployer && isOwner)) && (
