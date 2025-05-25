@@ -93,24 +93,65 @@ const JobAdviceBanner: React.FC = () => {
 
   // Desktop : affichage en colonnes
   return (
-    <div style={{ marginBottom: 32 }}>
-      <Title level={4} style={{ marginBottom: 16 }}>Conseils pour votre recherche d&apos;emploi</Title>
-      <Row gutter={[16, 16]} align="stretch">
+    <div style={{ marginBottom: 32, background: '#f7faff', borderRadius: 24, boxShadow: '0 4px 24px #e3e8f7', padding: '32px 18px 24px 18px', maxWidth: '100%' }}>
+      <Title level={4} style={{ marginBottom: 24, color: '#1d3557', display: 'flex', alignItems: 'center', gap: 12, fontWeight: 800 }}>
+        <PlusCircleOutlined style={{ color: '#1890ff', fontSize: 28 }} /> Conseils pour votre recherche d&apos;emploi
+      </Title>
+      <div
+        className="job-advice-grid"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4, 1fr)',
+          gap: 20,
+          alignItems: 'stretch',
+          width: '100%',
+          maxWidth: '100%',
+        }}
+      >
         {conseils.map((c, idx) => (
-          <Col xs={24} md={6} key={c.titre} style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-            <Card bordered style={{ minHeight: 220, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
-              <Title level={5} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div key={c.titre} style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <Card bordered
+              style={{
+                minHeight: 220,
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'flex-start',
+                borderRadius: 18,
+                boxShadow: '0 2px 12px #e3e8f7',
+                border: 'none',
+                transition: 'box-shadow 0.2s, transform 0.2s',
+                background: '#fff',
+                cursor: 'pointer',
+              }}
+              bodyStyle={{ padding: '18px 18px 12px 18px' }}
+              className="job-advice-card"
+            >
+              <Title level={5} style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#1890ff', fontWeight: 700, marginBottom: 10 }}>
                 <PlusCircleOutlined style={{ color: '#1890ff' }} /> {c.titre}
               </Title>
               <ul style={{ paddingLeft: 18, margin: 0, flex: 1 }}>
                 {c.points.map((p, i) => (
-                  <li key={i} style={{ marginBottom: 4, fontSize: 15 }}>{p}</li>
+                  <li key={i} style={{ marginBottom: 4, fontSize: 15, color: '#333' }}>{p}</li>
                 ))}
               </ul>
             </Card>
-          </Col>
+          </div>
         ))}
-      </Row>
+      </div>
+      <style>{`
+        .job-advice-grid { margin-top: 0; }
+        .job-advice-card:hover {
+          box-shadow: 0 8px 32px #b3d0f7, 0 2px 12px #e3e8f7;
+          transform: translateY(-4px) scale(1.03);
+        }
+        @media (max-width: 1100px) {
+          .job-advice-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+        @media (max-width: 700px) {
+          .job-advice-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </div>
   );
 };
