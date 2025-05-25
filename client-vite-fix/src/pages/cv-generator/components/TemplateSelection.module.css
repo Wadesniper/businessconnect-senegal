@@ -5,10 +5,30 @@
   display: block !important;
 }
 .cvMiniature {
-  transition: box-shadow 0.2s, transform 0.2s;
+  transition: box-shadow 0.25s cubic-bezier(.4,2,.3,1), transform 0.22s cubic-bezier(.4,2,.3,1), border 0.22s, box-shadow 0.22s;
+  box-shadow: 0 2px 12px #e3e8f7, 0 1.5px 6px #0001;
+  border: 2px solid #f0f4ff;
+  background: linear-gradient(120deg, #f7faff 80%, #e6f0ff 100%);
+  position: relative;
 }
 .cvMiniature:hover {
-  box-shadow: 0 6px 24px #1890ff33, 0 2px 12px #0002;
-  transform: scale(1.04);
-  z-index: 2;
+  box-shadow: 0 8px 32px #1890ff33, 0 4px 18px #0002;
+  transform: scale(1.045) translateY(-4px) rotateZ(-0.5deg);
+  border: 2.5px solid #1890ff;
+  background: linear-gradient(120deg, #f7faff 60%, #e6f0ff 100%);
+  z-index: 3;
+}
+.cvMiniature::after {
+  content: '';
+  display: block;
+  pointer-events: none;
+  position: absolute;
+  left: 0; right: 0; top: 0; bottom: 0;
+  border-radius: 12px;
+  opacity: 0;
+  transition: opacity 0.22s;
+  box-shadow: 0 0 32px 8px #1890ff33;
+}
+.cvMiniature:hover::after {
+  opacity: 0.18;
 } 
