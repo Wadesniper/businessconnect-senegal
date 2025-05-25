@@ -62,10 +62,11 @@ export class JobService {
       jobs = (jobs || []).map((job: any) => ({
         ...job,
         id: job._id || job.id,
-        type: job.type || job.jobType || '',
+        type: job.jobType || job.type || '',
         sector: job.sector || '',
         location: job.location || '',
       }));
+      console.log('Jobs reçus pour affichage (après mapping):', jobs);
       await indexedDBService.saveJobs(jobs);
       return jobs;
     } catch (error) {
@@ -74,10 +75,11 @@ export class JobService {
       jobs = (jobs || []).map((job: any) => ({
         ...job,
         id: job._id || job.id,
-        type: job.type || job.jobType || '',
+        type: job.jobType || job.type || '',
         sector: job.sector || '',
         location: job.location || '',
       }));
+      console.log('Jobs reçus depuis le cache (après mapping):', jobs);
       return jobs;
     }
   }
