@@ -9,20 +9,26 @@ const conseils = [
   {
     titre: "Optimisez votre CV",
     points: [
-      "Adaptez votre CV à chaque offre d\'emploi",
+      "Adaptez votre CV à chaque offre d'emploi",
       "Mettez en avant vos compétences techniques",
       "Utilisez des mots-clés du secteur recherché",
       "Soyez concis et précis dans vos descriptions",
     ],
+    color: '#1890ff',
+    bg: '#eaf3ff',
+    icon: '📝',
   },
   {
     titre: "Préparez vos entretiens",
     points: [
-      "Renseignez-vous sur l\'entreprise",
+      "Renseignez-vous sur l'entreprise",
       "Préparez des exemples concrets",
       "Posez des questions pertinentes",
       "Soignez votre apparence et ponctualité",
     ],
+    color: '#ff9800',
+    bg: '#fff7e6',
+    icon: '💬',
   },
   {
     titre: "Développez votre réseau",
@@ -30,17 +36,23 @@ const conseils = [
       "Participez aux événements professionnels",
       "Créez un profil LinkedIn à jour",
       "Rejoignez des groupes de votre domaine",
-      "Contactez d\'anciens collègues",
+      "Contactez d'anciens collègues",
     ],
+    color: '#43a047',
+    bg: '#eafaf1',
+    icon: '🤝',
   },
   {
     titre: "Restez en veille",
     points: [
-      "Suivez l\'actualité de votre secteur",
+      "Suivez l'actualité de votre secteur",
       "Formez-vous aux nouvelles technologies",
       "Inscrivez-vous aux newsletters",
       "Participez à des webinaires",
     ],
+    color: '#673ab7',
+    bg: '#f3eaff',
+    icon: '🔎',
   },
 ];
 
@@ -75,7 +87,7 @@ const JobAdviceBanner: React.FC = () => {
               <Col xs={24} key={c.titre} style={{ marginBottom: 8 }}>
                 <Card bordered size="small">
                   <Title level={5} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                    <PlusCircleOutlined style={{ color: '#1890ff' }} /> {c.titre}
+                    <span style={{ fontSize: 22 }}>{c.icon}</span> {c.titre}
                   </Title>
                   <ul style={{ paddingLeft: 18, margin: 0 }}>
                     {c.points.map((p, i) => (
@@ -109,7 +121,7 @@ const JobAdviceBanner: React.FC = () => {
         }}
       >
         {conseils.map((c, idx) => (
-          <div key={c.titre} style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+          <div key={c.titre} style={{ height: '100%', display: 'flex', flexDirection: 'column', animation: `fadeInUp 0.7s ${0.1 + idx * 0.12}s both` }}>
             <Card bordered
               style={{
                 minHeight: 220,
@@ -121,14 +133,14 @@ const JobAdviceBanner: React.FC = () => {
                 boxShadow: '0 2px 12px #e3e8f7',
                 border: 'none',
                 transition: 'box-shadow 0.2s, transform 0.2s',
-                background: '#fff',
+                background: c.bg,
                 cursor: 'pointer',
               }}
               bodyStyle={{ padding: '18px 18px 12px 18px' }}
               className="job-advice-card"
             >
-              <Title level={5} style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#1890ff', fontWeight: 700, marginBottom: 10 }}>
-                <PlusCircleOutlined style={{ color: '#1890ff' }} /> {c.titre}
+              <Title level={5} style={{ display: 'flex', alignItems: 'center', gap: 8, color: c.color, fontWeight: 700, marginBottom: 10 }}>
+                <span style={{ fontSize: 22 }}>{c.icon}</span> {c.titre}
               </Title>
               <ul style={{ paddingLeft: 18, margin: 0, flex: 1 }}>
                 {c.points.map((p, i) => (
@@ -140,6 +152,10 @@ const JobAdviceBanner: React.FC = () => {
         ))}
       </div>
       <style>{`
+        @keyframes fadeInUp {
+          0% { opacity: 0; transform: translateY(30px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
         .job-advice-grid { margin-top: 0; }
         .job-advice-card:hover {
           box-shadow: 0 8px 32px #b3d0f7, 0 2px 12px #e3e8f7;
