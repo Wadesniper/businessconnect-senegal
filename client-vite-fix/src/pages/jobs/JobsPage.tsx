@@ -71,6 +71,22 @@ const JobsPage: React.FC = () => {
     }
   };
 
+  const handleEdit = (jobId: string) => {
+    navigate(`/jobs/${jobId}/edit`);
+  };
+
+  const handleDelete = (jobId: string) => {
+    navigate(`/jobs/${jobId}/delete`);
+  };
+
+  const handlePublish = () => {
+    navigate('/jobs/publish');
+  };
+
+  const handleViewDetails = (jobId: string) => {
+    navigate(`/jobs/${jobId}`);
+  };
+
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <JobAdviceBanner />
@@ -122,7 +138,16 @@ const JobsPage: React.FC = () => {
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
                 {filteredJobs.map((job) => (
                   <Box key={job.id} sx={{ flexBasis: { xs: '100%', md: '48%' }, maxWidth: { xs: '100%', md: '48%' } }}>
-                    <JobCard job={job} isSubscribed={isPremium} onPostuler={handlePostuler} />
+                    <JobCard
+                      job={job}
+                      user={user}
+                      isSubscribed={isPremium}
+                      onPostuler={handlePostuler}
+                      onEdit={handleEdit}
+                      onDelete={handleDelete}
+                      onPublish={handlePublish}
+                      onViewDetails={handleViewDetails}
+                    />
                   </Box>
                 ))}
               </Box>

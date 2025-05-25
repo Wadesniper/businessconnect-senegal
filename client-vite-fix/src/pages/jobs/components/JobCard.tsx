@@ -2,11 +2,19 @@ import React from 'react';
 
 interface JobCardProps {
   job: any;
+  user: any;
   isSubscribed: boolean;
   onPostuler: (jobId: string) => void;
+  onEdit: (jobId: string) => void;
+  onDelete: (jobId: string) => void;
+  onPublish: () => void;
+  onViewDetails: (jobId: string) => void;
 }
 
-const JobCard: React.FC<JobCardProps> = ({ job, isSubscribed, onPostuler }) => {
+const JobCard: React.FC<JobCardProps> = ({ job, user, isSubscribed, onPostuler, onEdit, onDelete, onPublish, onViewDetails }) => {
+  const isAdmin = user?.role === 'admin';
+  const isEmployer = user?.role === 'employeur';
+  const isOwner = user && job && job.createdBy === user.id;
   return (
     <div style={{
       border: '1px solid #e3e8f7',
@@ -39,26 +47,68 @@ const JobCard: React.FC<JobCardProps> = ({ job, isSubscribed, onPostuler }) => {
       <div style={{ color: '#333', fontSize: 15, margin: '8px 0', flex: 1 }}>
         {job.description?.length > 120 ? job.description.slice(0, 120) + '…' : job.description}
       </div>
-      <button
-        style={{
-          marginTop: 'auto',
-          background: isSubscribed ? '#1890ff' : '#aaa',
-          color: '#fff',
-          border: 'none',
-          borderRadius: 8,
-          padding: '10px 0',
-          fontWeight: 700,
-          fontSize: 16,
-          cursor: 'pointer',
-          transition: 'background 0.2s',
-          width: '100%'
-        }}
-        onClick={() => onPostuler(job.id)}
-        disabled={!isSubscribed}
-        aria-label={isSubscribed ? 'Postuler à cette offre' : 'Abonnement requis pour postuler'}
-      >
-        {isSubscribed ? 'Postuler' : 'Abonnement requis'}
-      </button>
+      <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+        <button
+          style={{
+            background: '#fff',
+            color: '#1890ff',
+            border: '1px solid #1890ff',
+            borderRadius: 8,
+            padding: '8px 12px',
+            fontWeight: 600,
+            fontSize: 15,
+            cursor: 'pointer',
+            flex: 1
+          }}
+          onClick={() => onViewDetails(job.id)}
+        >
+          Voir détails
+        </button>
+        <button
+          style={{
+            background: isSubscribed ? '#1890ff' : '#aaa',
+            color: '#fff',
+            border: 'none',
+            borderRadius: 8,
+            padding: '8px 12px',
+            fontWeight: 700,
+            fontSize: 15,
+            cursor: isSubscribed ? 'pointer' : 'not-allowed',
+            flex: 1
+          }}
+          onClick={() => onPostuler(job.id)}
+          disabled={!isSubscribed}
+          aria-label={isSubscribed ? 'Postuler à cette offre' : 'Abonnement requis pour postuler'}
+        >
+          {isSubscribed ? 'Postuler' : 'Abonnement requis'}
+        </button>
+      </div>
+      {(isAdmin || (isEmployer && isOwner)) && (
+        <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+          <button
+            style={{ background: '#fff', color: '#52c41a', border: '1px solid #52c41a', borderRadius: 8, padding: '8px 12px', fontWeight: 600, fontSize: 15, cursor: 'pointer', flex: 1 }}
+            onClick={onEdit ? () => onEdit(job.id) : undefined}
+          >
+            Modifier
+          </button>
+          <button
+            style={{ background: '#fff', color: '#ff4d4f', border: '1px solid #ff4d4f', borderRadius: 8, padding: '8px 12px', fontWeight: 600, fontSize: 15, cursor: 'pointer', flex: 1 }}
+            onClick={onDelete ? () => onDelete(job.id) : undefined}
+          >
+            Supprimer
+          </button>
+        </div>
+      )}
+      {(isAdmin || isEmployer) && (
+        <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+          <button
+            style={{ background: '#1890ff', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 12px', fontWeight: 600, fontSize: 15, cursor: 'pointer', flex: 1 }}
+            onClick={onPublish}
+          >
+            Publier une offre
+          </button>
+        </div>
+      )}
     </div>
   );
 };
