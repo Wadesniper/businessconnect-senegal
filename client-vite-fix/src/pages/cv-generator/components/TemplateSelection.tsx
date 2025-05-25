@@ -109,7 +109,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
         />
       ) : (
         <Row gutter={[16, 16]}>
-          {filteredTemplates.map(template => (
+          {filteredTemplates.map((template, idx) => (
             <Col xs={24} sm={12} md={8} lg={6} key={template.id}>
               <Card
                 hoverable
@@ -128,8 +128,9 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                       margin: '0 auto',
                       overflow: 'hidden',
                       padding: 6,
+                      animationDelay: `${0.08 * idx + 0.08}s`,
                     }}
-                    className={styles.cvMiniature}
+                    className={`${styles.cvMiniature} appear`}
                   >
                     {template.previewImage ? (
                       <img
