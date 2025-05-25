@@ -1,6 +1,6 @@
 import { Router } from 'express';
 // import { jobController } from '../controllers/jobController';
-import { authMiddleware } from '../middleware/authMiddleware';
+// import { authMiddleware } from '../middleware/authMiddleware';
 import { getAllJobs } from '../controllers/jobController';
 
 const router = Router();
@@ -12,7 +12,7 @@ const router = Router();
 // router.get('/search', (req, res) => jobController.searchJobs(req, res));
 
 // Routes protégées
-router.use(authMiddleware);
+// router.use(authMiddleware);
 // router.post('/jobs', (req, res) => jobController.createJob(req, res));
 // router.put('/jobs/:id', (req, res) => jobController.updateJob(req, res));
 // router.delete('/jobs/:id', (req, res) => jobController.deleteJob(req, res));
@@ -29,6 +29,11 @@ router.use(authMiddleware);
 // router.post('/jobs/:id/save', (req, res) => jobController.toggleSaveJob(req, res));
 
 // Route publique pour récupérer toutes les offres d'emploi
-router.get('/api/jobs', getAllJobs);
+router.get('/', getAllJobs);
+
+// Les autres routes (protégées) peuvent être ajoutées ici si besoin
+// router.use(authMiddleware);
+// router.post('/', ...);
+// etc.
 
 export default router; 
