@@ -59,8 +59,12 @@ export class JobService {
       if (!response.ok) {
         throw new Error('Erreur réseau');
       }
-      const jobs = await response.json();
-      // Sauvegarder dans IndexedDB pour le mode hors ligne
+      let jobs = await response.json();
+      // Mapping _id -> id pour compatibilité frontend
+      jobs = (jobs || []).map((job: any) => ({
+        ...job,
+        id: job._id || job.id,
+      }));
       await indexedDBService.saveJobs(jobs);
       return jobs;
     } catch (error) {
