@@ -10,6 +10,7 @@ import healthRoutes from './routes/health';
 import usersRoutes from './routes/users';
 import dotenv from 'dotenv';
 import { config } from './config';
+import jobsRouter from './routes/jobs';
 dotenv.config();
 
 const app = express();
@@ -25,6 +26,7 @@ app.use('/api/health', healthRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/formations', formationRoutes);
 app.use('/api/auth', usersRoutes);
+app.use('/api/jobs', jobsRouter);
 
 // Middleware de gestion d'erreurs
 app.use(errorHandler);

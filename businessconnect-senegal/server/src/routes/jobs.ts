@@ -1,6 +1,7 @@
 import { Router } from 'express';
 // import { jobController } from '../controllers/jobController';
 import { authMiddleware } from '../middleware/authMiddleware';
+import { getAllJobs } from '../controllers/jobController';
 
 const router = Router();
 
@@ -26,5 +27,8 @@ router.use(authMiddleware);
 // router.get('/applications', (req, res) => jobController.getCandidateApplications(req, res));
 // router.get('/saved-jobs', (req, res) => jobController.getSavedJobs(req, res));
 // router.post('/jobs/:id/save', (req, res) => jobController.toggleSaveJob(req, res));
+
+// Route publique pour récupérer toutes les offres d'emploi
+router.get('/api/jobs', getAllJobs);
 
 export default router; 
