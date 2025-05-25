@@ -1,4 +1,4 @@
-import { Job, JobApplication, JobAlert, SavedJob } from '../types/job';
+import type { Job, JobApplication, JobAlert, SavedJob } from '../types/job';
 import { localStorageService } from './localStorageService';
 import { indexedDBService } from './indexedDBService';
 
@@ -54,24 +54,17 @@ export class JobService {
   // Gestion des offres d'emploi
   static async getJobs(): Promise<Job[]> {
     try {
-      // Essayer d'abord de récupérer depuis IndexedDB
-      const cachedJobs = await indexedDBService.getJobs();
-      if (cachedJobs && cachedJobs.length > 0) {
-        return cachedJobs;
-      }
-
-      // Si pas de cache, essayer l'API
+      // Toujours tenter l'API d'abord
       const response = await fetch('/api/jobs');
       if (!response.ok) {
         throw new Error('Erreur réseau');
       }
-
       const jobs = await response.json();
       // Sauvegarder dans IndexedDB pour le mode hors ligne
       await indexedDBService.saveJobs(jobs);
       return jobs;
     } catch (error) {
-      console.warn('Erreur lors de la récupération des offres:', error);
+      console.warn('Erreur lors de la récupération des offres depuis l\'API, fallback sur le cache IndexedDB:', error);
       // En cas d'erreur, retourner le cache même expiré si disponible
       return indexedDBService.getJobs();
     }
@@ -201,7 +194,7 @@ export class JobService {
   }
 
   async applyToJob(userId: string, jobId: string, application: Partial<JobApplication>): Promise<JobApplication> {
-    const job = await this.getJobById(jobId);
+    const job = await JobService.getJobById(jobId);
     if (!job) {
       throw new Error('Offre d\'emploi non trouvée');
     }
@@ -228,7 +221,7 @@ export class JobService {
   }
 
   async saveJob(userId: string, jobId: string): Promise<SavedJob> {
-    const job = await this.getJobById(jobId);
+    const job = await JobService.getJobById(jobId);
     if (!job) {
       throw new Error('Offre d\'emploi non trouvée');
     }
