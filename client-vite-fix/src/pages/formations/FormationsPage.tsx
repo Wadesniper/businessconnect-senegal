@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Layout, Card, Row, Col, Input, Select, Slider, Tag, Rate, Button, Empty, Spin, message } from 'antd';
-import { SearchOutlined, FilterOutlined, BookOutlined, ClockCircleOutlined, UserOutlined, ArrowRightOutlined, LockOutlined } from '@ant-design/icons';
+import React, { useState } from 'react';
+import { Layout, Card, Row, Col, Input, Button, Empty } from 'antd';
+import { SearchOutlined, ArrowRightOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useSubscription } from '../../hooks/useSubscription';
@@ -8,15 +8,21 @@ import { formationsData } from '../../data/formationsData';
 import { hasPremiumAccess } from '../../utils/premiumAccess';
 
 const { Content } = Layout;
-const { Search } = Input;
-const { Option } = Select;
 
-const ITEMS_PER_PAGE = 12;
-
-const TIMEOUT = 10000; // 10 secondes
+const emojiById: Record<string, string> = {
+  informatique: '💻',
+  langues: '🗣️',
+  business: '💼',
+  pro: '🏅',
+  design: '🎨',
+  education: '📚',
+  esthetique: '💄',
+  sante: '🏥',
+  autres: '🌐',
+};
 
 const FormationsPage: React.FC = () => {
-  const { hasActiveSubscription, loading } = useSubscription();
+  const { hasActiveSubscription } = useSubscription();
   const { user } = useAuth();
   const navigate = useNavigate();
   const isPremium = hasPremiumAccess(user, hasActiveSubscription);
@@ -35,19 +41,21 @@ const FormationsPage: React.FC = () => {
     }
   };
 
+  const headerStyle = {
+    background: 'linear-gradient(90deg, #e6f0ff 0%, #f7faff 100%)',
+    borderRadius: 24,
+    padding: '32px 16px 24px 16px',
+    marginBottom: 32,
+    textAlign: 'center' as const,
+    boxShadow: '0 4px 24px #e3e8f7',
+    maxWidth: 900,
+    margin: '0 auto 32px auto',
+  };
+
   return (
     <Layout>
       <Content>
-        <div style={{
-          background: 'linear-gradient(90deg, #e6f0ff 0%, #f7faff 100%)',
-          borderRadius: 24,
-          padding: '32px 16px 24px 16px',
-          marginBottom: 32,
-          textAlign: 'center',
-          boxShadow: '0 4px 24px #e3e8f7',
-          maxWidth: 900,
-          margin: '0 auto 32px auto',
-        }}>
+        <div style={headerStyle}>
           <h1 style={{ fontSize: 36, fontWeight: 800, color: '#1890ff', marginBottom: 8 }}>Formations</h1>
           <p style={{ fontSize: 18, color: '#333', marginBottom: 0 }}>
             Développez vos compétences avec plus de 4000 cours en ligne gratuits et certifiants dans de nombreux domaines.
@@ -100,7 +108,7 @@ const FormationsPage: React.FC = () => {
             allowClear
           />
         </div>
-        <Row gutter={[24, 24]} className="formationGrid" justify="center">
+        <Row gutter={[24, 24]} justify="center">
           {filteredFormations.length === 0 ? (
             <Col span={24} style={{ textAlign: 'center', marginTop: 40 }}>
               <Empty description="Aucune formation trouvée" />
@@ -128,7 +136,10 @@ const FormationsPage: React.FC = () => {
                   variant="outlined"
                 >
                   <Card.Meta
-                    title={<span style={{ color: '#1d3557', fontWeight: 700, fontSize: 20 }}>{f.title}</span>}
+                    title={<span style={{ color: '#1d3557', fontWeight: 700, fontSize: 20 }}>
+                      {emojiById[f.id] ? <span style={{ marginRight: 8 }}>{emojiById[f.id]}</span> : null}
+                      {f.title}
+                    </span>}
                     description={
                       <div>
                         <p style={{ color: '#333', marginBottom: 12, minHeight: 48 }}>{f.description}</p>
