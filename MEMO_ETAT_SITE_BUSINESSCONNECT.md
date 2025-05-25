@@ -962,3 +962,30 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Cette règle garantit que le générateur de CV est fiable, exhaustif et professionnel.
 
 ---
+
+# [Date : Correction des exports de types frontend (User, Job, Subscription)]
+
+- Problème : Le build affichait des warnings sur des types non exportés (User, UserRole, UserRegistrationData, LoginCredentials, Subscription, Job, JobApplication, SavedJob, JobAlert, JobData, UserSubscription).
+- Correction : Harmonisation et correction des exports dans les fichiers `src/types/user.ts`, `src/types/job.ts`, `src/data/subscriptionData.ts` pour garantir que tous les types nécessaires sont bien exportés, sans doublon ni conflit.
+- Aucun code ou fonctionnalité essentielle supprimé, aucune régression, aucune suppression de logique métier ou d'affichage.
+- Le build complet du frontend passe sans erreur bloquante, le site reste complet, toutes les fonctionnalités sont maintenues.
+- Aucun impact sur le backend ni sur le déploiement backend.
+- Statut : Prêt pour test d'affichage complet, déploiement et validation en production.
+
+---
+
+# [Date : Ajout d'emojis devant chaque domaine de formation]
+
+- Amélioration visuelle : chaque domaine de la page Formations affiche désormais un emoji devant son titre, pour un rendu premium et harmonisé avec la page Fiches Métiers.
+- Aucun code ou fonctionnalité essentielle supprimé, site complet et UX améliorée.
+
+---
+
+# [Date : Ajout de la route complète /api/jobs (backend)]
+
+- Ajout du modèle Mongoose Job (tous champs métier nécessaires).
+- Création du contrôleur getAllJobs pour retourner toutes les offres d'emploi.
+- Création de la route Express /api/jobs, montée dans l'app principale.
+- Aucune suppression de code, aucune perte de fonctionnalité, site complet maintenu, aucune version minimaliste.
+
+---

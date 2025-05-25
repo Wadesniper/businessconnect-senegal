@@ -35,6 +35,7 @@ const JobsPage: React.FC = () => {
     setIsLoading(true);
     JobService.getJobs()
       .then(jobs => {
+        console.log('Réponse API /api/jobs :', jobs);
         setJobs(jobs || []);
         // Extraire les secteurs uniques
         const uniqueSectors = Array.from(new Set((jobs || []).map((j: any) => j.sector).filter(Boolean)));
