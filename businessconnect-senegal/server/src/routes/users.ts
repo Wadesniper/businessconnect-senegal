@@ -4,6 +4,7 @@ import { authMiddleware, isAdmin } from '../middleware/authMiddleware';
 import { AuthController } from '../controllers/authController';
 import { Response } from 'express';
 import { AuthRequest } from '../types/user';
+import { User } from '../models/User';
 
 const router = Router();
 const authController = new AuthController();
@@ -22,9 +23,13 @@ router.use(authMiddleware);
 // router.delete('/account', userController.deleteAccount);
 
 // Routes administrateur
-// router.get('/admin/users', isAdmin, userController.getAllUsers);
-// router.put('/admin/user/:id', isAdmin, userController.updateUser);
-// router.delete('/admin/user/:id', isAdmin, userController.deleteUser);
+router.use('/admin', authMiddleware, isAdmin);
+
+// Liste des utilisateurs (admin)
+router.get('/admin/users', async (req, res) => {
+  const users = await User.find();
+  res.json(users);
+});
 
 // Route protégée pour récupérer l'utilisateur courant et son abonnement
 router.get('/me', authMiddleware, async (req: AuthRequest, res: Response) => {

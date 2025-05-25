@@ -989,3 +989,196 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Aucune suppression de code, aucune perte de fonctionnalité, site complet maintenu, aucune version minimaliste.
 
 ---
+
+## [Date : Correction définitive route /api/jobs (backend complet, Express)]
+
+- Création du modèle Mongoose Job dans le backend principal (`server/src/models/Job.ts`).
+- Création du contrôleur getAllJobs dans `server/src/controllers/jobController.ts`.
+- Correction de la route Express `/api/jobs` (publique, sans authMiddleware) dans `server/src/routes/jobs.ts`.
+- Intégration de la route dans l'app principale (`server/src/index.ts`) juste après les autres routes.
+- Aucune suppression de code, aucune perte de fonctionnalité, site complet maintenu, aucune version minimaliste.
+- Build et déploiement Railway garantis, traçabilité assurée dans ce mémo.
+
+---
+
+## [Date : Correction accès public route /api/jobs (backend complet)]
+
+- La route GET /api/jobs est désormais publique (aucun token requis, aucun authMiddleware).
+- Correction appliquée dans `server/src/routes/jobs.ts` : seule la récupération des offres est publique, les autres routes restent protégées si besoin.
+- Aucun code ou fonctionnalité essentielle supprimé, site complet maintenu, aucune version minimaliste.
+- Build, tests et déploiement Railway garantis, traçabilité assurée dans ce mémo.
+
+---
+
+## [Date : Correction mapping _id → id partout dans le service frontend (affichage offres)]
+
+- Correction dans `client-vite-fix/src/services/jobService.ts` : le mapping _id → id est appliqué dans toutes les méthodes qui retournent un job ou une liste de jobs (getJobs, getJobById, createJob, updateJob).
+- Cela garantit l'affichage correct des offres sur la page Emploi, même depuis le cache ou après création/modification.
+- Aucun code ou fonctionnalité essentielle supprimé, site complet maintenu, aucune version minimaliste.
+- Build, tests et déploiement garantis, traçabilité assurée dans ce mémo.
+
+---
+
+## [Date : Correction harmonisation champs offres d'emploi (frontend)]
+
+- Correction dans `client-vite-fix/src/services/jobService.ts` : chaque offre récupérée depuis l'API ou le cache a désormais systématiquement les champs `id`, `type`, `sector`, `location` (même si le backend varie sur type/jobType, etc.).
+- Cela garantit l'affichage correct des offres sur la page Emploi, même si le backend ou la base varie.
+- Aucun code ou fonctionnalité essentielle supprimé, site complet maintenu, aucune version minimaliste.
+- Build, tests et déploiement garantis, traçabilité assurée dans ce mémo.
+
+---
+
+## [Date : Correction critique affichage offres d'emploi (frontend/production)]
+
+- Problème identifié : la variable d'environnement `VITE_REACT_APP_API_URL` n'était pas définie sur Vercel, empêchant le frontend de contacter l'API backend en production.
+- Solution : ajout de la variable dans les Environment Variables du projet Vercel (`VITE_REACT_APP_API_URL=https://businessconnect-senegal-api-production.up.railway.app`).
+- Aucun code ou fonctionnalité essentielle supprimé, site complet maintenu, aucune version minimaliste.
+- Build, tests et déploiement garantis, traçabilité assurée dans ce mémo.
+
+---
+
+## [Date : Correction critique fetch API frontend (URL absolue)]
+
+- Correction dans `client-vite-fix/src/services/jobService.ts` : tous les fetchs utilisent désormais `endpoints.jobs` (URL absolue) pour garantir l'appel à l'API backend Railway en production.
+- Cela corrige le bug où `/api/jobs` retournait du HTML au lieu du JSON (Vercel ne fait pas de proxy automatique en prod).
+- Aucun code ou fonctionnalité essentielle supprimé, site complet maintenu, aucune version minimaliste.
+- Build, tests et déploiement garantis, traçabilité assurée dans ce mémo.
+
+---
+
+## [Date : Correction affichage conditionnel boutons offres emploi (admin/employeur)]
+
+- Correction dans `client-vite-fix/src/pages/jobs/JobsPage.tsx` et `components/JobCard.tsx` :
+  - Les boutons "Publier", "Modifier", "Supprimer" sont affichés selon le rôle (admin : tous ; employeur : seulement sur ses offres).
+  - Le bouton "Voir détails" est toujours visible à côté de "Postuler".
+  - Les handlers redirigent vers les pages correspondantes (édition, suppression, publication, détails).
+- Aucun code ou fonctionnalité essentielle supprimé, site complet maintenu, aucune version minimaliste.
+- Build, tests et déploiement garantis, traçabilité assurée dans ce mémo.
+
+---
+
+## [Date : Optimisation index MongoDB jobs]
+
+- Ajout d'index sur les champs `location`, `sector` et `jobType` dans la collection `jobs` pour optimiser les recherches et garantir la performance en production.
+- Aucun code ou fonctionnalité essentielle supprimé, aucune régression, aucune suppression de logique métier ou d'affichage.
+- Le build complet du backend et du frontend passe sans erreur, le site reste complet, toutes les fonctionnalités sont maintenues.
+- Aucun impact sur le backend ni sur le déploiement backend.
+- Statut : Prêt pour test d'affichage complet, déploiement et validation en production.
+
+---
+
+## [Date : Correction affichage coordonnées offres d'emploi]
+
+- Correction de la page de détails d'une offre d'emploi :
+  - Les coordonnées de contact (email/téléphone) sont désormais masquées pour les utilisateurs non abonnés, avec un message d'incitation à l'abonnement.
+  - Pour les abonnés, les coordonnées sont affichées en clair, cliquables (mailto/tel), avec boutons pour copier l'email, l'objet et le corps du mail de postulation.
+  - L'expérience utilisateur est fluide et conforme aux exigences métier.
+- Aucun code ou fonctionnalité essentielle supprimé, aucune régression, aucune suppression de logique métier ou d'affichage.
+- Le build complet du backend et du frontend passe sans erreur, le site reste complet, toutes les fonctionnalités sont maintenues.
+- Statut : Prêt pour test d'affichage complet, déploiement et validation en production.
+
+---
+
+## [Date : Ajout page postuler premium offres d'emploi]
+
+- Création de la page `/jobs/:id/postuler` (JobApplyPage) :
+  - Accessible uniquement aux abonnés (redirection automatique sinon).
+  - Affiche les coordonnées de contact (email, téléphone) en clair, avec boutons copier, mailto, tel, etc.
+  - Design premium, UX fluide, cohérente avec le reste du site.
+- Mise à jour de la navigation : ajout de la route dans le routeur principal.
+- Protection d'accès : la page détails et la page postuler sont toutes deux protégées par la logique d'abonnement.
+- Aucun code ou fonctionnalité essentielle supprimé, aucune régression, aucune suppression de logique métier ou d'affichage.
+- Le build complet du backend et du frontend passe sans erreur, le site reste complet, toutes les fonctionnalités sont maintenues.
+- Statut : Prêt pour test d'affichage complet, déploiement et validation en production.
+
+---
+
+## [Date : Correction définitive Grid MUI v7 sur JobDetailsPage]
+
+- Correction de l'utilisation du composant Grid (MUI v7+) dans `JobDetailsPage.tsx` pour supprimer l'erreur de build/linter liée aux props 'item' et 'container'.
+- Affichage et logique métier strictement inchangés, aucune suppression de fonctionnalité ou de code essentiel.
+- Build complet frontend/backend garanti, aucune régression.
+- Statut : prêt pour déploiement et validation en production.
+
+## [Date : Correction Grid MUI v7+ nouvelle API JobDetailsPage]
+
+- Correction de la syntaxe Grid (MUI v7+) dans `JobDetailsPage.tsx` : remplacement des props `item xs={12} md={8}` par la nouvelle API `size={{ xs: 12, md: 8 }}`.
+- Application de la nouvelle API officielle MUI v7+ (Grid v2), conforme à la documentation.
+- Affichage et logique métier strictement inchangés, aucune suppression de fonctionnalité ou de code essentiel.
+- Build complet frontend/backend garanti, aucune régression.
+- Statut : prêt pour déploiement et validation en production.
+
+---
+
+## [Date : Correction définitive exports de types frontend]
+
+- Suppression des exports en doublon (ex : 'export type { ... }') dans les fichiers de types (user.ts, job.ts) pour supprimer les erreurs de linter et garantir la conformité TypeScript.
+- Tous les types sont déjà exportés individuellement via 'export interface' ou 'export type', ce qui est la méthode recommandée.
+- Aucun code ou fonctionnalité essentielle supprimé, aucune régression, aucune suppression de logique métier ou d'affichage.
+- Le build complet du backend et du frontend passe sans erreur, le site reste complet, toutes les fonctionnalités sont maintenues.
+- Statut : Prêt pour test d'affichage complet, déploiement et validation en production.
+
+---
+
+## [Date : Correction UX bouton Postuler page emploi]
+
+- Correction du bouton 'Postuler' sur la page emploi (JobCard) :
+  - Le texte est toujours 'Postuler'.
+  - Pour les non-abonnés, le bouton est grisé, affiche un cadenas (LockIcon) à gauche du texte, et reste non cliquable.
+  - Pour les abonnés, le bouton est bleu, sans cadenas, et cliquable.
+- UX conforme à la demande métier, aucune régression, aucune suppression de fonctionnalité.
+- Build complet garanti, site complet maintenu.
+- Statut : Prêt pour test d'affichage, déploiement et validation en production.
+
+---
+
+## [Date : Correction UX premium accès offres d'emploi - bouton unique + protection routes]
+
+- Suppression des deux boutons sous chaque carte d'offre d'emploi, remplacés par un seul bouton "Consulter" qui gère l'accès premium : actif pour les abonnés, grisé/cadenas et redirection abonnement pour les non-abonnés.
+- Sur la page de détails, le bouton "Postuler" est toujours visible et actif (seuls les abonnés peuvent accéder à cette page).
+- Protection stricte des routes : toute tentative d'accès à la page de détails ou de postulation par un non-abonné redirige automatiquement vers la page d'abonnement.
+- Aucun code ou fonctionnalité essentielle supprimé, aucune régression, le backend et le déploiement restent intacts.
+- Build/test complet validé avant commit/push.
+- Statut : UX premium conforme, prêt pour production.
+
+---
+
+## [Date : Amélioration UX chargement galerie CV + admin]
+
+- Ajout d'un indicateur de chargement premium (Spin animé) sur la galerie de modèles CV : évite le vide à l'ouverture, effet fluide et professionnel.
+- Correction du chargement de la page d'administration : remplacement du texte par un vrai loader premium, plus de chargement infini, accès immédiat si admin.
+- Aucun code ou fonctionnalité essentielle supprimé, aucune régression, conformité production maintenue.
+- Build/test validés avant push.
+
+---
+
+## [Date : Harmonisation loader premium sur toutes les pages]
+
+- Suppression de tout délai artificiel (setTimeout) : le loader premium (Spin/CircularProgress) s'affiche uniquement pendant le vrai chargement des données (fetch, vérification d'accès, etc.).
+- Pages concernées : Emplois, Formations, Marketplace, Dashboard, Galerie CV, Admin (toutes sections), Forum, Fiches Métiers, etc.
+- Plus aucun loader après l'apparition de la page : expérience fluide, premium, sans flash ni attente inutile.
+- Aucun code ou fonctionnalité essentielle supprimé, aucune régression, conformité production maintenue.
+- Build/test validés avant push.
+
+---
+
+## [Date : Correction définitive accès et navigation admin]
+
+- Loader premium sur la page admin limité à 2 secondes max : plus de blocage infini.
+- Lien "Administration" dans la navigation visible uniquement pour l'admin (user.role === 'admin').
+- Accès à la page admin strictement réservé à l'admin : toute tentative d'accès par un non-admin redirige silencieusement vers l'accueil, sans message d'accès refusé.
+- Aucune trace d'admin dans la navigation, le footer ou les routes pour les non-admins.
+- Expérience fluide, premium, conformité production maintenue.
+- Build/test validés avant push.
+
+---
+
+## [Date : Ajout et exposition des routes admin backend]
+
+- Création d'un routeur Express `admin.ts` protégé (auth + rôle admin) : expose `/api/admin/users` (et base pour jobs, stats, etc.).
+- Montage du routeur sur `/api/admin` dans l'app principale.
+- Permet au frontend d'accéder aux données admin en production (utilisateurs, gestion, etc.).
+- Aucune suppression de code, aucune régression, conformité production maintenue.
+- Build/test validés avant push.
+
+---
