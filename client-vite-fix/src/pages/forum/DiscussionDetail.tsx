@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Layout, Card, Button, Space, Avatar, Typography, Input, message, Tag, Divider } from 'antd';
+import { Layout, Card, Button, Space, Avatar, Typography, Input, message, Tag, Divider, Spin } from 'antd';
 import { LikeOutlined, MessageOutlined, FlagOutlined } from '@ant-design/icons';
 import { api } from '../../services/api';
 import { authService } from '../../services/authService';
@@ -113,7 +113,7 @@ const DiscussionDetail: React.FC = () => {
   };
 
   if (loading) {
-    return <div>Chargement...</div>;
+    return <div style={{ minHeight: 320, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement de la discussion..." /></div>;
   }
 
   if (!discussion) {

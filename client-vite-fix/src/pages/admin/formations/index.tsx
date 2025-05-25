@@ -25,6 +25,7 @@ import {
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { Formation } from '../../../types/formation';
 import { api } from '../../../services/api';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const categories = ['développement', 'business', 'marketing', 'design', 'langues', 'soft-skills'];
 
@@ -98,6 +99,10 @@ const AdminFormationsPage = () => {
     }
   };
 
+  if (loading) {
+    return <Box sx={{ minHeight: 320, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><CircularProgress size={48} color="primary" /></Box>;
+  }
+
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 4 }}>
@@ -113,41 +118,37 @@ const AdminFormationsPage = () => {
         </Button>
       </Box>
 
-      {loading ? (
-        <Typography>Chargement...</Typography>
-      ) : (
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Titre</TableCell>
-                <TableCell>Catégorie</TableCell>
-                <TableCell>Prix</TableCell>
-                <TableCell>URL Cursa</TableCell>
-                <TableCell>Actions</TableCell>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Titre</TableCell>
+              <TableCell>Catégorie</TableCell>
+              <TableCell>Prix</TableCell>
+              <TableCell>URL Cursa</TableCell>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {formations.map((formation) => (
+              <TableRow key={formation._id}>
+                <TableCell>{formation.title}</TableCell>
+                <TableCell>{formation.category}</TableCell>
+                <TableCell>{formation.price} FCFA</TableCell>
+                <TableCell>{formation.cursaUrl}</TableCell>
+                <TableCell>
+                  <IconButton onClick={() => handleOpenDialog(formation)}>
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton onClick={() => handleDelete(formation._id)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </TableCell>
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {formations.map((formation) => (
-                <TableRow key={formation._id}>
-                  <TableCell>{formation.title}</TableCell>
-                  <TableCell>{formation.category}</TableCell>
-                  <TableCell>{formation.price} FCFA</TableCell>
-                  <TableCell>{formation.cursaUrl}</TableCell>
-                  <TableCell>
-                    <IconButton onClick={() => handleOpenDialog(formation)}>
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton onClick={() => handleDelete(formation._id)}>
-                      <DeleteIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
       <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
         <DialogTitle>

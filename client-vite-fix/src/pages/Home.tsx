@@ -1,6 +1,6 @@
 // Forçage de build Vercel - commit technique
 import React, { useEffect, useState } from 'react';
-import { Layout, Typography, Card, Row, Col, Button, Space, Avatar, Rate, Tag, Carousel, Statistic } from 'antd';
+import { Layout, Typography, Card, Row, Col, Button, Space, Avatar, Rate, Tag, Carousel, Statistic, Spin } from 'antd';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import styled from '@emotion/styled';
 import Hero from '../components/Hero';
@@ -135,6 +135,10 @@ const Home: React.FC = () => {
       </div>
     );
   };
+
+  if (isLoading) {
+    return <div style={{ minHeight: 420, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement des offres d'emploi..." /></div>;
+  }
 
   return (
     <Layout>

@@ -8,7 +8,8 @@ import {
   Tag, 
   Input,
   Typography,
-  Card
+  Card,
+  Spin
 } from 'antd';
 import { 
   CheckOutlined, 
@@ -172,6 +173,10 @@ const ForumModeration: React.FC = () => {
       ),
     },
   ];
+
+  if (loading) {
+    return <div style={{ minHeight: 320, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement des posts..." /></div>;
+  }
 
   return (
     <div>

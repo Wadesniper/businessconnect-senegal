@@ -37,12 +37,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
   const { user } = useAuth();
   const [previewTemplate, setPreviewTemplate] = useState<Template | null>(null);
   const modalContentRef = useRef<HTMLDivElement>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 500);
-    return () => clearTimeout(timer);
-  }, []);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (previewTemplate && modalContentRef.current) {
@@ -70,7 +65,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
     });
   }, [searchTerm, selectedCategory, showPremiumOnly]);
 
-  if (loading) {
+  if (!CV_TEMPLATES || CV_TEMPLATES.length === 0) {
     return <div style={{ minHeight: 420, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement de la galerie..." /></div>;
   }
 

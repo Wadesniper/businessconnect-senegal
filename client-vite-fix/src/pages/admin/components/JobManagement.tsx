@@ -10,7 +10,8 @@ import {
   Typography,
   Tag,
   Input,
-  Form
+  Form,
+  Spin
 } from 'antd';
 import { 
   DeleteOutlined, 
@@ -199,6 +200,10 @@ const JobManagement: React.FC = () => {
     job.title.toLowerCase().includes(searchText.toLowerCase()) ||
     job.company.toLowerCase().includes(searchText.toLowerCase())
   );
+
+  if (loading) {
+    return <div style={{ minHeight: 320, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement des offres d'emploi..." /></div>;
+  }
 
   return (
     <div>

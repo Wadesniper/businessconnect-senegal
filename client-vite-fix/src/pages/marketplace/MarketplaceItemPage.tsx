@@ -16,7 +16,8 @@ import {
   Input,
   message,
   Carousel,
-  Select
+  Select,
+  Spin
 } from 'antd';
 import {
   EnvironmentOutlined,
@@ -87,7 +88,7 @@ const MarketplaceItemPage: React.FC = () => {
   };
 
   if (loading) {
-    return <div>Chargement...</div>;
+    return <div style={{ minHeight: 320, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement de l'annonce..." /></div>;
   }
 
   if (!item) {

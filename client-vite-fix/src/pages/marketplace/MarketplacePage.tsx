@@ -14,7 +14,8 @@ import {
   Form,
   Upload,
   message,
-  Image
+  Image,
+  Spin
 } from 'antd';
 import {
   SearchOutlined,
@@ -116,6 +117,10 @@ const MarketplacePage: React.FC = () => {
     message.warning('Abonnement expiré !');
     refreshSubscription();
   };
+
+  if (loading) {
+    return <div style={{ minHeight: 420, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement des annonces..." /></div>;
+  }
 
   return (
     <Layout style={{ padding: '24px' }}>

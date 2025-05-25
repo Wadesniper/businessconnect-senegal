@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Space, Button, Modal, message, Tag, Select } from 'antd';
+import { Table, Space, Button, Modal, message, Tag, Select, Spin } from 'antd';
 import { adminService } from '../../../services/adminService';
 
 interface Subscription {
@@ -124,6 +124,10 @@ const SubscriptionManagement: React.FC = () => {
       ),
     },
   ];
+
+  if (loading) {
+    return <div style={{ minHeight: 320, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement des abonnements..." /></div>;
+  }
 
   return (
     <div>

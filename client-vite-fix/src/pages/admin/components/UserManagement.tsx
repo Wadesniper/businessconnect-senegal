@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Space, Button, Modal, message, Tag } from 'antd';
+import { Table, Space, Button, Modal, message, Tag, Spin } from 'antd';
 import { adminService } from '../../../services/adminService';
 
 interface User {
@@ -128,6 +128,10 @@ const UserManagement: React.FC = () => {
       ),
     },
   ];
+
+  if (loading) {
+    return <div style={{ minHeight: 320, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement des utilisateurs..." /></div>;
+  }
 
   return (
     <div>

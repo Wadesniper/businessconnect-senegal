@@ -4110,6 +4110,10 @@ const CareersPage: React.FC = () => {
     margin: '0 auto 32px auto',
   };
 
+  if (isLoading || loadingSub) {
+    return <div style={{ minHeight: 420, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement des fiches métiers..." /></div>;
+  }
+
   return (
     <div style={{ padding: '40px 8px', background: '#f7faff', minHeight: '100vh' }}>
       <div style={headerStyle}>

@@ -10,6 +10,7 @@ import { hasPremiumAccess } from '../../utils/premiumAccess';
 import type { JobType } from '../../types/job';
 import { useNavigate } from 'react-router-dom';
 import { JobService } from '../../services/jobService';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const JobsPage: React.FC = () => {
   const { user } = useAuth();
@@ -87,6 +88,10 @@ const JobsPage: React.FC = () => {
     navigate(`/jobs/${jobId}`);
   };
 
+  if (isLoading) {
+    return <Box sx={{ minHeight: 420, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><CircularProgress size={48} color="primary" /></Box>;
+  }
+
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <JobAdviceBanner />
@@ -110,9 +115,7 @@ const JobsPage: React.FC = () => {
           />
         </Box>
         <Box sx={{ flexBasis: { xs: '100%', md: '75%' }, maxWidth: { xs: '100%', md: '75%' } }}>
-          {isLoading ? (
-            <Typography>Chargement des offres...</Typography>
-          ) : error ? (
+          {error ? (
             <Box sx={{ textAlign: 'center', py: 4 }}>
               <Typography variant="h6" gutterBottom>
                 {error}

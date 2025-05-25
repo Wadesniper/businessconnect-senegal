@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Typography, Button, Space, Avatar, Row, Col, Tag } from 'antd';
+import { Card, Typography, Button, Space, Avatar, Row, Col, Tag, Spin } from 'antd';
 import {
   UserOutlined,
   FileTextOutlined,
@@ -69,6 +69,10 @@ const Dashboard: React.FC = () => {
   }, []);
 
   if (!user) return null;
+
+  if (loading) {
+    return <div style={{ minHeight: 320, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement du tableau de bord..." /></div>;
+  }
 
   return (
     <div style={{ padding: '24px' }}>
