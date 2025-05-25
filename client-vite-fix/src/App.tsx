@@ -32,6 +32,7 @@ const ProfilePage = lazy(() => import('./pages/profile/ProfilePage'));
 const NotFoundPage = lazy(() => import('./pages/404'));
 const CVGenerator = lazy(() => import('./pages/cv-generator'));
 import JobDetailsPage from './pages/jobs/JobDetailsPage';
+import JobApplyPage from './pages/jobs/JobApplyPage';
 const FAQ = lazy(() => import('./pages/help/FAQ'));
 const CareersPage = lazy(() => import('./pages/careers'));
 import AuthPage from './pages/auth/AuthPage';
@@ -78,6 +79,7 @@ const App: React.FC = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/jobs" element={<JobsPage />} />
                 <Route path="/jobs/:id" element={<JobDetailsPage />} />
+                <Route path="/jobs/:id/postuler" element={<JobApplyPage />} />
                 <Route path="/marketplace" element={<MarketplacePage />} />
                 <Route path="/marketplace/:id" element={<MarketplaceItemPage />} />
                 <Route path="/forum" element={<ForumPage />} />

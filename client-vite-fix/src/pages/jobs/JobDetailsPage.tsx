@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { JobService } from '../../services/jobService';
 import {
-  Container, Typography, Box, Button, Paper, Stack, IconButton, Tooltip, Chip, Avatar, Divider, useTheme, useMediaQuery, Grid, Fade, Alert
+  Container, Typography, Box, Button, Paper, Stack, IconButton, Tooltip, Chip, Avatar, Divider, useTheme, useMediaQuery, Fade, Alert
 } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import WorkIcon from '@mui/icons-material/Work';
@@ -10,6 +10,10 @@ import BusinessIcon from '@mui/icons-material/Business';
 import PlaceIcon from '@mui/icons-material/Place';
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
+import LockIcon from '@mui/icons-material/Lock';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { useSubscription } from '../../hooks/useSubscription';
+import Grid from '@mui/material/Grid';
 
 const JobDetailsPage: React.FC = () => {
   const { id } = useParams();
@@ -18,6 +22,7 @@ const JobDetailsPage: React.FC = () => {
   const [copied, setCopied] = useState<string | null>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const { hasActiveSubscription, loading: loadingSub } = useSubscription();
 
   useEffect(() => {
     if (id) {
@@ -39,6 +44,14 @@ const JobDetailsPage: React.FC = () => {
     navigator.clipboard.writeText(text);
     setCopied(type);
     setTimeout(() => setCopied(null), 1500);
+  };
+
+  const handlePostuler = () => {
+    if (!hasActiveSubscription) {
+      navigate('/subscription');
+    } else {
+      navigate(`/jobs/${id}/postuler`);
+    }
   };
 
   return (
@@ -68,7 +81,7 @@ const JobDetailsPage: React.FC = () => {
           </Box>
 
           <Grid container spacing={isMobile ? 2 : 4}>
-            <Grid item xs={12} md={8}>
+            <Grid size={{ xs: 12, md: 8 }}>
               <Stack direction="row" spacing={1} mb={2} flexWrap="wrap">
                 <Chip icon={<PlaceIcon />} label={job.location} color="info" variant="outlined" />
                 <Chip label={job.jobType} color="secondary" variant="outlined" />
@@ -84,73 +97,23 @@ const JobDetailsPage: React.FC = () => {
                 ))}
               </Stack>
             </Grid>
-            <Grid item xs={12} md={4}>
-              <Box sx={{ bgcolor: '#f1f5f9', borderRadius: 3, p: 3, boxShadow: 0, mb: 2 }}>
-                <Typography variant="h6" gutterBottom color="primary">Coordonnées pour postuler</Typography>
-                <Stack spacing={2}>
-                  {mail && (
-                    <Box>
-                      <Typography sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <EmailIcon color="action" /> <b>Email :</b> {mail}
-                        <Tooltip title="Copier">
-                          <IconButton onClick={() => handleCopy(mail, 'mail')} size="small"><ContentCopyIcon fontSize="small" /></IconButton>
-                        </Tooltip>
-                      </Typography>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                        startIcon={<EmailIcon />}
-                        href={`mailto:${mail}?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`}
-                        target="_blank"
-                        sx={{ mt: 1, borderRadius: 2, fontWeight: 600 }}
-                      >
-                        Envoyer un mail
-                      </Button>
-                      <Box mt={1}>
-                        <Typography variant="caption">Objet à copier :</Typography>
-                        <Paper sx={{ p: 1, display: 'inline-block', mr: 1, bgcolor: '#fff' }}>{mailSubject}</Paper>
-                        <Tooltip title="Copier"><IconButton onClick={() => handleCopy(mailSubject, 'subject')} size="small"><ContentCopyIcon fontSize="small" /></IconButton></Tooltip>
-                      </Box>
-                      <Box mt={1}>
-                        <Typography variant="caption">Corps du mail à copier :</Typography>
-                        <Paper sx={{ p: 1, display: 'inline-block', mr: 1, bgcolor: '#fff', whiteSpace: 'pre-line' }}>{mailBody}</Paper>
-                        <Tooltip title="Copier"><IconButton onClick={() => handleCopy(mailBody, 'body')} size="small"><ContentCopyIcon fontSize="small" /></IconButton></Tooltip>
-                      </Box>
-                    </Box>
-                  )}
-                  {phone && (
-                    <Box>
-                      <Typography sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <PhoneIcon color="action" /> <b>Téléphone :</b> {phone}
-                        <Tooltip title="Copier">
-                          <IconButton onClick={() => handleCopy(phone, 'phone')} size="small"><ContentCopyIcon fontSize="small" /></IconButton>
-                        </Tooltip>
-                      </Typography>
-                      <Button
-                        variant="contained"
-                        color="success"
-                        fullWidth
-                        startIcon={<PhoneIcon />}
-                        href={`tel:${phone}`}
-                        target="_blank"
-                        sx={{ mt: 1, borderRadius: 2, fontWeight: 600 }}
-                      >
-                        Appeler
-                      </Button>
-                    </Box>
-                  )}
-                </Stack>
-              </Box>
-              {copied && (
-                <Fade in={!!copied} timeout={400}>
-                  <Alert severity="success" sx={{ mt: 2, borderRadius: 2 }}>Copié !</Alert>
-                </Fade>
-              )}
+            <Grid size={{ xs: 12, md: 4 }}>
+              {/* SUPPRESSION de l'affichage des coordonnées ici */}
             </Grid>
           </Grid>
           <Divider sx={{ my: 3 }} />
-          <Button variant="contained" color="secondary" size="large" sx={{ borderRadius: 3, fontWeight: 700 }} onClick={() => navigate(-1)}>
+          <Button
+            variant="contained"
+            color={hasActiveSubscription ? 'primary' : 'inherit'}
+            size="large"
+            sx={{ borderRadius: 3, fontWeight: 700, position: 'relative', minWidth: 180 }}
+            onClick={handlePostuler}
+            disabled={loadingSub}
+            startIcon={hasActiveSubscription ? <CheckCircleIcon color="success" /> : <LockIcon color="disabled" />}
+          >
+            {hasActiveSubscription ? 'Postuler' : 'Abonnement requis'}
+          </Button>
+          <Button variant="outlined" color="secondary" size="large" sx={{ borderRadius: 3, fontWeight: 700, ml: 2 }} onClick={() => navigate(-1)}>
             Retour aux offres
           </Button>
         </Paper>

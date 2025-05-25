@@ -80,23 +80,6 @@ export interface SavedJob {
   job: JobData | Job;
 }
 
-export interface JobAlert {
-  id: string;
-  userId: string;
-  keywords: string[];
-  locations?: string[];
-  jobTypes?: string[];
-  salary?: {
-    min?: number;
-    max?: number;
-    currency?: string;
-  };
-  frequency: 'daily' | 'weekly';
-  active: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
 export interface JobFilter {
   type?: string[];
   location?: string[];
@@ -143,6 +126,23 @@ export interface JobApplicationStats {
   accepted: number;
   rejected: number;
   interview: number;
+}
+
+export interface JobAlert {
+  id: string;
+  userId: string;
+  keywords: string[];
+  locations?: string[];
+  jobTypes?: string[];
+  salary?: {
+    min?: number;
+    max?: number;
+    currency?: string;
+  };
+  frequency: 'daily' | 'weekly';
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export const JOB_TYPES = [

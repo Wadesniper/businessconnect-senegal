@@ -1,4 +1,5 @@
 import React from 'react';
+import LockIcon from '@mui/icons-material/Lock';
 
 interface JobCardProps {
   job: any;
@@ -50,18 +51,31 @@ const JobCard: React.FC<JobCardProps> = ({ job, user, isSubscribed, onPostuler, 
       <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
         <button
           style={{
-            background: '#fff',
-            color: '#1890ff',
+            background: isSubscribed ? '#fff' : '#f5f5f5',
+            color: isSubscribed ? '#1890ff' : '#aaa',
             border: '1px solid #1890ff',
             borderRadius: 8,
             padding: '8px 12px',
             fontWeight: 600,
             fontSize: 15,
-            cursor: 'pointer',
-            flex: 1
+            cursor: isSubscribed ? 'pointer' : 'not-allowed',
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 8
           }}
-          onClick={() => onViewDetails(job.id)}
+          onClick={() => {
+            if (isSubscribed) {
+              onViewDetails(job.id);
+            } else {
+              window.location.href = '/subscription';
+            }
+          }}
+          disabled={false}
+          aria-label={isSubscribed ? 'Voir les détails de cette offre' : 'Abonnement requis pour voir les détails'}
         >
+          {!isSubscribed && <LockIcon style={{ fontSize: 18, color: '#aaa' }} />}
           Voir détails
         </button>
         <button
