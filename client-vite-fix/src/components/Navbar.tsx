@@ -51,9 +51,6 @@ const Navbar: React.FC = () => {
             {user.role === 'admin' && (
               <Link to="/admin" className="navbar-link"><CrownOutlined /> Administration</Link>
             )}
-            <button onClick={handleLogout} className="logout-button">
-              <LogoutOutlined /> Déconnexion
-            </button>
           </div>
         ) : (
           <div className="auth-buttons" style={{gap: '10px', alignItems: 'center', display: 'flex'}}>
@@ -81,9 +78,6 @@ const Navbar: React.FC = () => {
                 {user.role === 'admin' && (
                   <Link to="/admin" className="navbar-link" onClick={() => setDrawerOpen(false)}><CrownOutlined /> Administration</Link>
                 )}
-                <button onClick={() => { setDrawerOpen(false); handleLogout(); }} className="logout-button" style={{ width: '100%', marginTop: 12 }}>
-                  <LogoutOutlined /> Déconnexion
-                </button>
               </>
             ) : (
               <>

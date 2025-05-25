@@ -5,7 +5,10 @@ import {
   FileTextOutlined,
   ShopOutlined,
   TeamOutlined,
-  EditOutlined
+  EditOutlined,
+  LogoutOutlined,
+  CrownOutlined,
+  BookOutlined
 } from '@ant-design/icons';
 import { useAuth } from '../context/AuthContext';
 import { JobService } from '../services/jobService';
@@ -16,37 +19,44 @@ const { Title, Text, Paragraph } = Typography;
 
 const quickAccessItems = [
   {
-    title: "Offres d'emploi",
+    title: "Emplois",
     icon: <FileTextOutlined />,
     path: '/jobs',
     description: "Consultez les dernières offres d'emploi",
     color: '#1890ff'
   },
   {
-    title: 'Marketplace',
-    icon: <ShopOutlined />,
-    path: '/marketplace',
-    description: 'Accédez au marketplace',
-    color: '#52c41a'
+    title: 'Fiches métiers',
+    icon: <CrownOutlined />,
+    path: '/careers',
+    description: 'Découvrez les métiers et secteurs',
+    color: '#722ed1'
   },
   {
-    title: 'Forum',
-    icon: <TeamOutlined />,
-    path: '/forum',
-    description: 'Participez aux discussions',
-    color: '#722ed1'
+    title: 'Formations',
+    icon: <BookOutlined />,
+    path: '/formations',
+    description: 'Développez vos compétences',
+    color: '#fa8c16'
   },
   {
     title: 'CV',
     icon: <EditOutlined />,
     path: '/cv-generator',
     description: 'Créez ou modifiez votre CV',
-    color: '#fa8c16'
+    color: '#52c41a'
+  },
+  {
+    title: 'Marketplace',
+    icon: <ShopOutlined />,
+    path: '/marketplace',
+    description: 'Accédez au marketplace',
+    color: '#40a9ff'
   }
 ];
 
 const Dashboard: React.FC = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [jobs, setJobs] = React.useState<Job[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -76,66 +86,56 @@ const Dashboard: React.FC = () => {
                 {user.subscription && user.subscription.status === 'active' && (
                   <Tag color="cyan">Membre Premium</Tag>
                 )}
-                <div style={{ marginTop: 8 }}>
+                <div style={{ marginTop: 8, display: 'flex', gap: 12 }}>
                   <Button type="default" onClick={() => navigate('/profile')} icon={<UserOutlined />}>Modifier mon profil</Button>
+                  <Button type="primary" danger icon={<LogoutOutlined />} onClick={logout}>Déconnexion</Button>
                 </div>
               </Col>
             </Row>
           </Card>
         </Col>
-
-        {/* Accès rapides */}
+        {/* Accès rapides avec animation dynamique */}
         <Col span={24}>
           <Card title="Accès rapides">
             <Row gutter={[16, 16]}>
-              {quickAccessItems.map(item => (
-                <Col xs={24} sm={12} md={6} key={item.title}>
-                  <Button
-                    type="primary"
-                    icon={item.icon}
-                    block
-                    size="large"
-                    style={{ background: item.color, border: 'none', marginBottom: 8 }}
+              {quickAccessItems.map((item, idx) => (
+                <Col xs={24} sm={12} md={8} lg={6} key={item.title}>
+                  <div style={{
+                    animation: `fadeInUp 0.7s ${0.1 + idx * 0.12}s both`,
+                    minHeight: 120,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'flex-start',
+                    borderRadius: 18,
+                    boxShadow: '0 2px 12px #e3e8f7',
+                    background: '#f7faff',
+                    cursor: 'pointer',
+                    padding: 18,
+                    marginBottom: 8,
+                    transition: 'box-shadow 0.2s, transform 0.2s, background 0.2s',
+                  }}
+                    className="dashboard-quick-access-card"
                     onClick={() => navigate(item.path)}
                   >
-                    {item.title}
-                  </Button>
-                  <Paragraph style={{ textAlign: 'center', margin: 0 }}>{item.description}</Paragraph>
+                    <span style={{ fontSize: 32, color: item.color, marginBottom: 8 }}>{item.icon}</span>
+                    <div style={{ fontWeight: 700, fontSize: 17, marginBottom: 4 }}>{item.title}</div>
+                    <Paragraph style={{ textAlign: 'center', margin: 0, color: '#555', fontSize: 15 }}>{item.description}</Paragraph>
+                  </div>
                 </Col>
               ))}
             </Row>
-          </Card>
-        </Col>
-
-        {/* Offres d'emploi */}
-        <Col span={24}>
-          <Card title="Dernières offres d'emploi" style={{ textAlign: 'center' }}>
-            {loading ? (
-              <Paragraph>Chargement des offres...</Paragraph>
-            ) : jobs.length === 0 ? (
-              <Paragraph>Aucune offre d'emploi disponible pour le moment.</Paragraph>
-            ) : (
-              <Space direction="vertical" style={{ width: '100%' }}>
-                {jobs.slice(0, 3).map((job: any) => (
-                  <Card key={job.id} type="inner" title={job.title} extra={<Button type="link" onClick={() => navigate(`/jobs/${job.id}`)}>Voir</Button>}>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                      <Text strong>{job.company}</Text>
-                      <Text type="secondary">{job.location}</Text>
-                      <Text>{job.sector}</Text>
-                    </div>
-                  </Card>
-                ))}
-              </Space>
-            )}
-          </Card>
-        </Col>
-
-        {/* Statistiques ou autres sections premium (placeholders) */}
-        <Col span={24}>
-          <Card title="Statistiques personnelles" style={{ textAlign: 'center' }}>
-            <Paragraph>
-              Cette section affichera vos statistiques d'utilisation dès qu'elles seront disponibles.
-            </Paragraph>
+            <style>{`
+              @keyframes fadeInUp {
+                0% { opacity: 0; transform: translateY(30px); }
+                100% { opacity: 1; transform: translateY(0); }
+              }
+              .dashboard-quick-access-card:hover {
+                box-shadow: 0 8px 32px #b3d0f7, 0 2px 12px #e3e8f7;
+                transform: translateY(-4px) scale(1.03);
+                background: #eaf3ff;
+              }
+            `}</style>
           </Card>
         </Col>
       </Row>
