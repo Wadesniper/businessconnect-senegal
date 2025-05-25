@@ -54,13 +54,11 @@ export class JobService {
   // Gestion des offres d'emploi
   static async getJobs(): Promise<Job[]> {
     try {
-      // Toujours tenter l'API d'abord
       const response = await fetch('/api/jobs');
       if (!response.ok) {
         throw new Error('Erreur réseau');
       }
       let jobs = await response.json();
-      // Mapping _id -> id pour compatibilité frontend
       jobs = (jobs || []).map((job: any) => ({
         ...job,
         id: job._id || job.id,
@@ -69,29 +67,32 @@ export class JobService {
       return jobs;
     } catch (error) {
       console.warn('Erreur lors de la récupération des offres depuis l\'API, fallback sur le cache IndexedDB:', error);
-      // En cas d'erreur, retourner le cache même expiré si disponible
-      return indexedDBService.getJobs();
+      let jobs = await indexedDBService.getJobs() || [];
+      jobs = (jobs || []).map((job: any) => ({
+        ...job,
+        id: job._id || job.id,
+      }));
+      return jobs;
     }
   }
 
   static async getJobById(id: string): Promise<Job | null> {
     try {
-      // Chercher d'abord dans IndexedDB
-      const cachedJob = await indexedDBService.getJobById(id);
-      if (cachedJob) return cachedJob;
-
-      // Si pas trouvé dans le cache, essayer l'API
-      const response = await fetch(`/api/jobs/${id}`);
-      if (!response.ok) {
-        throw new Error('Erreur réseau');
+      let job = await indexedDBService.getJobById(id);
+      if (!job) {
+        const response = await fetch(`/api/jobs/${id}`);
+        if (!response.ok) {
+          throw new Error('Erreur réseau');
+        }
+        job = await response.json();
       }
-
-      const job = await response.json();
+      if (job) {
+        job.id = job._id || job.id;
+      }
       return job;
     } catch (error) {
       console.warn('Erreur lors de la récupération de l\'offre:', error);
-      // En cas d'erreur, chercher une dernière fois dans le cache
-      return indexedDBService.getJobById(id);
+      return null;
     }
   }
 
@@ -133,10 +134,10 @@ export class JobService {
         throw new Error('Erreur lors de la création de l\'offre');
       }
 
-      const newJob = await response.json();
-      // Mettre à jour le cache
+      let newJob = await response.json();
+      newJob.id = newJob._id || newJob.id;
       const jobs = await indexedDBService.getJobs();
-      await indexedDBService.saveJobs([...jobs, newJob]);
+      await indexedDBService.saveJobs([...(jobs || []), newJob]);
       return newJob;
     } catch (error) {
       console.error('Erreur lors de la création de l\'offre:', error);
@@ -158,10 +159,10 @@ export class JobService {
         throw new Error('Erreur lors de la mise à jour de l\'offre');
       }
 
-      const updatedJob = await response.json();
-      // Mettre à jour le cache
+      let updatedJob = await response.json();
+      updatedJob.id = updatedJob._id || updatedJob.id;
       const jobs = await indexedDBService.getJobs();
-      const updatedJobs = jobs.map(job => 
+      const updatedJobs = (jobs || []).map(job => 
         job.id === id ? updatedJob : job
       );
       await indexedDBService.saveJobs(updatedJobs);
