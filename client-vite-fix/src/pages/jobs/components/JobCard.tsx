@@ -48,60 +48,35 @@ const JobCard: React.FC<JobCardProps> = ({ job, user, isSubscribed, onPostuler, 
       <div style={{ color: '#333', fontSize: 15, margin: '8px 0', flex: 1 }}>
         {job.description?.length > 120 ? job.description.slice(0, 120) + '…' : job.description}
       </div>
-      <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-        <button
-          style={{
-            background: isSubscribed ? '#fff' : '#f5f5f5',
-            color: isSubscribed ? '#1890ff' : '#aaa',
-            border: '1px solid #1890ff',
-            borderRadius: 8,
-            padding: '8px 12px',
-            fontWeight: 600,
-            fontSize: 15,
-            cursor: isSubscribed ? 'pointer' : 'not-allowed',
-            flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 8
-          }}
-          onClick={() => {
-            if (isSubscribed) {
-              onViewDetails(job.id);
-            } else {
-              window.location.href = '/subscription';
-            }
-          }}
-          disabled={false}
-          aria-label={isSubscribed ? 'Voir les détails de cette offre' : 'Abonnement requis pour voir les détails'}
-        >
-          {!isSubscribed && <LockIcon style={{ fontSize: 18, color: '#aaa' }} />}
-          Voir détails
-        </button>
-        <button
-          style={{
-            background: isSubscribed ? '#1890ff' : '#aaa',
-            color: '#fff',
-            border: 'none',
-            borderRadius: 8,
-            padding: '8px 12px',
-            fontWeight: 700,
-            fontSize: 15,
-            cursor: isSubscribed ? 'pointer' : 'not-allowed',
-            flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 8
-          }}
-          onClick={() => onPostuler(job.id)}
-          disabled={!isSubscribed}
-          aria-label={isSubscribed ? 'Postuler à cette offre' : 'Abonnement requis pour postuler'}
-        >
-          {!isSubscribed && <LockIcon style={{ fontSize: 18, marginRight: 6 }} />}
-          Postuler
-        </button>
-      </div>
+      <button
+        style={{
+          background: isSubscribed ? '#1890ff' : '#f5f5f5',
+          color: isSubscribed ? '#fff' : '#aaa',
+          border: 'none',
+          borderRadius: 8,
+          padding: '8px 12px',
+          fontWeight: 700,
+          fontSize: 15,
+          cursor: isSubscribed ? 'pointer' : 'not-allowed',
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 8
+        }}
+        onClick={() => {
+          if (isSubscribed) {
+            onViewDetails(job.id);
+          } else {
+            window.location.href = '/subscription';
+          }
+        }}
+        disabled={false}
+        aria-label={isSubscribed ? 'Consulter cette offre' : 'Abonnement requis pour consulter'}
+      >
+        {!isSubscribed && <LockIcon style={{ fontSize: 18, color: '#aaa' }} />}
+        Consulter
+      </button>
       {(isAdmin || (isEmployer && isOwner)) && (
         <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
           <button

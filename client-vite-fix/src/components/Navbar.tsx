@@ -47,7 +47,6 @@ const Navbar: React.FC = () => {
       <div className="navbar-end">
         {user ? (
           <div className="user-menu">
-            <Link to="/profile" className="navbar-link"><UserOutlined /> Mon Profil</Link>
             <Link to="/dashboard" className="navbar-link"><AppstoreOutlined /> Tableau de bord</Link>
             {user.role === 'admin' && (
               <Link to="/admin" className="navbar-link"><CrownOutlined /> Administration</Link>
@@ -78,7 +77,6 @@ const Navbar: React.FC = () => {
           <div style={{ marginTop: 24 }}>
             {user ? (
               <>
-                <Link to="/profile" className="navbar-link" onClick={() => setDrawerOpen(false)}><UserOutlined /> Mon Profil</Link>
                 <Link to="/dashboard" className="navbar-link" onClick={() => setDrawerOpen(false)}><AppstoreOutlined /> Tableau de bord</Link>
                 {user.role === 'admin' && (
                   <Link to="/admin" className="navbar-link" onClick={() => setDrawerOpen(false)}><CrownOutlined /> Administration</Link>

@@ -14,6 +14,7 @@ import LockIcon from '@mui/icons-material/Lock';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useSubscription } from '../../hooks/useSubscription';
 import Grid from '@mui/material/Grid';
+import { useAuth } from '../../context/AuthContext';
 
 const JobDetailsPage: React.FC = () => {
   const { id } = useParams();
@@ -23,12 +24,19 @@ const JobDetailsPage: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { hasActiveSubscription, loading: loadingSub } = useSubscription();
+  const { user } = useAuth();
 
   useEffect(() => {
     if (id) {
       JobService.getJobById(id).then(setJob);
     }
   }, [id]);
+
+  useEffect(() => {
+    if (!loadingSub && !hasActiveSubscription) {
+      navigate('/subscription');
+    }
+  }, [hasActiveSubscription, loadingSub, navigate]);
 
   if (!job) {
     return <Container><Typography>Chargement...</Typography></Container>;

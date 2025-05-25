@@ -7,11 +7,15 @@ import {
   TeamOutlined,
   EditOutlined
 } from '@ant-design/icons';
+import { useAuth } from '../context/AuthContext';
+import { JobService } from '../services/jobService';
+import { useNavigate } from 'react-router-dom';
+import type { Job } from '../types/job';
 
 const { Title, Text, Paragraph } = Typography;
 
-  const quickAccessItems = [
-    {
+const quickAccessItems = [
+  {
     title: "Offres d'emploi",
     icon: <FileTextOutlined />,
     path: '/jobs',
@@ -19,14 +23,14 @@ const { Title, Text, Paragraph } = Typography;
     color: '#1890ff'
   },
   {
-      title: 'Marketplace',
+    title: 'Marketplace',
     icon: <ShopOutlined />,
     path: '/marketplace',
     description: 'Accédez au marketplace',
     color: '#52c41a'
   },
   {
-      title: 'Forum',
+    title: 'Forum',
     icon: <TeamOutlined />,
     path: '/forum',
     description: 'Participez aux discussions',
@@ -42,13 +46,19 @@ const { Title, Text, Paragraph } = Typography;
 ];
 
 const Dashboard: React.FC = () => {
-  // Exemple de données statiques pour l'utilisateur
-  const user = {
-    fullName: 'Prénom Nom',
-    email: 'utilisateur@email.com',
-    avatar: '',
-    company: { name: 'BusinessConnect Sénégal', role: 'Membre Premium' }
-  };
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [jobs, setJobs] = React.useState<Job[]>([]);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    JobService.getJobs().then(jobs => {
+      setJobs(jobs || []);
+      setLoading(false);
+    });
+  }, []);
+
+  if (!user) return null;
 
   return (
     <div style={{ padding: '24px' }}>
@@ -61,14 +71,14 @@ const Dashboard: React.FC = () => {
                 <Avatar size={80} src={user.avatar} icon={!user.avatar && <UserOutlined />} />
               </Col>
               <Col flex="1">
-                <Title level={4} style={{ margin: 0 }}>{user.fullName}</Title>
+                <Title level={4} style={{ margin: 0 }}>{user.fullName || `${user.firstName} ${user.lastName}` || user.email}</Title>
                 <Text type="secondary">{user.email}</Text>
-                {user.company && (
-                  <div style={{ marginTop: 8 }}>
-                    <Tag color="blue">{user.company.name}</Tag>
-                    <Tag color="cyan">{user.company.role}</Tag>
-          </div>
+                {user.subscription && user.subscription.status === 'active' && (
+                  <Tag color="cyan">Membre Premium</Tag>
                 )}
+                <div style={{ marginTop: 8 }}>
+                  <Button type="default" onClick={() => navigate('/profile')} icon={<UserOutlined />}>Modifier mon profil</Button>
+                </div>
               </Col>
             </Row>
           </Card>
@@ -86,9 +96,9 @@ const Dashboard: React.FC = () => {
                     block
                     size="large"
                     style={{ background: item.color, border: 'none', marginBottom: 8 }}
-                    onClick={() => window.location.href = item.path}
+                    onClick={() => navigate(item.path)}
                   >
-                  {item.title}
+                    {item.title}
                   </Button>
                   <Paragraph style={{ textAlign: 'center', margin: 0 }}>{item.description}</Paragraph>
                 </Col>
@@ -97,13 +107,26 @@ const Dashboard: React.FC = () => {
           </Card>
         </Col>
 
-        {/* Placeholder pour les offres d'emploi */}
+        {/* Offres d'emploi */}
         <Col span={24}>
-          <Card title="Offres d'emploi à venir" style={{ textAlign: 'center' }}>
-            <Paragraph>
-              Les offres d'emploi seront affichées ici dès qu'elles seront disponibles.<br />
-              (Contactez l'administrateur pour ajouter vos offres)
-            </Paragraph>
+          <Card title="Dernières offres d'emploi" style={{ textAlign: 'center' }}>
+            {loading ? (
+              <Paragraph>Chargement des offres...</Paragraph>
+            ) : jobs.length === 0 ? (
+              <Paragraph>Aucune offre d'emploi disponible pour le moment.</Paragraph>
+            ) : (
+              <Space direction="vertical" style={{ width: '100%' }}>
+                {jobs.slice(0, 3).map((job: any) => (
+                  <Card key={job.id} type="inner" title={job.title} extra={<Button type="link" onClick={() => navigate(`/jobs/${job.id}`)}>Voir</Button>}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                      <Text strong>{job.company}</Text>
+                      <Text type="secondary">{job.location}</Text>
+                      <Text>{job.sector}</Text>
+                    </div>
+                  </Card>
+                ))}
+              </Space>
+            )}
           </Card>
         </Col>
 
