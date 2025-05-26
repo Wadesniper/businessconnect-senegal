@@ -64,6 +64,11 @@ const JobsPage: React.FC = () => {
     });
   }, [jobs, selectedSector, selectedType, selectedLocation, salaryRange, experienceLevel, workLocation]);
 
+  // Tri des offres filtrées par date décroissante
+  const sortedJobs = React.useMemo(() => {
+    return [...filteredJobs].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }, [filteredJobs]);
+
   const handlePostuler = (jobId: string) => {
     if (!isPremium) {
       navigate('/subscription');
@@ -139,8 +144,12 @@ const JobsPage: React.FC = () => {
                 {filteredJobs.length} offre{filteredJobs.length > 1 ? 's' : ''} trouvée{filteredJobs.length > 1 ? 's' : ''}
               </Typography>
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-                {filteredJobs.map((job) => (
-                  <Box key={job.id} sx={{ flexBasis: { xs: '100%', md: '48%' }, maxWidth: { xs: '100%', md: '48%' } }}>
+                {sortedJobs.map((job, idx) => (
+                  <Box key={job.id} sx={{
+                    flexBasis: { xs: '100%', sm: '32%', md: '32%' },
+                    maxWidth: { xs: '100%', sm: '32%', md: '32%' },
+                    mb: 3
+                  }}>
                     <JobCard
                       job={job}
                       user={user}
