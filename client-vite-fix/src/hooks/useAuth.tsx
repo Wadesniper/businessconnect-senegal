@@ -45,6 +45,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           ...currentUser,
           subscription: Object.keys(cleanSubscription).length > 0 ? cleanSubscription : undefined
         } as User & { subscription?: { status?: string; expireAt?: string; type?: 'etudiant' | 'annonceur' | 'employeur' } });
+        localStorage.setItem('user', JSON.stringify(currentUser));
       } catch (e) {
         setUser(null);
       } finally {

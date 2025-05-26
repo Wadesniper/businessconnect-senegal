@@ -4,7 +4,6 @@ import { ProLayout } from '@ant-design/pro-layout';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import { AuthProvider } from './context/AuthContext';
-import AdminRoute from './components/AdminRoute';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useSubscription } from './hooks/useSubscription';
 // Lazy load des pages principales
@@ -20,7 +19,6 @@ const MarketplaceItemPage = lazy(() => import('./pages/marketplace/MarketplaceIt
 const ForumPage = lazy(() => import('./pages/forum/ForumPage'));
 const DiscussionDetail = lazy(() => import('./pages/forum/DiscussionDetail'));
 const ContactPage = lazy(() => import('./pages/contact'));
-const AdminPage = lazy(() => import('./pages/admin'));
 const MentionsLegales = lazy(() => import('./pages/legal/MentionsLegales'));
 const CGV = lazy(() => import('./pages/legal/CGV'));
 const CGU = lazy(() => import('./pages/legal/CGU'));
@@ -141,16 +139,6 @@ const App: React.FC = () => {
                   path="/payment/cancel"
                   element={
                     <ProtectedRoute element={<PaymentCancel />} requiresSubscription />
-                  }
-                />
-
-                {/* Route d'administration */}
-                <Route
-                  path="/admin/*"
-                  element={
-                    <AdminRoute>
-                      <AdminPage />
-                    </AdminRoute>
                   }
                 />
 

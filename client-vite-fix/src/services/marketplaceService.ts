@@ -47,15 +47,18 @@ function getUserSubscription(userId: string): UserSubscription | undefined {
   return subscriptionData.find(sub => sub.userId === userId);
 }
 
-function isUserSubscribed(userId: string): boolean {
-  // Si l'utilisateur est admin, il est toujours considéré comme abonné
-  const userStr = localStorage.getItem('user');
-  if (userStr) {
-    try {
-      const user = JSON.parse(userStr);
-      if (user && user.role === 'admin') return true;
-    } catch {}
+function isUserSubscribed(userId: string, userContext?: any): boolean {
+  // Priorité au user du contexte si fourni
+  let user = userContext;
+  if (!user) {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      try {
+        user = JSON.parse(userStr);
+      } catch {}
+    }
   }
+  if (user && user.role === 'admin') return true;
   const sub = getUserSubscription(userId);
   if (!sub) return false;
   if (sub.status !== 'active') return false;
@@ -64,10 +67,10 @@ function isUserSubscribed(userId: string): boolean {
 }
 
 export const marketplaceService = {
-  async getItems(filters?: MarketplaceFilters): Promise<MarketplaceItem[]> {
+  async getItems(filters?: MarketplaceFilters, userContext?: any): Promise<MarketplaceItem[]> {
     let items = getStoredItems();
     // Filtrer pour ne garder que les annonces dont le propriétaire est abonné
-    items = items.filter(i => isUserSubscribed(i.userId));
+    items = items.filter(i => isUserSubscribed(i.userId, userContext));
     if (filters) {
       if (filters.category) items = items.filter(i => i.category === filters.category);
       if (filters.location) items = items.filter(i => i.location.toLowerCase().includes((filters.location || '').toLowerCase()));
@@ -78,17 +81,17 @@ export const marketplaceService = {
     return Promise.resolve(items);
   },
 
-  async getItem(id: string): Promise<MarketplaceItem | null> {
+  async getItem(id: string, userContext?: any): Promise<MarketplaceItem | null> {
     const items = getStoredItems();
     const item = items.find(i => i.id === id) || null;
     // Vérifier l'abonnement du propriétaire
-    if (item && !isUserSubscribed(item.userId)) return null;
+    if (item && !isUserSubscribed(item.userId, userContext)) return null;
     return Promise.resolve(item);
   },
 
-  async createItem(itemData: Omit<MarketplaceItem, 'id' | 'createdAt' | 'updatedAt' | 'status'>): Promise<MarketplaceItem> {
+  async createItem(itemData: Omit<MarketplaceItem, 'id' | 'createdAt' | 'updatedAt' | 'status'>, userContext?: any): Promise<MarketplaceItem> {
     // Vérifier l'abonnement de l'utilisateur
-    if (!isUserSubscribed(itemData.userId)) {
+    if (!isUserSubscribed(itemData.userId, userContext)) {
       return Promise.reject(new Error('Votre abonnement n\'est pas actif. Veuillez vous abonner pour publier une annonce.'));
     }
     const items = getStoredItems();

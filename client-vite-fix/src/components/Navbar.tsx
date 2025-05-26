@@ -48,9 +48,6 @@ const Navbar: React.FC = () => {
         {user ? (
           <div className="user-menu">
             <Link to="/dashboard" className="navbar-link"><AppstoreOutlined /> Tableau de bord</Link>
-            {user.role === 'admin' && (
-              <Link to="/admin" className="navbar-link"><CrownOutlined /> Administration</Link>
-            )}
           </div>
         ) : (
           <div className="auth-buttons" style={{gap: '10px', alignItems: 'center', display: 'flex'}}>
@@ -75,9 +72,6 @@ const Navbar: React.FC = () => {
             {user ? (
               <>
                 <Link to="/dashboard" className="navbar-link" onClick={() => setDrawerOpen(false)}><AppstoreOutlined /> Tableau de bord</Link>
-                {user.role === 'admin' && (
-                  <Link to="/admin" className="navbar-link" onClick={() => setDrawerOpen(false)}><CrownOutlined /> Administration</Link>
-                )}
               </>
             ) : (
               <>

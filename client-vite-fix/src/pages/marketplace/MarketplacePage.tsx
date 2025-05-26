@@ -66,7 +66,7 @@ const MarketplacePage: React.FC = () => {
   const fetchItems = async () => {
     setLoading(true);
     try {
-      const data = await marketplaceService.getItems(filters);
+      const data = await marketplaceService.getItems(filters, user);
       setItems(data);
     } catch (error) {
       message.error('Erreur lors de la récupération des annonces');
@@ -85,7 +85,7 @@ const MarketplacePage: React.FC = () => {
         userId: user.id,
         images: values.images?.fileList?.map((file: any) => file.url || file.thumbUrl) || []
       };
-      await marketplaceService.createItem(itemData);
+      await marketplaceService.createItem(itemData, user);
       message.success('Annonce créée avec succès');
       setIsModalVisible(false);
       form.resetFields();
