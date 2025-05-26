@@ -98,7 +98,7 @@ const JobsPage: React.FC = () => {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    <Container maxWidth="xl" sx={{ py: 4 }}>
       <JobAdviceBanner />
       <RedirectBanners />
       <Grid container spacing={4}>
