@@ -26,8 +26,10 @@ const JobCard: React.FC<JobCardProps> = ({ job, user, isSubscribed, onPostuler, 
       display: 'flex',
       flexDirection: 'column',
       gap: 12,
-      minHeight: 220,
-      maxWidth: 340
+      minHeight: 320,
+      maxWidth: 340,
+      justifyContent: 'space-between',
+      height: '100%'
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
         {job.companyLogo ? (
