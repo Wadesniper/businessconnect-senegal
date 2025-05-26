@@ -28,8 +28,8 @@ const JobFilters: React.FC<JobFiltersProps> = ({
   onWorkLocationChange
 }) => {
   return (
-    <>
-      <div style={{ fontWeight: 800, color: '#1d3557', fontSize: 20, marginBottom: 10, marginLeft: 2 }}>Filtres</div>
+    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-end', gap: 18, marginBottom: 24 }}>
+      <div style={{ fontWeight: 800, color: '#1d3557', fontSize: 20, marginRight: 24, minWidth: 90, marginBottom: 0, whiteSpace: 'nowrap' }}>Filtres</div>
       <div
         className="job-filters-row"
         style={{
@@ -42,7 +42,8 @@ const JobFilters: React.FC<JobFiltersProps> = ({
           boxShadow: '0 2px 12px #e3e8f7',
           borderRadius: 18,
           padding: '18px 18px 8px 18px',
-          marginBottom: 24,
+          marginBottom: 0,
+          flex: 1,
         }}
       >
         <label style={{ minWidth: 180 }}>
@@ -99,11 +100,15 @@ const JobFilters: React.FC<JobFiltersProps> = ({
         </label>
       </div>
       <style>{`
+        @media (max-width: 1100px) {
+          .job-filters-row { flex-wrap: wrap !important; gap: 12px !important; }
+        }
         @media (max-width: 700px) {
           .job-filters-row { flex-direction: column !important; gap: 12px !important; }
+          .job-filters-row label { min-width: 0 !important; width: 100% !important; }
         }
       `}</style>
-    </>
+    </div>
   );
 };
 

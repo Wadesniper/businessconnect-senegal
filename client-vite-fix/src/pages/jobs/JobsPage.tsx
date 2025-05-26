@@ -102,7 +102,7 @@ const JobsPage: React.FC = () => {
       <JobAdviceBanner />
       <RedirectBanners />
       <Grid container spacing={4}>
-        <Box sx={{ flexBasis: { xs: '100%', md: '25%' }, maxWidth: { xs: '100%', md: '25%' }, pr: { md: 2 } }}>
+        <Grid item xs={12} md={3}>
           <JobFilters
             sectors={sectors}
             selectedSector={selectedSector}
@@ -118,8 +118,8 @@ const JobsPage: React.FC = () => {
             workLocation={workLocation}
             onWorkLocationChange={setWorkLocation}
           />
-        </Box>
-        <Box sx={{ flexBasis: { xs: '100%', md: '75%' }, maxWidth: { xs: '100%', md: '75%' } }}>
+        </Grid>
+        <Grid item xs={12} md={9}>
           {error ? (
             <Box sx={{ textAlign: 'center', py: 4 }}>
               <Typography variant="h6" gutterBottom>
@@ -143,13 +143,9 @@ const JobsPage: React.FC = () => {
               <Typography variant="subtitle1" gutterBottom>
                 {filteredJobs.length} offre{filteredJobs.length > 1 ? 's' : ''} trouvée{filteredJobs.length > 1 ? 's' : ''}
               </Typography>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+              <Grid container spacing={3}>
                 {sortedJobs.map((job, idx) => (
-                  <Box key={job.id} sx={{
-                    flexBasis: { xs: '100%', sm: '32%', md: '32%' },
-                    maxWidth: { xs: '100%', sm: '32%', md: '32%' },
-                    mb: 3
-                  }}>
+                  <Grid item xs={12} sm={6} md={4} lg={3} key={job.id}>
                     <JobCard
                       job={job}
                       user={user}
@@ -160,12 +156,12 @@ const JobsPage: React.FC = () => {
                       onPublish={handlePublish}
                       onViewDetails={handleViewDetails}
                     />
-                  </Box>
+                  </Grid>
                 ))}
-              </Box>
+              </Grid>
             </>
           )}
-        </Box>
+        </Grid>
       </Grid>
     </Container>
   );
