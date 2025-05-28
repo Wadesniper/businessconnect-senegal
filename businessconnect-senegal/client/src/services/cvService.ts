@@ -7,7 +7,8 @@ export interface CV {
   id: string;
   userId: string;
   personalInfo: {
-    fullName: string;
+    firstName: string;
+    lastName: string;
     email: string;
     phone: string;
     address: string;

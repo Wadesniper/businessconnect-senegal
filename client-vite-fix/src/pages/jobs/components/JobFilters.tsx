@@ -46,16 +46,30 @@ const JobFilters: React.FC<JobFiltersProps> = ({
           flex: 1,
         }}
       >
-        <label style={{ minWidth: 180 }}>
+        <label style={{ minWidth: 180, maxWidth: 260 }}>
           <span style={{ fontWeight: 600 }}>Secteur</span>
           <select
             value={selectedSector || ''}
             onChange={e => onSectorChange(e.target.value || null)}
-            style={{ width: '100%', padding: 8, borderRadius: 8, marginTop: 4, background: '#fff', color: '#222', border: '1.5px solid #e3e8f7' }}
+            style={{
+              width: '100%',
+              maxWidth: 260,
+              padding: 8,
+              borderRadius: 8,
+              marginTop: 4,
+              background: '#fff',
+              color: '#222',
+              border: '1.5px solid #e3e8f7',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
           >
             <option value="">Tous secteurs</option>
             {sectors.map((s) => (
-              <option key={s} value={s}>{s}</option>
+              <option key={s} value={s} style={{ maxWidth: 240, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {s.length > 38 ? s.slice(0, 35) + '…' : s}
+              </option>
             ))}
           </select>
         </label>
@@ -84,19 +98,6 @@ const JobFilters: React.FC<JobFiltersProps> = ({
             placeholder="Ville, région..."
             style={{ width: '100%', padding: 8, borderRadius: 8, marginTop: 4, background: '#fff', color: '#222', border: '1.5px solid #e3e8f7' }}
           />
-        </label>
-        <label style={{ minWidth: 180 }}>
-          <span style={{ fontWeight: 600 }}>Mode de travail</span>
-          <select
-            value={workLocation || ''}
-            onChange={e => onWorkLocationChange(e.target.value || null)}
-            style={{ width: '100%', padding: 8, borderRadius: 8, marginTop: 4, background: '#fff', color: '#222', border: '1.5px solid #e3e8f7' }}
-          >
-            <option value="">Tous modes</option>
-            <option value="onsite">Présentiel</option>
-            <option value="remote">Télétravail</option>
-            <option value="hybrid">Hybride</option>
-          </select>
         </label>
       </div>
       <style>{`

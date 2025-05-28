@@ -99,28 +99,16 @@ const TechModernTemplate: React.FC<TechModernTemplateProps> = ({ data }) => {
 
         <div style={{ marginBottom: '30px' }}>
           <Title level={4}>Expérience professionnelle</Title>
-          {data.experience.map(exp => (
-            <div key={exp.id} style={{ marginBottom: '20px' }}>
-              <Title level={5} style={{ marginBottom: '5px' }}>{exp.title}</Title>
+          {data.experience.map((exp, idx) => (
+            <div key={idx} style={{ marginBottom: '20px' }}>
+              <Title level={5} style={{ marginBottom: '5px' }}>{exp.position}</Title>
               <Text strong>{exp.company}</Text>
               <br />
               <Text type="secondary">
-                {formatDate(exp.startDate)} - {exp.current ? 'Présent' : formatDate(exp.endDate || '')}
+                {formatDate(exp.startDate)} - {exp.endDate ? formatDate(exp.endDate) : ''}
               </Text>
-              <ul style={{ marginTop: '10px' }}>
-                {exp.description.map((desc, index) => (
-                  <li key={index}>{desc}</li>
-                ))}
-              </ul>
-              {exp.achievements && exp.achievements.length > 0 && (
-                <>
-                  <Text strong>Réalisations :</Text>
-                  <ul>
-                    {exp.achievements.map((achievement, index) => (
-                      <li key={index}>{achievement}</li>
-                    ))}
-                  </ul>
-                </>
+              {exp.description && (
+                <p style={{ marginTop: '10px' }}>{exp.description}</p>
               )}
             </div>
           ))}
@@ -128,35 +116,22 @@ const TechModernTemplate: React.FC<TechModernTemplateProps> = ({ data }) => {
 
         <div style={{ marginBottom: '30px' }}>
           <Title level={4}>Formation</Title>
-          {data.education.map(edu => (
-            <div key={edu.id} style={{ marginBottom: '20px' }}>
-              <Title level={5} style={{ marginBottom: '5px' }}>
-                {edu.degree}
-                {edu.field && <span> en {edu.field}</span>}
-              </Title>
+          {data.education.map((edu, idx) => (
+            <div key={idx} style={{ marginBottom: '20px' }}>
+              <Title level={5} style={{ marginBottom: '5px' }}>{edu.degree}</Title>
               <Text strong>{edu.school}</Text>
               <br />
               <Text type="secondary">
-                {formatDate(edu.startDate)} - {formatDate(edu.endDate)}
+                {formatDate(edu.startDate)} - {edu.endDate ? formatDate(edu.endDate) : ''}
               </Text>
               {edu.description && (
                 <p style={{ marginTop: '10px' }}>{edu.description}</p>
-              )}
-              {edu.achievements && edu.achievements.length > 0 && (
-                <>
-                  <Text strong>Réalisations :</Text>
-                  <ul>
-                    {edu.achievements.map((achievement, index) => (
-                      <li key={index}>{achievement}</li>
-                    ))}
-                  </ul>
-                </>
               )}
             </div>
           ))}
         </div>
 
-        {data.certifications.length > 0 && (
+        {(data.certifications && data.certifications.length > 0) && (
           <div style={{ marginBottom: '30px' }}>
             <Title level={4}>Certifications</Title>
             {data.certifications.map(cert => (

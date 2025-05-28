@@ -17,6 +17,7 @@
     "@types/styled-components": "^5.1.34",
     "antd": "^5.25.1",
     "axios": "0.27.2",
+    "businessconnect-server": "file:..",
     "compression": "^1.8.0",
     "docx": "^8.0.0",
     "file-saver": "^2.0.5",

@@ -135,8 +135,8 @@ const CVPreview: React.FC<CVPreviewProps> = ({
 
       <div style={sectionStyle}>
         <Title level={4} style={titleStyle}>Expérience professionnelle</Title>
-        {data.experience.map(exp => (
-          <div key={exp.id} style={{ marginBottom: '20px' }}>
+        {data.experience.map((exp, idx) => (
+          <div key={exp.id || idx} style={{ marginBottom: '20px' }}>
             <Title level={5} style={{ marginBottom: '5px' }}>{exp.title}</Title>
             <Text strong>{exp.company}</Text>
             {exp.location && (

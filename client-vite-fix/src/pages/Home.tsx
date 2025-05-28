@@ -25,6 +25,10 @@ import type { Job } from '../types/job';
 import { marketplaceService } from '../services/marketplaceService';
 import type { MarketplaceItem } from '../services/marketplaceService';
 import { useSpring, animated } from 'react-spring';
+import JobCard from './jobs/components/JobCard';
+import { useAuth } from '../hooks/useAuth';
+import { useSubscription } from '../hooks/useSubscription';
+import { hasPremiumAccess } from '../utils/premiumAccess';
 
 const { Content } = Layout;
 const { Title, Paragraph, Text } = Typography;
@@ -87,6 +91,9 @@ const Home: React.FC = () => {
   const [jobs, setJobs] = React.useState<Job[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [marketplaceItems, setMarketplaceItems] = useState<MarketplaceItem[]>([]);
+  const { user } = useAuth();
+  const { hasActiveSubscription } = useSubscription();
+  const isPremium = hasPremiumAccess(user, hasActiveSubscription);
 
   React.useEffect(() => {
     JobService.getJobs().then(jobs => {
@@ -222,20 +229,17 @@ const Home: React.FC = () => {
               <Col span={24}><div style={{ textAlign: 'center', color: '#888' }}>Aucune offre disponible pour le moment.</div></Col>
             ) : (
               latestJobs.map((job) => (
-                <Col xs={24} sm={12} md={8} key={job.id}>
-                  <Card
-                    hoverable
-                    data-testid="job-preview"
-                    style={{ borderRadius: 18, boxShadow: '0 4px 24px #e3e8f7', border: 'none', minHeight: 180, background: '#fff' }}
-                    onClick={() => navigate('/jobs')}
-                  >
-                    <Space direction="vertical" size={8} style={{ width: '100%' }}>
-                      <Typography.Title level={4} style={{ margin: 0, color: '#457b9d' }}>{job.title}</Typography.Title>
-                      <Typography.Text strong style={{ color: '#1d3557' }}>{job.company}</Typography.Text>
-                      <Typography.Text type="secondary">{job.location}</Typography.Text>
-                      <Button type="primary" ghost style={{ marginTop: 8, alignSelf: 'flex-start' }} aria-label="Voir toutes les offres d'emploi" onClick={e => { e.stopPropagation(); navigate('/jobs'); }}>Voir toutes les offres</Button>
-                    </Space>
-                  </Card>
+                <Col xs={24} sm={12} md={8} key={job.id} style={{ display: 'flex', justifyContent: 'center' }}>
+                  <JobCard
+                    job={job}
+                    user={user}
+                    isSubscribed={isPremium}
+                    onPostuler={() => navigate('/jobs/' + job.id)}
+                    onEdit={() => navigate('/jobs/' + job.id + '/edit')}
+                    onDelete={() => navigate('/jobs/' + job.id + '/delete')}
+                    onPublish={() => navigate('/jobs/publish')}
+                    onViewDetails={() => navigate('/jobs/' + job.id)}
+                  />
                 </Col>
               ))
             )}

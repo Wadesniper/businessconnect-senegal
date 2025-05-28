@@ -39,10 +39,7 @@ const CVGenerator: React.FC = () => {
     {
       title: 'Informations',
       content: (
-        <CVForm
-          data={cvData}
-          onChange={setCVData}
-        />
+        <CVForm initialValues={cvData || {}} onSubmit={setCVData} loading={false} />
       ),
     },
     {

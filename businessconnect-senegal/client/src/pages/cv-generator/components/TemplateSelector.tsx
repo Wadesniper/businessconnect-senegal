@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, Radio, Space, Tag, Image, Empty } from 'antd';
 import { CrownOutlined } from '@ant-design/icons';
-import { Template } from '../types';
+import type { Template } from '../../../types/cv';
 
 interface TemplateSelectorProps {
   onSelect: (template: Template) => void;
@@ -15,7 +15,17 @@ const templates: Template[] = [
     category: 'Tech',
     thumbnail: '/templates/tech-modern.png',
     premium: true,
-    layout: 'modern'
+    layout: 'modern',
+    previewImage: '/templates/tech-modern-preview.png',
+    description: 'Un modèle moderne pour les profils tech.',
+    features: ['Design moderne', 'Section projets', 'Compétences techniques'],
+    profileImage: '/templates/tech-modern-profile.png',
+    sampleData: {
+      title: 'Développeur Fullstack',
+      experience: ['Expérience 1', 'Expérience 2'],
+      education: ['Diplôme 1', 'Diplôme 2'],
+      skills: ['React', 'Node.js']
+    }
   },
   {
     id: 'tech-2',
@@ -23,7 +33,17 @@ const templates: Template[] = [
     category: 'Tech',
     thumbnail: '/templates/tech-classic.png',
     premium: false,
-    layout: 'classic'
+    layout: 'classic',
+    previewImage: '/templates/tech-classic-preview.png',
+    description: 'Un modèle classique pour développeur.',
+    features: ['Design classique', 'Section expérience'],
+    profileImage: '/templates/tech-classic-profile.png',
+    sampleData: {
+      title: 'Développeur',
+      experience: ['Expérience 1'],
+      education: ['Diplôme 1'],
+      skills: ['JavaScript']
+    }
   },
   {
     id: 'finance-1',
@@ -31,7 +51,17 @@ const templates: Template[] = [
     category: 'Finance',
     thumbnail: '/templates/finance-pro.png',
     premium: true,
-    layout: 'classic'
+    layout: 'classic',
+    previewImage: '/templates/finance-pro-preview.png',
+    description: 'Modèle premium pour la finance.',
+    features: ['Section finance', 'Design épuré'],
+    profileImage: '/templates/finance-pro-profile.png',
+    sampleData: {
+      title: 'Analyste financier',
+      experience: ['Expérience finance'],
+      education: ['Master Finance'],
+      skills: ['Excel', 'Analyse']
+    }
   },
   {
     id: 'marketing-1',
@@ -39,7 +69,17 @@ const templates: Template[] = [
     category: 'Marketing',
     thumbnail: '/templates/marketing-creative.png',
     premium: true,
-    layout: 'creative'
+    layout: 'creative',
+    previewImage: '/templates/marketing-creative-preview.png',
+    description: 'Modèle créatif pour le marketing.',
+    features: ['Design créatif', 'Section portfolio'],
+    profileImage: '/templates/marketing-creative-profile.png',
+    sampleData: {
+      title: 'Responsable marketing',
+      experience: ['Expérience marketing'],
+      education: ['Licence Marketing'],
+      skills: ['SEO', 'Communication']
+    }
   },
   {
     id: 'health-1',
@@ -47,7 +87,17 @@ const templates: Template[] = [
     category: 'Santé',
     thumbnail: '/templates/health-pro.png',
     premium: true,
-    layout: 'classic'
+    layout: 'classic',
+    previewImage: '/templates/health-pro-preview.png',
+    description: 'Modèle pour les professionnels de santé.',
+    features: ['Section santé', 'Design sobre'],
+    profileImage: '/templates/health-pro-profile.png',
+    sampleData: {
+      title: 'Médecin',
+      experience: ['Expérience santé'],
+      education: ['Doctorat Médecine'],
+      skills: ['Diagnostic', 'Soins']
+    }
   },
   {
     id: 'education-1',
@@ -55,7 +105,17 @@ const templates: Template[] = [
     category: 'Education',
     thumbnail: '/templates/education-classic.png',
     premium: false,
-    layout: 'classic'
+    layout: 'classic',
+    previewImage: '/templates/education-classic-preview.png',
+    description: 'Modèle classique pour enseignants.',
+    features: ['Section enseignement', 'Design clair'],
+    profileImage: '/templates/education-classic-profile.png',
+    sampleData: {
+      title: 'Professeur',
+      experience: ['Expérience enseignement'],
+      education: ['CAPES'],
+      skills: ['Pédagogie']
+    }
   }
 ];
 

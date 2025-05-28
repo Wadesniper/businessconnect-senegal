@@ -13,7 +13,7 @@ import {
   Col
 } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { CV } from '../../../services/cvService';
+import { CVData } from '../types';
 import moment from 'moment';
 import 'moment/locale/fr';
 
@@ -24,7 +24,7 @@ const { TextArea } = Input;
 const { RangePicker } = DatePicker;
 
 interface CVFormProps {
-  initialValues?: Partial<CV>;
+  initialValues?: Partial<CVData>;
   onSubmit: (values: any) => void;
   loading: boolean;
 }
@@ -95,13 +95,25 @@ const CVForm: React.FC<CVFormProps> = ({ initialValues, onSubmit, loading }) => 
       <Row gutter={16}>
         <Col span={12}>
       <Form.Item
-            name={['personalInfo', 'fullName']}
-            label="Nom complet"
-            rules={[{ required: true, message: 'Le nom est requis' }]}
+            name={['personalInfo', 'firstName']}
+            label="Prénom"
+            rules={[{ required: true, message: 'Le prénom est requis' }]}
         >
           <Input />
         </Form.Item>
         </Col>
+        <Col span={12}>
+      <Form.Item
+        name={['personalInfo', 'lastName']}
+        label="Nom"
+        rules={[{ required: true, message: 'Le nom est requis' }]}
+      >
+        <Input />
+      </Form.Item>
+        </Col>
+      </Row>
+
+      <Row gutter={16}>
         <Col span={12}>
       <Form.Item
         name={['personalInfo', 'email']}
@@ -114,22 +126,11 @@ const CVForm: React.FC<CVFormProps> = ({ initialValues, onSubmit, loading }) => 
         <Input />
       </Form.Item>
         </Col>
-      </Row>
-
-      <Row gutter={16}>
         <Col span={12}>
       <Form.Item
         name={['personalInfo', 'phone']}
         label="Téléphone"
             rules={[{ required: true, message: 'Le téléphone est requis' }]}
-      >
-        <Input />
-      </Form.Item>
-        </Col>
-        <Col span={12}>
-      <Form.Item
-        name={['personalInfo', 'address']}
-        label="Adresse"
       >
         <Input />
       </Form.Item>

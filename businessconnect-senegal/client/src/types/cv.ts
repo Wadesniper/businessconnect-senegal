@@ -13,6 +13,8 @@ export interface Template {
     education: string[];
     skills: string[];
   };
+  premium?: boolean;
+  layout?: string;
 }
 
 export interface PersonalInfo {
@@ -115,6 +117,4 @@ export interface CustomizationOptions {
   fontFamily: string;
   fontSize: string;
   spacing: 'compact' | 'comfortable' | 'spacious';
-}
-
-export type Template = 'modern' | 'classic' | 'creative' | 'tech'; 
+} 

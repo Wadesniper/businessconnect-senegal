@@ -1,93 +1,57 @@
-import React, { useState } from 'react';
-import { Layout, Menu } from 'antd';
-import {
-  UserOutlined,
-  CreditCardOutlined,
-  ShoppingOutlined,
-  MessageOutlined,
-  ShopOutlined,
-  BarChartOutlined,
-} from '@ant-design/icons';
-import { Routes, Route, useNavigate } from 'react-router-dom';
-import UserManagement from './components/UserManagement';
-import SubscriptionManagement from './components/SubscriptionManagement';
-import JobManagement from './components/JobManagement';
-import ForumModeration from './components/ForumModeration';
-import MarketplaceModeration from './components/MarketplaceModeration';
-import Statistics from './components/Statistics';
+import React, { useEffect, useState } from 'react';
+import { Table, Spin, Typography } from 'antd';
+import { adminService } from '../../services/adminService';
 
-const { Content, Sider } = Layout;
+const { Title } = Typography;
 
 const AdminPage: React.FC = () => {
-  const [collapsed, setCollapsed] = useState(false);
-  const navigate = useNavigate();
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [pagination, setPagination] = useState({ current: 1, pageSize: 10, total: 0 });
 
-  const menuItems = [
-    {
-      key: 'users',
-      icon: <UserOutlined />,
-      label: 'Utilisateurs',
-      onClick: () => navigate('/admin/users'),
-    },
-    {
-      key: 'subscriptions',
-      icon: <CreditCardOutlined />,
-      label: 'Abonnements',
-      onClick: () => navigate('/admin/subscriptions'),
-    },
-    {
-      key: 'jobs',
-      icon: <ShoppingOutlined />,
-      label: 'Offres d\'emploi',
-      onClick: () => navigate('/admin/jobs'),
-    },
-    {
-      key: 'forum',
-      icon: <MessageOutlined />,
-      label: 'Forum',
-      onClick: () => navigate('/admin/forum'),
-    },
-    {
-      key: 'marketplace',
-      icon: <ShopOutlined />,
-      label: 'Marketplace',
-      onClick: () => navigate('/admin/marketplace'),
-    },
-    {
-      key: 'statistics',
-      icon: <BarChartOutlined />,
-      label: 'Statistiques',
-      onClick: () => navigate('/admin/statistics'),
-    },
+  const fetchUsers = async (page = 1, pageSize = 10) => {
+    setLoading(true);
+    try {
+      const res = await adminService.getUsers(page, pageSize);
+      setUsers(res.data);
+      setPagination({ current: page, pageSize, total: res.total });
+    } catch (error) {
+      // Gestion d'erreur premium
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const handleTableChange = (pag: any) => {
+    fetchUsers(pag.current, pag.pageSize);
+  };
+
+  const columns = [
+    { title: 'Nom', dataIndex: 'name', key: 'name' },
+    { title: 'Email', dataIndex: 'email', key: 'email', render: (email: string) => email || <span style={{color:'#aaa'}}>Aucun</span> },
+    { title: 'Téléphone', dataIndex: 'phone', key: 'phone' },
+    { title: 'Rôle', dataIndex: 'role', key: 'role' },
+    { title: 'Statut abonnement', dataIndex: ['subscription', 'status'], key: 'subscription', render: (status: string) => status === 'active' ? <span style={{color:'green'}}>Actif</span> : <span style={{color:'red'}}>Aucun</span> },
+    { title: 'Expire le', dataIndex: ['subscription', 'expireAt'], key: 'expireAt', render: (date: string) => date ? new Date(date).toLocaleDateString() : '-' },
   ];
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
-      <Sider collapsible collapsed={collapsed} onCollapse={setCollapsed}>
-        <div style={{ height: 32, margin: 16, background: 'rgba(255, 255, 255, 0.2)' }} />
-        <Menu
-          theme="dark"
-          defaultSelectedKeys={['users']}
-          mode="inline"
-          items={menuItems}
+    <div style={{ padding: 32 }}>
+      <Title level={2}>Gestion des utilisateurs (admin)</Title>
+      {loading ? <Spin size="large" /> : (
+        <Table
+          columns={columns}
+          dataSource={users}
+          rowKey="id"
+          pagination={pagination}
+          onChange={handleTableChange}
         />
-      </Sider>
-      <Layout>
-        <Content style={{ margin: '16px' }}>
-          <div style={{ padding: 24, minHeight: 360, background: '#fff' }}>
-            <Routes>
-              <Route path="/users" element={<UserManagement />} />
-              <Route path="/subscriptions" element={<SubscriptionManagement />} />
-              <Route path="/jobs" element={<JobManagement />} />
-              <Route path="/forum" element={<ForumModeration />} />
-              <Route path="/marketplace" element={<MarketplaceModeration />} />
-              <Route path="/statistics" element={<Statistics />} />
-              <Route path="/" element={<Statistics />} />
-            </Routes>
-          </div>
-        </Content>
-      </Layout>
-    </Layout>
+      )}
+    </div>
   );
 };
 

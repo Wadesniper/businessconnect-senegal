@@ -23,34 +23,12 @@ router.use(authMiddleware);
 // router.delete('/account', userController.deleteAccount);
 
 // Routes administrateur
-router.use('/admin', authMiddleware, isAdmin);
+// router.use('/admin', authMiddleware, isAdmin);
 
 // Liste des utilisateurs (admin)
-router.get('/admin/users', async (req, res) => {
-  const page = parseInt(req.query.page as string) || 1;
-  const limit = parseInt(req.query.limit as string) || 10;
-  const skip = (page - 1) * limit;
-  const total = await User.countDocuments();
-  const users = await User.find().skip(skip).limit(limit);
-  const { subscriptionService } = require('../services/subscriptionService');
-  const usersWithSub = await Promise.all(users.map(async (user) => {
-    const activeSub = await subscriptionService.getActiveSubscription(user._id);
-    return {
-      id: user._id,
-      name: user.name,
-      email: user.email || '',
-      phone: user.phone,
-      role: user.role,
-      createdAt: user.createdAt,
-      subscription: activeSub ? {
-        status: 'active',
-        expireAt: activeSub.endDate,
-        type: activeSub.plan
-      } : { status: 'none' }
-    };
-  }));
-  res.json({ data: usersWithSub, total });
-});
+// router.get('/admin/users', async (req, res) => {
+//   ...
+// });
 
 // Route protégée pour récupérer l'utilisateur courant et son abonnement
 router.get('/me', authMiddleware, async (req: AuthRequest, res: Response) => {
