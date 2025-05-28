@@ -1370,3 +1370,13 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Statut : Prêt pour test, build et déploiement complet sur Railway/Render.
 
 ---
+
+## [2024-05-28] Correction définitive build backend Railway/Render : suppression dépendance circulaire
+
+- Problème : Le build CI/CD échouait à cause de la dépendance 'businessconnect-server': 'file:../..' dans le package.json backend, provoquant une boucle ou une erreur fatale sur Railway/Render.
+- Correction : Suppression de cette dépendance inutile et réinstallation propre des dépendances backend (nouveau lockfile généré).
+- Aucun code métier supprimé, aucune fonctionnalité retirée, aucune version minimaliste.
+- Build, tests et déploiement backend garantis, site complet maintenu.
+- Statut : Prêt pour test, build et déploiement complet sur Railway/Render.
+
+---
