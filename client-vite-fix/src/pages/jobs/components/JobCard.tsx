@@ -97,17 +97,6 @@ const JobCard: React.FC<JobCardProps> = ({ job, user, isSubscribed, onPostuler, 
           </button>
         </div>
       )}
-      {/* BOUTON PUBLIER : toujours visible pour admin et employeur */}
-      {(isAdmin || isEmployer) && (
-        <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-          <button
-            style={{ background: '#1890ff', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 12px', fontWeight: 600, fontSize: 15, cursor: 'pointer', flex: 1 }}
-            onClick={onPublish}
-          >
-            Publier une offre
-          </button>
-        </div>
-      )}
     </div>
   );
 };

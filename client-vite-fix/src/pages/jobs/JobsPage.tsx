@@ -99,6 +99,16 @@ const JobsPage: React.FC = () => {
 
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
+      {(user?.role === 'admin' || user?.role === 'employeur') && (
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3 }}>
+          <button
+            style={{ background: '#1890ff', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 28px', fontWeight: 700, fontSize: 17, cursor: 'pointer', boxShadow: '0 2px 8px #e3e8f7' }}
+            onClick={handlePublish}
+          >
+            Publier une offre
+          </button>
+        </Box>
+      )}
       {/* DEBUG TEMPORAIRE */}
       {/* <pre style={{background:'#f5f5f5',padding:8,borderRadius:8,fontSize:13,color:'#333',marginBottom:12}}>{debugUser}</pre> */}
       {/* FIN DEBUG */}
