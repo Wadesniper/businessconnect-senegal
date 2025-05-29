@@ -20,8 +20,16 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  // Initialisation immédiate depuis le localStorage
+  const [user, setUser] = useState<User | null>(() => {
+    try {
+      const u = localStorage.getItem('user');
+      return u ? JSON.parse(u) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [loading, setLoading] = useState(false); // plus de blocage du rendu
   const location = useLocation();
 
   // Synchronisation avec localStorage à chaque navigation ou changement de storage
@@ -39,23 +47,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => window.removeEventListener('storage', syncUser);
   }, [location]);
 
-  // Rechargement initial depuis l'API
+  // Mise à jour asynchrone depuis l'API (en arrière-plan)
   useEffect(() => {
     const fetchUser = async () => {
-      setLoading(true);
       try {
         const currentUser = await authService.getCurrentUser();
-        if (!currentUser) {
-          setUser(null);
-          setLoading(false);
-          return;
+        if (currentUser) {
+          localStorage.setItem('user', JSON.stringify(currentUser));
+          setUser(currentUser);
         }
-        localStorage.setItem('user', JSON.stringify(currentUser));
-        setUser(currentUser);
       } catch (e) {
-        setUser(null);
-      } finally {
-        setLoading(false);
+        // Ne rien faire, on garde le user du localStorage
       }
     };
     fetchUser();
