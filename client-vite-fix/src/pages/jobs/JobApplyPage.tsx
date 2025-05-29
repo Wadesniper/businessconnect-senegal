@@ -39,8 +39,9 @@ const JobApplyPage: React.FC = () => {
   // DEBUG TEMPORAIRE : Affichage brut de l'objet job
   const debugJob = <pre style={{background:'#f5f5f5',padding:8,borderRadius:8,fontSize:13,color:'#333',marginBottom:12}}>{JSON.stringify(job, null, 2)}</pre>;
 
-  const mail = job.email;
-  const phone = job.phone;
+  // Mapping robuste : fallback sur contactEmail/contactPhone
+  const mail = job.email || job.contactEmail;
+  const phone = job.phone || job.contactPhone;
   const mailSubject = `Candidature au poste de ${job.title}`;
   const mailBody = `Bonjour,\n\nJe souhaite postuler à l'offre \"${job.title}\" publiée sur votre plateforme.\n\nVeuillez trouver ci-joint mon CV.\n\nCordialement,\n[Votre nom]`;
 
