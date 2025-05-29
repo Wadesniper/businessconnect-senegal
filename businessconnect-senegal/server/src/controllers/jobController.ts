@@ -16,7 +16,12 @@ export const getJob = async (req: Request, res: Response) => {
     if (!job) {
       return res.status(404).json({ error: 'Offre non trouvée' });
     }
-    res.json(job);
+    const jobObj = job.toObject();
+    res.json({
+      ...jobObj,
+      email: jobObj.contactEmail,
+      phone: jobObj.contactPhone
+    });
   } catch (err) {
     res.status(500).json({ error: 'Erreur lors de la récupération de l\'offre' });
   }
