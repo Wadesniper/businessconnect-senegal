@@ -1420,3 +1420,11 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 **Correction réalisée le 29/05/2025.**
 
 ---
+
+## [29/05/2025] - Correction build backend Railway
+- Création d'un Dockerfile dédié dans `businessconnect-senegal/server/` pour le backend Node.js/Express.
+- Utilisation de l'image `node:18-bullseye` (Debian) pour compatibilité avec apt-get et installation des dépendances système nécessaires (libnss3, etc.).
+- Aucun code supprimé, aucune fonctionnalité retirée.
+- Build et déploiement backend Railway désormais compatibles avec un environnement de production complet.
+
+---
