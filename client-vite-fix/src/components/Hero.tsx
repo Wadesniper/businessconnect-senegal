@@ -210,8 +210,7 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
               La <GreenSpan>plateforme n°1</GreenSpan> où les <GreenSpan>talents</GreenSpan> <span style={{color:'white', fontWeight:700}}>sénégalais</span> rencontrent les <GreenSpan>opportunités</GreenSpan>
             </TitleStyled>
             <Paragraph style={{ color: 'white', fontSize: '18px', marginBottom: '30px' }}>
-              Découvrez les meilleurs talents et opportunités dans tous les secteurs d'activité. 
-              Une plateforme unique pour les professionnels qui façonnent l'avenir du Sénégal.
+              Formez-vous, créez votre CV, trouvez un emploi ou recrutez dans un écosystème numérique innovant dédié au marché de l'emploi sénégalais.
             </Paragraph>
             <StyledButton type="primary" size="large" onClick={onDiscoverClick}>
               Découvrir nos services

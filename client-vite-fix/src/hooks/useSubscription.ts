@@ -21,7 +21,11 @@ export const useSubscription = () => {
       },
       body: JSON.stringify({
         userId: user.id,
-        subscriptionType: type
+        subscriptionType: type,
+        customer_name: user.firstName || '',
+        customer_surname: user.lastName || '',
+        customer_email: user.email || '',
+        customer_phone_number: user.phoneNumber || ''
       })
     });
 

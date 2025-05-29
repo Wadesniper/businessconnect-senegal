@@ -71,7 +71,7 @@ api.interceptors.response.use(
       if (error.response.status === 401) {
         authService.removeToken();
         message.error('Session expirée. Veuillez vous reconnecter.');
-        window.location.href = '/auth/login';
+        window.location.href = '/login';
         return Promise.reject(error);
       }
 
