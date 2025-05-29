@@ -1392,3 +1392,31 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Statut : Prêt pour test, build et déploiement complet sur Railway/Render/Vercel.
 
 ---
+
+# ÉTAT DU SITE BUSINESSCONNECT - MAJ du 29/05/2025
+
+## Actions correctives majeures
+
+- **Suppression de la dépendance locale "businessconnect-server: file:../.."** dans tous les package.json et lockfiles du projet (frontend et backend).
+- **Suppression complète de l'ancien frontend** (`businessconnect-senegal/client/`) pour ne garder qu'un seul frontend moderne (`client-vite-fix/`).
+- **Nettoyage des node_modules et lockfiles** pour garantir une installation propre et éviter tout conflit ou résidu d'ancienne config.
+- **Correction du bug de build lié à react-icons/FaBell** : downgrade de `react-icons` à la version `5.3.0` dans `client-vite-fix` pour assurer la compatibilité avec React 18 et TypeScript.
+- **Vérification du build** : le build du frontend (`client-vite-fix`) et du backend (`businessconnect-senegal/server`) passe sans erreur.
+- **Aucune suppression de fonctionnalité, aucun code essentiel supprimé** : le site complet reste fonctionnel, aucune version minimaliste n'a été utilisée.
+
+## Structure actuelle du projet (propre)
+
+- `client-vite-fix/` : **Frontend unique** (Vite, React 18, stable, moderne)
+- `businessconnect-senegal/server/` : **Backend unique** (Node/Express)
+
+## Conseils et prochaines étapes
+
+- Ne maintenir que ces deux dossiers pour le développement et le déploiement.
+- Toute nouvelle fonctionnalité ou correction doit être faite dans ces deux dossiers uniquement.
+- Le déploiement Railway/Vercel doit pointer sur ces dossiers.
+
+---
+
+**Correction réalisée le 29/05/2025.**
+
+---
