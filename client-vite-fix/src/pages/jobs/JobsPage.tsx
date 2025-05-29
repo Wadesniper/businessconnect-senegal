@@ -103,6 +103,12 @@ const JobsPage: React.FC = () => {
 
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
+      {/* DEBUG VISUEL TEMPORAIRE */}
+      <Box sx={{ mb: 2, p: 2, bgcolor: '#fffbe6', border: '1px solid #ffe58f', borderRadius: 2, color: '#ad8b00', fontSize: 15 }}>
+        <b>DEBUG user :</b> {JSON.stringify(user)}<br/>
+        <b>user?.role :</b> {user?.role || 'Aucun'}
+      </Box>
+      {/* FIN DEBUG VISUEL */}
       {(user?.role === 'admin' || user?.role === 'employeur') && (
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3 }}>
           <button
