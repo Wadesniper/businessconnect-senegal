@@ -10,6 +10,7 @@ export interface IJob extends Document {
   requirements?: string[];
   contactEmail?: string;
   contactPhone?: string;
+  createdBy: string;
   // Ajoute ici d'autres champs métier si besoin
 }
 
@@ -23,6 +24,7 @@ const JobSchema = new mongoose.Schema({
   requirements: [{ type: String }],
   contactEmail: { type: String },
   contactPhone: { type: String },
+  createdBy: { type: String, required: true },
   // Ajoute ici d'autres champs métier si besoin
 }, { timestamps: true });
 

@@ -25,4 +25,20 @@ export const getJob = async (req: Request, res: Response) => {
   } catch (err) {
     res.status(500).json({ error: 'Erreur lors de la récupération de l\'offre' });
   }
+};
+
+// Création d'une offre d'emploi (avec createdBy)
+export const createJob = async (req: any, res: Response) => {
+  try {
+    const userId = req.user?.id || req.user?._id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Non autorisé' });
+    }
+    const jobData = { ...req.body, createdBy: userId };
+    const job = new Job(jobData);
+    await job.save();
+    res.status(201).json(job);
+  } catch (err) {
+    res.status(500).json({ error: 'Erreur lors de la création de l\'offre' });
+  }
 }; 

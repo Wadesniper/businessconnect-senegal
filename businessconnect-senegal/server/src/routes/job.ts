@@ -4,6 +4,7 @@ import { body } from 'express-validator';
 import { authMiddleware } from '../middleware/authMiddleware';
 import { AuthRequest } from '../types/user';
 import { Response } from 'express';
+import { createJob } from '../controllers/jobController';
 
 const router = express.Router();
 
@@ -29,7 +30,7 @@ router.post(
     body('location').not().isEmpty().withMessage('La localisation est requise'),
     body('type').isIn(['CDI', 'CDD', 'Stage', 'Freelance']).withMessage('Type de contrat invalide'),
   ],
-  // jobController.createJob
+  createJob
 );
 
 router.put('/:id', authMiddleware, async (req, res): Promise<void> => {
