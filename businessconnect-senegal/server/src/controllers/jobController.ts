@@ -1,4 +1,4 @@
-import Job from '../models/Job';
+import Job, { IJob } from '../models/Job';
 import { Request, Response } from 'express';
 
 export const getAllJobs = async (req: Request, res: Response) => {
@@ -12,7 +12,7 @@ export const getAllJobs = async (req: Request, res: Response) => {
 
 export const getJob = async (req: Request, res: Response) => {
   try {
-    const job = await Job.findById(req.params.id);
+    const job = await Job.findById(req.params.id) as IJob | null;
     if (!job) {
       return res.status(404).json({ error: 'Offre non trouvée' });
     }
