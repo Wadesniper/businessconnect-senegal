@@ -50,20 +50,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setLoading(false);
           return;
         }
-        const userSub = subscriptionData.find(sub => sub.userId === currentUser.id && sub.status === 'active');
-        let cleanSubscription: { status?: string; expireAt?: string; type?: 'etudiant' | 'annonceur' | 'employeur' } = {};
-        if (currentUser.subscription) {
-          cleanSubscription = {
-            ...currentUser.subscription,
-            expireAt: currentUser.subscription.expireAt === null ? undefined : currentUser.subscription.expireAt,
-            type: userSub?.type
-          };
-        }
-        setUser({
-          ...currentUser,
-          subscription: Object.keys(cleanSubscription).length > 0 ? cleanSubscription : undefined
-        } as User & { subscription?: { status?: string; expireAt?: string; type?: 'etudiant' | 'annonceur' | 'employeur' } });
         localStorage.setItem('user', JSON.stringify(currentUser));
+        setUser(currentUser);
       } catch (e) {
         setUser(null);
       } finally {

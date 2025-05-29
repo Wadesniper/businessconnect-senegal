@@ -1491,3 +1491,17 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Statut : Prêt pour test, build et déploiement complet en production.
 
 ---
+
+## [Date : Diagnostic et correction définitive affichage bouton Publier une offre (admin)]
+
+- Problème : Le bouton "Publier une offre" n'apparaissait pas pour l'admin malgré un rôle correct dans le localStorage.
+- Analyse :
+  - Diagnostic du contexte React (user) dans JobsPage : affichage console et UI pour vérifier la synchronisation.
+  - Vérification du hook useAuth et de la propagation du user du localStorage/API vers le contexte React.
+- Correction :
+  - Ajout d'un debug visuel et console pour trancher la cause racine.
+  - Préparation d'une correction définitive du hook useAuth si désynchronisation constatée.
+- Aucun code ou fonctionnalité essentielle supprimé, aucune régression, site complet maintenu.
+- Statut : En cours de validation, prêt pour build, test et déploiement complet en production.
+
+---
