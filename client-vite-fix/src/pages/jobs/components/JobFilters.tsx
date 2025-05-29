@@ -14,6 +14,7 @@ interface JobFiltersProps {
   onExperienceLevelChange: (level: string | null) => void;
   workLocation: string | null;
   onWorkLocationChange: (location: string | null) => void;
+  renderAction?: React.ReactNode;
 }
 
 const JobFilters: React.FC<JobFiltersProps> = ({
@@ -25,10 +26,11 @@ const JobFilters: React.FC<JobFiltersProps> = ({
   selectedLocation,
   onLocationChange,
   workLocation,
-  onWorkLocationChange
+  onWorkLocationChange,
+  renderAction
 }) => {
   return (
-    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-end', gap: 18, marginBottom: 24 }}>
+    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-end', gap: 18, marginBottom: 24, flexWrap: 'nowrap' }}>
       <div style={{ fontWeight: 800, color: '#1d3557', fontSize: 20, marginRight: 24, minWidth: 90, marginBottom: 0, whiteSpace: 'nowrap' }}>Filtres</div>
       <div
         className="job-filters-row"
@@ -37,7 +39,7 @@ const JobFilters: React.FC<JobFiltersProps> = ({
           flexDirection: 'row',
           gap: 18,
           alignItems: 'flex-end',
-          flexWrap: 'wrap',
+          flexWrap: 'nowrap',
           background: '#fff',
           boxShadow: '0 2px 12px #e3e8f7',
           borderRadius: 18,
@@ -99,6 +101,7 @@ const JobFilters: React.FC<JobFiltersProps> = ({
             style={{ width: '100%', padding: 8, borderRadius: 8, marginTop: 4, background: '#fff', color: '#222', border: '1.5px solid #e3e8f7' }}
           />
         </label>
+        {renderAction && <div style={{ marginLeft: 'auto' }}>{renderAction}</div>}
       </div>
       <style>{`
         @media (max-width: 1100px) {

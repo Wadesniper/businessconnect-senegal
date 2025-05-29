@@ -99,37 +99,37 @@ const JobsPage: React.FC = () => {
 
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
-      {(user?.role === 'admin' || user?.role === 'employeur') && (
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3 }}>
-          <button
-            style={{ background: '#1890ff', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 28px', fontWeight: 700, fontSize: 17, cursor: 'pointer', boxShadow: '0 2px 8px #e3e8f7' }}
-            onClick={handlePublish}
-          >
-            Publier une offre
-          </button>
-        </Box>
-      )}
       <JobAdviceBanner />
       <RedirectBanners />
+      <Box sx={{ mb: 2 }}>
+        <JobFilters
+          sectors={sectors}
+          selectedSector={selectedSector}
+          onSectorChange={setSelectedSector}
+          selectedType={selectedType}
+          onTypeChange={setSelectedType}
+          selectedLocation={selectedLocation}
+          onLocationChange={setSelectedLocation}
+          salaryRange={salaryRange}
+          onSalaryRangeChange={setSalaryRange}
+          experienceLevel={experienceLevel}
+          onExperienceLevelChange={setExperienceLevel}
+          workLocation={workLocation}
+          onWorkLocationChange={setWorkLocation}
+          renderAction={
+            (user?.role === 'admin' || user?.role === 'employeur') ? (
+              <button
+                style={{ background: '#1890ff', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 28px', fontWeight: 700, fontSize: 17, cursor: 'pointer', boxShadow: '0 2px 8px #e3e8f7', marginLeft: 18 }}
+                onClick={handlePublish}
+              >
+                Publier une offre
+              </button>
+            ) : null
+          }
+        />
+      </Box>
       <Grid container spacing={4}>
-        <Box sx={{ width: { xs: '100%', md: '25%' }, pr: { md: 2 } }}>
-          <JobFilters
-            sectors={sectors}
-            selectedSector={selectedSector}
-            onSectorChange={setSelectedSector}
-            selectedType={selectedType}
-            onTypeChange={setSelectedType}
-            selectedLocation={selectedLocation}
-            onLocationChange={setSelectedLocation}
-            salaryRange={salaryRange}
-            onSalaryRangeChange={setSalaryRange}
-            experienceLevel={experienceLevel}
-            onExperienceLevelChange={setExperienceLevel}
-            workLocation={workLocation}
-            onWorkLocationChange={setWorkLocation}
-          />
-        </Box>
-        <Box sx={{ width: { xs: '100%', md: '75%' } }}>
+        <Grid item xs={12}>
           {error ? (
             <Box sx={{ textAlign: 'center', py: 4 }}>
               <Typography variant="h6" gutterBottom>
@@ -155,7 +155,7 @@ const JobsPage: React.FC = () => {
               </Typography>
               <Grid container spacing={3}>
                 {sortedJobs.map((job, idx) => (
-                  <Box key={job.id} sx={{ width: { xs: '100%', sm: '50%', md: '33.33%', lg: '25%' }, p: 1 }}>
+                  <Grid item xs={12} sm={6} md={4} lg={3} key={job.id}>
                     <JobCard
                       job={job}
                       user={user}
@@ -166,12 +166,12 @@ const JobsPage: React.FC = () => {
                       onPublish={handlePublish}
                       onViewDetails={handleViewDetails}
                     />
-                  </Box>
+                  </Grid>
                 ))}
               </Grid>
             </>
           )}
-        </Box>
+        </Grid>
       </Grid>
     </Container>
   );
