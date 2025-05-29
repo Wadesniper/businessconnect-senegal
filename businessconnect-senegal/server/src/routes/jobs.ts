@@ -1,13 +1,13 @@
 import { Router } from 'express';
 // import { jobController } from '../controllers/jobController';
 // import { authMiddleware } from '../middleware/authMiddleware';
-import { getAllJobs } from '../controllers/jobController';
+import { getAllJobs, getJob } from '../controllers/jobController';
 
 const router = Router();
 
 // Routes publiques
 // router.get('/jobs', (req, res) => jobController.getAllJobs(req, res));
-// router.get('/jobs/:id', (req, res) => jobController.getJob(req, res));
+router.get('/:id', getJob);
 // router.get('/categories', (req, res) => jobController.getCategories(req, res));
 // router.get('/search', (req, res) => jobController.searchJobs(req, res));
 
