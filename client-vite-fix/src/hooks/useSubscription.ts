@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import type { SubscriptionType, PaymentInitiation } from '../types/subscription';
 import { subscriptionService } from '../services/subscriptionService';
+import { endpoints } from '../config/api';
 
 export const useSubscription = () => {
   const { user } = useAuth();
@@ -14,7 +15,7 @@ export const useSubscription = () => {
       throw new Error('Utilisateur non connecté');
     }
 
-    const response = await fetch('/api/subscriptions/initiate', {
+    const response = await fetch(`${endpoints.subscriptions}/initiate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
