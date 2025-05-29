@@ -36,6 +36,9 @@ const JobApplyPage: React.FC = () => {
     return <Container><Typography>Chargement...</Typography></Container>;
   }
 
+  // DEBUG TEMPORAIRE : Affichage brut de l'objet job
+  const debugJob = <pre style={{background:'#f5f5f5',padding:8,borderRadius:8,fontSize:13,color:'#333',marginBottom:12}}>{JSON.stringify(job, null, 2)}</pre>;
+
   const mail = job.email;
   const phone = job.phone;
   const mailSubject = `Candidature au poste de ${job.title}`;
@@ -49,6 +52,7 @@ const JobApplyPage: React.FC = () => {
 
   return (
     <Container maxWidth="sm" sx={{ py: 4 }}>
+      {debugJob}
       <Fade in timeout={600}>
         <Paper elevation={4} sx={{ p: isMobile ? 2 : 4, borderRadius: 4, bgcolor: '#f9fafb' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
@@ -65,58 +69,22 @@ const JobApplyPage: React.FC = () => {
           <Divider sx={{ my: 2 }} />
           <Typography variant="h6" gutterBottom color="primary">Coordonnées de contact</Typography>
           <Stack spacing={2}>
-            {mail && (
-              <Box>
-                <Typography sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <EmailIcon color="action" /> <b>Email :</b> {mail}
-                  <Tooltip title="Copier">
-                    <IconButton onClick={() => handleCopy(mail, 'mail')} size="small"><ContentCopyIcon fontSize="small" /></IconButton>
-                  </Tooltip>
-                </Typography>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  startIcon={<EmailIcon />}
-                  href={`mailto:${mail}?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`}
-                  target="_blank"
-                  sx={{ mt: 1, borderRadius: 2, fontWeight: 600 }}
-                >
-                  Envoyer un mail
-                </Button>
-                <Box mt={1}>
-                  <Typography variant="caption">Objet à copier :</Typography>
-                  <Paper sx={{ p: 1, display: 'inline-block', mr: 1, bgcolor: '#fff' }}>{mailSubject}</Paper>
-                  <Tooltip title="Copier"><IconButton onClick={() => handleCopy(mailSubject, 'subject')} size="small"><ContentCopyIcon fontSize="small" /></IconButton></Tooltip>
-                </Box>
-                <Box mt={1}>
-                  <Typography variant="caption">Corps du mail à copier :</Typography>
-                  <Paper sx={{ p: 1, display: 'inline-block', mr: 1, bgcolor: '#fff', whiteSpace: 'pre-line' }}>{mailBody}</Paper>
-                  <Tooltip title="Copier"><IconButton onClick={() => handleCopy(mailBody, 'body')} size="small"><ContentCopyIcon fontSize="small" /></IconButton></Tooltip>
-                </Box>
-              </Box>
-            )}
-            {phone && (
-              <Box>
-                <Typography sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <PhoneIcon color="action" /> <b>Téléphone :</b> {phone}
-                  <Tooltip title="Copier">
-                    <IconButton onClick={() => handleCopy(phone, 'phone')} size="small"><ContentCopyIcon fontSize="small" /></IconButton>
-                  </Tooltip>
-                </Typography>
-                <Button
-                  variant="contained"
-                  color="success"
-                  fullWidth
-                  startIcon={<PhoneIcon />}
-                  href={`tel:${phone}`}
-                  target="_blank"
-                  sx={{ mt: 1, borderRadius: 2, fontWeight: 600 }}
-                >
-                  Appeler
-                </Button>
-              </Box>
-            )}
+            <Box>
+              <Typography sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <EmailIcon color="action" /> <b>Email :</b> {mail || <span style={{color:'#aaa'}}>Aucun email</span>}
+                <Tooltip title="Copier">
+                  <IconButton onClick={() => handleCopy(mail, 'mail')} size="small"><ContentCopyIcon fontSize="small" /></IconButton>
+                </Tooltip>
+              </Typography>
+            </Box>
+            <Box>
+              <Typography sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <PhoneIcon color="action" /> <b>Téléphone :</b> {phone || <span style={{color:'#aaa'}}>Aucun téléphone</span>}
+                <Tooltip title="Copier">
+                  <IconButton onClick={() => handleCopy(phone, 'phone')} size="small"><ContentCopyIcon fontSize="small" /></IconButton>
+                </Tooltip>
+              </Typography>
+            </Box>
           </Stack>
           {copied && (
             <Fade in={!!copied} timeout={400}>
