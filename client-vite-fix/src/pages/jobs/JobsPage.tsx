@@ -93,12 +93,18 @@ const JobsPage: React.FC = () => {
     navigate(`/jobs/${jobId}`);
   };
 
+  // DEBUG TEMPORAIRE : Affichage du user pour vérifier le rôle
+  console.log('USER CONTEXT', user);
+
   if (isLoading) {
     return <Box sx={{ minHeight: 420, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><CircularProgress size={48} color="primary" /></Box>;
   }
 
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
+      {/* DEBUG TEMPORAIRE */}
+      <pre style={{background:'#f5f5f5',padding:8,borderRadius:8,fontSize:13,color:'#333',marginBottom:12}}>{JSON.stringify(user, null, 2)}</pre>
+      {/* FIN DEBUG */}
       <JobAdviceBanner />
       <RedirectBanners />
       <Grid container spacing={4}>

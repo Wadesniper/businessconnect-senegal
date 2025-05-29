@@ -55,11 +55,7 @@ const JobDetailsPage: React.FC = () => {
   };
 
   const handlePostuler = () => {
-    if (!hasActiveSubscription) {
-      navigate('/subscription');
-    } else {
-      navigate(`/jobs/${id}/postuler`);
-    }
+    navigate(`/jobs/${id}/postuler`);
   };
 
   return (

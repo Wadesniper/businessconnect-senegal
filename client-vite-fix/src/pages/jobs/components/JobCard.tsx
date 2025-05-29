@@ -81,7 +81,23 @@ const JobCard: React.FC<JobCardProps> = ({ job, user, isSubscribed, onPostuler, 
         Consulter
       </button>
       {/* BOUTONS ADMIN/EMPLOYEUR */}
-      {(isAdmin || (isEmployer && isOwner)) && (
+      {isAdmin && (
+        <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+          <button
+            style={{ background: '#fff', color: '#52c41a', border: '1px solid #52c41a', borderRadius: 8, padding: '8px 12px', fontWeight: 600, fontSize: 15, cursor: 'pointer', flex: 1 }}
+            onClick={onEdit ? () => onEdit(job.id) : undefined}
+          >
+            Modifier
+          </button>
+          <button
+            style={{ background: '#fff', color: '#ff4d4f', border: '1px solid #ff4d4f', borderRadius: 8, padding: '8px 12px', fontWeight: 600, fontSize: 15, cursor: 'pointer', flex: 1 }}
+            onClick={onDelete ? () => onDelete(job.id) : undefined}
+          >
+            Supprimer
+          </button>
+        </div>
+      )}
+      {isEmployer && isOwner && !isAdmin && (
         <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
           <button
             style={{ background: '#fff', color: '#52c41a', border: '1px solid #52c41a', borderRadius: 8, padding: '8px 12px', fontWeight: 600, fontSize: 15, cursor: 'pointer', flex: 1 }}
