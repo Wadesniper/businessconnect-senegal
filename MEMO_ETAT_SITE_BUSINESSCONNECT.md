@@ -1516,3 +1516,13 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Paiement 100% conforme, sécurisé, et traçable pour tous les utilisateurs.
 
 ---
+
+## [2024-06-XX] Correction critique AuthProvider : déplacement dans main.tsx, suppression du double contexte, résolution page blanche
+
+- Déplacement du provider d'authentification `<AuthProvider>` dans `main.tsx` pour englober tout le site dès le point d'entrée.
+- Suppression du `<AuthProvider>` dans `App.tsx` (plus de double contexte).
+- Résolution de l'erreur « useAuth must be used within an AuthProvider » et de la page blanche sur tout le site.
+- Garantie que toutes les pages et composants accèdent toujours au contexte d'authentification, sans délai ni bug.
+- Aucun code minimaliste, aucune perte de fonctionnalité, site complet prêt pour la prod.
+
+---

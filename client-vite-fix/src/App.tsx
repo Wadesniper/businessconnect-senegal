@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ProLayout } from '@ant-design/pro-layout';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useSubscription } from './hooks/useSubscription';
 // Lazy load des pages principales
@@ -61,100 +60,98 @@ const App: React.FC = () => {
   const { hasActiveSubscription } = useSubscription();
   return (
     <ErrorBoundary>
-      <AuthProvider>
-        <Router>
-          <ProLayout
-            layout="top"
-            navTheme="light"
-            headerRender={() => <Navbar />}
-            footerRender={() => <Footer />}
-            contentWidth="Fluid"
-            style={{ width: '100vw', maxWidth: '100vw' }}
-          >
-            <Suspense fallback={<></>}>
-              <Routes>
-                {/* Pages publiques */}
-                <Route path="/" element={<Home />} />
-                <Route path="/jobs" element={<JobsPage />} />
-                <Route path="/jobs/:id" element={<JobDetailsPage />} />
-                <Route path="/jobs/:id/postuler" element={<JobApplyPage />} />
-                <Route path="/marketplace" element={<MarketplacePage />} />
-                <Route path="/marketplace/:id" element={<MarketplaceItemPage />} />
-                <Route path="/forum" element={<ForumPage />} />
-                <Route path="/forum/:id" element={<DiscussionDetail />} />
-                <Route path="/formations" element={<FormationsPage />} />
-                <Route path="/contact" element={<ContactPage />} />
-                <Route path="/cv-generator" element={<CVGenerator isSubscribed={hasActiveSubscription} />} />
-                <Route path="/careers" element={<CareersPage />} />
+      <Router>
+        <ProLayout
+          layout="top"
+          navTheme="light"
+          headerRender={() => <Navbar />}
+          footerRender={() => <Footer />}
+          contentWidth="Fluid"
+          style={{ width: '100vw', maxWidth: '100vw' }}
+        >
+          <Suspense fallback={<></>}>
+            <Routes>
+              {/* Pages publiques */}
+              <Route path="/" element={<Home />} />
+              <Route path="/jobs" element={<JobsPage />} />
+              <Route path="/jobs/:id" element={<JobDetailsPage />} />
+              <Route path="/jobs/:id/postuler" element={<JobApplyPage />} />
+              <Route path="/marketplace" element={<MarketplacePage />} />
+              <Route path="/marketplace/:id" element={<MarketplaceItemPage />} />
+              <Route path="/forum" element={<ForumPage />} />
+              <Route path="/forum/:id" element={<DiscussionDetail />} />
+              <Route path="/formations" element={<FormationsPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/cv-generator" element={<CVGenerator isSubscribed={hasActiveSubscription} />} />
+              <Route path="/careers" element={<CareersPage />} />
 
-                {/* Pages légales */}
-                <Route path="/legal/mentions-legales" element={<MentionsLegales />} />
-                <Route path="/legal/cgv" element={<CGV />} />
-                <Route path="/legal/cgu" element={<CGU />} />
-                <Route path="/legal/privacy" element={<Privacy />} />
-                <Route path="/legal/cookies" element={<Cookies />} />
+              {/* Pages légales */}
+              <Route path="/legal/mentions-legales" element={<MentionsLegales />} />
+              <Route path="/legal/cgv" element={<CGV />} />
+              <Route path="/legal/cgu" element={<CGU />} />
+              <Route path="/legal/privacy" element={<Privacy />} />
+              <Route path="/legal/cookies" element={<Cookies />} />
 
-                {/* Routes d'authentification */}
-                <Route path="/login" element={<AuthPage />} />
-                <Route path="/register" element={<AuthPage />} />
+              {/* Routes d'authentification */}
+              <Route path="/login" element={<AuthPage />} />
+              <Route path="/register" element={<AuthPage />} />
 
-                {/* Routes protégées */}
-                <Route
-                  path="/profile"
-                  element={
-                    <ProtectedRoute element={<ProfilePage />} requiresSubscription />
-                  }
-                />
-                <Route
-                  path="/dashboard"
-                  element={
-                    <ProtectedRoute element={<Dashboard />} requiresSubscription />
-                  }
-                />
-                <Route
-                  path="/cv-generator/create"
-                  element={
-                    <ProtectedRoute element={<CVGenerator />} requiresSubscription />
-                  }
-                />
-                <Route
-                  path="/marketplace/create"
-                  element={
-                    <ProtectedRoute element={<MarketplacePage />} requiresSubscription />
-                  }
-                />
-                <Route
-                  path="/subscription"
-                  element={
-                    <SubscriptionPage />
-                  }
-                />
-                <Route
-                  path="/payment/success"
-                  element={
-                    <ProtectedRoute element={<PaymentSuccess />} requiresSubscription />
-                  }
-                />
-                <Route
-                  path="/payment/cancel"
-                  element={
-                    <ProtectedRoute element={<PaymentCancel />} requiresSubscription />
-                  }
-                />
+              {/* Routes protégées */}
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute element={<ProfilePage />} requiresSubscription />
+                }
+              />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute element={<Dashboard />} requiresSubscription />
+                }
+              />
+              <Route
+                path="/cv-generator/create"
+                element={
+                  <ProtectedRoute element={<CVGenerator />} requiresSubscription />
+                }
+              />
+              <Route
+                path="/marketplace/create"
+                element={
+                  <ProtectedRoute element={<MarketplacePage />} requiresSubscription />
+                }
+              />
+              <Route
+                path="/subscription"
+                element={
+                  <SubscriptionPage />
+                }
+              />
+              <Route
+                path="/payment/success"
+                element={
+                  <ProtectedRoute element={<PaymentSuccess />} requiresSubscription />
+                }
+              />
+              <Route
+                path="/payment/cancel"
+                element={
+                  <ProtectedRoute element={<PaymentCancel />} requiresSubscription />
+                }
+              />
 
-                {/* Page 404 */}
-                <Route path="*" element={<NotFoundPage />} />
+              {/* Page 404 */}
+              <Route path="*" element={<NotFoundPage />} />
 
-                {/* New route */}
-                <Route path="/help/FAQ" element={<FAQ />} />
+              {/* New route */}
+              <Route path="/help/FAQ" element={<FAQ />} />
 
-                {/* New route */}
-                <Route path="/cv-preview/:templateId" element={<CVPreviewGallery />} />
-              </Routes>
-            </Suspense>
-          </ProLayout>
-        </Router>
-      </AuthProvider>
+              {/* New route */}
+              <Route path="/cv-preview/:templateId" element={<CVPreviewGallery />} />
+            </Routes>
+          </Suspense>
+        </ProLayout>
+      </Router>
     </ErrorBoundary>
   );
 };

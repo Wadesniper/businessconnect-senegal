@@ -6,6 +6,7 @@ import { GA_ID } from './config/monitoring';
 import 'antd/dist/reset.css';
 import { ConfigProvider } from 'antd';
 import frFR from 'antd/locale/fr_FR';
+import { AuthProvider } from './context/AuthContext';
 
 // Google Analytics (gtag.js)
 declare global {
@@ -38,9 +39,11 @@ const root = ReactDOM.createRoot(
 console.log('Avant le rendu ReactDOM');
 root.render(
   <React.StrictMode>
-    <ConfigProvider locale={frFR}>
-      <App />
-    </ConfigProvider>
+    <AuthProvider>
+      <ConfigProvider locale={frFR}>
+        <App />
+      </ConfigProvider>
+    </AuthProvider>
   </React.StrictMode>
 );
 console.log('Après le rendu ReactDOM');
