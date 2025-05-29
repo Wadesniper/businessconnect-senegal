@@ -36,9 +36,6 @@ const JobApplyPage: React.FC = () => {
     return <Container><Typography>Chargement...</Typography></Container>;
   }
 
-  // DEBUG TEMPORAIRE : Affichage brut de l'objet job
-  const debugJob = <pre style={{background:'#f5f5f5',padding:8,borderRadius:8,fontSize:13,color:'#333',marginBottom:12}}>{JSON.stringify(job, null, 2)}</pre>;
-
   // Mapping robuste : fallback sur contactEmail/contactPhone
   const mail = job.email || job.contactEmail;
   const phone = job.phone || job.contactPhone;
@@ -53,7 +50,6 @@ const JobApplyPage: React.FC = () => {
 
   return (
     <Container maxWidth="sm" sx={{ py: 4 }}>
-      {debugJob}
       <Fade in timeout={600}>
         <Paper elevation={4} sx={{ p: isMobile ? 2 : 4, borderRadius: 4, bgcolor: '#f9fafb' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>

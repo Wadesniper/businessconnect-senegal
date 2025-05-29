@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { authService } from '../services/authService';
 import type { User } from '../types/user';
 import { subscriptionData } from '../data/subscriptionData';
+import { useLocation } from 'react-router-dom';
 
 interface AuthContextType {
   user: (User & { subscription?: { status?: string; expireAt?: string; type?: 'etudiant' | 'annonceur' | 'employeur' } }) | null;
@@ -21,7 +22,24 @@ const AuthContext = createContext<AuthContextType>({
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const location = useLocation();
 
+  // Synchronisation avec localStorage à chaque navigation ou changement de storage
+  useEffect(() => {
+    const syncUser = () => {
+      try {
+        const u = localStorage.getItem('user');
+        setUser(u ? JSON.parse(u) : null);
+      } catch {
+        setUser(null);
+      }
+    };
+    syncUser();
+    window.addEventListener('storage', syncUser);
+    return () => window.removeEventListener('storage', syncUser);
+  }, [location]);
+
+  // Rechargement initial depuis l'API
   useEffect(() => {
     const fetchUser = async () => {
       setLoading(true);
@@ -58,6 +76,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = async () => {
     await authService.logout();
     setUser(null);
+    localStorage.removeItem('user');
   };
 
   return (
