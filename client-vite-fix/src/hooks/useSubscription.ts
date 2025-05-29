@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from './useAuth';
+import { useAuth } from '../context/AuthContext';
 import type { SubscriptionType, PaymentInitiation } from '../types/subscription';
 import { subscriptionService } from '../services/subscriptionService';
 

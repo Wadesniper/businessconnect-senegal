@@ -26,7 +26,7 @@ import { marketplaceService } from '../services/marketplaceService';
 import type { MarketplaceItem } from '../services/marketplaceService';
 import { useSpring, animated } from 'react-spring';
 import JobCard from './jobs/components/JobCard';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../context/AuthContext';
 import { useSubscription } from '../hooks/useSubscription';
 import { hasPremiumAccess } from '../utils/premiumAccess';
 

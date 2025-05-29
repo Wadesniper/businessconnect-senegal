@@ -3,7 +3,7 @@ import { Row, Col, Card, Typography, Button, Space, Tag, Input, Tabs, Modal, Sta
 import { SearchOutlined, ArrowRightOutlined, EnvironmentOutlined, BookOutlined, TrophyOutlined, LockOutlined } from '@ant-design/icons';
 import type { Secteur, FicheMetier, Competence } from './types';
 import { formatNumberToCurrency } from '../../utils/format';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useSubscription } from '../../hooks/useSubscription';
 import { hasPremiumAccess } from '../../utils/premiumAccess';

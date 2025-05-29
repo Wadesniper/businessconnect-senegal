@@ -3,8 +3,10 @@ import { Card, Row, Col, Typography, Button, Space, Tag } from 'antd';
 import { UserOutlined, ShopOutlined, TeamOutlined } from '@ant-design/icons';
 import './SubscriptionPage.css';
 import axios from 'axios';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useSubscription } from '../../hooks/useSubscription';
+import type { SubscriptionType } from '../../types/subscription';
 
 const { Title, Paragraph } = Typography;
 
@@ -60,6 +62,8 @@ const offers = [
 const SubscriptionPage: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { initiateSubscription } = useSubscription();
+
   const handleSubscribe = async (offerKey: string) => {
     if (!user) {
       navigate('/login', { state: { from: '/subscription' } });
@@ -68,22 +72,9 @@ const SubscriptionPage: React.FC = () => {
     try {
       let type = offerKey;
       if (type === 'student') type = 'etudiant';
-      const customer_name = user.firstName || '';
-      const customer_surname = user.lastName || '';
-      const customer_email = user.email || '';
-      const customer_phone_number = user.phoneNumber || '';
-      const res = await axios.post<{ success: boolean, data?: { payment_url?: string } }>(
-        '/api/payment/subscriptions',
-        {
-          type,
-          customer_name,
-          customer_surname,
-          customer_email,
-          customer_phone_number
-        }
-      );
-      if (res.data && res.data.success && res.data.data && res.data.data.payment_url) {
-        window.location.href = res.data.data.payment_url;
+      const res = await initiateSubscription(type as SubscriptionType);
+      if (res && res.paymentUrl) {
+        window.location.href = res.paymentUrl;
       } else {
         alert("Erreur lors de la génération du lien de paiement.");
       }

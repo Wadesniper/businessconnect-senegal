@@ -28,7 +28,7 @@ import { marketplaceService } from '../../services/marketplaceService';
 import type { MarketplaceItem } from '../../services/marketplaceService';
 import { authService } from '../../services/authService';
 import { useSubscription } from '../../hooks/useSubscription';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../context/AuthContext';
 
 const categories = [
   'Informatique',

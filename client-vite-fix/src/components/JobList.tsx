@@ -6,7 +6,7 @@ import { authService } from '../services/authService';
 import type { Job } from '../types/job';
 import { useNavigate } from 'react-router-dom';
 import { useSubscription } from '../hooks/useSubscription';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../context/AuthContext';
 
 const { Search } = Input;
 const { Option } = Select;

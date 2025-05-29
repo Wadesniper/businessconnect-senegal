@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Layout, Card, Row, Col, Input, Button, Empty } from 'antd';
 import { SearchOutlined, ArrowRightOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../context/AuthContext';
 import { useSubscription } from '../../hooks/useSubscription';
 import { formationsData } from '../../data/formationsData';
 import { hasPremiumAccess } from '../../utils/premiumAccess';

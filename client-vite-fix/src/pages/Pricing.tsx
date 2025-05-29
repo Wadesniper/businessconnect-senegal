@@ -11,9 +11,9 @@ import {
 } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
-import { paymentService } from '../services/paymentService';
-import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
+import { useSubscription } from '../hooks/useSubscription';
+import type { SubscriptionType } from '../types/subscription';
 
 const { Title, Paragraph } = Typography;
 
@@ -117,24 +117,19 @@ const planTypeMap: Record<string, string> = {
 
 const Pricing: React.FC = () => {
   const navigate = useNavigate();
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth();
+  const { initiateSubscription } = useSubscription();
 
   const handleSubscribe = async (planTitle: string) => {
-    if (!isAuthenticated) {
-      navigate('/login', { state: { from: '/pricing' } });
+    if (!user) {
+      navigate('/login');
       return;
     }
     const planType = planTypeMap[planTitle.toLowerCase()] || 'etudiant';
     try {
-      const res = await axios.post('/api/payment/init', {
-        type: planType,
-        customer_name: user?.firstName || '',
-        customer_surname: user?.lastName || '',
-        customer_email: user?.email || '',
-        customer_phone_number: user?.phoneNumber || ''
-      });
-      if (res.data && res.data.data && res.data.data.payment_url) {
-        window.location.href = res.data.data.payment_url;
+      const res = await initiateSubscription(planType as SubscriptionType);
+      if (res && res.paymentUrl) {
+        window.location.href = res.paymentUrl;
       } else {
         alert("Erreur lors de la génération du lien de paiement.");
       }

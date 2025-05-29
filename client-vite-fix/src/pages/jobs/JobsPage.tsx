@@ -4,7 +4,7 @@ import JobAdviceBanner from './components/JobAdviceBanner';
 import RedirectBanners from './components/RedirectBanners';
 import JobFilters from './components/JobFilters';
 import JobCard from './components/JobCard';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../context/AuthContext';
 import { useSubscription } from '../../hooks/useSubscription';
 import { hasPremiumAccess } from '../../utils/premiumAccess';
 import type { JobType } from '../../types/job';
@@ -93,22 +93,12 @@ const JobsPage: React.FC = () => {
     navigate(`/jobs/${jobId}`);
   };
 
-  // DEBUG : Affichage du user et du rôle dans la console
-  console.log('user dans JobsPage :', user);
-  console.log('user?.role dans JobsPage :', user?.role);
-
   if (isLoading) {
     return <Box sx={{ minHeight: 420, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><CircularProgress size={48} color="primary" /></Box>;
   }
 
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
-      {/* DEBUG VISUEL TEMPORAIRE */}
-      <Box sx={{ mb: 2, p: 2, bgcolor: '#fffbe6', border: '1px solid #ffe58f', borderRadius: 2, color: '#ad8b00', fontSize: 15 }}>
-        <b>DEBUG user :</b> {JSON.stringify(user)}<br/>
-        <b>user?.role :</b> {user?.role || 'Aucun'}
-      </Box>
-      {/* FIN DEBUG VISUEL */}
       {(user?.role === 'admin' || user?.role === 'employeur') && (
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3 }}>
           <button
@@ -119,13 +109,10 @@ const JobsPage: React.FC = () => {
           </button>
         </Box>
       )}
-      {/* DEBUG TEMPORAIRE */}
-      {/* <pre style={{background:'#f5f5f5',padding:8,borderRadius:8,fontSize:13,color:'#333',marginBottom:12}}>{debugUser}</pre> */}
-      {/* FIN DEBUG */}
       <JobAdviceBanner />
       <RedirectBanners />
       <Grid container spacing={4}>
-        <Grid item xs={12} md={3}>
+        <Box sx={{ width: { xs: '100%', md: '25%' }, pr: { md: 2 } }}>
           <JobFilters
             sectors={sectors}
             selectedSector={selectedSector}
@@ -141,8 +128,8 @@ const JobsPage: React.FC = () => {
             workLocation={workLocation}
             onWorkLocationChange={setWorkLocation}
           />
-        </Grid>
-        <Grid item xs={12} md={9}>
+        </Box>
+        <Box sx={{ width: { xs: '100%', md: '75%' } }}>
           {error ? (
             <Box sx={{ textAlign: 'center', py: 4 }}>
               <Typography variant="h6" gutterBottom>
@@ -168,7 +155,7 @@ const JobsPage: React.FC = () => {
               </Typography>
               <Grid container spacing={3}>
                 {sortedJobs.map((job, idx) => (
-                  <Grid item xs={12} sm={6} md={4} lg={3} key={job.id}>
+                  <Box key={job.id} sx={{ width: { xs: '100%', sm: '50%', md: '33.33%', lg: '25%' }, p: 1 }}>
                     <JobCard
                       job={job}
                       user={user}
@@ -179,12 +166,12 @@ const JobsPage: React.FC = () => {
                       onPublish={handlePublish}
                       onViewDetails={handleViewDetails}
                     />
-                  </Grid>
+                  </Box>
                 ))}
               </Grid>
             </>
           )}
-        </Grid>
+        </Box>
       </Grid>
     </Container>
   );

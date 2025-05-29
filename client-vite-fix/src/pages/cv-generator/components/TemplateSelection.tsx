@@ -6,7 +6,7 @@ import { CV_TEMPLATES } from '../components/data/templates';
 import { useNavigate } from 'react-router-dom';
 import { DEMO_PROFILES } from '../CVPreviewGallery';
 import styles from './TemplateSelection.module.css';
-import { useAuth } from '../../../hooks/useAuth';
+import { useAuth } from '../../../context/AuthContext';
 import { hasPremiumAccess } from '../../../utils/premiumAccess';
 import CVPreview from './CVPreview';
 import { defaultCustomization } from '../context/CVContext';

@@ -7,7 +7,7 @@ import { CVProvider, useCV } from './context/CVContext';
 import { exportCV } from './services/documentExport';
 import { useSubscription } from '../../hooks/useSubscription';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../context/AuthContext';
 import { hasPremiumAccess } from '../../utils/premiumAccess';
 import type { Template } from '../../types/cv';
 import CustomizationForm from './components/CustomizationForm';

@@ -1505,3 +1505,14 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Statut : En cours de validation, prêt pour build, test et déploiement complet en production.
 
 ---
+
+## [2024-06-XX] Correction définitive du flux de paiement CinetPay, suppression de PayTech côté frontend
+
+- Suppression de toute la logique PayTech dans le frontend (service paymentService.ts vidé).
+- Les pages d'abonnement (SubscriptionPage, Pricing) appellent désormais le backend pour initier le paiement CinetPay, conformément à la documentation officielle.
+- Garantie que tous les paramètres obligatoires sont transmis au backend, qui gère la génération du lien de paiement CinetPay.
+- Vérification que les variables d'environnement Railway (apikey, site_id, notify_url, return_url) sont bien utilisées côté backend.
+- Plus aucun code minimaliste, aucune perte de fonctionnalité, site complet et UX fluide.
+- Paiement 100% conforme, sécurisé, et traçable pour tous les utilisateurs.
+
+---

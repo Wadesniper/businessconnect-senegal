@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Result, Button, Spin } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../context/AuthContext';
 import { subscriptionService } from '../../services/subscriptionService';
 import { paymentService } from '../../services/paymentService';
 

@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Card, Typography, Row, Col, Button, Empty, List, Modal } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, DownloadOutlined, ShareAltOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { Template } from '../../types/cv';
+import type { Template } from '../../types/cv';
 import { CV_TEMPLATES } from './components/data/templates';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../context/AuthContext';
 import { useSubscription } from '../../hooks/useSubscription';
 
 const { Title } = Typography;
@@ -26,7 +26,7 @@ const CVGeneratorPage: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user && user.subscription?.type !== 'etudiant') {
+    if (user && user.subscription && typeof user.subscription === 'object' && 'type' in user.subscription && user.subscription.type !== 'etudiant') {
       navigate('/subscription');
     }
   }, [user, navigate]);
