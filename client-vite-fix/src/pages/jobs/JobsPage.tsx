@@ -93,6 +93,10 @@ const JobsPage: React.FC = () => {
     navigate(`/jobs/${jobId}`);
   };
 
+  // DEBUG : Affichage du user et du rôle dans la console
+  console.log('user dans JobsPage :', user);
+  console.log('user?.role dans JobsPage :', user?.role);
+
   if (isLoading) {
     return <Box sx={{ minHeight: 420, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><CircularProgress size={48} color="primary" /></Box>;
   }
