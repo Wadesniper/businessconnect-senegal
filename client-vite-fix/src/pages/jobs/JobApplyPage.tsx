@@ -8,6 +8,7 @@ import BusinessIcon from '@mui/icons-material/Business';
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import { useSubscription } from '../../hooks/useSubscription';
+import { useAuth } from '../../context/AuthContext';
 
 const JobApplyPage: React.FC = () => {
   const { id } = useParams();
@@ -17,6 +18,7 @@ const JobApplyPage: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { hasActiveSubscription, loading: loadingSub } = useSubscription();
+  const { user } = useAuth();
 
   useEffect(() => {
     if (id) {
@@ -25,10 +27,10 @@ const JobApplyPage: React.FC = () => {
   }, [id]);
 
   useEffect(() => {
-    if (!loadingSub && !hasActiveSubscription) {
+    if (!loadingSub && !hasActiveSubscription && user?.role !== 'admin' && user?.role !== 'employeur') {
       navigate('/subscription');
     }
-  }, [hasActiveSubscription, loadingSub, navigate]);
+  }, [hasActiveSubscription, loadingSub, navigate, user]);
 
   if (!job) {
     return <Container><Typography>Chargement...</Typography></Container>;

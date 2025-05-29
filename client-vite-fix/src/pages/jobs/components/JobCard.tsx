@@ -50,6 +50,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, user, isSubscribed, onPostuler, 
       <div style={{ color: '#333', fontSize: 15, margin: '8px 0', flex: 1 }}>
         {job.description?.length > 120 ? job.description.slice(0, 120) + '…' : job.description}
       </div>
+      {/* BOUTON CONSULTER */}
       <button
         style={{
           background: isSubscribed ? '#1890ff' : '#f5f5f5',
@@ -74,12 +75,12 @@ const JobCard: React.FC<JobCardProps> = ({ job, user, isSubscribed, onPostuler, 
             window.location.href = '/subscription';
           }
         }}
-        disabled={false}
         aria-label={isSubscribed ? 'Consulter cette offre' : 'Abonnement requis pour consulter'}
       >
         {!isSubscribed && <LockIcon style={{ fontSize: 18, color: '#aaa' }} />}
         Consulter
       </button>
+      {/* BOUTONS ADMIN/EMPLOYEUR */}
       {(isAdmin || (isEmployer && isOwner)) && (
         <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
           <button
@@ -96,6 +97,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, user, isSubscribed, onPostuler, 
           </button>
         </div>
       )}
+      {/* BOUTON PUBLIER : toujours visible pour admin et employeur */}
       {(isAdmin || isEmployer) && (
         <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
           <button

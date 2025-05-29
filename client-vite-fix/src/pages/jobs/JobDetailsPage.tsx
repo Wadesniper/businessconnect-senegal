@@ -33,10 +33,10 @@ const JobDetailsPage: React.FC = () => {
   }, [id]);
 
   useEffect(() => {
-    if (!loadingSub && !hasActiveSubscription) {
+    if (!loadingSub && !hasActiveSubscription && user?.role !== 'admin' && user?.role !== 'employeur') {
       navigate('/subscription');
     }
-  }, [hasActiveSubscription, loadingSub, navigate]);
+  }, [hasActiveSubscription, loadingSub, navigate, user]);
 
   if (!job) {
     return <Container><Typography>Chargement...</Typography></Container>;
