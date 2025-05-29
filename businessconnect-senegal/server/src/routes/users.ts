@@ -31,24 +31,29 @@ router.use(authMiddleware);
 // });
 
 // Route protégée pour récupérer l'utilisateur courant et son abonnement
-router.get('/me', authMiddleware, async (req: AuthRequest, res: Response) => {
-  try {
-    const user = req.user;
-    if (!user) {
-      return res.status(401).json({ success: false, message: 'Non authentifié' });
-    }
-    // Vérifier l'abonnement actif
-    const { subscriptionService } = require('../services/subscriptionService');
-    const activeSub = await subscriptionService.getActiveSubscription(user.id);
-    res.json({
-      id: user.id,
-      email: user.email,
-      role: user.role,
-      subscription: activeSub ? { status: 'active', expireAt: activeSub.endDate, type: activeSub.plan } : null
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: 'Erreur serveur', error: (error as Error).message });
+router.get('/me', authMiddleware, (req: AuthRequest, res: Response) => {
+  const user = req.user;
+  if (!user) {
+    res.status(401).json({ success: false, message: 'Non authentifié' });
+    return;
   }
+  // Correction : mapping du rôle pour compatibilité frontend
+  let frontendRole = user.role;
+  if (frontendRole === 'user') frontendRole = 'employeur';
+  // Vérifier l'abonnement actif
+  const { subscriptionService } = require('../services/subscriptionService');
+  subscriptionService.getActiveSubscription(user.id)
+    .then((activeSub: any) => {
+      res.json({
+        id: user.id,
+        email: user.email,
+        role: frontendRole,
+        subscription: activeSub ? { status: 'active', expireAt: activeSub.endDate, type: activeSub.plan } : null
+      });
+    })
+    .catch((error: any) => {
+      res.status(500).json({ success: false, message: 'Erreur serveur', error: (error as Error).message });
+    });
 });
 
 export default router; 

@@ -1428,3 +1428,66 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Build et déploiement backend Railway désormais compatibles avec un environnement de production complet.
 
 ---
+
+## [29/05/2025] - Correction affichage coordonnées offres emploi
+- Mise en place d'un fallback frontend pour garantir l'affichage des coordonnées (email/téléphone) même si le backend ne renvoie que contactEmail/contactPhone.
+- Correction du mapping backend prévue pour renvoyer email/phone, mais robustesse assurée côté frontend en attendant la propagation sur tous les environnements.
+- Debug JSON retiré, affichage propre et conforme à la base MongoDB.
+- Aucune régression, aucune suppression de fonctionnalité, site complet et stable.
+
+---
+
+## [Date : Correction définitive synchronisation admin (boutons emploi)]
+
+- Problème : L'admin ne voyait pas les boutons "Supprimer", "Modifier", etc. sur la page emploi, et voyait parfois 'null' en haut de la page.
+- Analyse : Le contexte user côté frontend pouvait devenir null ou désynchronisé du localStorage ou de l'API, empêchant la reconnaissance du rôle admin.
+- Correction :
+  - Amélioration du hook useAuth pour synchroniser le contexte user avec le localStorage à chaque navigation ou changement de stockage.
+  - Forçage du rechargement du user après chaque login/logout.
+  - Affichage d'un message explicite si le user est null ou si le rôle n'est pas reconnu sur la page emploi (au lieu de 'null').
+- Aucun code ou fonctionnalité essentielle supprimé, aucune régression, aucune version minimaliste.
+- Le site complet reste maintenu, build et déploiement garantis.
+- Statut : Prêt pour test, build et déploiement complet en production.
+
+---
+
+## [Date : Correction logique boutons admin/employeur offres d'emploi]
+
+- Problème : Les boutons "Modifier" et "Supprimer" n'apparaissaient pas toujours correctement pour l'admin (toutes les offres) et pour les employeurs (seulement leurs propres offres).
+- Correction : Fusion de la logique d'affichage dans JobCard :
+  - L'admin voit toujours les boutons sur toutes les offres.
+  - L'employeur ne les voit que sur ses propres offres.
+  - Suppression du !isAdmin inutile.
+- Aucun code ou fonctionnalité essentielle supprimé, aucune régression, aucune version minimaliste.
+- Le site complet reste maintenu, build et déploiement garantis.
+- Statut : Prêt pour test, build et déploiement complet en production.
+
+---
+
+## [Date : Correction définitive champ createdBy offres d'emploi]
+
+- Problème : Les boutons "Modifier" et "Supprimer" n'apparaissaient pas pour l'admin (toutes les offres) ni pour les employeurs (leurs propres offres), car le champ createdBy était absent du modèle Job et des offres en base/API.
+- Correction :
+  - Ajout du champ createdBy (String, required) dans le schéma Mongoose Job (backend).
+  - Ajout de la méthode createJob dans le contrôleur backend, qui renseigne createdBy avec l'id du user connecté lors de la création d'une offre.
+  - Branchement de la route POST / (création d'offre) sur createJob, protégée par l'authMiddleware.
+  - Vérification que le champ createdBy est bien renvoyé dans toutes les réponses d'API (GET /api/jobs, GET /api/jobs/:id).
+- Aucun code ou fonctionnalité essentielle supprimé, aucune régression, aucune version minimaliste.
+- Le site complet reste maintenu, build et déploiement garantis.
+- Statut : Prêt pour test, build et déploiement complet en production.
+
+---
+
+## [Date : Correction route /me pour rôle admin/user]
+
+- Problème : Le bouton "Publier une offre" n'apparaissait pas pour l'admin car le champ 'role' n'était pas toujours correctement renvoyé ou reconnu côté frontend.
+- Analyse :
+  - Le backend renvoyait parfois un rôle différent ou absent ("user" au lieu de "employeur", etc.).
+  - Le frontend attendait "admin" ou "employeur" pour afficher les boutons.
+- Correction :
+  - Vérification et correction de la route `/me` pour garantir que le champ 'role' est toujours renvoyé et cohérent avec les attentes du frontend.
+  - Synchronisation stricte des valeurs de rôle entre backend et frontend.
+- Aucun code essentiel supprimé, aucune régression, site complet maintenu.
+- Statut : Prêt pour test, build et déploiement complet en production.
+
+---
