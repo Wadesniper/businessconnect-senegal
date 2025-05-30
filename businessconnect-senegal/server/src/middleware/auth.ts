@@ -9,47 +9,61 @@ export interface AuthRequest extends Request {
 
 export const authenticate = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    // Exclure les routes d'authentification
+    // Routes publiques qui ne nécessitent pas d'authentification
     if (req.path.startsWith('/api/auth/')) {
-      next();
-      return;
+      return next();
     }
 
-    const token = req.headers.authorization?.split(' ')[1];
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(401).json({ 
+        success: false,
+        message: 'Token d\'authentification manquant'
+      });
+    }
 
+    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
     if (!token) {
-      res.status(401).json({ error: 'Token d\'authentification manquant' });
-      return;
+      return res.status(401).json({ 
+        success: false,
+        message: 'Token d\'authentification invalide'
+      });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default_secret') as UserPayload;
     req.user = decoded;
-    next();
-    return;
+    return next();
   } catch (error) {
     logger.error('Erreur d\'authentification:', error);
-    res.status(401).json({ error: 'Token invalide ou expiré' });
-    return;
+    return res.status(401).json({ 
+      success: false,
+      message: 'Token invalide ou expiré'
+    });
   }
 };
 
 export const isAdmin = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     if (!req.user) {
-      res.status(401).json({ error: 'Utilisateur non authentifié' });
-      return;
+      return res.status(401).json({ 
+        success: false,
+        message: 'Utilisateur non authentifié'
+      });
     }
 
     if (req.user.role !== 'admin') {
-      res.status(403).json({ error: 'Accès non autorisé' });
-      return;
+      return res.status(403).json({ 
+        success: false,
+        message: 'Accès non autorisé. Droits administrateur requis.'
+      });
     }
 
-    next();
-    return;
+    return next();
   } catch (error) {
     logger.error('Erreur de vérification admin:', error);
-    res.status(500).json({ error: 'Erreur interne du serveur' });
-    return;
+    return res.status(500).json({ 
+      success: false,
+      message: 'Erreur interne du serveur'
+    });
   }
 }; 

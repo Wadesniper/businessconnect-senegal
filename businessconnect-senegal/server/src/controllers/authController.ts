@@ -157,7 +157,13 @@ export class AuthController {
       const jwtExpire: any = process.env.JWT_EXPIRE || process.env.JWT_EXPIRES_IN || '30d';
       const options: jwt.SignOptions = { expiresIn: jwtExpire };
       const token = jwt.sign(
-        { id: user._id },
+        { 
+          id: user._id,
+          role: user.role,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email
+        },
         jwtSecret,
         options
       );
