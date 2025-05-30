@@ -1588,3 +1588,50 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Statut : Prêt pour validation finale et déploiement en production.
 
 ---
+
+## [2024-03-21] Correction validation numéros de téléphone
+
+### Problème
+- Incohérence dans la validation des numéros de téléphone entre le frontend et le backend
+- Problèmes avec les espaces et les formats internationaux
+- Messages d'erreur peu clairs
+
+### Corrections
+1. Frontend (RegisterForm.tsx et LoginForm.tsx) :
+   - Validation en temps réel avec onChange au lieu de onBlur
+   - Acceptation des espaces et tirets dans le format
+   - Pattern regex unifié : `^(\\+[0-9]{1,4}[\\s-]?[0-9]{8,}|7[0-9]{8})$`
+   - Messages d'erreur plus clairs et cohérents
+
+2. Backend (User.ts et authController.ts) :
+   - Validation Zod et Mongoose unifiée
+   - Meilleure gestion des espaces et caractères spéciaux
+   - Normalisation cohérente des numéros
+   - Support des formats internationaux et sénégalais
+
+### Impact
+- Aucun code ou fonctionnalité essentielle supprimé
+- Pas de perturbation du backend ou du frontend
+- Amélioration de l'expérience utilisateur
+- Maintien de la sécurité et de la validation des données
+
+---
+
+## [2024-03-21] Nettoyage structure du projet
+
+### Problème
+- Présence d'un dossier dupliqué `businessconnect-senegal-main` contenant une version obsolète du code
+- Risque de confusion et de conflits avec les chemins de fichiers
+
+### Action
+- Suppression du dossier dupliqué `businessconnect-senegal-main`
+- Conservation uniquement des fichiers dans les chemins corrects :
+  - Frontend : `client-vite-fix/`
+  - Backend : `businessconnect-senegal/server/`
+
+### Impact
+- Structure du projet plus claire
+- Élimination des risques de confusion avec les chemins de fichiers
+- Pas d'impact sur les fonctionnalités, seul le code obsolète a été supprimé
+
+---

@@ -35,12 +35,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
       return;
     }
     
-    // Nettoie le numéro en gardant uniquement les chiffres et le +
-    const cleaned = value.replace(/[^\d+]/g, '');
+    // Nettoie le numéro en gardant uniquement les chiffres, les espaces et le +
+    const cleaned = value.replace(/[^0-9\s+]/g, '');
+    
+    // Retire les espaces pour la validation
+    const withoutSpaces = cleaned.replace(/\s/g, '');
     
     // Vérifie si c'est un numéro international avec +
-    if (cleaned.startsWith('+')) {
-      if (cleaned.length >= 10) {
+    if (withoutSpaces.startsWith('+')) {
+      if (withoutSpaces.length >= 10) {
         setPhoneError('');
         return;
       }
@@ -49,12 +52,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
     }
     
     // Vérifie si c'est un numéro sénégalais sans indicatif
-    if (/^7\d{8}$/.test(cleaned)) {
+    if (/^7\d{8}$/.test(withoutSpaces)) {
       setPhoneError('');
       return;
     }
     
-    setPhoneError("Merci d'entrer un numéro valide : soit au format international (+221 77 123 45 67) soit un numéro sénégalais (77 123 45 67)");
+    setPhoneError("Merci d'entrer votre numéro au format international (+221 77 123 45 67) ou sénégalais (77 123 45 67)");
   };
 
   // Styles responsives pour mobile
@@ -76,7 +79,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
           rules={[
             { required: true, message: 'Veuillez saisir votre numéro de téléphone' },
             { 
-              pattern: /^(\+\d{1,4}\s*\d{8,}|7\d{8})$/,
+              pattern: /^(\+[0-9]{1,4}[\s]*[0-9\s]{8,}|7[\s]*[0-9\s]{8})$/,
               message: 'Numéro de téléphone invalide'
             }
           ]}
@@ -86,7 +89,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
             placeholder="+221 77 123 45 67"
             className="auth-full-width"
             style={{ borderRadius: 8, width: '100% !important' }}
-            onBlur={e => validatePhone(e.target.value)}
+            onChange={e => validatePhone(e.target.value)}
           />
         </Form.Item>
         {phoneError && <div style={{ color: 'red', marginBottom: 12 }}>{phoneError}</div>}
@@ -164,7 +167,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
             rules={[
               { required: true, message: 'Veuillez saisir votre numéro de téléphone' },
               { 
-                pattern: /^(\+\d{1,4}\s*\d{8,}|7\d{8})$/,
+                pattern: /^(\+[0-9]{1,4}[\s]*[0-9\s]{8,}|7[\s]*[0-9\s]{8})$/,
                 message: 'Numéro de téléphone invalide'
               }
             ]}
@@ -174,7 +177,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
               placeholder="+221 77 123 45 67"
               className="auth-full-width"
               style={{ borderRadius: 8 }}
-              onBlur={e => validatePhone(e.target.value)}
+              onChange={e => validatePhone(e.target.value)}
             />
           </Form.Item>
           {phoneError && <div style={{ color: 'red', marginBottom: 12 }}>{phoneError}</div>}

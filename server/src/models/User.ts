@@ -10,14 +10,17 @@ export const UserValidationSchema = z.object({
   phone: z.string()
     .refine(
       (value) => {
-        // Nettoie le numéro en gardant uniquement les chiffres et le +
-        const cleaned = value.replace(/[^\\d+]/g, '');
+        // Nettoie le numéro en gardant uniquement les chiffres, les espaces et le +
+        const cleaned = value.replace(/[^0-9\s+]/g, '');
+        // Retire les espaces pour la validation
+        const withoutSpaces = cleaned.replace(/\s/g, '');
+        
         // Vérifie le format international
-        if (cleaned.startsWith('+')) {
-          return cleaned.length >= 10;
+        if (withoutSpaces.startsWith('+')) {
+          return withoutSpaces.length >= 10;
         }
         // Vérifie le format sénégalais
-        return /^7\\d{8}$/.test(cleaned);
+        return /^7\d{8}$/.test(withoutSpaces);
       },
       'Le numéro doit être au format international (+XXX...) ou sénégalais (7XXXXXXXX)'
     ),
@@ -53,14 +56,17 @@ const userSchema = new Schema<IUser>({
     unique: true,
     validate: {
       validator: function(value: string) {
-        // Nettoie le numéro en gardant uniquement les chiffres et le +
-        const cleaned = value.replace(/[^\\d+]/g, '');
+        // Nettoie le numéro en gardant uniquement les chiffres, les espaces et le +
+        const cleaned = value.replace(/[^0-9\s+]/g, '');
+        // Retire les espaces pour la validation
+        const withoutSpaces = cleaned.replace(/\s/g, '');
+        
         // Vérifie le format international
-        if (cleaned.startsWith('+')) {
-          return cleaned.length >= 10;
+        if (withoutSpaces.startsWith('+')) {
+          return withoutSpaces.length >= 10;
         }
         // Vérifie le format sénégalais
-        return /^7\\d{8}$/.test(cleaned);
+        return /^7\d{8}$/.test(withoutSpaces);
       },
       message: 'Le numéro doit être au format international (+XXX...) ou sénégalais (7XXXXXXXX)'
     }
@@ -73,5 +79,6 @@ const userSchema = new Schema<IUser>({
 
 // Index pour améliorer les performances des requêtes
 userSchema.index({ email: 1 });
+userSchema.index({ phone: 1 });
 
-export const User = model<IUser>('User', userSchema); 
+export const User = model<IUser>('User', userSchema);
