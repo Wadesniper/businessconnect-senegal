@@ -8,6 +8,7 @@ import subscriptionsRoutes from './routes/subscriptions';
 import usersRoutes from './routes/users';
 import authRoutes from './routes/auth';
 import { errorHandler } from './middleware/errorHandler';
+import { authenticate } from './middleware/auth';
 
 dotenv.config();
 
@@ -25,13 +26,18 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Middleware
+// Middleware de base
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
+// Routes publiques (pas besoin d'authentification)
 app.use('/api/auth', authRoutes);
 app.use('/api/webhooks', webhookRoutes);
+
+// Middleware d'authentification pour les routes protégées
+app.use('/api/*', authenticate);
+
+// Routes protégées (nécessitent une authentification)
 app.use('/api/subscriptions', subscriptionsRoutes);
 app.use('/api/users', usersRoutes);
 
