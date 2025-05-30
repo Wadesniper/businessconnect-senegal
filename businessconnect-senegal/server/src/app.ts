@@ -16,14 +16,10 @@ const app = express();
 
 // Configuration CORS
 app.use(cors({
-  origin: [
-    process.env.CLIENT_URL || 'http://localhost:3000',
-    'https://businessconnect-senegal.vercel.app',
-    /\.vercel\.app$/
-  ],
+  origin: '*',  // Accepter toutes les origines en développement
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
 }));
 
 // Middleware de base

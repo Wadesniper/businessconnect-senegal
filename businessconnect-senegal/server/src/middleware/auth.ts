@@ -9,6 +9,12 @@ export interface AuthRequest extends Request {
 
 export const authenticate = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
+    // Exclure les routes d'authentification
+    if (req.path.startsWith('/api/auth/')) {
+      next();
+      return;
+    }
+
     const token = req.headers.authorization?.split(' ')[1];
 
     if (!token) {
