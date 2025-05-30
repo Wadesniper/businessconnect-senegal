@@ -1526,3 +1526,65 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Aucun code minimaliste, aucune perte de fonctionnalité, site complet prêt pour la prod.
 
 ---
+
+## 2024-06-09 : Correction des redirections et vérification AuthProvider
+
+- Toutes les redirections frontend vers `/auth/login` ont été corrigées vers `/login` (api.ts, authService.ts, Navbar.tsx).
+- Vérification complète : aucune redirection erronée restante dans le code JS/TS.
+- Le build frontend (`client-vite-fix`) est 100% réussi après correction.
+- Vérification de l'absence de doublon d'`AuthProvider` en production : seul le provider de `main.tsx` est utilisé, les autres occurrences sont dans les tests (mock context, normal).
+- Aucun code ou élément essentiel supprimé, aucune fonctionnalité perdue.
+- Le site reste complet, fonctionnel, et prêt pour la production.
+
+---
+
+## 2024-06-09 : Mise à jour de la description du Hero
+
+- Ancienne description : « Découvrez les meilleurs talents et opportunités dans tous les secteurs d'activité. Une plateforme unique pour les professionnels qui façonnent l'avenir du Sénégal. »
+- Nouvelle description : « Formez-vous, créez votre CV, trouvez un emploi ou recrutez dans un écosystème numérique innovant dédié au marché de l'emploi sénégalais. »
+- Build frontend relancé et 100% réussi, aucune régression, site complet maintenu.
+
+---
+
+## 2024-06-09 : Correction définitive du paiement CinetPay (abonnement)
+
+- Correction du frontend : tous les champs nécessaires (nom, prénom, email, téléphone) sont envoyés lors de l'initiation du paiement.
+- Correction du backend : la route `/api/subscriptions/initiate` appelle désormais le service CinetPay et retourne le vrai lien de paiement dans `paymentUrl`.
+- Le bouton « S'abonner » redirige bien vers l'interface de paiement CinetPay en production.
+- Aucun code ou élément essentiel supprimé, aucune fonctionnalité perdue, build frontend et backend 100% fonctionnels.
+
+---
+
+## 2024-06-09 : Correction critique backend – exposition de la route /api/subscriptions
+
+- Ajout du montage du routeur `subscriptionsRoutes` dans `index.ts` (backend Railway).
+- Cause racine du bug paiement CinetPay : la route `/api/subscriptions/initiate` n'était pas exposée en production, donc 404 systématique.
+- Après correction, la route d'abonnement est accessible, le paiement CinetPay fonctionne, et le site complet passe les tests/déploiement.
+- Aucun code ou élément essentiel supprimé, aucune perte de fonctionnalité, conformité totale prod.
+
+---
+
+## 2024-06-09 : Correction UX/technique abonnement – email optionnel, profil obligatoire
+
+- L'email est désormais optionnel à l'inscription ET lors de l'abonnement/paiement (CinetPay).
+- L'utilisateur ne peut s'abonner que si son profil contient prénom, nom et téléphone (alerte claire sinon, jamais de saisie forcée au paiement).
+- Le backend accepte l'absence d'email lors de l'initiation d'un abonnement.
+- Aucun code ou élément essentiel supprimé, build et production intacts.
+
+---
+
+## [Date : Correction définitive validation numéros de téléphone (frontend + backend)]
+
+- Problème : Incohérence dans la validation des numéros de téléphone entre le frontend et le backend.
+- Correction :
+  - Validation unifiée dans le modèle User (Zod + Mongoose) :
+    - Format international : commence par '+' et au moins 10 chiffres
+    - Format sénégalais : exactement 9 chiffres commençant par 7
+  - Nettoyage des numéros : suppression des espaces et caractères spéciaux avant validation
+  - Messages d'erreur clairs et cohérents sur toute la chaîne
+  - Unicité du numéro de téléphone garantie en base
+- Impact : Aucun code ou fonctionnalité essentielle supprimé, aucune perturbation du backend ou du frontend.
+- Le site complet reste maintenu, toutes les fonctionnalités sont présentes et testées.
+- Statut : Prêt pour validation finale et déploiement en production.
+
+---

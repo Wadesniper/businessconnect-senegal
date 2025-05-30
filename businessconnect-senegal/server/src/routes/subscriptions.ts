@@ -45,7 +45,7 @@ router.post('/initiate', authenticate, async (req: Request, res: Response) => {
   try {
     const { userId, subscriptionType, customer_name, customer_surname, customer_email, customer_phone_number } = req.body;
 
-    if (!userId || !subscriptionType || !customer_name || !customer_surname || !customer_email || !customer_phone_number) {
+    if (!userId || !subscriptionType || !customer_name || !customer_surname || !customer_phone_number) {
       res.status(400).json({ error: 'Paramètres manquants' });
       return;
     }

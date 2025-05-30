@@ -1,55 +1,17 @@
-export type UserRole = 'admin' | 'etudiant' | 'annonceur' | 'employeur';
+export type UserRole = 'user' | 'admin' | 'employeur';
 
 export interface User {
-  id: string;
-  phoneNumber: string;
-  firstName: string;
-  lastName: string;
-  fullName?: string;
-  role: UserRole;
+  _id: string;
+  name: string;
   email?: string;
-  avatar?: string;
+  phone: string;
+  role: UserRole;
   isVerified: boolean;
-  lastLogin?: string;
-  company?: {
-    name: string;
-    secteur: string;
-    taille: string;
-    description?: string;
-  };
-  profile?: {
-    titre?: string;
-    competences?: string[];
-    langues?: string[];
-    experiences?: Array<{
-      titre: string;
-      entreprise: string;
-      lieu: string;
-      dateDebut: string;
-      dateFin?: string;
-      description?: string;
-    }>;
-    education?: Array<{
-      diplome: string;
-      etablissement: string;
-      lieu: string;
-      dateDebut: string;
-      dateFin?: string;
-      description?: string;
-    }>;
-  };
-  settings?: {
-    notifications: boolean;
-    newsletter: boolean;
-    language: string;
-    theme: string;
-  };
+  createdAt: string;
   subscription?: {
-    status: 'active' | 'expired' | 'cancelled';
+    status: string;
     expireAt?: string;
   };
-  createdAt?: string;
-  updatedAt?: string;
 }
 
 export interface UserLoginData {
@@ -58,18 +20,11 @@ export interface UserLoginData {
 }
 
 export interface UserRegistrationData {
-  phoneNumber: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  role: UserRole;
+  name: string;
   email?: string;
-  company?: {
-    name: string;
-    secteur: string;
-    taille: string;
-    description?: string;
-  };
+  phone: string;
+  password: string;
+  confirmPassword: string;
 }
 
 export interface UserUpdateData {
@@ -136,7 +91,7 @@ export interface UserPreferences {
 }
 
 export interface LoginCredentials {
-  phoneNumber: string;
+  phone: string;
   password: string;
 }
 

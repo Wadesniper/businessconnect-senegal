@@ -33,22 +33,18 @@ export interface JobData {
 }
 
 export interface Job {
-  id: string;
+  _id: string;
   title: string;
-  company?: string;
+  company: string;
   location: string;
-  jobType: string;
-  sector: string;
+  type: string;
   description: string;
-  missions?: string[];
   requirements: string[];
-  contactEmail?: string;
-  contactPhone?: string;
-  keywords?: string[];
+  contactEmail: string;
+  contactPhone: string;
   createdAt: string;
-  updatedAt: string;
-  employerId?: string;
-  isActive: boolean;
+  createdBy?: string;
+  status: 'active' | 'inactive' | 'expired';
 }
 
 export interface JobApplication {
@@ -73,11 +69,8 @@ export interface JobApplication {
 }
 
 export interface SavedJob {
-  id: string;
   jobId: string;
-  userId: string;
   savedAt: string;
-  job: JobData | Job;
 }
 
 export interface JobFilter {
@@ -130,19 +123,11 @@ export interface JobApplicationStats {
 
 export interface JobAlert {
   id: string;
-  userId: string;
   keywords: string[];
-  locations?: string[];
-  jobTypes?: string[];
-  salary?: {
-    min?: number;
-    max?: number;
-    currency?: string;
-  };
+  location?: string;
+  type?: string;
   frequency: 'daily' | 'weekly';
-  active: boolean;
   createdAt: string;
-  updatedAt: string;
 }
 
 export const JOB_TYPES = [

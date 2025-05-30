@@ -6,6 +6,7 @@ export interface UserSubscription {
   endDate: string;
   price: number;
   currency: string;
+  expireAt?: string;
 }
 
 export const subscriptionData: UserSubscription[] = [
@@ -36,4 +37,36 @@ export const subscriptionData: UserSubscription[] = [
     price: 9000,
     currency: 'XOF',
   },
+];
+
+export const subscriptionPlans = [
+  {
+    id: 'monthly',
+    title: 'Abonnement Mensuel',
+    price: 5000,
+    description: 'Accès complet pendant 1 mois',
+    features: [
+      'Accès aux fiches métiers',
+      'Création de CV illimitée',
+      'Accès aux formations',
+      'Accès aux coordonnées des recruteurs'
+    ],
+    duration: 30,
+    popular: false
+  },
+  {
+    id: 'yearly',
+    title: 'Abonnement Annuel',
+    price: 50000,
+    description: 'Accès complet pendant 1 an',
+    features: [
+      'Accès aux fiches métiers',
+      'Création de CV illimitée',
+      'Accès aux formations',
+      'Accès aux coordonnées des recruteurs',
+      'Économisez 10 000 FCFA'
+    ],
+    duration: 365,
+    popular: true
+  }
 ]; 

@@ -7,7 +7,20 @@ export const UserValidationSchema = z.object({
   email: z.string().email('Email invalide').optional(),
   password: z.string().min(6, 'Le mot de passe doit contenir au moins 6 caractères'),
   role: z.enum(['user', 'admin']).default('user'),
-  phone: z.string().min(6, 'Le numéro de téléphone doit contenir au moins 6 chiffres'),
+  phone: z.string()
+    .refine(
+      (value) => {
+        // Nettoie le numéro
+        const cleaned = value.replace(/[^\d+]/g, '');
+        // Vérifie le format international
+        if (cleaned.startsWith('+')) {
+          return cleaned.length >= 10;
+        }
+        // Vérifie le format sénégalais
+        return /^7\d{8}$/.test(cleaned);
+      },
+      'Le numéro doit être au format international (+XXX...) ou sénégalais (7XXXXXXXX)'
+    ),
   isVerified: z.boolean().default(false),
   resetPasswordToken: z.string().optional(),
   resetPasswordExpire: z.date().optional(),
@@ -17,32 +30,45 @@ export const UserValidationSchema = z.object({
 // Interface TypeScript
 export interface IUser {
   _id: string;
+  name: string;
   email?: string;
   password: string;
-  name: string;
   role: 'user' | 'admin';
   phone: string;
-  avatar?: string;
+  isVerified: boolean;
+  resetPasswordToken?: string;
+  resetPasswordExpire?: Date;
   createdAt: Date;
-  updatedAt: Date;
-  isVerified?: boolean;
-  resetPasswordToken?: string | null;
-  resetPasswordExpire?: Date | null;
 }
 
-// Schéma Mongoose
+// Schéma Mongoose avec validation
 const userSchema = new Schema<IUser>({
+  name: { type: String, required: true, minlength: 2 },
   email: { type: String, unique: true, sparse: true },
-  password: { type: String, required: true },
-  name: { type: String, required: true },
+  password: { type: String, required: true, select: false },
   role: { type: String, enum: ['user', 'admin'], default: 'user' },
-  phone: { type: String, required: true, unique: true },
-  avatar: { type: String },
+  phone: {
+    type: String,
+    required: true,
+    unique: true,
+    validate: {
+      validator: function(value: string) {
+        // Nettoie le numéro
+        const cleaned = value.replace(/[^\d+]/g, '');
+        // Vérifie le format international
+        if (cleaned.startsWith('+')) {
+          return cleaned.length >= 10;
+        }
+        // Vérifie le format sénégalais
+        return /^7\d{8}$/.test(cleaned);
+      },
+      message: 'Le numéro doit être au format international (+XXX...) ou sénégalais (7XXXXXXXX)'
+    }
+  },
   isVerified: { type: Boolean, default: false },
-  resetPasswordToken: { type: String, default: null },
-  resetPasswordExpire: { type: Date, default: null },
-}, {
-  timestamps: true
+  resetPasswordToken: String,
+  resetPasswordExpire: Date,
+  createdAt: { type: Date, default: Date.now }
 });
 
 // Index pour améliorer les performances des requêtes
