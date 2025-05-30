@@ -15,7 +15,7 @@ async function resetAdminPassword() {
       admin.password = hashedPassword;
       await admin.save();
       console.log('Mot de passe admin réinitialisé avec succès.');
-      console.log(`- Téléphone : ${admin.phone} | Email : ${admin.email} | Nom : ${admin.name} | ID : ${admin._id}`);
+      console.log(`- Téléphone : ${admin.phone} | Email : ${admin.email} | Nom : ${admin.firstName} ${admin.lastName} | ID : ${admin._id}`);
     }
     await mongoose.disconnect();
   } catch (err) {

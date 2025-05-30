@@ -16,22 +16,29 @@ export const register = async (
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { name, email, password } = req.body;
+    const { fullName: name, phoneNumber: phone, email, password } = req.body;
 
-    let user = await User.findOne({ email });
-    if (user) {
+    // Vérifier si un utilisateur existe avec le même email ou téléphone
+    let existingUser = await User.findOne({ $or: [
+      { phone },
+      ...(email ? [{ email }] : [])
+    ]});
+    
+    if (existingUser) {
+      const field = existingUser.phone === phone ? 'téléphone' : 'email';
       return res.status(400).json({
         success: false,
-        error: 'Un utilisateur avec cet email existe déjà',
+        error: `Un utilisateur avec ce ${field} existe déjà`,
       });
     }
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    user = await User.create({
+    const user = await User.create({
       name,
       email,
+      phone,
       password: hashedPassword,
     });
 
@@ -49,8 +56,10 @@ export const register = async (
       token,
       user: {
         id: user._id,
-        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
+        phone: user.phone
       },
     });
     return;
@@ -103,7 +112,8 @@ export const login = async (
       token,
       user: {
         id: user._id,
-        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
       },
     });

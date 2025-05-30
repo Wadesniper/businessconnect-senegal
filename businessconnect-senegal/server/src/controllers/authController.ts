@@ -161,9 +161,9 @@ export class AuthController {
           token,
           user: {
             id: user._id,
-            name: user.name,
+            firstName: user.firstName,
+            lastName: user.lastName,
             email: user.email,
-            phone: user.phone,
             role: user.role
           }
         }
@@ -328,9 +328,9 @@ export class AuthController {
         data: {
           user: {
             id: user._id,
-            name: user.name,
+            firstName: user.firstName,
+            lastName: user.lastName,
             email: user.email,
-            phone: user.phone,
             role: user.role
           }
         }
