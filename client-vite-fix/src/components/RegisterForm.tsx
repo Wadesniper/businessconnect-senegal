@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Form, Input, Button, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { UserRegistrationData } from '../types/user';
+import type { UserRegistrationData } from '../types/user';
 
 // Ajout des props
 interface RegisterFormProps {
@@ -26,23 +26,25 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
   }) => {
     try {
       setLoading(true);
-      const [firstName, ...lastNameParts] = values.fullName.trim().split(' ');
-      const lastName = lastNameParts.join(' ');
-
+      
       const registrationData: UserRegistrationData = {
-        firstName,
-        lastName,
-        phoneNumber: values.phoneNumber,
-        password: values.password,
+        name: values.fullName.trim(),
+        phone: values.phoneNumber,
         email: values.email,
-        role: 'etudiant' // Rôle par défaut
+        password: values.password
       };
 
-      await register(registrationData);
-      message.success('Inscription réussie ! Vous pouvez maintenant vous connecter.');
-      navigate('/login');
-    } catch (error) {
-      message.error('Erreur lors de l\'inscription. Veuillez réessayer.');
+      const response = await register(registrationData);
+      
+      if (response.success) {
+        message.success(response.message);
+        navigate('/login');
+      } else {
+        message.error(response.message || 'Erreur lors de l\'inscription. Veuillez réessayer.');
+      }
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'Erreur lors de l\'inscription';
+      message.error(errorMessage);
     } finally {
       setLoading(false);
     }

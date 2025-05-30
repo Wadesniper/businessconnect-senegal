@@ -1,7 +1,8 @@
 import { api } from './api';
 import { message } from 'antd';
-import { subscriptionData, UserSubscription } from '../data/subscriptionData';
-import { User, UserRole, UserRegistrationData, LoginCredentials } from '../types/user';
+import type { UserSubscription } from '../data/subscriptionData';
+import { subscriptionData } from '../data/subscriptionData';
+import type { User, UserRole, UserRegistrationData, LoginCredentials } from '../types/user';
 
 export interface AuthResponse {
   success: boolean;
@@ -30,10 +31,10 @@ export const authService = {
     }
   },
 
-  async register(data: UserRegistrationData): Promise<AuthResponse> {
+  async register(data: UserRegistrationData): Promise<{ success: boolean; message: string; data?: { token: string; user: User } }> {
     try {
-      const response = await api.post<AuthResponse>('/api/auth/register', data);
-      if (response.data.success) {
+      const response = await api.post<{ success: boolean; message: string; data?: { token: string; user: User } }>('/api/auth/register', data);
+      if (response.data.success && response.data.data) {
         localStorage.setItem('token', response.data.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.data.user));
       }

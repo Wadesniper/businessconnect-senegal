@@ -1,16 +1,37 @@
-export type UserRole = 'user' | 'admin' | 'employeur';
+export type UserRole = 'user' | 'admin' | 'employeur' | 'etudiant' | 'annonceur';
 
 export interface User {
   _id: string;
+  id?: string;  // Pour la compatibilité avec l'API
   name: string;
   email?: string;
   phone: string;
   role: UserRole;
   isVerified: boolean;
   createdAt: string;
-  subscription?: {
-    status: string;
-    expireAt?: string;
+  company?: {
+    name?: string;
+    secteur?: string;
+    taille?: string;
+    description?: string;
+  };
+  profile?: {
+    titre?: string;
+    competences?: string[];
+    experiences?: {
+      poste: string;
+      entreprise: string;
+      debut: string;
+      fin?: string;
+      description?: string;
+    }[];
+    education?: {
+      diplome: string;
+      etablissement: string;
+      annee: number;
+      domaine?: string;
+    }[];
+    langues?: string[];
   };
 }
 
@@ -24,7 +45,6 @@ export interface UserRegistrationData {
   email?: string;
   phone: string;
   password: string;
-  confirmPassword: string;
 }
 
 export interface UserUpdateData {
@@ -105,5 +125,14 @@ export interface RegisterData {
   company?: {
     name: string;
     secteur: string;
+  };
+}
+
+export interface UserRegistrationResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    token: string;
+    user: User;
   };
 } 
