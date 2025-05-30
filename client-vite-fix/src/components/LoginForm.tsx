@@ -30,12 +30,24 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
   };
 
   const validatePhone = (value: string) => {
-    const cleaned = value.replace(/[^\d+]/g, '');
-    if (!cleaned.startsWith('+') && !/^7\d{8}$/.test(cleaned)) {
-      setPhoneError("Merci d'entrer votre numéro au format international (ex : +221 771234567 ou +33 612345678).");
-    } else {
+    // Garde les espaces pour l'affichage
+    const displayValue = value.trim();
+    // Nettoie pour la validation
+    const cleaned = displayValue.replace(/[\s-]/g, '');
+    
+    // Vérifie si c'est un numéro sénégalais sans indicatif
+    if (/^7[0-9]{8}$/.test(cleaned)) {
       setPhoneError('');
+      return;
     }
+    
+    // Vérifie si c'est un numéro international avec +
+    if (/^\+[0-9]{1,4}[0-9]{8,}$/.test(cleaned)) {
+      setPhoneError('');
+      return;
+    }
+    
+    setPhoneError("Merci d'entrer votre numéro au format international (ex : +221 77 123 45 67) ou sénégalais (77 123 45 67)");
   };
 
   // Styles responsives pour mobile
@@ -56,12 +68,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
           label={<span style={{ fontWeight: 500 }}>Numéro de téléphone</span>}
           rules={[
             { required: true, message: 'Veuillez saisir votre numéro de téléphone' },
-            { pattern: /^\+?[0-9]{8,15}$/, message: 'Numéro de téléphone invalide' }
+            { 
+              pattern: /^(\+[0-9]{1,4}[\s-]?[0-9]{8,}|7[0-9\s-]{8,})$/,
+              message: 'Numéro de téléphone invalide'
+            }
           ]}
         >
           <Input
             size="large"
-            placeholder="+221 XX XXX XX XX"
+            placeholder="+221 77 123 45 67"
             className="auth-full-width"
             style={{ borderRadius: 8, width: '100% !important' }}
             onBlur={e => validatePhone(e.target.value)}
@@ -141,15 +156,18 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
             label={<span style={{ fontWeight: 500 }}>Numéro de téléphone</span>}
             rules={[
               { required: true, message: 'Veuillez saisir votre numéro de téléphone' },
-              { pattern: /^\+?[0-9]{8,15}$/, message: 'Numéro de téléphone invalide' }
+              { 
+                pattern: /^(\+[0-9]{1,4}[\s-]?[0-9]{8,}|7[0-9\s-]{8,})$/,
+                message: 'Numéro de téléphone invalide'
+              }
             ]}
           >
             <Input
               size="large"
-              placeholder="+221 XX XXX XX XX"
+              placeholder="+221 77 123 45 67"
               className="auth-full-width"
               style={{ borderRadius: 8 }}
-              onBlur={(e) => validatePhone(e.target.value)}
+              onBlur={e => validatePhone(e.target.value)}
             />
           </Form.Item>
           {phoneError && <div style={{ color: 'red', marginBottom: 12 }}>{phoneError}</div>}
