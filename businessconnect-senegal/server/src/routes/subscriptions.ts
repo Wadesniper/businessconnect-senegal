@@ -53,9 +53,19 @@ router.post('/initiate', authenticate, async (req: Request, res: Response) => {
     // Créer un abonnement réel en base (statut pending)
     await subscriptionService.createSubscription(userId, subscriptionType);
 
-    // Retourner une fausse URL de paiement pour les tests
-    const paymentUrl = `http://localhost:3000/fake-payment?userId=${userId}`;
-    res.json({ paymentUrl });
+    // Appel au service CinetPay pour obtenir le lien de paiement
+    const amount = subscriptionService['SUBSCRIPTION_PRICES'][subscriptionType];
+    const cinetpayService = require('../services/cinetpayService');
+    const payment = await cinetpayService.cinetpayService.initializePayment({
+      amount,
+      customer_name,
+      customer_surname,
+      customer_email,
+      customer_phone_number,
+      description: `Abonnement ${subscriptionType} BusinessConnect`
+    });
+
+    res.json({ paymentUrl: payment.payment_url });
   } catch (error) {
     logger.error('Erreur lors de l\'initiation de l\'abonnement:', error);
     res.status(500).json({ error: 'Erreur serveur lors de l\'initiation de l\'abonnement' });
