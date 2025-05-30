@@ -49,24 +49,31 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
   };
 
   const validatePhone = (value: string) => {
-    // Garde les espaces pour l'affichage
-    const displayValue = value.trim();
-    // Nettoie pour la validation
-    const cleaned = displayValue.replace(/[\s-]/g, '');
-    
-    // Vérifie si c'est un numéro sénégalais sans indicatif
-    if (/^7[0-9]{8}$/.test(cleaned)) {
-      setPhoneError('');
+    if (!value) {
+      setPhoneError('Le numéro de téléphone est requis');
       return;
     }
+    
+    // Nettoie le numéro en gardant uniquement les chiffres et le +
+    const cleaned = value.replace(/[^\d+]/g, '');
     
     // Vérifie si c'est un numéro international avec +
-    if (/^\+[0-9]{1,4}[0-9]{8,}$/.test(cleaned)) {
+    if (cleaned.startsWith('+')) {
+      if (cleaned.length >= 10) {
+        setPhoneError('');
+        return;
+      }
+      setPhoneError('Le numéro international doit avoir au moins 10 chiffres');
+      return;
+    }
+    
+    // Vérifie si c'est un numéro sénégalais sans indicatif
+    if (/^7\d{8}$/.test(cleaned)) {
       setPhoneError('');
       return;
     }
     
-    setPhoneError("Merci d'entrer votre numéro au format international (ex : +221 77 123 45 67) ou sénégalais (77 123 45 67)");
+    setPhoneError("Merci d'entrer un numéro valide : soit au format international (+221 77 123 45 67) soit un numéro sénégalais (77 123 45 67)");
   };
 
   // Si noCard ou noBg, on affiche juste le formulaire sans fond ni card
@@ -96,7 +103,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
           rules={[
             { required: true, message: 'Veuillez saisir votre numéro de téléphone' },
             { 
-              pattern: /^(\+[0-9]{1,4}[\s-]?[0-9]{8,}|7[0-9\s-]{8,})$/,
+              pattern: /^(\+\d{1,4}\s*\d{8,}|7\d{8})$/,
               message: 'Numéro de téléphone invalide'
             }
           ]}
@@ -226,7 +233,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
             rules={[
               { required: true, message: 'Veuillez saisir votre numéro de téléphone' },
               { 
-                pattern: /^(\+[0-9]{1,4}[\s-]?[0-9]{8,}|7[0-9\s-]{8,})$/,
+                pattern: /^(\+\d{1,4}\s*\d{8,}|7\d{8})$/,
                 message: 'Numéro de téléphone invalide'
               }
             ]}

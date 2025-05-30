@@ -19,9 +19,21 @@ export class AuthController {
       // Normalisation du téléphone
       function normalizePhone(phone: string): string | null {
         if (!phone) return null;
+        // Nettoie le numéro en gardant uniquement les chiffres et le +
         let cleaned = phone.replace(/[^\d+]/g, '');
-        if (cleaned.startsWith('+')) return cleaned;
-        if (/^7\d{8}$/.test(cleaned)) return '+221' + cleaned;
+        
+        // Si le numéro commence par +, c'est déjà au format international
+        if (cleaned.startsWith('+')) {
+          // Vérifie que le numéro a une longueur valide (indicatif + 8 chiffres minimum)
+          if (cleaned.length >= 10) return cleaned;
+          return null;
+        }
+        
+        // Si c'est un numéro sénégalais (commence par 7 et a 9 chiffres)
+        if (/^7\d{8}$/.test(cleaned)) {
+          return '+221' + cleaned;
+        }
+        
         return null;
       }
       const normalizedPhone = normalizePhone(phone);
@@ -86,9 +98,21 @@ export class AuthController {
       // Normalisation du téléphone
       function normalizePhone(phone: string): string | null {
         if (!phone) return null;
+        // Nettoie le numéro en gardant uniquement les chiffres et le +
         let cleaned = phone.replace(/[^\d+]/g, '');
-        if (cleaned.startsWith('+')) return cleaned;
-        if (/^7\d{8}$/.test(cleaned)) return '+221' + cleaned;
+        
+        // Si le numéro commence par +, c'est déjà au format international
+        if (cleaned.startsWith('+')) {
+          // Vérifie que le numéro a une longueur valide (indicatif + 8 chiffres minimum)
+          if (cleaned.length >= 10) return cleaned;
+          return null;
+        }
+        
+        // Si c'est un numéro sénégalais (commence par 7 et a 9 chiffres)
+        if (/^7\d{8}$/.test(cleaned)) {
+          return '+221' + cleaned;
+        }
+        
         return null;
       }
       if (!phone) {
