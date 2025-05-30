@@ -17,20 +17,21 @@ export const useSubscription = () => {
       throw new Error('Utilisateur non connecté');
     }
 
+    const payload: any = {
+      userId: user.id,
+      subscriptionType: type,
+      customer_name: user.firstName || '',
+      customer_surname: user.lastName || '',
+      customer_phone_number: user.phoneNumber || ''
+    };
+    if (user.email) payload.customer_email = user.email;
     const response = await fetch(`${endpoints.subscriptions}/initiate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         ...(token ? { 'Authorization': `Bearer ${token}` } : {})
       },
-      body: JSON.stringify({
-        userId: user.id,
-        subscriptionType: type,
-        customer_name: user.firstName || '',
-        customer_surname: user.lastName || '',
-        customer_email: user.email || '',
-        customer_phone_number: user.phoneNumber || ''
-      })
+      body: JSON.stringify(payload)
     });
 
     if (!response.ok) {

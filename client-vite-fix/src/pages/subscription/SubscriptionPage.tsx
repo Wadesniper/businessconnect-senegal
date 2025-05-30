@@ -69,6 +69,10 @@ const SubscriptionPage: React.FC = () => {
       navigate('/login', { state: { from: '/subscription' } });
       return;
     }
+    if (!user.firstName || !user.lastName || !user.phoneNumber) {
+      alert("Merci de compléter votre profil (prénom, nom, téléphone) avant de vous abonner.\nVous pouvez le faire dans votre tableau de bord ou lors de la prochaine connexion.");
+      return;
+    }
     try {
       let type = offerKey;
       if (type === 'student') type = 'etudiant';
@@ -78,8 +82,8 @@ const SubscriptionPage: React.FC = () => {
       } else {
         alert("Erreur lors de la génération du lien de paiement.");
       }
-    } catch (error) {
-      alert("Erreur lors de l'initialisation du paiement.");
+    } catch (error: any) {
+      alert(error.message || "Erreur lors de l'initialisation du paiement.");
     }
   };
 
