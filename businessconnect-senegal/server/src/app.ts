@@ -6,6 +6,7 @@ import webhookRoutes from './routes/webhook';
 // import healthcheckRoutes from './routes/healthcheck';
 import subscriptionsRoutes from './routes/subscriptions';
 import usersRoutes from './routes/users';
+import authRoutes from './routes/auth';
 import { errorHandler } from './middleware/errorHandler';
 
 dotenv.config();
@@ -29,6 +30,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/webhooks', webhookRoutes);
 app.use('/api/subscriptions', subscriptionsRoutes);
 app.use('/api/users', usersRoutes);
