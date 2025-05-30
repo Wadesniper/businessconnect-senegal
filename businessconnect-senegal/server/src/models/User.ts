@@ -1,34 +1,4 @@
 import { Schema, model } from 'mongoose';
-import { z } from 'zod';
-
-// Schéma de validation Zod
-export const UserValidationSchema = z.object({
-  firstName: z.string().min(2, 'Le prénom doit contenir au moins 2 caractères'),
-  lastName: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
-  email: z.string().email('Email invalide').optional(),
-  password: z.string().min(6, 'Le mot de passe doit contenir au moins 6 caractères'),
-  role: z.enum(['user', 'admin']).default('user'),
-  phone: z.string()
-    .refine(
-      (value) => {
-        // Nettoie le numéro en gardant uniquement les chiffres et le +
-        const cleaned = value.replace(/[^0-9+]/g, '');
-        
-        // Vérifie le format international
-        if (cleaned.startsWith('+')) {
-          return cleaned.length >= 10;
-        }
-        
-        // Vérifie le format sénégalais
-        return /^7\d{8}$/.test(cleaned);
-      },
-      'Le numéro doit être au format international (+221 77 XXX XX XX) ou sénégalais (77 XXX XX XX)'
-    ),
-  isVerified: z.boolean().default(false),
-  resetPasswordToken: z.string().optional(),
-  resetPasswordExpire: z.date().optional(),
-  createdAt: z.date().default(() => new Date()),
-});
 
 // Interface TypeScript
 export interface IUser {
@@ -47,35 +17,56 @@ export interface IUser {
 
 // Schéma Mongoose avec validation
 const userSchema = new Schema<IUser>({
-  firstName: { type: String, required: true, minlength: 2 },
-  lastName: { type: String, required: true, minlength: 2 },
-  email: { type: String, unique: true, sparse: true },
-  password: { type: String, required: true, select: false },
-  role: { type: String, enum: ['user', 'admin'], default: 'user' },
+  firstName: { 
+    type: String, 
+    required: [true, 'Le prénom est requis'],
+    trim: true,
+    minlength: [2, 'Le prénom doit contenir au moins 2 caractères']
+  },
+  lastName: { 
+    type: String, 
+    required: [true, 'Le nom est requis'],
+    trim: true,
+    minlength: [2, 'Le nom doit contenir au moins 2 caractères']
+  },
+  email: { 
+    type: String, 
+    unique: true, 
+    sparse: true,
+    trim: true,
+    lowercase: true,
+    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Veuillez fournir un email valide']
+  },
+  password: { 
+    type: String, 
+    required: [true, 'Le mot de passe est requis'],
+    minlength: [6, 'Le mot de passe doit contenir au moins 6 caractères'],
+    select: false
+  },
+  role: { 
+    type: String, 
+    enum: {
+      values: ['user', 'admin'],
+      message: 'Le rôle doit être soit "user" soit "admin"'
+    },
+    default: 'user'
+  },
   phone: {
     type: String,
-    required: true,
+    required: [true, 'Le numéro de téléphone est requis'],
     unique: true,
-    validate: {
-      validator: function(value: string) {
-        // Nettoie le numéro en gardant uniquement les chiffres et le +
-        const cleaned = value.replace(/[^0-9+]/g, '');
-        
-        // Vérifie le format international
-        if (cleaned.startsWith('+')) {
-          return cleaned.length >= 10;
-        }
-        
-        // Vérifie le format sénégalais
-        return /^7\d{8}$/.test(cleaned);
-      },
-      message: 'Le numéro doit être au format international (+221 77 XXX XX XX) ou sénégalais (77 XXX XX XX)'
-    }
+    trim: true
   },
-  isVerified: { type: Boolean, default: false },
+  isVerified: { 
+    type: Boolean, 
+    default: false 
+  },
   resetPasswordToken: String,
   resetPasswordExpire: Date,
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { 
+    type: Date, 
+    default: Date.now 
+  }
 });
 
 // Index pour améliorer les performances des requêtes
