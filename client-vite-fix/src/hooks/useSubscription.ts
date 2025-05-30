@@ -10,6 +10,8 @@ export const useSubscription = () => {
   const [error, setError] = useState<string | null>(null);
   const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
 
+  const token = localStorage.getItem('auth_token');
+
   const initiateSubscription = async (type: SubscriptionType): Promise<PaymentInitiation> => {
     if (!user?.id) {
       throw new Error('Utilisateur non connecté');
@@ -19,6 +21,7 @@ export const useSubscription = () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
       },
       body: JSON.stringify({
         userId: user.id,
@@ -31,7 +34,12 @@ export const useSubscription = () => {
     });
 
     if (!response.ok) {
-      throw new Error('Erreur lors de l\'initiation du paiement');
+      let errorMsg = 'Erreur lors de l\'initiation du paiement';
+      try {
+        const errorData = await response.json();
+        if (errorData && errorData.error) errorMsg = errorData.error;
+      } catch {}
+      throw new Error(errorMsg);
     }
 
     return response.json();
