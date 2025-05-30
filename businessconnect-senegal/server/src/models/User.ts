@@ -11,19 +11,18 @@ export const UserValidationSchema = z.object({
   phone: z.string()
     .refine(
       (value) => {
-        // Nettoie le numéro en gardant uniquement les chiffres, les espaces et le +
-        const cleaned = value.replace(/[^0-9\s+]/g, '');
-        // Retire les espaces pour la validation
-        const withoutSpaces = cleaned.replace(/\s/g, '');
+        // Nettoie le numéro en gardant uniquement les chiffres et le +
+        const cleaned = value.replace(/[^0-9+]/g, '');
         
         // Vérifie le format international
-        if (withoutSpaces.startsWith('+')) {
-          return withoutSpaces.length >= 10;
+        if (cleaned.startsWith('+')) {
+          return cleaned.length >= 10;
         }
+        
         // Vérifie le format sénégalais
-        return /^7\d{8}$/.test(withoutSpaces);
+        return /^7\d{8}$/.test(cleaned);
       },
-      'Le numéro doit être au format international (+XXX...) ou sénégalais (7XXXXXXXX)'
+      'Le numéro doit être au format international (+221 77 XXX XX XX) ou sénégalais (77 XXX XX XX)'
     ),
   isVerified: z.boolean().default(false),
   resetPasswordToken: z.string().optional(),
@@ -59,19 +58,18 @@ const userSchema = new Schema<IUser>({
     unique: true,
     validate: {
       validator: function(value: string) {
-        // Nettoie le numéro en gardant uniquement les chiffres, les espaces et le +
-        const cleaned = value.replace(/[^0-9\s+]/g, '');
-        // Retire les espaces pour la validation
-        const withoutSpaces = cleaned.replace(/\s/g, '');
+        // Nettoie le numéro en gardant uniquement les chiffres et le +
+        const cleaned = value.replace(/[^0-9+]/g, '');
         
         // Vérifie le format international
-        if (withoutSpaces.startsWith('+')) {
-          return withoutSpaces.length >= 10;
+        if (cleaned.startsWith('+')) {
+          return cleaned.length >= 10;
         }
+        
         // Vérifie le format sénégalais
-        return /^7\d{8}$/.test(withoutSpaces);
+        return /^7\d{8}$/.test(cleaned);
       },
-      message: 'Le numéro doit être au format international (+XXX...) ou sénégalais (7XXXXXXXX)'
+      message: 'Le numéro doit être au format international (+221 77 XXX XX XX) ou sénégalais (77 XXX XX XX)'
     }
   },
   isVerified: { type: Boolean, default: false },

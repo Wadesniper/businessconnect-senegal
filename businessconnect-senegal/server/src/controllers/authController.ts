@@ -15,7 +15,7 @@ export class AuthController {
 
   register = async (req: Request, res: Response) => {
     try {
-      const { name, email, phone, password } = req.body;
+      const { firstName, lastName, email, phone, password } = req.body;
       // Normalisation du téléphone
       function normalizePhone(phone: string): string | null {
         if (!phone) return null;
@@ -37,14 +37,17 @@ export class AuthController {
         
         return null;
       }
+
+      // Nettoyer et valider le numéro de téléphone
       const normalizedPhone = normalizePhone(phone);
       if (!normalizedPhone) {
         return res.status(400).json({
           success: false,
-          message: "Merci d'entrer votre numéro au format international (ex : +221770000000 ou +33612345678)."
+          message: "Le numéro de téléphone doit être au format international (+221 77 XXX XX XX) ou sénégalais (77 XXX XX XX)"
         });
       }
-      // Vérifier si l'utilisateur existe déjà par téléphone
+
+      // Vérifier si l'utilisateur existe déjà
       const existingUser = await User.findOne({ phone: normalizedPhone });
       if (existingUser) {
         return res.status(400).json({
@@ -52,16 +55,20 @@ export class AuthController {
           message: 'Un utilisateur avec ce numéro de téléphone existe déjà'
         });
       }
+
       // Hasher le mot de passe
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
-      // Créer le nouvel utilisateur
+
+      // Créer le nouvel utilisateur avec le numéro normalisé
       const user = new User({
-        name,
+        firstName,
+        lastName,
         email,
         phone: normalizedPhone,
         password: hashedPassword
       });
+
       await user.save();
       // Générer le token de vérification
       const jwtSecret: any = process.env.JWT_SECRET || 'default_secret';

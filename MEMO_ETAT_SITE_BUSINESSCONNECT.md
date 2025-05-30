@@ -1635,3 +1635,17 @@ Garantir que **tous les tests backend passent** sans version minimaliste, en con
 - Pas d'impact sur les fonctionnalités, seul le code obsolète a été supprimé
 
 ---
+
+## [IMPORTANT : Procédure de commit et push]
+
+- Les commandes git doivent TOUJOURS être exécutées une par une, dans cet ordre :
+  1. `git add .` (ajouter les fichiers modifiés)
+  2. `git commit -m "message descriptif"` (créer le commit)
+  3. `git push` (pousser vers le dépôt distant)
+
+- Attendre que chaque commande soit terminée avant de passer à la suivante
+- Vérifier le résultat de chaque commande pour s'assurer qu'il n'y a pas d'erreur
+- Ne jamais combiner les commandes avec && ou ;
+- En cas d'erreur, résoudre le problème avant de continuer
+
+---
