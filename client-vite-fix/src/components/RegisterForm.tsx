@@ -19,7 +19,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
   const [phoneError, setPhoneError] = useState('');
 
   const onFinish = async (values: {
-    fullName: string;
+    firstName: string;
+    lastName: string;
     phoneNumber: string;
     email?: string;
     password: string;
@@ -28,7 +29,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
       setLoading(true);
       
       const registrationData: UserRegistrationData = {
-        name: values.fullName.trim(),
+        firstName: values.firstName.trim(),
+        lastName: values.lastName.trim(),
         phone: values.phoneNumber,
         email: values.email,
         password: values.password
@@ -92,15 +94,26 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
         requiredMark={false}
       >
         <Form.Item
-          name="fullName"
-          label={<span style={{ fontWeight: 500 }}>Nom complet</span>}
+          name="firstName"
+          label={<span style={{ fontWeight: 500 }}>Prénom</span>}
           rules={[
-            { required: true, message: 'Veuillez saisir votre nom complet' },
-            { min: 3, message: 'Le nom doit contenir au moins 3 caractères' },
+            { required: true, message: 'Veuillez saisir votre prénom' },
+            { min: 2, message: 'Le prénom doit contenir au moins 2 caractères' },
+            { pattern: /^[a-zA-ZÀ-ÿ\s]+$/, message: 'Le prénom ne doit contenir que des lettres' }
+          ]}
+        >
+          <Input size="large" placeholder="Votre prénom" className="auth-full-width" style={{ borderRadius: 8 }} />
+        </Form.Item>
+        <Form.Item
+          name="lastName"
+          label={<span style={{ fontWeight: 500 }}>Nom</span>}
+          rules={[
+            { required: true, message: 'Veuillez saisir votre nom' },
+            { min: 2, message: 'Le nom doit contenir au moins 2 caractères' },
             { pattern: /^[a-zA-ZÀ-ÿ\s]+$/, message: 'Le nom ne doit contenir que des lettres' }
           ]}
         >
-          <Input size="large" placeholder="Prénom et Nom" className="auth-full-width" style={{ borderRadius: 8 }} />
+          <Input size="large" placeholder="Votre nom" className="auth-full-width" style={{ borderRadius: 8 }} />
         </Form.Item>
         <Form.Item
           name="phoneNumber"
@@ -222,15 +235,26 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
           requiredMark={false}
         >
           <Form.Item
-            name="fullName"
-            label={<span style={{ fontWeight: 500 }}>Nom complet</span>}
+            name="firstName"
+            label={<span style={{ fontWeight: 500 }}>Prénom</span>}
             rules={[
-              { required: true, message: 'Veuillez saisir votre nom complet' },
-              { min: 3, message: 'Le nom doit contenir au moins 3 caractères' },
+              { required: true, message: 'Veuillez saisir votre prénom' },
+              { min: 2, message: 'Le prénom doit contenir au moins 2 caractères' },
+              { pattern: /^[a-zA-ZÀ-ÿ\s]+$/, message: 'Le prénom ne doit contenir que des lettres' }
+            ]}
+          >
+            <Input size="large" placeholder="Votre prénom" className="auth-full-width" style={{ borderRadius: 8 }} />
+          </Form.Item>
+          <Form.Item
+            name="lastName"
+            label={<span style={{ fontWeight: 500 }}>Nom</span>}
+            rules={[
+              { required: true, message: 'Veuillez saisir votre nom' },
+              { min: 2, message: 'Le nom doit contenir au moins 2 caractères' },
               { pattern: /^[a-zA-ZÀ-ÿ\s]+$/, message: 'Le nom ne doit contenir que des lettres' }
             ]}
           >
-            <Input size="large" placeholder="Prénom et Nom" className="auth-full-width" style={{ borderRadius: 8 }} />
+            <Input size="large" placeholder="Votre nom" className="auth-full-width" style={{ borderRadius: 8 }} />
           </Form.Item>
           <Form.Item
             name="phoneNumber"

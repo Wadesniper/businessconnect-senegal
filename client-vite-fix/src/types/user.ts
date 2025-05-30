@@ -3,7 +3,8 @@ export type UserRole = 'user' | 'admin' | 'employeur' | 'etudiant' | 'annonceur'
 export interface User {
   _id: string;
   id?: string;  // Pour la compatibilité avec l'API
-  name: string;
+  firstName: string;
+  lastName: string;
   email?: string;
   phone: string;
   role: UserRole;
@@ -41,7 +42,8 @@ export interface UserLoginData {
 }
 
 export interface UserRegistrationData {
-  name: string;
+  firstName: string;
+  lastName: string;
   email?: string;
   phone: string;
   password: string;

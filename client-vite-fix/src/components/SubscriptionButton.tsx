@@ -1,47 +1,62 @@
 import React from 'react';
 import { Button, CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 interface SubscriptionButtonProps {
-  userId: string;
-  subscriptionType: 'etudiant' | 'annonceur' | 'recruteur';
+  subscriptionType: string;
   label: string;
 }
 
 export const SubscriptionButton: React.FC<SubscriptionButtonProps> = ({
-  userId,
   subscriptionType,
   label
 }) => {
   const [loading, setLoading] = React.useState(false);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const handleSubscription = async () => {
     try {
+      if (!user) {
+        navigate('/login');
+        return;
+      }
+
       setLoading(true);
 
-      const response = await fetch('/api/subscriptions/initiate-payment', {
+      const response = await fetch('/api/subscriptions/initiate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify({
-          userId,
-          subscriptionType
+          userId: user.id,
+          subscriptionType,
+          customer_name: user.lastName,
+          customer_surname: user.firstName,
+          customer_email: user.email || '',
+          customer_phone_number: user.phone,
+          customer_address: 'Dakar',
+          customer_city: 'Dakar',
+          customer_country: 'SN',
+          customer_state: 'DK',
+          customer_zip_code: '12000'
         })
       });
 
       const data = await response.json();
 
-      if (data.success && data.data.redirectUrl) {
+      if (response.ok && data.paymentUrl) {
         // Rediriger vers l'interface de paiement CinetPay
-        window.location.href = data.data.redirectUrl;
+        window.location.href = data.paymentUrl;
       } else {
-        throw new Error(data.message || 'Erreur lors de l\'initiation du paiement');
+        throw new Error(data.error || 'Erreur lors de l\'initiation du paiement');
       }
     } catch (error) {
       console.error('Erreur:', error);
-      // Gérer l'erreur (afficher un message, etc.)
+      // TODO: Afficher un message d'erreur à l'utilisateur
     } finally {
       setLoading(false);
     }
