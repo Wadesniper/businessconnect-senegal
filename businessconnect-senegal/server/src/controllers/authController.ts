@@ -21,7 +21,7 @@ export class AuthController {
         if (!phone) return null;
         
         // Nettoie le numéro en gardant uniquement les chiffres et le +
-        let cleaned = phone.replace(/[^\\d+]/g, '');
+        let cleaned = phone.replace(/[^0-9+]/g, '');
         
         // Si le numéro commence par +, c'est déjà au format international
         if (cleaned.startsWith('+')) {
@@ -31,7 +31,7 @@ export class AuthController {
         }
         
         // Si c'est un numéro sénégalais (commence par 7 et a 9 chiffres)
-        if (/^7\\d{8}$/.test(cleaned)) {
+        if (/^7\d{8}$/.test(cleaned)) {
           return '+221' + cleaned;
         }
         
@@ -101,7 +101,7 @@ export class AuthController {
         if (!phone) return null;
         
         // Nettoie le numéro en gardant uniquement les chiffres et le +
-        let cleaned = phone.replace(/[^\\d+]/g, '');
+        let cleaned = phone.replace(/[^0-9+]/g, '');
         
         // Si le numéro commence par +, c'est déjà au format international
         if (cleaned.startsWith('+')) {
@@ -111,7 +111,7 @@ export class AuthController {
         }
         
         // Si c'est un numéro sénégalais (commence par 7 et a 9 chiffres)
-        if (/^7\\d{8}$/.test(cleaned)) {
+        if (/^7\d{8}$/.test(cleaned)) {
           return '+221' + cleaned;
         }
         
@@ -249,10 +249,10 @@ export class AuthController {
       });
       return;
     } catch (error) {
-      logger.error('Erreur lors de la demande de réinitialisation:', error);
+      logger.error('Erreur lors de l\'envoi de l\'email de réinitialisation:', error);
       res.status(500).json({
         success: false,
-        message: 'Une erreur est survenue'
+        message: 'Une erreur est survenue lors de l\'envoi de l\'email de réinitialisation'
       });
       return;
     }
@@ -265,16 +265,20 @@ export class AuthController {
 
       // Vérifier le token
       const decoded = jwt.verify(token, config.JWT_SECRET) as { id: string };
-      const user = await User.findOne({
-        _id: decoded.id,
-        resetPasswordToken: token,
-        resetPasswordExpire: { $gt: Date.now() }
-      });
+      const user = await User.findById(decoded.id);
 
       if (!user) {
         return res.status(400).json({
           success: false,
-          message: 'Token invalide ou expiré'
+          message: 'Token invalide'
+        });
+      }
+
+      // Vérifier si le token n'a pas expiré
+      if (!user.resetPasswordExpire || user.resetPasswordExpire < new Date()) {
+        return res.status(400).json({
+          success: false,
+          message: 'Token expiré'
         });
       }
 
@@ -305,40 +309,38 @@ export class AuthController {
 
   verifyToken = async (req: Request, res: Response) => {
     try {
-      const token = req.headers.authorization?.split(' ')[1];
-      
-      if (!token) {
-        return res.status(401).json({
-          success: false,
-          message: 'Token non fourni'
-        });
-      }
+      const { token } = req.params;
 
+      // Vérifier le token
       const decoded = jwt.verify(token, config.JWT_SECRET) as { id: string };
       const user = await User.findById(decoded.id);
 
       if (!user) {
-        return res.status(401).json({
+        return res.status(400).json({
           success: false,
-          message: 'Utilisateur non trouvé'
+          message: 'Token invalide'
         });
       }
 
       res.status(200).json({
         success: true,
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          role: user.role
+        message: 'Token valide',
+        data: {
+          user: {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            role: user.role
+          }
         }
       });
       return;
     } catch (error) {
       logger.error('Erreur lors de la vérification du token:', error);
-      res.status(401).json({
+      res.status(400).json({
         success: false,
-        message: 'Token invalide'
+        message: 'Token invalide ou expiré'
       });
       return;
     }
