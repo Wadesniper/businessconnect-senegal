@@ -4,14 +4,14 @@ FROM node:18-alpine as builder
 # Définition du répertoire de travail
 WORKDIR /app
 
-# Copie des fichiers package du serveur
-COPY server/package*.json ./
+# Copie des fichiers package
+COPY package*.json ./
 
 # Installation des dépendances
 RUN npm install
 
-# Copie des sources du serveur
-COPY server/ .
+# Copie des sources
+COPY . .
 
 # Build du serveur
 RUN npm run build
