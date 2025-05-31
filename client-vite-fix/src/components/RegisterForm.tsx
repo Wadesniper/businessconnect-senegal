@@ -53,15 +53,13 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
       return;
     }
     
-    // Nettoie le numéro en gardant uniquement les chiffres, les espaces et le +
-    const cleaned = value.replace(/[^0-9\s+]/g, '');
-    
-    // Retire tous les espaces pour la validation
-    const withoutSpaces = cleaned.replace(/\s/g, '');
+    // Nettoie le numéro en gardant uniquement les chiffres et le +
+    const cleaned = value.replace(/[^0-9+]/g, '');
     
     // Vérifie si c'est un numéro international sénégalais
-    if (withoutSpaces.startsWith('+221')) {
-      if (/^\+2217[0-9]{8}$/.test(withoutSpaces)) {
+    if (cleaned.startsWith('+221')) {
+      const digits = cleaned.slice(4); // Enlève le +221
+      if (/^7[0-9]{8}$/.test(digits)) {
         setPhoneError('');
         return;
       }
@@ -70,12 +68,49 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
     }
     
     // Vérifie si c'est un numéro sénégalais sans indicatif
-    if (/^7[0-9]{8}$/.test(withoutSpaces)) {
+    if (/^7[0-9]{8}$/.test(cleaned)) {
       setPhoneError('');
       return;
     }
     
     setPhoneError("Le numéro doit être au format sénégalais (+221 7X XXX XX XX ou 7X XXX XX XX)");
+  };
+
+  const formatPhoneNumber = (value: string) => {
+    if (!value) return value;
+    
+    // Enlève tout sauf les chiffres et le +
+    const cleaned = value.replace(/[^0-9+]/g, '');
+    
+    // Format avec +221
+    if (cleaned.startsWith('+221')) {
+      const digits = cleaned.slice(4);
+      if (digits.length <= 9) {
+        let formatted = '+221 ';
+        for (let i = 0; i < digits.length; i++) {
+          if (i === 2 || i === 5 || i === 7) {
+            formatted += ' ';
+          }
+          formatted += digits[i];
+        }
+        return formatted.trim();
+      }
+      return cleaned;
+    }
+    
+    // Format sans +221
+    if (cleaned.length <= 9) {
+      let formatted = '';
+      for (let i = 0; i < cleaned.length; i++) {
+        if (i === 2 || i === 5 || i === 7) {
+          formatted += ' ';
+        }
+        formatted += cleaned[i];
+      }
+      return formatted.trim();
+    }
+    
+    return cleaned;
   };
 
   // Si noCard ou noBg, on affiche juste le formulaire sans fond ni card
@@ -116,17 +151,34 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
           rules={[
             { required: true, message: 'Veuillez saisir votre numéro de téléphone' },
             { 
-              pattern: /^\+221\s*7[0-9](\s*\d){8}$|^7[0-9](\s*\d){8}$/,
-              message: 'Le numéro doit être au format sénégalais (+221 7X XXX XX XX ou 7X XXX XX XX)'
+              validator: async (_, value) => {
+                if (!value) return;
+                
+                const cleaned = value.replace(/[^0-9+]/g, '');
+                
+                if (cleaned.startsWith('+221')) {
+                  const digits = cleaned.slice(4);
+                  if (!/^7[0-9]{8}$/.test(digits)) {
+                    throw new Error('Le numéro doit être au format sénégalais (+221 7X XXX XX XX)');
+                  }
+                } else if (!/^7[0-9]{8}$/.test(cleaned)) {
+                  throw new Error('Le numéro doit être au format sénégalais (7X XXX XX XX)');
+                }
+              }
             }
           ]}
+          validateTrigger="onBlur"
         >
           <Input
             size="large"
             placeholder="+221 7X XXX XX XX"
             className="auth-full-width"
             style={{ borderRadius: 8 }}
-            onChange={e => validatePhone(e.target.value)}
+            onChange={e => {
+              const formatted = formatPhoneNumber(e.target.value);
+              form.setFieldsValue({ phoneNumber: formatted });
+              validatePhone(formatted);
+            }}
           />
         </Form.Item>
         {phoneError && <div style={{ color: 'red', marginBottom: 12 }}>{phoneError}</div>}
@@ -257,17 +309,34 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
             rules={[
               { required: true, message: 'Veuillez saisir votre numéro de téléphone' },
               { 
-                pattern: /^\+221\s*7[0-9](\s*\d){8}$|^7[0-9](\s*\d){8}$/,
-                message: 'Le numéro doit être au format sénégalais (+221 7X XXX XX XX ou 7X XXX XX XX)'
+                validator: async (_, value) => {
+                  if (!value) return;
+                  
+                  const cleaned = value.replace(/[^0-9+]/g, '');
+                  
+                  if (cleaned.startsWith('+221')) {
+                    const digits = cleaned.slice(4);
+                    if (!/^7[0-9]{8}$/.test(digits)) {
+                      throw new Error('Le numéro doit être au format sénégalais (+221 7X XXX XX XX)');
+                    }
+                  } else if (!/^7[0-9]{8}$/.test(cleaned)) {
+                    throw new Error('Le numéro doit être au format sénégalais (7X XXX XX XX)');
+                  }
+                }
               }
             ]}
+            validateTrigger="onBlur"
           >
             <Input
               size="large"
               placeholder="+221 7X XXX XX XX"
               className="auth-full-width"
               style={{ borderRadius: 8 }}
-              onChange={e => validatePhone(e.target.value)}
+              onChange={e => {
+                const formatted = formatPhoneNumber(e.target.value);
+                form.setFieldsValue({ phoneNumber: formatted });
+                validatePhone(formatted);
+              }}
             />
           </Form.Item>
           {phoneError && <div style={{ color: 'red', marginBottom: 12 }}>{phoneError}</div>}
