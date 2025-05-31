@@ -42,7 +42,7 @@ export class AuthController {
       }
 
       // Normalisation du téléphone
-      function normalizePhone(phone: string): string | null | 'INVALID_PREFIX' {
+      function normalizePhone(phone: string): string | null {
         if (!phone) return null;
         
         // Nettoie le numéro en gardant uniquement les chiffres et le +
@@ -54,7 +54,7 @@ export class AuthController {
           if (/^(70|76|77|78)[0-9]{7}$/.test(digits)) {
             return cleaned;
           }
-          return 'INVALID_PREFIX';
+          return null;
         }
         
         // Si le numéro commence par un préfixe valide (format local)
@@ -67,12 +67,6 @@ export class AuthController {
 
       // Nettoyer et valider le numéro de téléphone
       const normalizedPhone = normalizePhone(phoneNumber);
-      if (normalizedPhone === 'INVALID_PREFIX') {
-        return res.status(400).json({
-          success: false,
-          message: "Le numéro de téléphone doit commencer par 70, 76, 77 ou 78 pour les numéros sénégalais"
-        });
-      }
       if (!normalizedPhone) {
         return res.status(400).json({
           success: false,
@@ -81,12 +75,26 @@ export class AuthController {
       }
 
       // Vérifier si l'utilisateur existe déjà
-      const existingUser = await User.findOne({ phoneNumber: normalizedPhone });
+      const existingUser = await User.findOne({
+        $or: [
+          { phoneNumber: normalizedPhone },
+          { email: email ? email.toLowerCase() : undefined }
+        ]
+      });
+
       if (existingUser) {
-        return res.status(400).json({
-          success: false,
-          message: 'Un utilisateur avec ce numéro de téléphone existe déjà'
-        });
+        if (existingUser.phoneNumber === normalizedPhone) {
+          return res.status(400).json({
+            success: false,
+            message: 'Un utilisateur avec ce numéro de téléphone existe déjà'
+          });
+        }
+        if (email && existingUser.email === email.toLowerCase()) {
+          return res.status(400).json({
+            success: false,
+            message: 'Un utilisateur avec cet email existe déjà'
+          });
+        }
       }
 
       // Hasher le mot de passe
@@ -95,19 +103,43 @@ export class AuthController {
 
       // Créer le nouvel utilisateur avec le numéro normalisé
       const userData: any = {
-        firstName,
-        lastName,
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
         phoneNumber: normalizedPhone,
-        password: hashedPassword
+        password: hashedPassword,
+        isVerified: false
       };
 
       if (email) {
-        userData.email = email;
+        userData.email = email.toLowerCase();
       }
 
       const user = new User(userData);
 
-      await user.save();
+      try {
+        await user.save();
+      } catch (dbError: any) {
+        // Gérer les erreurs de validation MongoDB
+        if (dbError.name === 'ValidationError') {
+          const errors = Object.values(dbError.errors).map((err: any) => err.message);
+          return res.status(400).json({
+            success: false,
+            message: 'Erreur de validation',
+            errors
+          });
+        }
+        
+        // Gérer les erreurs de duplicate key
+        if (dbError.code === 11000) {
+          const field = Object.keys(dbError.keyPattern)[0];
+          return res.status(400).json({
+            success: false,
+            message: `Un utilisateur avec ce ${field === 'phoneNumber' ? 'numéro de téléphone' : 'email'} existe déjà`
+          });
+        }
+        
+        throw dbError;
+      }
       
       // Générer le token JWT pour la connexion immédiate
       const jwtSecret: any = process.env.JWT_SECRET || 'default_secret';
@@ -119,7 +151,7 @@ export class AuthController {
           role: user.role,
           firstName: user.firstName,
           lastName: user.lastName,
-          email: user.email
+          phoneNumber: user.phoneNumber
         },
         jwtSecret,
         options
@@ -146,6 +178,7 @@ export class AuthController {
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
+            phoneNumber: user.phoneNumber,
             role: user.role
           }
         }

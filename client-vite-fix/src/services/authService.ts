@@ -50,17 +50,31 @@ export const authService = {
       throw new Error(response.data.message || 'Erreur lors de l\'inscription');
     } catch (error: any) {
       console.error('Erreur d\'inscription:', error);
+      
+      // Erreur avec réponse du serveur
       if (error.response) {
-        // Erreur avec réponse du serveur
-        const errorMessage = error.response.data.message || 'Erreur lors de l\'inscription';
-        throw new Error(errorMessage);
-      } else if (error.request) {
-        // Pas de réponse du serveur
+        const errorData = error.response.data;
+        
+        // Si nous avons des erreurs de validation multiples
+        if (errorData.errors && Array.isArray(errorData.errors)) {
+          throw new Error(errorData.errors.join('\n'));
+        }
+        
+        // Si nous avons un message d'erreur spécifique
+        if (errorData.message) {
+          throw new Error(errorData.message);
+        }
+        
+        throw new Error('Erreur lors de l\'inscription. Veuillez vérifier vos informations.');
+      } 
+      
+      // Erreur de connexion
+      if (error.request) {
         throw new Error('Impossible de contacter le serveur. Veuillez vérifier votre connexion et réessayer.');
-      } else {
-        // Erreur de configuration de la requête
-        throw new Error('Une erreur est survenue lors de la configuration de la requête.');
       }
+      
+      // Autres erreurs
+      throw new Error('Une erreur est survenue lors de l\'inscription. Veuillez réessayer.');
     }
   },
 

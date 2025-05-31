@@ -83,21 +83,21 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
     // Vérifie si c'est un numéro international sénégalais
     if (cleaned.startsWith('+221')) {
       const digits = cleaned.slice(4); // Enlève le +221
-      if (/^7[0-9]{8}$/.test(digits)) {
+      if (/^(70|76|77|78)[0-9]{7}$/.test(digits)) {
         setPhoneError('');
         return;
       }
-      setPhoneError('Le numéro doit commencer par 7 et avoir 9 chiffres après +221');
+      setPhoneError('Le numéro doit commencer par 70, 76, 77 ou 78 après +221');
       return;
     }
     
     // Vérifie si c'est un numéro sénégalais sans indicatif
-    if (/^7[0-9]{8}$/.test(cleaned)) {
+    if (/^(70|76|77|78)[0-9]{7}$/.test(cleaned)) {
       setPhoneError('');
       return;
     }
     
-    setPhoneError("Le numéro doit être au format sénégalais (+221 7X XXX XX XX ou 7X XXX XX XX)");
+    setPhoneError("Le numéro doit être au format sénégalais (+221 7X XXX XX XX ou 7X XXX XX XX) et commencer par 70, 76, 77 ou 78");
   };
 
   const formatPhoneNumber = (value: string) => {
@@ -182,27 +182,30 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
                 
                 if (cleaned.startsWith('+221')) {
                   const digits = cleaned.slice(4);
-                  if (!/^7[0-9]{8}$/.test(digits)) {
-                    throw new Error('Le numéro doit être au format sénégalais (+221 7X XXX XX XX)');
+                  if (!/^(70|76|77|78)[0-9]{7}$/.test(digits)) {
+                    throw new Error('Le numéro doit commencer par 70, 76, 77 ou 78 après +221');
                   }
-                } else if (!/^7[0-9]{8}$/.test(cleaned)) {
-                  throw new Error('Le numéro doit être au format sénégalais (7X XXX XX XX)');
+                } else if (!/^(70|76|77|78)[0-9]{7}$/.test(cleaned)) {
+                  throw new Error('Le numéro doit commencer par 70, 76, 77 ou 78');
                 }
               }
             }
           ]}
           validateTrigger="onBlur"
+          help={phoneError}
+          validateStatus={phoneError ? 'error' : undefined}
         >
           <Input
             size="large"
             placeholder="+221 7X XXX XX XX"
             className="auth-full-width"
             style={{ borderRadius: 8 }}
-            onChange={e => {
+            onChange={(e) => {
               const formatted = formatPhoneNumber(e.target.value);
               form.setFieldsValue({ phoneNumber: formatted });
               validatePhone(formatted);
             }}
+            onBlur={(e) => validatePhone(e.target.value)}
           />
         </Form.Item>
         {phoneError && <div style={{ color: 'red', marginBottom: 12 }}>{phoneError}</div>}
@@ -345,27 +348,30 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
                   
                   if (cleaned.startsWith('+221')) {
                     const digits = cleaned.slice(4);
-                    if (!/^7[0-9]{8}$/.test(digits)) {
-                      throw new Error('Le numéro doit être au format sénégalais (+221 7X XXX XX XX)');
+                    if (!/^(70|76|77|78)[0-9]{7}$/.test(digits)) {
+                      throw new Error('Le numéro doit commencer par 70, 76, 77 ou 78 après +221');
                     }
-                  } else if (!/^7[0-9]{8}$/.test(cleaned)) {
-                    throw new Error('Le numéro doit être au format sénégalais (7X XXX XX XX)');
+                  } else if (!/^(70|76|77|78)[0-9]{7}$/.test(cleaned)) {
+                    throw new Error('Le numéro doit commencer par 70, 76, 77 ou 78');
                   }
                 }
               }
             ]}
             validateTrigger={['onBlur', 'onChange']}
+            help={phoneError}
+            validateStatus={phoneError ? 'error' : undefined}
           >
             <Input
               size="large"
               placeholder="+221 7X XXX XX XX"
               className="auth-full-width"
               style={{ borderRadius: 8 }}
-              onChange={e => {
+              onChange={(e) => {
                 const formatted = formatPhoneNumber(e.target.value);
                 form.setFieldsValue({ phoneNumber: formatted });
                 validatePhone(formatted);
               }}
+              onBlur={(e) => validatePhone(e.target.value)}
             />
           </Form.Item>
           {phoneError && <div style={{ color: 'red', marginBottom: 12 }}>{phoneError}</div>}
