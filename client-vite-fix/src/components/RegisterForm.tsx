@@ -36,14 +36,9 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
         password: values.password
       };
 
-      const response = await register(registrationData);
-      
-      if (response.success) {
-        message.success(response.message);
-        navigate('/login');
-      } else {
-        message.error(response.message || 'Erreur lors de l\'inscription. Veuillez réessayer.');
-      }
+      await register(registrationData);
+      message.success('Inscription réussie ! Vous pouvez maintenant vous connecter.');
+      navigate('/login');
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || 'Erreur lors de l\'inscription';
       message.error(errorMessage);
@@ -61,21 +56,21 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
     // Nettoie le numéro en gardant uniquement les chiffres, les espaces et le +
     const cleaned = value.replace(/[^0-9\s+]/g, '');
     
-    // Retire les espaces pour la validation
+    // Retire tous les espaces pour la validation
     const withoutSpaces = cleaned.replace(/\s/g, '');
     
     // Vérifie si c'est un numéro international sénégalais
     if (withoutSpaces.startsWith('+221')) {
-      if (/^\+221[76]\d{8}$/.test(withoutSpaces)) {
+      if (/^\+2217[0-9]{8}$/.test(withoutSpaces)) {
         setPhoneError('');
         return;
       }
-      setPhoneError('Le numéro doit commencer par 7 ou 6 et avoir 9 chiffres après +221');
+      setPhoneError('Le numéro doit commencer par 7 et avoir 9 chiffres après +221');
       return;
     }
     
     // Vérifie si c'est un numéro sénégalais sans indicatif
-    if (/^[76]\d{8}$/.test(withoutSpaces)) {
+    if (/^7[0-9]{8}$/.test(withoutSpaces)) {
       setPhoneError('');
       return;
     }
@@ -121,7 +116,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
           rules={[
             { required: true, message: 'Veuillez saisir votre numéro de téléphone' },
             { 
-              pattern: /^(\+221[\s]*[76][0-9\s]{8}|[76][\s]*[0-9\s]{8})$/,
+              pattern: /^\+221\s*7[0-9](\s*\d){8}$|^7[0-9](\s*\d){8}$/,
               message: 'Le numéro doit être au format sénégalais (+221 7X XXX XX XX ou 7X XXX XX XX)'
             }
           ]}
@@ -262,7 +257,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
             rules={[
               { required: true, message: 'Veuillez saisir votre numéro de téléphone' },
               { 
-                pattern: /^(\+221[\s]*[76][0-9\s]{8}|[76][\s]*[0-9\s]{8})$/,
+                pattern: /^\+221\s*7[0-9](\s*\d){8}$|^7[0-9](\s*\d){8}$/,
                 message: 'Le numéro doit être au format sénégalais (+221 7X XXX XX XX ou 7X XXX XX XX)'
               }
             ]}
