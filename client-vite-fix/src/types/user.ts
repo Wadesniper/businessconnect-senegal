@@ -6,7 +6,7 @@ export interface User {
   firstName: string;
   lastName: string;
   email?: string;
-  phone: string;
+  phoneNumber: string;  // Changé de phone à phoneNumber pour la cohérence
   role: UserRole;
   isVerified: boolean;
   createdAt: string;
@@ -47,6 +47,11 @@ export interface UserRegistrationData {
   email?: string;
   phoneNumber: string;
   password: string;
+  role?: UserRole;
+  company?: {
+    name?: string;
+    secteur?: string;
+  };
 }
 
 export interface UserUpdateData {
@@ -113,21 +118,8 @@ export interface UserPreferences {
 }
 
 export interface LoginCredentials {
-  phone: string;
+  phoneNumber: string;  // Changé de phone à phoneNumber pour la cohérence
   password: string;
-}
-
-export interface RegisterData {
-  phoneNumber: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  email?: string;
-  role?: UserRole;
-  company?: {
-    name: string;
-    secteur: string;
-  };
 }
 
 export interface UserRegistrationResponse {

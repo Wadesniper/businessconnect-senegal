@@ -1,8 +1,6 @@
 import { api } from './api';
 import { message } from 'antd';
-import type { UserSubscription } from '../data/subscriptionData';
-import { subscriptionData } from '../data/subscriptionData';
-import type { User, UserRole, UserRegistrationData, LoginCredentials } from '../types/user';
+import type { User, UserRole, UserRegistrationData, LoginCredentials, UserRegistrationResponse } from '../types/user';
 
 export interface AuthResponse {
   success: boolean;
@@ -23,27 +21,46 @@ export const authService = {
       if (response.data.success) {
         this.setToken(response.data.data.token);
         this.setUser(response.data.data.user);
+        return response.data.data;
       }
-      return response.data.data;
+      throw new Error(response.data.message || 'Erreur lors de la connexion');
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || 'Erreur lors de la connexion';
-      message.error(errorMessage);
-      throw error;
+      console.error('Erreur de connexion:', error);
+      if (error.response) {
+        throw new Error(error.response.data.message || 'Erreur lors de la connexion');
+      } else if (error.request) {
+        throw new Error('Impossible de contacter le serveur. Veuillez vérifier votre connexion.');
+      } else {
+        throw new Error('Une erreur est survenue lors de la configuration de la requête.');
+      }
     }
   },
 
-  async register(data: UserRegistrationData): Promise<{ success: boolean; message: string; data?: { token: string; user: User } }> {
+  async register(data: UserRegistrationData): Promise<UserRegistrationResponse> {
     try {
-      const response = await api.post<{ success: boolean; message: string; data?: { token: string; user: User } }>('/auth/register', data);
+      console.log('Données d\'inscription:', data);
+      const response = await api.post<UserRegistrationResponse>('/auth/register', data);
+      console.log('Réponse du serveur:', response.data);
+      
       if (response.data.success && response.data.data) {
         this.setToken(response.data.data.token);
         this.setUser(response.data.data.user);
+        return response.data;
       }
-      return response.data;
+      throw new Error(response.data.message || 'Erreur lors de l\'inscription');
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || 'Erreur lors de l\'inscription';
-      message.error(errorMessage);
-      throw error;
+      console.error('Erreur d\'inscription:', error);
+      if (error.response) {
+        // Erreur avec réponse du serveur
+        const errorMessage = error.response.data.message || 'Erreur lors de l\'inscription';
+        throw new Error(errorMessage);
+      } else if (error.request) {
+        // Pas de réponse du serveur
+        throw new Error('Impossible de contacter le serveur. Veuillez vérifier votre connexion et réessayer.');
+      } else {
+        // Erreur de configuration de la requête
+        throw new Error('Une erreur est survenue lors de la configuration de la requête.');
+      }
     }
   },
 
@@ -54,43 +71,59 @@ export const authService = {
   },
 
   async getCurrentUser(): Promise<User> {
-    const response = await api.get<User>('/api/auth/me');
-    return response.data;
+    try {
+      const response = await api.get<User>('/auth/me');
+      return response.data;
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        this.logout();
+        throw new Error('Session expirée. Veuillez vous reconnecter.');
+      }
+      throw error;
+    }
   },
 
   async updateProfile(data: Partial<User>): Promise<User> {
-    const response = await api.patch<User>('/api/auth/profile', data);
-    return response.data;
+    try {
+      const response = await api.patch<User>('/auth/profile', data);
+      return response.data;
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        this.logout();
+        throw new Error('Session expirée. Veuillez vous reconnecter.');
+      }
+      throw error;
+    }
   },
 
   async resetPassword(phoneNumber: string): Promise<void> {
-    await api.post('/api/auth/reset-password', { phoneNumber });
+    await api.post('/auth/reset-password', { phoneNumber });
   },
 
   async verifyResetToken(token: string): Promise<void> {
-    await api.post('/api/auth/verify-reset-token', { token });
+    await api.post('/auth/verify-reset-token', { token });
   },
 
   async setNewPassword(token: string, password: string): Promise<void> {
-    await api.post('/api/auth/set-new-password', { token, password });
+    await api.post('/auth/set-new-password', { token, password });
   },
 
   async verifyPhoneNumber(token: string): Promise<void> {
-    await api.post('/api/auth/verify-phone', { token });
+    await api.post('/auth/verify-phone', { token });
   },
 
   async updateSubscription(status: 'active' | 'cancelled'): Promise<User> {
-    const response = await api.patch<User>('/api/auth/subscription', { status });
+    const response = await api.patch<User>('/auth/subscription', { status });
     return response.data;
   },
 
   async updateCompanyInfo(companyData: Partial<User['company']>): Promise<User> {
-    const response = await api.patch<User>('/api/auth/company', companyData);
+    const response = await api.patch<User>('/auth/company', companyData);
     return response.data;
   },
 
   async updateProfileInfo(profileData: Partial<User['profile']>): Promise<User> {
-    const response = await api.patch<User>('/api/auth/profile-details', profileData);
+    const response = await api.patch<User>('/auth/profile-details', profileData);
     return response.data;
   },
 
@@ -142,33 +175,5 @@ export const authService = {
 
   isEmployeur(): boolean {
     return this.getUserRole() === 'employeur';
-  },
-
-  getCurrentUserSubscription(): UserSubscription | undefined {
-    const user = this.getUser();
-    if (!user) return undefined;
-    return subscriptionData.find(sub => sub.userId === user.id);
-  },
-
-  setCurrentUserSubscriptionActive(active: boolean) {
-    const user = this.getUser();
-    if (!user) return;
-    const sub = subscriptionData.find(sub => sub.userId === user.id);
-    if (sub) {
-      sub.isActive = active;
-      if (active) {
-        sub.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString();
-      } else {
-        sub.expiresAt = new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString();
-      }
-    }
-  },
-
-  renewCurrentUserSubscription() {
-    this.setCurrentUserSubscriptionActive(true);
-  },
-
-  expireCurrentUserSubscription() {
-    this.setCurrentUserSubscriptionActive(false);
   }
 }; 

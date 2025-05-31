@@ -26,11 +26,7 @@ const corsOptions = {
     ];
     
     // Autoriser les requêtes sans origine (comme les appels API directs)
-    if (!origin) {
-      return callback(null, true);
-    }
-    
-    if (allowedOrigins.indexOf(origin) !== -1) {
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
@@ -38,11 +34,16 @@ const corsOptions = {
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
-  exposedHeaders: ['Set-Cookie']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin', 'Access-Control-Allow-Credentials'],
+  exposedHeaders: ['Set-Cookie', 'Authorization'],
+  maxAge: 86400 // 24 heures de cache pour les requêtes préflight
 };
 
+// Appliquer CORS avant tout autre middleware
 app.use(cors(corsOptions));
+
+// Support des requêtes préflight OPTIONS
+app.options('*', cors(corsOptions));
 
 // Middleware pour parser le JSON et les formulaires
 app.use(express.json());

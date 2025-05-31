@@ -1,4 +1,53 @@
-# MEMO ÉTAT DU SITE BUSINESSCONNECT SÉNÉGAL
+# État du site BusinessConnect Sénégal
+
+## Dernières modifications (31/05/2024)
+
+### Corrections d'authentification
+- Correction du routage frontend pour les pages de connexion et d'inscription
+- Amélioration de la gestion des erreurs dans le service d'authentification
+- Mise à jour de la configuration CORS pour gérer correctement les requêtes préflight
+- Ajout du support des cookies et des en-têtes d'autorisation
+- Amélioration des messages d'erreur pour une meilleure expérience utilisateur
+
+### Configuration API
+- URL de l'API en production : https://businessconnect-senegal-api-production.up.railway.app
+- Domaines autorisés :
+  - http://localhost:5173
+  - http://localhost:3000
+  - https://app.businessconnectsenegal.com
+  - https://businessconnect-senegal.vercel.app
+  - https://businessconnect-senegal-git-main-mouhamed-ali.vercel.app
+  - https://businessconnectsenegal2025gooo.vercel.app
+
+### État des fonctionnalités
+- ✅ Inscription
+- ✅ Connexion
+- ✅ Gestion des profils
+- ✅ Abonnements
+- ✅ Marketplace
+- ✅ Offres d'emploi
+- ✅ CV Generator
+- ✅ Formations
+
+### Points d'attention
+1. La validation du numéro de téléphone est stricte :
+   - Format international : +221 7X XXX XX XX
+   - Format local : 7X XXX XX XX
+2. Les messages d'erreur sont plus descriptifs pour aider les utilisateurs
+3. La gestion des sessions est améliorée avec déconnexion automatique en cas d'expiration
+
+### Prochaines étapes
+1. Surveiller les logs d'erreur pour identifier d'éventuels problèmes
+2. Tester en profondeur les scénarios d'authentification
+3. Vérifier la persistance des sessions utilisateur
+4. Monitorer les performances de l'API
+
+### Notes techniques
+- Le frontend utilise React avec Vite
+- Le backend est en Node.js avec Express
+- Base de données MongoDB Atlas
+- Déploiement : Vercel (frontend) et Railway (backend)
+- CORS configuré avec support des cookies et des requêtes préflight
 
 ## 1. Architecture Technique
 
