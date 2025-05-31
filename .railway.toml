@@ -1,9 +1,9 @@
 [build]
 builder = "NIXPACKS"
-buildCommand = "cd businessconnect-senegal && npm install && npm run build"
+buildCommand = "npm install && npm run build"
 
 [deploy]
-startCommand = "cd businessconnect-senegal && npm start"
+startCommand = "npm start"
 healthcheckPath = "/api/health"
 healthcheckTimeout = 100
 restartPolicyType = "ON_FAILURE"
@@ -13,7 +13,7 @@ restartPolicyMaxRetries = 3
 NODE_ENV = "production"
 
 [service]
-rootDirectory = "businessconnect-senegal/server"
+rootDirectory = "server"
 
 [variables]
 NODE_ENV = "production"
