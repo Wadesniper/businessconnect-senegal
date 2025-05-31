@@ -14,22 +14,35 @@ dotenv.config();
 const app = express();
 
 // Configuration CORS
-app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'http://localhost:3000',
-    'https://app.businessconnectsenegal.com',
-    'https://businessconnect-senegal.vercel.app',
-    'https://businessconnect-senegal-api-production.up.railway.app',
-    'https://businessconnect-senegal-git-main-mouhamed-ali.vercel.app'
-  ],
+const corsOptions = {
+  origin: function(origin: any, callback: any) {
+    const allowedOrigins = [
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'https://app.businessconnectsenegal.com',
+      'https://businessconnect-senegal.vercel.app',
+      'https://businessconnect-senegal-git-main-mouhamed-ali.vercel.app',
+      'https://businessconnectsenegal2025gooo.vercel.app'
+    ];
+    
+    // Autoriser les requêtes sans origine (comme les appels API directs)
+    if (!origin) {
+      return callback(null, true);
+    }
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
-}));
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+  exposedHeaders: ['Set-Cookie']
+};
 
-// Middleware pour gérer les requêtes préflight OPTIONS
-app.options('*', cors());
+app.use(cors(corsOptions));
 
 // Middleware pour parser le JSON et les formulaires
 app.use(express.json());
