@@ -28,6 +28,9 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
 }));
 
+// Middleware pour gérer les requêtes préflight OPTIONS
+app.options('*', cors());
+
 // Middleware pour parser le JSON et les formulaires
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
