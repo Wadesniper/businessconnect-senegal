@@ -1,29 +1,24 @@
 /**
  * Valide et normalise un numéro de téléphone sénégalais
- * @param phone Le numéro de téléphone à valider
- * @returns Le numéro normalisé au format international ou null si invalide
+ * @param phoneNumber Le numéro de téléphone à valider
+ * @returns Le numéro normalisé ou null si invalide
  */
-export function validatePhoneNumber(phone: string): string | null {
-  if (!phone) return null;
-  
-  // Nettoie le numéro en gardant uniquement les chiffres et le +
-  let cleaned = phone.replace(/[^0-9+]/g, '');
-  
-  // Si le numéro commence par +221
-  if (cleaned.startsWith('+221')) {
-    const digits = cleaned.slice(4); // Enlève le +221
-    if (/^(70|76|77|78)[0-9]{7}$/.test(digits)) {
-      return cleaned;
-    }
+export function validatePhoneNumber(phoneNumber: string): string | null {
+  // Supprimer tous les espaces et caractères spéciaux
+  const cleaned = phoneNumber.replace(/\s+/g, '').replace(/[-()+]/g, '');
+
+  // Si le numéro commence par +221, le retirer
+  const withoutPrefix = cleaned.startsWith('221') ? cleaned.slice(3) : cleaned;
+
+  // Vérifier que le numéro commence par 70, 76, 77 ou 78 et a 9 chiffres
+  const isValid = /^(70|76|77|78)\d{7}$/.test(withoutPrefix);
+
+  if (!isValid) {
     return null;
   }
-  
-  // Si le numéro commence par un préfixe valide (format local)
-  if (/^(70|76|77|78)[0-9]{7}$/.test(cleaned)) {
-    return '+221' + cleaned;
-  }
-  
-  return null;
+
+  // Retourner le numéro au format international
+  return `+221${withoutPrefix}`;
 }
 
 /**

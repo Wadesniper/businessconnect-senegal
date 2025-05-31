@@ -1,84 +1,62 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { config } from '../config';
-import { User } from '../models/User';
+import { AuthRequest, UserPayload } from '../types/user';
+import jwtConfig from '../config/jwt';
 import { logger } from '../utils/logger';
-import { UserPayload } from '../types/user';
+import { User } from '../models/User';
 
-export interface AuthRequest extends Request {
-  user?: UserPayload;
-}
-
-export const authMiddleware = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const token = req.headers.authorization?.replace('Bearer ', '');
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        message: 'Accès non autorisé. Token manquant.'
+      });
+    }
 
+    const token = authHeader.split(' ')[1];
     if (!token) {
       return res.status(401).json({
         success: false,
-        message: 'Accès non autorisé. Token manquant'
+        message: 'Accès non autorisé. Token invalide.'
       });
     }
 
     try {
-      const decoded = jwt.verify(token, config.JWT_SECRET) as UserPayload;
-      const user = await User.findById(decoded.id);
-
-      if (!user) {
-        return res.status(401).json({
-          success: false,
-          message: 'Utilisateur non trouvé'
-        });
-      }
-
-      // Vérifier si l'utilisateur est vérifié
-      if (!user.isVerified) {
-        res.status(401).json({
-          success: false,
-          message: 'Veuillez vérifier votre email'
-        });
-        return;
-      }
-
-      req.user = {
-        id: user._id.toString(),
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        phoneNumber: user.phoneNumber,
-        role: user.role
-      };
-
+      const decoded = jwt.verify(token, jwtConfig.secret) as UserPayload;
+      req.user = decoded;
       next();
     } catch (error) {
+      logger.error('Erreur de vérification du token:', error);
       return res.status(401).json({
         success: false,
-        message: 'Token invalide ou expiré'
+        message: 'Accès non autorisé. Token invalide ou expiré.'
       });
     }
   } catch (error) {
-    logger.error('Erreur d\'authentification:', error);
+    logger.error('Erreur lors de la vérification du token:', error);
     return res.status(500).json({
       success: false,
-      message: 'Erreur serveur'
+      message: 'Erreur lors de la vérification du token.'
     });
   }
 };
 
 export const isAdmin = (req: AuthRequest, res: Response, next: NextFunction) => {
-  if (!req.user) {
-    return res.status(401).json({
+  try {
+    if (req.user?.role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Accès non autorisé. Privilèges administrateur requis.'
+      });
+    }
+    next();
+  } catch (error) {
+    logger.error('Erreur lors de la vérification des privilèges:', error);
+    return res.status(500).json({
       success: false,
-      message: 'Non authentifié'
+      message: 'Erreur lors de la vérification des privilèges.'
     });
   }
-
-  if (req.user.role !== 'admin') {
-    return res.status(403).json({
-      success: false,
-      message: 'Accès refusé. Droits administrateur requis.'
-    });
-  }
-
-  next();
 }; 

@@ -1,18 +1,18 @@
 import { Secret, SignOptions } from 'jsonwebtoken';
 import { logger } from '../utils/logger';
 
+// Vérification de la présence de JWT_SECRET
 if (!process.env.JWT_SECRET) {
-  logger.error('JWT_SECRET is not defined in environment variables. This is a security risk in production.');
-  if (process.env.NODE_ENV === 'production') {
-    throw new Error('JWT_SECRET must be defined in production environment');
-  }
+  const message = 'JWT_SECRET is not defined in environment variables';
+  logger.error(message);
+  throw new Error(message);
 }
 
 const jwtConfig = {
   secret: process.env.JWT_SECRET as Secret,
   signOptions: {
-    expiresIn: '7d'
-  } satisfies SignOptions
+    expiresIn: process.env.JWT_EXPIRES_IN || '7d'
+  } as SignOptions
 } as const;
 
 export default jwtConfig; 

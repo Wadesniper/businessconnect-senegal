@@ -2,15 +2,14 @@ import axios from 'axios';
 import { message } from 'antd';
 import { authService } from './authService';
 
-// Détermine l'URL de base de l'API en fonction de l'environnement
-const BASE_URL = import.meta.env.MODE === 'development' 
-  ? 'http://localhost:5000'
-  : 'https://businessconnect-senegal-api-production.up.railway.app';
+// URL de base de l'API en production
+const BASE_URL = 'https://businessconnect-senegal-api-production.up.railway.app';
 
 export const api = axios.create({
   baseURL: BASE_URL,
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
   },
   timeout: 15000
 });

@@ -284,12 +284,12 @@ export class AuthController {
       const resetToken = jwt.sign(
         { id: user._id },
         jwtConfig.secret,
-        { expiresIn: '1h' }
+        jwtConfig.signOptions
       );
 
       // Sauvegarder le token
       user.resetPasswordToken = resetToken;
-      user.resetPasswordExpire = new Date(Date.now() + 3600000); // 1 heure
+      user.resetPasswordExpire = new Date(Date.now() + 24 * 3600000); // 24 heures
       await user.save();
 
       // Envoyer l'email de réinitialisation
