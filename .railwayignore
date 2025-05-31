@@ -1,18 +1,42 @@
-# Ignore node_modules
+# Dossiers
 node_modules/
-
-# Ignore build artifacts
+.git/
+client-vite-fix/
 dist/
-build/
+coverage/
+docs/
+logs/
 
-# Ignore development files
+# Fichiers de développement
+*.test.js
+*.spec.js
+*.test.ts
+*.spec.ts
 *.log
 .env.local
 .env.development
 .env.test
 
-# Ignore git files
-.git/
+# Fichiers de configuration d'éditeur
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Scripts d'insertion de données de test
+insert_*.js
+
+# Autres fichiers non nécessaires pour la production
+README.md
+CHANGELOG.md
+jest.config.js
+tsconfig.json
+.prettierrc
+.eslintrc
 .gitignore
 
 # Ignore Railway config files except the root ones
