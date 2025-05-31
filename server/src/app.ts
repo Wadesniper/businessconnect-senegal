@@ -15,23 +15,20 @@ const app = express();
 
 // Configuration CORS
 const corsOptions = {
-  origin: 'https://businessconnectsenegal2025gooo.vercel.app',
+  origin: ['https://businessconnectsenegal2025gooo.vercel.app'],
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
-  exposedHeaders: ['Set-Cookie'],
-  maxAge: 86400
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 };
-
-// Appliquer CORS avant tout autre middleware
-app.use(cors(corsOptions));
-
-// Support des requêtes préflight OPTIONS
-app.options('*', cors(corsOptions));
 
 // Middleware pour parser le JSON et les formulaires
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Appliquer CORS avant tout autre middleware
+app.use(cors(corsOptions));
 
 // Routes publiques (pas besoin d'authentification)
 app.use('/auth', authRoutes);

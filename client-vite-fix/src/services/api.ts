@@ -10,19 +10,15 @@ const BASE_URL = import.meta.env.MODE === 'development'
 export const api = axios.create({
   baseURL: BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json'
+    'Content-Type': 'application/json'
   },
   withCredentials: true,
-  timeout: 15000 // 15 secondes de timeout
+  timeout: 15000
 });
 
 // Intercepteur pour ajouter le token d'authentification
 api.interceptors.request.use(
   (config) => {
-    // Ajouter l'origine pour les requêtes CORS
-    config.headers['Origin'] = window.location.origin;
-    
     // Ne pas ajouter de token pour les routes d'authentification
     if (config.url?.includes('/auth/')) {
       return config;
@@ -73,11 +69,9 @@ api.interceptors.response.use(
       const errorMessage = error.response.data.message || 'Une erreur est survenue';
       message.error(errorMessage);
     } else if (error.request) {
-      // La requête a été faite mais pas de réponse reçue
       console.error('Erreur de connexion:', error.request);
       message.error('Impossible de contacter le serveur. Veuillez vérifier votre connexion.');
     } else {
-      // Une erreur s'est produite lors de la configuration de la requête
       console.error('Erreur de configuration:', error.message);
       message.error('Une erreur est survenue lors de la configuration de la requête.');
     }
