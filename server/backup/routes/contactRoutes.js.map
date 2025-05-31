@@ -1,0 +1,1 @@
+{"version":3,"file":"contactRoutes.js","sourceRoot":"","sources":["../../src/routes/contactRoutes.ts"],"names":[],"mappings":";;;;;AAAA,sDAA8B;AAC9B,wEAAoE;AAGpE,MAAM,MAAM,GAAG,iBAAO,CAAC,MAAM,EAAE,CAAC;AAGhC,MAAM,CAAC,IAAI,CAAC,GAAG,EAAE,KAAK,EAAE,GAAY,EAAE,GAAa,EAAiB,EAAE;IACpE,MAAM,IAAA,oCAAgB,EAAC,GAAG,EAAE,GAAG,CAAC,CAAC;AACnC,CAAC,CAAC,CAAC;AAEH,kBAAe,MAAM,CAAC"}
