@@ -42,20 +42,32 @@ if (!BASE_URL) {
 }
 
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_REACT_APP_API_URL || '/api',
+  baseURL: BASE_URL,
   headers: {
-    'Content-Type': 'application/json'
-  }
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+  },
+  withCredentials: true
 });
 
 // Intercepteur pour ajouter le token d'authentification
-api.interceptors.request.use(config => {
-  const token = localStorage.getItem('token');
-  if (token && config.headers) {
-    config.headers.Authorization = `Bearer ${token}`;
+api.interceptors.request.use(
+  async (config) => {
+    // Ne pas ajouter de token pour les routes d'authentification
+    if (config.url?.includes('/auth/')) {
+      return config;
+    }
+
+    const token = localStorage.getItem('token');
+    if (token && config.headers) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-  return config;
-});
+);
 
 // Intercepteur pour gérer les erreurs
 api.interceptors.response.use(
@@ -64,19 +76,25 @@ api.interceptors.response.use(
     if (error.response) {
       // Gérer les erreurs d'authentification
       if (error.response.status === 401) {
-        authService.removeToken();
-        message.error('Session expirée. Veuillez vous reconnecter.');
-        window.location.href = '/login';
+        // Ne pas rediriger si on est déjà sur la page de login ou d'inscription
+        const currentPath = window.location.pathname;
+        if (!currentPath.includes('/login') && !currentPath.includes('/register')) {
+          authService.removeToken();
+          message.error('Session expirée. Veuillez vous reconnecter.');
+          window.location.href = '/login';
+        }
         return Promise.reject(error);
       }
 
       // Gérer les erreurs de validation
-      if (error.response.status === 422) {
+      if (error.response.status === 422 || error.response.status === 400) {
         const validationErrors = error.response.data.errors;
         if (validationErrors) {
           Object.values(validationErrors).forEach((err: any) => {
             message.error(err);
           });
+        } else if (error.response.data.message) {
+          message.error(error.response.data.message);
         }
         return Promise.reject(error);
       }

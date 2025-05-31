@@ -13,15 +13,16 @@ export interface AuthResponse {
   };
 }
 
-const TOKEN_KEY = 'auth_token';
+const TOKEN_KEY = 'token';
+const USER_KEY = 'user';
 
 export const authService = {
   async login(credentials: LoginCredentials): Promise<AuthResponse['data']> {
     try {
-      const response = await api.post<AuthResponse>('/api/auth/login', credentials);
+      const response = await api.post<AuthResponse>('/auth/login', credentials);
       if (response.data.success) {
-        localStorage.setItem('token', response.data.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data.data.user));
+        this.setToken(response.data.data.token);
+        this.setUser(response.data.data.user);
       }
       return response.data.data;
     } catch (error: any) {
@@ -33,10 +34,10 @@ export const authService = {
 
   async register(data: UserRegistrationData): Promise<{ success: boolean; message: string; data?: { token: string; user: User } }> {
     try {
-      const response = await api.post<{ success: boolean; message: string; data?: { token: string; user: User } }>('/api/auth/register', data);
+      const response = await api.post<{ success: boolean; message: string; data?: { token: string; user: User } }>('/auth/register', data);
       if (response.data.success && response.data.data) {
-        localStorage.setItem('token', response.data.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data.data.user));
+        this.setToken(response.data.data.token);
+        this.setUser(response.data.data.user);
       }
       return response.data;
     } catch (error: any) {
@@ -47,8 +48,8 @@ export const authService = {
   },
 
   logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    this.removeToken();
+    this.removeUser();
     window.location.href = '/login';
   },
 
@@ -105,12 +106,25 @@ export const authService = {
     localStorage.removeItem(TOKEN_KEY);
   },
 
+  setUser(user: User): void {
+    localStorage.setItem(USER_KEY, JSON.stringify(user));
+  },
+
+  getUser(): User | null {
+    const userStr = localStorage.getItem(USER_KEY);
+    return userStr ? JSON.parse(userStr) : null;
+  },
+
+  removeUser(): void {
+    localStorage.removeItem(USER_KEY);
+  },
+
   isAuthenticated(): boolean {
-    return !!this.getToken();
+    return !!this.getToken() && !!this.getUser();
   },
 
   getUserRole(): UserRole | null {
-    const user = this.getCurrentUser();
+    const user = this.getUser();
     return user ? user.role : null;
   },
 
@@ -131,13 +145,13 @@ export const authService = {
   },
 
   getCurrentUserSubscription(): UserSubscription | undefined {
-    const user = this.getCurrentUser();
+    const user = this.getUser();
     if (!user) return undefined;
     return subscriptionData.find(sub => sub.userId === user.id);
   },
 
   setCurrentUserSubscriptionActive(active: boolean) {
-    const user = this.getCurrentUser();
+    const user = this.getUser();
     if (!user) return;
     const sub = subscriptionData.find(sub => sub.userId === user.id);
     if (sub) {
