@@ -10,7 +10,7 @@ export interface AuthRequest extends Request {
 export const authenticate = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     // Routes publiques qui ne nécessitent pas d'authentification
-    if (req.path.startsWith('/api/auth/')) {
+    if (req.path.startsWith('/auth/') || req.path.startsWith('/webhooks/')) {
       return next();
     }
 
@@ -18,7 +18,7 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
     if (!authHeader) {
       return res.status(401).json({ 
         success: false,
-        message: 'Token d\'authentification manquant'
+        message: 'Accès non autorisé. Token manquant'
       });
     }
 
@@ -26,18 +26,26 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
     if (!token) {
       return res.status(401).json({ 
         success: false,
-        message: 'Token d\'authentification invalide'
+        message: 'Accès non autorisé. Token invalide'
       });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default_secret') as UserPayload;
-    req.user = decoded;
-    return next();
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default_secret') as UserPayload;
+      req.user = decoded;
+      return next();
+    } catch (jwtError) {
+      logger.error('Erreur de vérification JWT:', jwtError);
+      return res.status(401).json({ 
+        success: false,
+        message: 'Accès non autorisé. Token invalide ou expiré'
+      });
+    }
   } catch (error) {
     logger.error('Erreur d\'authentification:', error);
-    return res.status(401).json({ 
+    return res.status(500).json({ 
       success: false,
-      message: 'Token invalide ou expiré'
+      message: 'Erreur interne du serveur'
     });
   }
 };

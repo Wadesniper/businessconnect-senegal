@@ -23,20 +23,25 @@ app.use(cors({
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
 }));
 
-// Middleware pour parser le JSON
+// Middleware pour parser le JSON et les formulaires
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes publiques (pas besoin d'authentification)
-app.use('/api/auth', authRoutes);
-app.use('/api/webhooks', webhookRoutes);
+app.use('/auth', authRoutes);
+app.use('/webhooks', webhookRoutes);
 
 // Middleware d'authentification pour les routes protégées
-app.use('/api/subscriptions', authenticate, subscriptionsRoutes);
-app.use('/api/users', authenticate, usersRoutes);
+app.use('/subscriptions', authenticate, subscriptionsRoutes);
+app.use('/users', authenticate, usersRoutes);
+
+// Route de test pour vérifier que l'API fonctionne
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', message: 'API BusinessConnect en ligne' });
+});
 
 // Middleware de gestion des erreurs
 app.use(errorHandler);
