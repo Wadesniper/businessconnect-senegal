@@ -18,6 +18,7 @@ app.use(cors({
   origin: [
     'http://localhost:5173',
     'http://localhost:3000',
+    'https://app.businessconnectsenegal.com',
     'https://businessconnect-senegal.vercel.app',
     'https://businessconnect-senegal-api-production.up.railway.app'
   ],
