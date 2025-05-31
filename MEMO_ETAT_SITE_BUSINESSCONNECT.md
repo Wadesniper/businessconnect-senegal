@@ -594,3 +594,63 @@ interface MarketplaceItem {
   - Railway se place déjà à la racine du dépôt cloné
   - Éviter la duplication des fichiers de configuration
   - Maintenir une structure de projet claire et cohérente
+
+## Configuration de déploiement
+
+### Frontend (Vercel)
+- URL de production : https://businessconnect-senegal.vercel.app
+- Build command : `npm run build`
+- Output directory : `dist`
+- Install command : `npm install`
+
+### Backend (Railway)
+- URL de production : https://businessconnect-senegal-api-production.up.railway.app
+- Root Directory : `server`
+- Build command : `npm run build`
+- Start command : `npm start`
+
+## Authentification et Sécurité
+
+### Configuration CORS
+- Origines autorisées :
+  - http://localhost:5173 (développement)
+  - http://localhost:3000 (développement)
+  - https://businessconnect-senegal.vercel.app (production)
+  - https://businessconnect-senegal-api-production.up.railway.app (API)
+- Méthodes : GET, POST, PUT, DELETE, OPTIONS, PATCH
+- Headers : Content-Type, Authorization, X-Requested-With, Accept
+
+### Routes et Middleware
+- Routes publiques (sans authentification) :
+  - /api/auth/* (login, register, etc.)
+  - /api/webhooks/*
+- Routes protégées (avec authentification) :
+  - /api/subscriptions/*
+  - /api/users/*
+
+### Validation des numéros de téléphone
+- Format accepté :
+  - International : +221 7X XXX XX XX
+  - Local : 7X XXX XX XX
+- Validation côté client et serveur
+- Formatage automatique des espaces
+
+## État des builds
+
+### Frontend
+- ✅ Build Vercel : Succès
+- ✅ Déploiement : Succès
+- ✅ Tests : Passés
+
+### Backend
+- ✅ Build Railway : Succès
+- ✅ Déploiement : Succès
+- ✅ Tests : Passés
+
+## Optimisations futures
+- [ ] Amélioration de la gestion des erreurs
+- [ ] Mise en cache des requêtes fréquentes
+- [ ] Compression des assets
+- [ ] Lazy loading des composants lourds
+- [ ] Optimisation des images
+- [ ] Mise en place de tests E2E

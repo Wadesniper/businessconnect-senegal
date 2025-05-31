@@ -7,6 +7,7 @@ import subscriptionsRoutes from './routes/subscriptions';
 import usersRoutes from './routes/users';
 import authRoutes from './routes/auth';
 import { errorHandler } from './middleware/errorHandler';
+import { authenticate } from './middleware/auth';
 
 dotenv.config();
 
@@ -21,20 +22,21 @@ app.use(cors({
     'https://businessconnect-senegal-api-production.up.railway.app'
   ],
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
 }));
 
 // Middleware pour parser le JSON
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Routes publiques (pas besoin d'authentification)
 app.use('/api/auth', authRoutes);
 app.use('/api/webhooks', webhookRoutes);
 
-// Routes protégées (nécessitent une authentification)
-app.use('/api/subscriptions', subscriptionsRoutes);
-app.use('/api/users', usersRoutes);
+// Middleware d'authentification pour les routes protégées
+app.use('/api/subscriptions', authenticate, subscriptionsRoutes);
+app.use('/api/users', authenticate, usersRoutes);
 
 // Middleware de gestion des erreurs
 app.use(errorHandler);
