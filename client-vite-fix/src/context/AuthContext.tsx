@@ -8,7 +8,7 @@ interface AuthContextType {
   error: string | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  register: (data: UserRegistrationData) => Promise<void>;
+  register: (data: UserRegistrationData) => Promise<{ token: string; user: User; } | void>;
   updateProfile: (data: Partial<User>) => Promise<void>;
 }
 
@@ -88,12 +88,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (response.success && response.data) {
         authService.setToken(response.data.token);
         setUser(response.data.user);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        return response.data;
       } else {
         throw new Error(response.message || 'Erreur lors de l\'inscription');
       }
-    } catch (error) {
-      setError('Erreur lors de l\'inscription');
-      throw error;
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || error.message || 'Erreur lors de l\'inscription';
+      setError(errorMessage);
+      throw new Error(errorMessage);
     }
   };
 

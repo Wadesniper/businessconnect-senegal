@@ -51,14 +51,14 @@ export class AuthController {
         // Si le numéro commence par +221
         if (cleaned.startsWith('+221')) {
           const digits = cleaned.slice(4); // Enlève le +221
-          if (/^7[0-9]{8}$/.test(digits)) {
+          if (/^(70|76|77|78)[0-9]{7}$/.test(digits)) {
             return cleaned;
           }
           return 'INVALID_PREFIX';
         }
         
-        // Si le numéro commence par 7 (format local)
-        if (/^7[0-9]{8}$/.test(cleaned)) {
+        // Si le numéro commence par un préfixe valide (format local)
+        if (/^(70|76|77|78)[0-9]{7}$/.test(cleaned)) {
           return '+221' + cleaned;
         }
         
@@ -70,13 +70,13 @@ export class AuthController {
       if (normalizedPhone === 'INVALID_PREFIX') {
         return res.status(400).json({
           success: false,
-          message: "Le numéro de téléphone doit commencer par 7 pour les numéros sénégalais"
+          message: "Le numéro de téléphone doit commencer par 70, 76, 77 ou 78 pour les numéros sénégalais"
         });
       }
       if (!normalizedPhone) {
         return res.status(400).json({
           success: false,
-          message: "Le numéro de téléphone doit être au format international (+221 7X XXX XX XX) ou sénégalais (7X XXX XX XX)"
+          message: "Le numéro de téléphone doit être au format international (+221 7X XXX XX XX) ou sénégalais (7X XXX XX XX) et commencer par 70, 76, 77 ou 78"
         });
       }
 

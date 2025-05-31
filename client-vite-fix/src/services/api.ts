@@ -2,7 +2,10 @@ import axios from 'axios';
 import { message } from 'antd';
 import { authService } from './authService';
 
-const BASE_URL = 'https://businessconnect-senegal-api-production.up.railway.app';
+// Détermine l'URL de base de l'API en fonction de l'environnement
+const BASE_URL = import.meta.env.MODE === 'development' 
+  ? 'http://localhost:5000'
+  : 'https://businessconnect-senegal-api-production.up.railway.app';
 
 export const api = axios.create({
   baseURL: BASE_URL,
@@ -46,10 +49,10 @@ api.interceptors.response.use(
       if (error.response.status === 401) {
         // Ne pas rediriger si on est déjà sur la page de login ou d'inscription
         const currentPath = window.location.pathname;
-        if (!currentPath.includes('/login') && !currentPath.includes('/register')) {
+        if (!currentPath.includes('/auth') && !currentPath.includes('/login') && !currentPath.includes('/register')) {
           authService.removeToken();
           message.error('Session expirée. Veuillez vous reconnecter.');
-          window.location.href = '/login';
+          window.location.href = '/auth';
         }
         return Promise.reject(error);
       }

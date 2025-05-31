@@ -16,6 +16,12 @@ const app = express();
 // Configuration CORS
 const corsOptions = {
   origin: function(origin: any, callback: any) {
+    // En développement, on accepte toutes les origines
+    if (process.env.NODE_ENV === 'development') {
+      callback(null, true);
+      return;
+    }
+
     const allowedOrigins = [
       'http://localhost:5173',
       'http://localhost:3000',
@@ -25,7 +31,7 @@ const corsOptions = {
       'https://businessconnectsenegal2025gooo.vercel.app'
     ];
     
-    // Autoriser les requêtes sans origine (comme les appels API directs)
+    // En production, on vérifie l'origine
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {

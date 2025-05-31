@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ProLayout } from '@ant-design/pro-layout';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -93,8 +93,9 @@ const App: React.FC = () => {
               <Route path="/legal/cookies" element={<Cookies />} />
 
               {/* Routes d'authentification */}
-              <Route path="/login" element={<AuthPage />} />
-              <Route path="/register" element={<AuthPage />} />
+              <Route path="/auth" element={<AuthPage />} />
+              <Route path="/login" element={<Navigate to="/auth" replace />} />
+              <Route path="/register" element={<Navigate to="/auth" replace />} />
 
               {/* Routes protégées */}
               <Route

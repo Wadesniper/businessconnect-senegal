@@ -41,13 +41,13 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
       
       if (cleaned.startsWith('+221')) {
         const digits = cleaned.slice(4);
-        isValidPhone = /^7[0-9]{8}$/.test(digits);
+        isValidPhone = /^(70|76|77|78)[0-9]{7}$/.test(digits);
       } else {
-        isValidPhone = /^7[0-9]{8}$/.test(cleaned);
+        isValidPhone = /^(70|76|77|78)[0-9]{7}$/.test(cleaned);
       }
 
       if (!isValidPhone) {
-        message.error('Le format du numéro de téléphone est invalide');
+        message.error('Le numéro doit commencer par 70, 76, 77 ou 78 pour les numéros sénégalais');
         setLoading(false);
         return;
       }
@@ -62,9 +62,9 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
 
       await register(registrationData);
       message.success('Inscription réussie ! Vous pouvez maintenant vous connecter.');
-      navigate('/login');
+      navigate('/auth');
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || 'Erreur lors de l\'inscription';
+      const errorMessage = error.response?.data?.message || error.message || 'Erreur lors de l\'inscription';
       message.error(errorMessage);
     } finally {
       setLoading(false);
