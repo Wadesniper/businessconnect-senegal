@@ -720,3 +720,21 @@ interface MarketplaceItem {
 - Maintenir la cohérence des noms de champs
 - Préserver la validation des données
 - Assurer la rétrocompatibilité
+
+### 14.9 Configuration de l'API en Production
+- URL de base : https://businessconnect-senegal-api-production.up.railway.app
+- Suppression de la dépendance aux variables d'environnement
+- Configuration CORS mise à jour :
+  - Origines autorisées
+  - Headers nécessaires
+  - Support des credentials
+- Routes API :
+  - Suppression du préfixe `/api`
+  - Routes publiques : `/auth/*`, `/webhooks/*`
+  - Routes protégées : `/subscriptions/*`, `/users/*`
+
+### 14.10 Sécurité et Validation
+- Vérification des tokens côté serveur
+- Validation des données côté client
+- Gestion des erreurs CORS
+- Protection contre les requêtes non autorisées

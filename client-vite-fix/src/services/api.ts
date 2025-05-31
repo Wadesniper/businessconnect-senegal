@@ -36,10 +36,7 @@ interface Reply extends ReplyData {
   likesCount: number;
 }
 
-const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
-if (!BASE_URL) {
-  throw new Error('VITE_REACT_APP_API_URL n\'est pas définie dans les variables d\'environnement !');
-}
+const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL || 'https://businessconnect-senegal-api-production.up.railway.app';
 
 export const api = axios.create({
   baseURL: BASE_URL,
