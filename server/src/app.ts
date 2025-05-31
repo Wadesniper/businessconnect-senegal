@@ -16,33 +16,31 @@ const app = express();
 // Configuration CORS
 const corsOptions = {
   origin: function(origin: any, callback: any) {
-    // En développement, on accepte toutes les origines
-    if (process.env.NODE_ENV === 'development') {
+    const allowedOrigins = [
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'https://businessconnectsenegal2025gooo.vercel.app',
+      'https://businessconnect-senegal.vercel.app',
+      'https://businessconnect-senegal-git-main-mouhamed-ali.vercel.app'
+    ];
+    
+    // En développement ou si pas d'origine (ex: Postman), on accepte
+    if (!origin || process.env.NODE_ENV === 'development') {
       callback(null, true);
       return;
     }
 
-    const allowedOrigins = [
-      'http://localhost:5173',
-      'http://localhost:3000',
-      'https://app.businessconnectsenegal.com',
-      'https://businessconnect-senegal.vercel.app',
-      'https://businessconnect-senegal-git-main-mouhamed-ali.vercel.app',
-      'https://businessconnectsenegal2025gooo.vercel.app'
-    ];
-    
-    // En production, on vérifie l'origine
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(new Error(`Origin ${origin} not allowed by CORS`));
     }
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin', 'Access-Control-Allow-Credentials'],
-  exposedHeaders: ['Set-Cookie', 'Authorization'],
-  maxAge: 86400 // 24 heures de cache pour les requêtes préflight
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+  exposedHeaders: ['Set-Cookie'],
+  maxAge: 86400
 };
 
 // Appliquer CORS avant tout autre middleware

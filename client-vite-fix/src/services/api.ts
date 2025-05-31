@@ -11,11 +11,10 @@ export const api = axios.create({
   baseURL: BASE_URL,
   headers: {
     'Content-Type': 'application/json',
-    'Accept': 'application/json',
-    'Access-Control-Allow-Credentials': 'true'
+    'Accept': 'application/json'
   },
   withCredentials: true,
-  timeout: 10000 // 10 secondes de timeout
+  timeout: 15000 // 15 secondes de timeout
 });
 
 // Intercepteur pour ajouter le token d'authentification
@@ -33,7 +32,7 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
-    console.error('Erreur dans l\'intercepteur de requête (rejet):', error);
+    console.error('Erreur dans l\'intercepteur de requête:', error);
     return Promise.reject(error);
   }
 );
@@ -42,14 +41,11 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    console.error('Erreur détaillée:', error);
-
     if (error.response) {
       // Gérer les erreurs d'authentification
       if (error.response.status === 401) {
-        // Ne pas rediriger si on est déjà sur la page de login ou d'inscription
         const currentPath = window.location.pathname;
-        if (!currentPath.includes('/auth') && !currentPath.includes('/login') && !currentPath.includes('/register')) {
+        if (!currentPath.includes('/auth')) {
           authService.removeToken();
           message.error('Session expirée. Veuillez vous reconnecter.');
           window.location.href = '/auth';
@@ -59,14 +55,8 @@ api.interceptors.response.use(
 
       // Gérer les erreurs de validation
       if (error.response.status === 422 || error.response.status === 400) {
-        const validationErrors = error.response.data.errors;
-        if (validationErrors) {
-          Object.values(validationErrors).forEach((err: any) => {
-            message.error(err);
-          });
-        } else if (error.response.data.message) {
-          message.error(error.response.data.message);
-        }
+        const errorMessage = error.response.data.message || 'Erreur de validation';
+        message.error(errorMessage);
         return Promise.reject(error);
       }
 
