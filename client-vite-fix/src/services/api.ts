@@ -20,6 +20,9 @@ export const api = axios.create({
 // Intercepteur pour ajouter le token d'authentification
 api.interceptors.request.use(
   (config) => {
+    // Ajouter l'origine pour les requêtes CORS
+    config.headers['Origin'] = window.location.origin;
+    
     // Ne pas ajouter de token pour les routes d'authentification
     if (config.url?.includes('/auth/')) {
       return config;

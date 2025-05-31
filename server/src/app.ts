@@ -15,27 +15,7 @@ const app = express();
 
 // Configuration CORS
 const corsOptions = {
-  origin: function(origin: any, callback: any) {
-    const allowedOrigins = [
-      'http://localhost:5173',
-      'http://localhost:3000',
-      'https://businessconnectsenegal2025gooo.vercel.app',
-      'https://businessconnect-senegal.vercel.app',
-      'https://businessconnect-senegal-git-main-mouhamed-ali.vercel.app'
-    ];
-    
-    // En développement ou si pas d'origine (ex: Postman), on accepte
-    if (!origin || process.env.NODE_ENV === 'development') {
-      callback(null, true);
-      return;
-    }
-
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error(`Origin ${origin} not allowed by CORS`));
-    }
-  },
+  origin: 'https://businessconnectsenegal2025gooo.vercel.app',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
