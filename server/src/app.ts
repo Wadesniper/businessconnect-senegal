@@ -20,7 +20,8 @@ app.use(cors({
     'http://localhost:3000',
     'https://app.businessconnectsenegal.com',
     'https://businessconnect-senegal.vercel.app',
-    'https://businessconnect-senegal-api-production.up.railway.app'
+    'https://businessconnect-senegal-api-production.up.railway.app',
+    'https://businessconnect-senegal-git-main-mouhamed-ali.vercel.app'
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
