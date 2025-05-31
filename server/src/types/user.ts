@@ -1,22 +1,25 @@
 import { Request } from 'express';
 
-export type UserRole = 'student' | 'recruiter' | 'admin';
+export type UserRole = 'user' | 'admin' | 'recruiter';
 
 export interface User {
   id: string;
-  email: string;
-  name: string;
-  role: string;
-  phone?: string;
+  firstName: string;
+  lastName: string;
+  email?: string;
+  role: UserRole;
+  phoneNumber: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
 export interface UserPayload {
   id: string;
-  email: string;
-  role: string;
-  phone?: string;
+  role: UserRole;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  email?: string;
 }
 
 export interface AuthRequest extends Request {

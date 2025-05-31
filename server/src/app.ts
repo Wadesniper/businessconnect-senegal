@@ -17,11 +17,11 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Configuration CORS simple
+// Configuration CORS simple pour la production
 app.use(cors({
-  origin: '*',
+  origin: 'https://businessconnectsenegal2025gooo.vercel.app',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
 }));
 
 // Routes publiques (pas besoin d'authentification)

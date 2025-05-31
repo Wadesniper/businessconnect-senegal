@@ -31,15 +31,13 @@ router.use(authMiddleware);
 // });
 
 // Route protégée pour récupérer l'utilisateur courant et son abonnement
-router.get('/me', authMiddleware, (req: AuthRequest, res: Response) => {
+router.get('/me', (req: AuthRequest, res: Response) => {
   const user = req.user;
   if (!user) {
     res.status(401).json({ success: false, message: 'Non authentifié' });
     return;
   }
-  // Correction : mapping du rôle pour compatibilité frontend
-  let frontendRole = user.role;
-  if (frontendRole === 'user') frontendRole = 'employeur';
+
   // Vérifier l'abonnement actif
   const { subscriptionService } = require('../services/subscriptionService');
   subscriptionService.getActiveSubscription(user.id)
@@ -47,7 +45,7 @@ router.get('/me', authMiddleware, (req: AuthRequest, res: Response) => {
       res.json({
         id: user.id,
         email: user.email,
-        role: frontendRole,
+        role: user.role,
         subscription: activeSub ? { status: 'active', expireAt: activeSub.endDate, type: activeSub.plan } : null
       });
     })

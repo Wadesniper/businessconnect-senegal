@@ -5,6 +5,8 @@ import { User } from '../models/User';
 import { config } from '../config';
 import { NotificationService } from '../services/notificationService';
 import { logger } from '../utils/logger';
+import { validatePhoneNumber } from '../utils/validation';
+import jwtConfig from '../config/jwt';
 
 export class AuthController {
   private notificationService: NotificationService;
@@ -18,7 +20,7 @@ export class AuthController {
       const { firstName, lastName, email, phoneNumber, password } = req.body;
 
       // Validation des champs requis
-      if (!firstName || !lastName || !phoneNumber || !password) {
+      if (!firstName?.trim() || !lastName?.trim() || !phoneNumber || !password) {
         return res.status(400).json({
           success: false,
           message: 'Veuillez remplir tous les champs obligatoires (prénom, nom, téléphone, mot de passe)'
@@ -34,39 +36,15 @@ export class AuthController {
       }
 
       // Validation du format de l'email si fourni
-      if (email && !/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         return res.status(400).json({
           success: false,
           message: 'Format d\'email invalide'
         });
       }
 
-      // Normalisation du téléphone
-      function normalizePhone(phone: string): string | null {
-        if (!phone) return null;
-        
-        // Nettoie le numéro en gardant uniquement les chiffres et le +
-        let cleaned = phone.replace(/[^0-9+]/g, '');
-        
-        // Si le numéro commence par +221
-        if (cleaned.startsWith('+221')) {
-          const digits = cleaned.slice(4); // Enlève le +221
-          if (/^(70|76|77|78)[0-9]{7}$/.test(digits)) {
-            return cleaned;
-          }
-          return null;
-        }
-        
-        // Si le numéro commence par un préfixe valide (format local)
-        if (/^(70|76|77|78)[0-9]{7}$/.test(cleaned)) {
-          return '+221' + cleaned;
-        }
-        
-        return null;
-      }
-
-      // Nettoyer et valider le numéro de téléphone
-      const normalizedPhone = normalizePhone(phoneNumber);
+      // Validation et normalisation du numéro de téléphone
+      const normalizedPhone = validatePhoneNumber(phoneNumber);
       if (!normalizedPhone) {
         return res.status(400).json({
           success: false,
@@ -78,58 +56,48 @@ export class AuthController {
       const existingUser = await User.findOne({
         $or: [
           { phoneNumber: normalizedPhone },
-          { email: email ? email.toLowerCase() : undefined }
+          ...(email ? [{ email: email.toLowerCase() }] : [])
         ]
       });
 
       if (existingUser) {
-        if (existingUser.phoneNumber === normalizedPhone) {
-          return res.status(400).json({
-            success: false,
-            message: 'Un utilisateur avec ce numéro de téléphone existe déjà'
-          });
-        }
-        if (email && existingUser.email === email.toLowerCase()) {
-          return res.status(400).json({
-            success: false,
-            message: 'Un utilisateur avec cet email existe déjà'
-          });
-        }
+        const field = existingUser.phoneNumber === normalizedPhone ? 'numéro de téléphone' : 'email';
+        return res.status(400).json({
+          success: false,
+          message: `Un utilisateur avec ce ${field} existe déjà`
+        });
       }
 
       // Hasher le mot de passe
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
 
-      // Créer le nouvel utilisateur avec le numéro normalisé
-      const userData: any = {
+      // Créer le nouvel utilisateur
+      const userData = {
         firstName: firstName.trim(),
         lastName: lastName.trim(),
         phoneNumber: normalizedPhone,
         password: hashedPassword,
-        isVerified: false
+        isVerified: false,
+        role: 'user',
+        ...(email && { email: email.toLowerCase() })
       };
-
-      if (email) {
-        userData.email = email.toLowerCase();
-      }
 
       const user = new User(userData);
 
       try {
         await user.save();
       } catch (dbError: any) {
-        // Gérer les erreurs de validation MongoDB
+        logger.error('Erreur lors de la sauvegarde de l\'utilisateur:', dbError);
+        
         if (dbError.name === 'ValidationError') {
-          const errors = Object.values(dbError.errors).map((err: any) => err.message);
           return res.status(400).json({
             success: false,
             message: 'Erreur de validation',
-            errors
+            errors: Object.values(dbError.errors).map((err: any) => err.message)
           });
         }
         
-        // Gérer les erreurs de duplicate key
         if (dbError.code === 11000) {
           const field = Object.keys(dbError.keyPattern)[0];
           return res.status(400).json({
@@ -141,10 +109,7 @@ export class AuthController {
         throw dbError;
       }
       
-      // Générer le token JWT pour la connexion immédiate
-      const jwtSecret: any = process.env.JWT_SECRET || 'default_secret';
-      const jwtExpire: any = process.env.JWT_EXPIRE || process.env.JWT_EXPIRES_IN || '30d';
-      const options: jwt.SignOptions = { expiresIn: jwtExpire };
+      // Générer le token JWT
       const token = jwt.sign(
         { 
           id: user._id,
@@ -153,8 +118,8 @@ export class AuthController {
           lastName: user.lastName,
           phoneNumber: user.phoneNumber
         },
-        jwtSecret,
-        options
+        jwtConfig.secret,
+        jwtConfig.signOptions
       );
 
       // Envoyer l'email de vérification si email fourni
@@ -167,7 +132,7 @@ export class AuthController {
         }
       }
 
-      // Renvoyer le token avec la réponse pour permettre la connexion immédiate
+      // Renvoyer la réponse
       res.status(201).json({
         success: true,
         message: 'Inscription réussie',
@@ -183,86 +148,69 @@ export class AuthController {
           }
         }
       });
-      return;
     } catch (error) {
       logger.error('Erreur lors de l\'inscription:', error);
       res.status(500).json({
         success: false,
         message: 'Une erreur est survenue lors de l\'inscription'
       });
-      return;
     }
   };
 
   login = async (req: Request, res: Response) => {
     try {
       const { phoneNumber, password } = req.body;
-      
-      // Normalisation du téléphone
-      function normalizePhone(phone: string): string | null {
-        if (!phone) return null;
-        
-        // Nettoie le numéro en gardant uniquement les chiffres et le +
-        let cleaned = phone.replace(/[^0-9+]/g, '');
-        
-        // Si le numéro commence par +, c'est déjà au format international
-        if (cleaned.startsWith('+')) {
-          // Vérifie que le numéro a une longueur valide (indicatif + 8 chiffres minimum)
-          if (cleaned.length >= 10) return cleaned;
-          return null;
-        }
-        
-        // Si c'est un numéro sénégalais (commence par 7 et a 9 chiffres)
-        if (/^7\d{8}$/.test(cleaned)) {
-          return '+221' + cleaned;
-        }
-        
-        return null;
-      }
-      if (!phoneNumber) {
+
+      // Validation des champs requis
+      if (!phoneNumber || !password) {
         return res.status(400).json({
           success: false,
-          message: 'Le numéro de téléphone est requis pour la connexion.'
+          message: 'Le numéro de téléphone et le mot de passe sont requis'
         });
       }
-      const normalizedPhone = normalizePhone(phoneNumber);
+
+      // Validation et normalisation du numéro de téléphone
+      const normalizedPhone = validatePhoneNumber(phoneNumber);
       if (!normalizedPhone) {
         return res.status(400).json({
           success: false,
-          message: "Merci d'entrer votre numéro au format international (ex : +221770000000 ou +33612345678)."
+          message: "Format de numéro de téléphone invalide"
         });
       }
-      const user = await User.findOne({ phoneNumber: normalizedPhone }).select('+password');
+
+      // Rechercher l'utilisateur
+      const user = await User.findOne({ phoneNumber: normalizedPhone });
       if (!user) {
         return res.status(401).json({
           success: false,
-          message: 'Numéro de téléphone ou mot de passe incorrect'
+          message: 'Identifiants invalides'
         });
       }
+
       // Vérifier le mot de passe
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
         return res.status(401).json({
           success: false,
-          message: 'Numéro de téléphone ou mot de passe incorrect'
+          message: 'Identifiants invalides'
         });
       }
+
       // Générer le token JWT
-      const jwtSecret: any = process.env.JWT_SECRET || 'default_secret';
-      const jwtExpire: any = process.env.JWT_EXPIRE || process.env.JWT_EXPIRES_IN || '30d';
-      const options: jwt.SignOptions = { expiresIn: jwtExpire };
       const token = jwt.sign(
         { 
           id: user._id,
           role: user.role,
           firstName: user.firstName,
           lastName: user.lastName,
-          email: user.email
+          phoneNumber: user.phoneNumber
         },
-        jwtSecret,
-        options
+        jwtConfig.secret,
+        jwtConfig.signOptions
       );
-      res.status(200).json({
+
+      // Renvoyer la réponse
+      res.json({
         success: true,
         message: 'Connexion réussie',
         data: {
@@ -272,18 +220,17 @@ export class AuthController {
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
+            phoneNumber: user.phoneNumber,
             role: user.role
           }
         }
       });
-      return;
     } catch (error) {
       logger.error('Erreur lors de la connexion:', error);
       res.status(500).json({
         success: false,
         message: 'Une erreur est survenue lors de la connexion'
       });
-      return;
     }
   };
 
@@ -292,7 +239,7 @@ export class AuthController {
       const { token } = req.params;
 
       // Vérifier le token
-      const decoded = jwt.verify(token, config.JWT_SECRET) as { id: string };
+      const decoded = jwt.verify(token, jwtConfig.secret) as { id: string };
       const user = await User.findById(decoded.id);
 
       if (!user) {
@@ -334,13 +281,10 @@ export class AuthController {
       }
 
       // Générer le token de réinitialisation
-      const jwtSecret: any = process.env.JWT_SECRET || 'default_secret';
-      const jwtExpire: any = process.env.JWT_EXPIRE || process.env.JWT_EXPIRES_IN || '30d';
-      const options: jwt.SignOptions = { expiresIn: jwtExpire };
       const resetToken = jwt.sign(
         { id: user._id },
-        jwtSecret,
-        options
+        jwtConfig.secret,
+        { expiresIn: '1h' }
       );
 
       // Sauvegarder le token
@@ -372,7 +316,7 @@ export class AuthController {
       const { password } = req.body;
 
       // Vérifier le token
-      const decoded = jwt.verify(token, config.JWT_SECRET) as { id: string };
+      const decoded = jwt.verify(token, jwtConfig.secret) as { id: string };
       const user = await User.findById(decoded.id);
 
       if (!user) {
@@ -420,7 +364,7 @@ export class AuthController {
       const { token } = req.params;
 
       // Vérifier le token
-      const decoded = jwt.verify(token, config.JWT_SECRET) as { id: string };
+      const decoded = jwt.verify(token, jwtConfig.secret) as { id: string };
       const user = await User.findById(decoded.id);
 
       if (!user) {
