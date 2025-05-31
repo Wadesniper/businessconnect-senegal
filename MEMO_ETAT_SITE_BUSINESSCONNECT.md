@@ -654,3 +654,69 @@ interface MarketplaceItem {
 - [ ] Lazy loading des composants lourds
 - [ ] Optimisation des images
 - [ ] Mise en place de tests E2E
+
+## 14. Dernières Corrections d'Authentification
+
+### 14.1 Configuration des Routes
+- Suppression du préfixe `/api` pour toutes les routes
+- Routes publiques :
+  - `/auth/*` (login, register, etc.)
+  - `/webhooks/*`
+- Routes protégées :
+  - `/subscriptions/*`
+  - `/users/*`
+- Route de santé : `/health`
+
+### 14.2 Middleware d'Authentification
+- Amélioration de la gestion des tokens
+- Messages d'erreur plus clairs et cohérents
+- Meilleure gestion des erreurs JWT
+- Séparation claire des erreurs d'authentification et serveur
+
+### 14.3 Configuration CORS
+- Origines autorisées :
+  ```
+  http://localhost:5173
+  http://localhost:3000
+  https://businessconnect-senegal.vercel.app
+  https://businessconnect-senegal-api-production.up.railway.app
+  ```
+- Support complet des credentials
+- Headers autorisés : Content-Type, Authorization, X-Requested-With, Accept, Origin
+- Méthodes HTTP : GET, POST, PUT, DELETE, OPTIONS, PATCH
+
+### 14.4 Client API
+- Configuration axios avec withCredentials
+- Gestion intelligente des tokens
+- Interception et traitement des erreurs
+- Redirection appropriée selon le contexte
+
+### 14.5 Service d'Authentification
+- Gestion centralisée du token et des données utilisateur
+- Méthodes de stockage local sécurisées
+- Vérification robuste de l'authentification
+- Support des différents rôles utilisateur
+
+### 14.6 Points d'Attention
+- Ne pas modifier les URLs de déploiement
+- Préserver la version complète du site
+- Maintenir la compatibilité avec les builds existants
+- Assurer la continuité du service
+
+### 14.7 Corrections d'Inscription
+- Uniformisation des noms de champs entre client et serveur
+  - Utilisation de `phoneNumber` au lieu de `phone`
+  - Validation cohérente des numéros de téléphone
+- Format des numéros acceptés :
+  - International : +221 7X XXX XX XX
+  - Local : 7X XXX XX XX
+- Gestion des erreurs améliorée :
+  - Messages d'erreur plus clairs
+  - Validation côté client renforcée
+  - Meilleure gestion des réponses serveur
+
+### 14.8 Points de Vigilance
+- Ne pas modifier les URLs de déploiement
+- Maintenir la cohérence des noms de champs
+- Préserver la validation des données
+- Assurer la rétrocompatibilité

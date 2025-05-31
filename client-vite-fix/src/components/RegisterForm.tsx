@@ -55,7 +55,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
       const registrationData: UserRegistrationData = {
         firstName: values.firstName.trim(),
         lastName: values.lastName.trim(),
-        phone: values.phoneNumber,
+        phoneNumber: values.phoneNumber,
         email: values.email,
         password: values.password
       };
