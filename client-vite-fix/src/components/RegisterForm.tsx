@@ -28,6 +28,30 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
     try {
       setLoading(true);
       
+      // Vérification des champs obligatoires
+      if (!values.firstName || !values.lastName || !values.phoneNumber || !values.password) {
+        message.error('Veuillez remplir tous les champs obligatoires');
+        setLoading(false);
+        return;
+      }
+
+      // Validation du numéro de téléphone
+      const cleaned = values.phoneNumber.replace(/[^0-9+]/g, '');
+      let isValidPhone = false;
+      
+      if (cleaned.startsWith('+221')) {
+        const digits = cleaned.slice(4);
+        isValidPhone = /^7[0-9]{8}$/.test(digits);
+      } else {
+        isValidPhone = /^7[0-9]{8}$/.test(cleaned);
+      }
+
+      if (!isValidPhone) {
+        message.error('Le format du numéro de téléphone est invalide');
+        setLoading(false);
+        return;
+      }
+      
       const registrationData: UserRegistrationData = {
         firstName: values.firstName.trim(),
         lastName: values.lastName.trim(),
@@ -280,6 +304,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
           onFinish={onFinish}
           layout="vertical"
           requiredMark={false}
+          validateTrigger={['onBlur', 'onChange']}
         >
           <Form.Item
             name="firstName"
@@ -289,6 +314,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
               { min: 2, message: 'Le prénom doit contenir au moins 2 caractères' },
               { pattern: /^[a-zA-ZÀ-ÿ\s]+$/, message: 'Le prénom ne doit contenir que des lettres' }
             ]}
+            validateTrigger={['onBlur', 'onChange']}
           >
             <Input size="large" placeholder="Votre prénom" className="auth-full-width" style={{ borderRadius: 8 }} />
           </Form.Item>
@@ -300,6 +326,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
               { min: 2, message: 'Le nom doit contenir au moins 2 caractères' },
               { pattern: /^[a-zA-ZÀ-ÿ\s]+$/, message: 'Le nom ne doit contenir que des lettres' }
             ]}
+            validateTrigger={['onBlur', 'onChange']}
           >
             <Input size="large" placeholder="Votre nom" className="auth-full-width" style={{ borderRadius: 8 }} />
           </Form.Item>
@@ -310,7 +337,9 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
               { required: true, message: 'Veuillez saisir votre numéro de téléphone' },
               { 
                 validator: async (_, value) => {
-                  if (!value) return;
+                  if (!value) {
+                    throw new Error('Veuillez saisir votre numéro de téléphone');
+                  }
                   
                   const cleaned = value.replace(/[^0-9+]/g, '');
                   
@@ -325,7 +354,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
                 }
               }
             ]}
-            validateTrigger="onBlur"
+            validateTrigger={['onBlur', 'onChange']}
           >
             <Input
               size="large"
@@ -346,6 +375,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
             rules={[
               { type: 'email', message: 'Email invalide' }
             ]}
+            validateTrigger={['onBlur', 'onChange']}
           >
             <Input size="large" placeholder="exemple@email.com" className="auth-full-width" style={{ borderRadius: 8 }} />
           </Form.Item>
@@ -356,6 +386,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
               { required: true, message: 'Veuillez saisir un mot de passe' },
               { min: 8, message: 'Le mot de passe doit contenir au moins 8 caractères' }
             ]}
+            validateTrigger={['onBlur', 'onChange']}
           >
             <Input.Password size="large" placeholder="Votre mot de passe" className="auth-full-width" style={{ borderRadius: 8 }} />
           </Form.Item>
@@ -374,6 +405,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
                 },
               }),
             ]}
+            validateTrigger={['onBlur', 'onChange']}
           >
             <Input.Password size="large" placeholder="Confirmez votre mot de passe" className="auth-full-width" style={{ borderRadius: 8 }} />
           </Form.Item>

@@ -579,3 +579,18 @@ interface MarketplaceItem {
    - Correction des types TypeScript
    - Résolution des avertissements de compatibilité
    - Standardisation des exports/imports
+
+### 13.7 Notes de Déploiement Importantes
+- **Root Directory** : Doit être configuré comme "server" dans Railway (pas "businessconnect-senegal/server")
+- **Structure du Projet** :
+  ```
+  .
+  ├── server/           # Backend (Root Directory pour Railway)
+  ├── client-vite-fix/  # Frontend
+  ├── Dockerfile        # À la racine uniquement
+  └── .railway.toml     # Configuration Railway
+  ```
+- **Points Clés** :
+  - Railway se place déjà à la racine du dépôt cloné
+  - Éviter la duplication des fichiers de configuration
+  - Maintenir une structure de projet claire et cohérente
