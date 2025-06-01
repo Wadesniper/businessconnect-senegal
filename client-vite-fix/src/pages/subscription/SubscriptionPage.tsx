@@ -1,6 +1,6 @@
 import React from 'react';
-import { Card, Row, Col, Typography, Button, Space, Tag } from 'antd';
-import { UserOutlined, ShopOutlined, TeamOutlined } from '@ant-design/icons';
+import { Card, Row, Col, Typography, Button, Space, Tag, Result } from 'antd';
+import { UserOutlined, ShopOutlined, TeamOutlined, LoginOutlined } from '@ant-design/icons';
 import './SubscriptionPage.css';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
@@ -80,10 +80,47 @@ const SubscriptionPage: React.FC = () => {
     );
   }
 
-  // Si non authentifié, rediriger vers la page de connexion
+  // Si non authentifié, afficher un message avec des options
   if (!isAuthenticated) {
-    navigate('/login', { state: { from: '/subscription' } });
-    return null;
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        background: 'linear-gradient(135deg, #1890ff 0%, #43e97b 100%)',
+      }}>
+        <Result
+          status="warning"
+          title="Connexion requise"
+          subTitle="Vous devez être connecté pour choisir un abonnement."
+          extra={[
+            <Button 
+              type="primary" 
+              key="login"
+              icon={<LoginOutlined />}
+              size="large"
+              onClick={() => navigate('/login', { state: { from: '/subscription' } })}
+            >
+              Se connecter
+            </Button>,
+            <Button 
+              key="register"
+              size="large"
+              onClick={() => navigate('/register', { state: { from: '/subscription' } })}
+            >
+              Créer un compte
+            </Button>,
+          ]}
+          style={{
+            backgroundColor: 'white',
+            borderRadius: 20,
+            padding: '40px',
+            boxShadow: '0 4px 16px 0 rgba(31, 38, 135, 0.10)'
+          }}
+        />
+      </div>
+    );
   }
 
   const handleSubscribe = async (offerKey: string) => {
@@ -99,7 +136,8 @@ const SubscriptionPage: React.FC = () => {
         message.error("Erreur lors de la génération du lien de paiement.");
       }
     } catch (error: any) {
-      if (error.message?.includes('Session expirée')) {
+      if (error.message?.includes('Session expirée') || error.message?.includes('non connecté')) {
+        message.error("Votre session a expiré. Veuillez vous reconnecter.");
         navigate('/login', { state: { from: '/subscription' } });
       } else {
         message.error(error.message || "Erreur lors de l'initialisation du paiement.");
