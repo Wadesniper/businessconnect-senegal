@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styled from '@emotion/styled';
 import { Typography, Button } from 'antd';
@@ -32,17 +32,14 @@ const HeroContainer = styled.div`
   }
 `;
 
-const HeroBackground = styled.div<{ $imageUrl: string }>`
+// Optimisation: Un seul background fixe avec overlay
+const StaticBackground = styled.div`
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url(${props => props.$imageUrl});
-  background-size: cover;
-  background-position: center;
-  filter: blur(10px) brightness(0.8);
-  transform: scale(1.1);
+  background: linear-gradient(135deg, #001529 0%, #003366 100%);
   z-index: 0;
 `;
 
@@ -105,39 +102,85 @@ const TextContent = styled.div`
   }
 `;
 
-const ImageSlider = styled.div`
+// Nouveau conteneur de carrousel optimisé
+const CarouselContainer = styled.div`
   flex: 1;
   position: relative;
-  height: 0;
-  padding-top: 40%; /* Ratio 2.5/1 large et plus haut */
+  height: 400px;
+  max-width: 550px;
   border-radius: 32px;
   overflow: hidden;
-  background: #001529; /* Fond foncé de secours */
+  background: #001529;
   box-shadow: 0 8px 32px #00152933;
   border: 2px solid #fff;
-  min-width: 0;
+  margin-right: 48px;
   @media (max-width: 600px) {
-    width: 100% !important;
-    max-width: 100% !important;
-    padding-top: 35%; /* Ratio compact mobile */
+    width: 90% !important;
+    max-width: 90% !important;
+    height: 300px;
     border-radius: 14px;
-    margin-top: 18px;
+    margin: 18px auto 0;
   }
 `;
 
-const SlideImage = styled(motion.div)<{ $imageUrl: string }>`
+// Image optimisée avec lazy loading et transition CSS pure
+const OptimizedImage = styled.div<{ $imageUrl: string; $isActive: boolean }>`
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url(${props => props.$imageUrl});
+  background-image: ${props => `url(${props.$imageUrl})`};
   background-size: cover;
   background-position: center;
-  border-radius: 32px;
+  background-repeat: no-repeat;
+  opacity: ${props => props.$isActive ? 1 : 0};
+  transform: ${props => props.$isActive ? 'scale(1)' : 'scale(1.05)'};
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), 
+              transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity, transform;
+`;
+
+const ImageOverlay = styled.div<{ $isActive: boolean }>`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(transparent, rgba(0,0,0,0.7));
+  color: #fff;
+  padding: 24px;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  opacity: ${props => props.$isActive ? 1 : 0};
+  transform: ${props => props.$isActive ? 'translateY(0)' : 'translateY(20px)'};
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s, 
+              transform 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s;
+`;
+
+// Indicateurs de navigation
+const CarouselIndicators = styled.div`
+  position: absolute;
+  bottom: 16px;
+  right: 24px;
   display: flex;
-  align-items: flex-end;
-  background-color: #001529; /* Fond foncé de secours */
+  gap: 8px;
+  z-index: 3;
+`;
+
+const Indicator = styled.button<{ $isActive: boolean }>`
+  width: ${props => props.$isActive ? '24px' : '8px'};
+  height: 8px;
+  border-radius: 4px;
+  border: none;
+  background: ${props => props.$isActive ? '#fff' : 'rgba(255,255,255,0.4)'};
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: rgba(255,255,255,0.8);
+  }
 `;
 
 const StyledButton = styled(Button)`
@@ -174,29 +217,82 @@ const images = [
   { src: '13-business.jpg', desc: 'Entreprenez au Sénégal' },
 ];
 
-const slideVariants = {
-  enter: { opacity: 0 },
-  center: { zIndex: 1, opacity: 1 },
-  exit: { zIndex: 0, opacity: 0 }
-};
-
 interface HeroProps {
   onDiscoverClick?: () => void;
 }
 
 const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [imagesLoaded, setImagesLoaded] = useState<Set<number>>(new Set());
+  const [isPaused, setIsPaused] = useState(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Préchargement intelligent des images
+  useEffect(() => {
+    const preloadImages = async () => {
+      // Précharge d'abord les 3 premières images
+      const initialImages = images.slice(0, 3);
+      const loadPromises = initialImages.map((image, index) => {
+        return new Promise<void>((resolve) => {
+          const img = new Image();
+          img.onload = () => {
+            setImagesLoaded(prev => new Set([...prev, index]));
+            resolve();
+          };
+          img.onerror = () => resolve(); // Continue même en cas d'erreur
+          img.src = getImageUrl(image.src);
+        });
+      });
+
+      await Promise.all(loadPromises);
+
+      // Précharge les images restantes en arrière-plan
+      images.slice(3).forEach((image, index) => {
+        const img = new Image();
+        img.onload = () => {
+          setImagesLoaded(prev => new Set([...prev, index + 3]));
+        };
+        img.src = getImageUrl(image.src);
+      });
+    };
+
+    preloadImages();
+  }, []);
+
+  // Gestion du carrousel automatique
+  const startCarousel = useCallback(() => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    
+    intervalRef.current = setInterval(() => {
+      if (!isPaused) {
+        setCurrentImageIndex((prev) => (prev + 1) % images.length);
+      }
+    }, 4000); // Ralenti à 4 secondes pour meilleure UX
+  }, [isPaused]);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev + 1) % images.length);
-    }, 3000);
-    return () => clearInterval(timer);
-  }, []);
+    startCarousel();
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [startCarousel]);
+
+  const handleIndicatorClick = (index: number) => {
+    setCurrentImageIndex(index);
+    startCarousel(); // Redémarre le timer
+  };
+
+  const handleMouseEnter = () => {
+    setIsPaused(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsPaused(false);
+  };
 
   return (
     <HeroContainer>
-      <HeroBackground $imageUrl={getImageUrl(images[currentImageIndex].src)} />
+      <StaticBackground />
       <Overlay />
       <GeometricBackground />
       <ContentWrapper>
@@ -218,38 +314,34 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
             </StyledButton>
           </motion.div>
         </TextContent>
-        <ImageSlider>
-          <AnimatePresence initial={false}>
-            <SlideImage
-              key={currentImageIndex}
-              $imageUrl={getImageUrl(images[currentImageIndex].src)}
-              variants={slideVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ opacity: { duration: 1.2, ease: "easeInOut" } }}
+        
+        <CarouselContainer
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          {images.map((image, index) => (
+            <OptimizedImage
+              key={index}
+              $imageUrl={getImageUrl(image.src)}
+              $isActive={index === currentImageIndex && imagesLoaded.has(index)}
             >
-              <img src={getImageUrl(images[currentImageIndex].src)} alt={images[currentImageIndex].desc} style={{width:'100%',height:'100%',objectFit:'cover',borderRadius:20,position:'absolute',top:0,left:0,zIndex:1,background:'#f7fafc'}} />
-              <div style={{
-                position: 'absolute',
-                bottom: 0,
-                left: 0,
-                width: '100%',
-                background: 'rgba(0,0,0,0.45)',
-                color: '#fff',
-                padding: '18px 28px',
-                fontSize: 22,
-                fontWeight: 600,
-                borderRadius: '0 0 20px 20px',
-                letterSpacing: 1,
-                textShadow: '0 2px 8px #0007',
-                zIndex: 2
-              }}>
-                {images[currentImageIndex].desc}
-              </div>
-            </SlideImage>
-          </AnimatePresence>
-        </ImageSlider>
+              <ImageOverlay $isActive={index === currentImageIndex}>
+                {image.desc}
+              </ImageOverlay>
+            </OptimizedImage>
+          ))}
+          
+          <CarouselIndicators>
+            {images.map((_, index) => (
+              <Indicator
+                key={index}
+                $isActive={index === currentImageIndex}
+                onClick={() => handleIndicatorClick(index)}
+                aria-label={`Aller à l'image ${index + 1}`}
+              />
+            ))}
+          </CarouselIndicators>
+        </CarouselContainer>
       </ContentWrapper>
     </HeroContainer>
   );
