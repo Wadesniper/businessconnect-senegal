@@ -18,14 +18,16 @@ export const config = {
   JWT_SECRET: process.env.JWT_SECRET,
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '7d',
   // Configuration SMTP
-  EMAIL_HOST: process.env.SMTP_HOST,
-  EMAIL_PORT: process.env.SMTP_PORT,
-  EMAIL_SECURE: process.env.SMTP_SECURE === 'true',
-  EMAIL_USER: process.env.SMTP_USER,
-  EMAIL_PASS: process.env.SMTP_PASSWORD,
-  EMAIL_FROM: process.env.SMTP_FROM,
+  SMTP_HOST: process.env.SMTP_HOST,
+  SMTP_PORT: process.env.SMTP_PORT,
+  SMTP_SECURE: process.env.SMTP_SECURE === 'true',
+  SMTP_USER: process.env.SMTP_USER,
+  SMTP_PASSWORD: process.env.SMTP_PASSWORD,
+  SMTP_FROM: process.env.SMTP_FROM,
   // Configuration CinetPay
-  CINETPAY_APIKEY: process.env.CINETPAY_APIKEY,
+  CINETPAY_API_KEY: process.env.CINETPAY_APIKEY,
   CINETPAY_SITE_ID: process.env.CINETPAY_SITE_ID,
-  CINETPAY_SECRET_KEY: process.env.CINETPAY_SECRET_KEY
+  CINETPAY_SECRET_KEY: process.env.CINETPAY_SECRET_KEY,
+  CINETPAY_URL: process.env.CINETPAY_URL || 'https://api.cinetpay.com/v1',
+  CINETPAY_NOTIFY_URL: process.env.CINETPAY_NOTIFY_URL
 }; 

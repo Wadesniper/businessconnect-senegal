@@ -2,28 +2,60 @@ import { Schema, model, Document } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 export interface IUser extends Document {
-  name: string;
-  email: string;
+  firstName: string;
+  lastName: string;
+  email?: string;
+  phone: string;
   password: string;
-  role: 'user' | 'admin' | 'moderator';
+  role: 'admin' | 'etudiant' | 'annonceur' | 'employeur';
   isVerified: boolean;
   resetPasswordToken?: string;
   resetPasswordExpire?: Date;
+  subscription?: {
+    status: 'active' | 'inactive' | 'expired';
+    type: 'basic' | 'premium';
+    startDate: Date;
+    endDate: Date;
+    autoRenew: boolean;
+  };
+  preferences?: {
+    notifications: boolean;
+    emailNotifications: boolean;
+    language: string;
+  };
+  notifications?: Array<{
+    id: string;
+    type: string;
+    message: string;
+    read: boolean;
+    createdAt: Date;
+  }>;
   createdAt: Date;
   updatedAt: Date;
+  comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
 const userSchema = new Schema<IUser>({
-  name: {
+  firstName: {
+    type: String,
+    required: [true, 'Le prénom est requis']
+  },
+  lastName: {
     type: String,
     required: [true, 'Le nom est requis']
   },
   email: {
     type: String,
-    required: [true, 'L\'email est requis'],
+    required: false,
     unique: true,
+    sparse: true,
     lowercase: true,
     match: [/^\S+@\S+\.\S+$/, 'Email invalide']
+  },
+  phone: {
+    type: String,
+    required: [true, 'Le numéro de téléphone est requis'],
+    unique: true
   },
   password: {
     type: String,
@@ -33,15 +65,60 @@ const userSchema = new Schema<IUser>({
   },
   role: {
     type: String,
-    enum: ['user', 'admin', 'moderator'],
-    default: 'user'
+    enum: ['admin', 'etudiant', 'annonceur', 'employeur'],
+    default: 'etudiant'
   },
   isVerified: {
     type: Boolean,
     default: false
   },
   resetPasswordToken: String,
-  resetPasswordExpire: Date
+  resetPasswordExpire: Date,
+  subscription: {
+    status: {
+      type: String,
+      enum: ['active', 'inactive', 'expired'],
+      default: 'inactive'
+    },
+    type: {
+      type: String,
+      enum: ['basic', 'premium'],
+      default: 'basic'
+    },
+    startDate: Date,
+    endDate: Date,
+    autoRenew: {
+      type: Boolean,
+      default: false
+    }
+  },
+  preferences: {
+    notifications: {
+      type: Boolean,
+      default: true
+    },
+    emailNotifications: {
+      type: Boolean,
+      default: true
+    },
+    language: {
+      type: String,
+      default: 'fr'
+    }
+  },
+  notifications: [{
+    id: String,
+    type: String,
+    message: String,
+    read: {
+      type: Boolean,
+      default: false
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now
+    }
+  }]
 }, {
   timestamps: true
 });
