@@ -1086,3 +1086,52 @@ interface MarketplaceItem {
    - Optimisation des layers Docker
    - Réduction de la surface d'attaque
    - Performances de build améliorées
+
+## Configuration Technique
+
+### Backend
+- Node.js >= 18.0.0
+- TypeScript 5.3.3
+- Express 4.18.2
+- MongoDB avec Mongoose 8.0.3
+- PostgreSQL 8.11.3
+- Configuration TypeScript optimisée pour la production
+- Build process amélioré avec gestion des assets statiques
+
+### Frontend
+- React 18.2.0
+- Ant Design 5.12.0
+- Axios 1.6.0 pour les requêtes API
+- Configuration TypeScript avec support JSX
+
+### Sécurité
+- Helmet 7.1.0 pour la sécurité HTTP
+- Express Rate Limit 7.1.5
+- JWT pour l'authentification
+- Bcrypt pour le hachage des mots de passe
+
+### Tests
+- Jest 29.7.0
+- Supertest 6.3.3
+- Configuration TypeScript pour les tests
+
+### Build & Déploiement
+- Scripts npm optimisés:
+  - `npm run build`: Compilation TypeScript + copie des assets
+  - `npm run dev`: Développement avec hot-reload
+  - `npm start`: Production
+  - `npm test`: Tests unitaires
+- Configuration TypeScript stricte pour la qualité du code
+- Support des assets statiques (public, views)
+
+## État Actuel
+- Build process corrigé et optimisé
+- Versions des dépendances stabilisées
+- Configuration TypeScript complète
+- Support complet du frontend et backend
+
+## Prochaines Étapes
+1. Tests de déploiement
+2. Monitoring des performances
+3. Optimisation des assets
+4. Documentation technique complète
