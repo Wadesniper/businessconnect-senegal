@@ -1,6 +1,6 @@
 # État du Site BusinessConnect
 
-## Dernière mise à jour : 2024-03-21
+## Dernière mise à jour : 2025-06-02
 
 ### Fonctionnalités implémentées
 
@@ -43,7 +43,7 @@
 
 ### Corrections et Améliorations Récentes
 
-#### 2024-03-21
+#### 2025-06-02
 - Suppression des services inutilisés (formationService et inAppNotificationService)
 - Nettoyage des dépendances node_modules
 - Mise à jour des packages npm
