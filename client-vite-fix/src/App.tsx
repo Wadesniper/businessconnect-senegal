@@ -35,6 +35,7 @@ const FAQ = lazy(() => import('./pages/help/FAQ'));
 const CareersPage = lazy(() => import('./pages/careers'));
 import AuthPage from './pages/auth/AuthPage';
 const CVPreviewGallery = lazy(() => import('./pages/cv-generator/CVPreviewGallery'));
+const TestCinetPay = lazy(() => import('./pages/TestCinetPay'));
 
 // ErrorBoundary global
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, error: any}> {
@@ -99,6 +100,12 @@ const App: React.FC = () => {
               <Route path="/register" element={<Navigate to="/auth" replace />} />
 
               {/* Routes protégées */}
+              <Route
+                path="/test-cinetpay"
+                element={
+                  <ProtectedRoute element={<TestCinetPay />} requiresSubscription={false} />
+                }
+              />
               <Route
                 path="/profile"
                 element={

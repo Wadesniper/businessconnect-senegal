@@ -4,6 +4,7 @@ import { SubscriptionService } from '../services/subscriptionService';
 import { logger } from '../utils/logger';
 import { authenticate } from '../middleware/auth';
 import { CinetpayService } from '../services/cinetpayService';
+import { config } from '../config';
 
 const router = express.Router();
 
@@ -74,16 +75,96 @@ router.get('/test-cinetpay', authenticate, async (req: Request, res: Response) =
   }
 });
 
+// Route de debug CinetPay - affiche la configuration et teste l'API
+router.get('/debug-cinetpay', authenticate, async (req: Request, res: Response) => {
+  try {
+    const hasApiKey = !!config.CINETPAY_APIKEY;
+    const hasSiteId = !!config.CINETPAY_SITE_ID;
+    
+    const debugInfo = {
+      config: {
+        hasApiKey,
+        hasSiteId,
+        apiKeyLength: config.CINETPAY_APIKEY?.length || 0,
+        siteIdLength: config.CINETPAY_SITE_ID?.length || 0,
+        baseUrl: config.CINETPAY_BASE_URL,
+        returnUrl: config.CINETPAY_RETURN_URL,
+        notifyUrl: config.CINETPAY_NOTIFY_URL
+      },
+      environment: {
+        nodeEnv: process.env.NODE_ENV,
+        hasEnvApiKey: !!process.env.CINETPAY_APIKEY,
+        hasEnvSiteId: !!process.env.CINETPAY_SITE_ID
+      }
+    };
+    
+    // Test avec des données minimales
+    const testData = {
+      amount: 100,
+      customer_name: 'Test',
+      customer_surname: 'User',
+      customer_email: 'test@test.com',
+      customer_phone_number: '+221700000000',
+      description: 'Test payment'
+    };
+    
+    let testResult = null;
+    let testError = null;
+    
+    try {
+      testResult = await cinetpayService.initializePayment(testData);
+    } catch (err: any) {
+      testError = {
+        message: err.message,
+        stack: err.stack
+      };
+    }
+    
+    res.json({
+      debugInfo,
+      testData,
+      testResult,
+      testError
+    });
+  } catch (error: any) {
+    res.status(500).json({ 
+      error: 'Erreur debug',
+      message: error.message
+    });
+  }
+});
+
 // Initier un nouvel abonnement
 router.post('/initiate', authenticate, async (req: Request, res: Response) => {
   try {
     const { userId, subscriptionType, customer_name, customer_surname, customer_email, customer_phone_number } = req.body;
 
-    console.log('Requête d\'initiation reçue:', { userId, subscriptionType, customer_name, customer_surname, customer_phone_number, customer_email });
+    console.log('=== DÉBUT INITIATION PAIEMENT ===');
+    console.log('Requête d\'initiation reçue:', { 
+      userId, 
+      subscriptionType, 
+      customer_name, 
+      customer_surname, 
+      customer_phone_number, 
+      customer_email,
+      body: req.body 
+    });
 
-    if (!userId || !subscriptionType || !customer_name || !customer_surname || !customer_phone_number) {
-      console.error('Paramètres manquants dans la requête');
-      res.status(400).json({ error: 'Paramètres manquants' });
+    // Vérification détaillée des paramètres
+    const missingParams = [];
+    if (!userId) missingParams.push('userId');
+    if (!subscriptionType) missingParams.push('subscriptionType');
+    if (!customer_name) missingParams.push('customer_name');
+    if (!customer_surname) missingParams.push('customer_surname');
+    if (!customer_phone_number) missingParams.push('customer_phone_number');
+    
+    if (missingParams.length > 0) {
+      console.error('Paramètres manquants:', missingParams);
+      res.status(400).json({ 
+        error: 'Paramètres manquants',
+        missing: missingParams,
+        received: req.body
+      });
       return;
     }
 
@@ -95,6 +176,12 @@ router.post('/initiate', authenticate, async (req: Request, res: Response) => {
       email = `user${phoneDigits}@businessconnect.sn`;
       console.log('Email généré automatiquement:', email);
     }
+
+    console.log('Configuration CinetPay:', {
+      hasApiKey: !!config.CINETPAY_APIKEY,
+      hasSiteId: !!config.CINETPAY_SITE_ID,
+      baseUrl: config.CINETPAY_BASE_URL
+    });
 
     // Utiliser la méthode publique du service d'abonnement
     const payment = await subscriptionService.initiatePayment({
@@ -118,11 +205,18 @@ router.post('/initiate', authenticate, async (req: Request, res: Response) => {
       amount: subscriptionService.getSubscriptionPrice(subscriptionType),
       currency: 'XOF'
     });
+    
+    console.log('=== FIN INITIATION PAIEMENT - SUCCÈS ===');
   } catch (error: any) {
-    console.error('Erreur complète lors de l\'initiation:', error);
+    console.error('=== ERREUR INITIATION PAIEMENT ===');
+    console.error('Erreur complète:', error);
+    console.error('Message:', error.message);
+    console.error('Stack:', error.stack);
+    
     logger.error('Erreur lors de l\'initiation de l\'abonnement:', error);
     res.status(500).json({ 
-      error: error.message || 'Erreur serveur lors de l\'initiation de l\'abonnement' 
+      error: error.message || 'Erreur serveur lors de l\'initiation de l\'abonnement',
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 });
