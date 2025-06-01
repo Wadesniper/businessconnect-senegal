@@ -17,7 +17,7 @@ const USER_KEY = 'user';
 export const authService = {
   async login(credentials: LoginCredentials): Promise<AuthResponse['data']> {
     try {
-      const response = await api.post<AuthResponse>('/auth/login', credentials);
+      const response = await api.post<AuthResponse>('/api/auth/login', credentials);
       if (response.data.success) {
         this.setToken(response.data.data.token);
         this.setUser(response.data.data.user);
@@ -86,7 +86,7 @@ export const authService = {
 
   async getCurrentUser(): Promise<User> {
     try {
-      const response = await api.get<User>('/auth/me');
+      const response = await api.get<User>('/api/auth/me');
       return response.data;
     } catch (error: any) {
       if (error.response?.status === 401) {
@@ -99,7 +99,7 @@ export const authService = {
 
   async updateProfile(data: Partial<User>): Promise<User> {
     try {
-      const response = await api.patch<User>('/auth/profile', data);
+      const response = await api.patch<User>('/api/auth/profile', data);
       return response.data;
     } catch (error: any) {
       if (error.response?.status === 401) {
@@ -111,33 +111,33 @@ export const authService = {
   },
 
   async resetPassword(phoneNumber: string): Promise<void> {
-    await api.post('/auth/reset-password', { phoneNumber });
+    await api.post('/api/auth/reset-password', { phoneNumber });
   },
 
   async verifyResetToken(token: string): Promise<void> {
-    await api.post('/auth/verify-reset-token', { token });
+    await api.post('/api/auth/verify-reset-token', { token });
   },
 
   async setNewPassword(token: string, password: string): Promise<void> {
-    await api.post('/auth/set-new-password', { token, password });
+    await api.post('/api/auth/set-new-password', { token, password });
   },
 
   async verifyPhoneNumber(token: string): Promise<void> {
-    await api.post('/auth/verify-phone', { token });
+    await api.post('/api/auth/verify-phone', { token });
   },
 
   async updateSubscription(status: 'active' | 'cancelled'): Promise<User> {
-    const response = await api.patch<User>('/auth/subscription', { status });
+    const response = await api.patch<User>('/api/auth/subscription', { status });
     return response.data;
   },
 
   async updateCompanyInfo(companyData: Partial<User['company']>): Promise<User> {
-    const response = await api.patch<User>('/auth/company', companyData);
+    const response = await api.patch<User>('/api/auth/company', companyData);
     return response.data;
   },
 
   async updateProfileInfo(profileData: Partial<User['profile']>): Promise<User> {
-    const response = await api.patch<User>('/auth/profile-details', profileData);
+    const response = await api.patch<User>('/api/auth/profile-details', profileData);
     return response.data;
   },
 

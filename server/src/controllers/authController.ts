@@ -372,17 +372,108 @@ export class AuthController {
 
   // Générer le token JWT
   private generateToken(user: any): string {
-    const signOptions: SignOptions = { expiresIn: '7d' };
-    return jwt.sign(
-      { 
-        id: user._id,
-        role: user.role,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        phoneNumber: user.phoneNumber
-      },
-      config.JWT_SECRET as Secret,
-      signOptions
-    );
+    const payload = {
+      id: user._id,
+      phoneNumber: user.phoneNumber,
+      role: user.role
+    };
+
+    const signOptions: SignOptions = {
+      expiresIn: '7d'
+    };
+
+    return jwt.sign(payload, config.JWT_SECRET as Secret, signOptions);
   }
+
+  getCurrentUser = async (req: any, res: Response) => {
+    try {
+      const user = await User.findById(req.user?.id).select('-password');
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'Utilisateur non trouvé'
+        });
+      }
+
+      res.json({
+        success: true,
+        data: {
+          id: user._id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          phoneNumber: user.phoneNumber,
+          role: user.role,
+          isVerified: user.isVerified
+        }
+      });
+    } catch (error) {
+      logger.error('Erreur lors de la récupération du profil:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la récupération du profil'
+      });
+    }
+  };
+
+  updateProfile = async (req: any, res: Response) => {
+    try {
+      const { firstName, lastName, email } = req.body;
+      
+      const updateData: any = {};
+      if (firstName) updateData.firstName = firstName.trim();
+      if (lastName) updateData.lastName = lastName.trim();
+      if (email) {
+        // Validation de l'email
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          return res.status(400).json({
+            success: false,
+            message: 'Format d\'email invalide'
+          });
+        }
+        updateData.email = email.toLowerCase();
+      }
+
+      const user = await User.findByIdAndUpdate(
+        req.user?.id,
+        { $set: updateData },
+        { new: true, runValidators: true }
+      ).select('-password');
+
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'Utilisateur non trouvé'
+        });
+      }
+
+      res.json({
+        success: true,
+        message: 'Profil mis à jour avec succès',
+        data: {
+          id: user._id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          phoneNumber: user.phoneNumber,
+          role: user.role,
+          isVerified: user.isVerified
+        }
+      });
+    } catch (error: any) {
+      logger.error('Erreur lors de la mise à jour du profil:', error);
+      
+      if (error.code === 11000) {
+        return res.status(400).json({
+          success: false,
+          message: 'Cet email est déjà utilisé par un autre utilisateur'
+        });
+      }
+      
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la mise à jour du profil'
+      });
+    }
+  };
 } 
