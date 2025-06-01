@@ -24,38 +24,36 @@ export class SubscriptionService {
     userId: string
   }): Promise<{ redirectUrl: string; paymentId: string }> {
     try {
-      console.log('Initiation paiement pour:', params);
-
+      // Vérifier si l'utilisateur a déjà un abonnement actif
       const existingSubscription = await this.getActiveSubscription(params.userId);
       if (existingSubscription) {
-        throw new Error('Utilisateur a déjà un abonnement actif');
+        throw new Error('Vous avez déjà un abonnement actif');
       }
 
+      // Calculer le montant
       const amount = this.getSubscriptionPrice(params.type);
       if (!amount) {
         throw new Error(`Type d'abonnement invalide: ${params.type}`);
       }
 
-      console.log(`Montant calculé pour ${params.type}: ${amount} FCFA`);
-
+      // Générer un ID de transaction unique
       const transaction_id = uuidv4();
       
-      // Validation préventive du numéro de téléphone
+      // Formater le numéro de téléphone
       let phoneNumber = params.customer_phone_number;
       if (!phoneNumber.startsWith('+')) {
-        // Si c'est un numéro sénégalais local, ajouter l'indicatif
         if (phoneNumber.startsWith('7')) {
           phoneNumber = '+221' + phoneNumber;
         }
       }
       
-      // Appel au service CinetPay pour obtenir le lien de paiement
+      // Initialiser le paiement avec CinetPay
       const payment = await cinetpayService.initializePayment({
         amount,
         transaction_id,
         customer_name: params.customer_name,
         customer_surname: params.customer_surname,
-        customer_email: params.customer_email,
+        customer_email: params.customer_email || `user${phoneNumber.replace(/[^0-9]/g, '')}@businessconnect.sn`,
         customer_phone_number: phoneNumber,
         description: `Abonnement ${params.type} BusinessConnect Sénégal`,
         customer_country: 'SN',
@@ -65,15 +63,32 @@ export class SubscriptionService {
         customer_zip_code: '12000'
       });
 
-      console.log('Paiement CinetPay initié:', payment);
+      // Créer un abonnement en attente
+      await this.createPendingSubscription(params.userId, params.type, transaction_id);
 
       return {
         redirectUrl: payment.payment_url,
         paymentId: transaction_id
       };
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Erreur lors de l\'initiation du paiement CinetPay:', error);
-      throw error;
+      throw new Error(error.message || 'Erreur lors de l\'initiation du paiement');
+    }
+  }
+
+  private async createPendingSubscription(userId: string, type: string, paymentId: string) {
+    try {
+      const subscription = new Subscription({
+        userId,
+        type,
+        status: 'pending',
+        paymentId,
+        createdAt: new Date()
+      });
+      await subscription.save();
+    } catch (error) {
+      logger.error('Erreur lors de la création de l\'abonnement en attente:', error);
+      throw new Error('Erreur lors de la création de l\'abonnement');
     }
   }
 

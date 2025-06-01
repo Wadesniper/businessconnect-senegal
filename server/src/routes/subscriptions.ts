@@ -79,7 +79,7 @@ router.post('/initiate', authenticate, async (req: Request, res: Response) => {
   try {
     const { userId, subscriptionType, customer_name, customer_surname, customer_email, customer_phone_number } = req.body;
 
-    console.log('Requête d\'initiation reçue:', { userId, subscriptionType, customer_name, customer_surname, customer_phone_number });
+    console.log('Requête d\'initiation reçue:', { userId, subscriptionType, customer_name, customer_surname, customer_phone_number, customer_email });
 
     if (!userId || !subscriptionType || !customer_name || !customer_surname || !customer_phone_number) {
       console.error('Paramètres manquants dans la requête');
@@ -87,12 +87,21 @@ router.post('/initiate', authenticate, async (req: Request, res: Response) => {
       return;
     }
 
+    // Email obligatoire pour CinetPay - générer un fallback si manquant
+    let email = customer_email;
+    if (!email || !email.includes('@')) {
+      // Générer un email temporaire basé sur le téléphone
+      const phoneDigits = customer_phone_number.replace(/[^0-9]/g, '');
+      email = `user${phoneDigits}@businessconnect.sn`;
+      console.log('Email généré automatiquement:', email);
+    }
+
     // Utiliser la méthode publique du service d'abonnement
     const payment = await subscriptionService.initiatePayment({
       type: subscriptionType,
       customer_name,
       customer_surname,
-      customer_email,
+      customer_email: email, // Utiliser l'email validé
       customer_phone_number,
       userId
     });

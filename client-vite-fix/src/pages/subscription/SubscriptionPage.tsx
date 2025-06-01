@@ -7,6 +7,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useSubscription } from '../../hooks/useSubscription';
 import type { SubscriptionType } from '../../types/subscription';
+import { message } from 'antd';
 
 const { Title, Paragraph } = Typography;
 
@@ -86,43 +87,28 @@ const SubscriptionPage: React.FC = () => {
   }
 
   const handleSubscribe = async (offerKey: string) => {
-    // Vérification robuste avec le nouvel état d'authentification
-    if (!isAuthenticated || !user) {
-      console.log('SubscriptionPage - Utilisateur non authentifié, redirection vers login');
-      navigate('/login', { state: { from: '/subscription' } });
-      return;
-    }
-    
-    // Vérification du profil complet
-    if (!user.firstName || !user.lastName || !user.phoneNumber) {
-      alert("Merci de compléter votre profil (prénom, nom, téléphone) avant de vous abonner.\nVous pouvez le faire dans votre tableau de bord ou lors de la prochaine connexion.");
-      return;
-    }
-
     try {
-      let type = offerKey;
-      if (type === 'student') type = 'etudiant';
-      
-      console.log('SubscriptionPage - Initiation abonnement pour:', type);
-      const res = await initiateSubscription(type as SubscriptionType);
-      
-      if (res && res.paymentUrl) {
-        console.log('SubscriptionPage - Redirection vers CinetPay:', res.paymentUrl);
-        window.location.href = res.paymentUrl;
-      } else {
-        console.error('SubscriptionPage - Pas d\'URL de paiement dans la réponse:', res);
-        alert("Erreur lors de la génération du lien de paiement.");
-      }
-    } catch (error: any) {
-      console.error('SubscriptionPage - Erreur lors de l\'initiation:', error);
-      
-      // Si erreur de session, rediriger vers login
-      if (error.message && error.message.includes('Session expirée')) {
+      if (!isAuthenticated || !user) {
         navigate('/login', { state: { from: '/subscription' } });
         return;
       }
+
+      let type = offerKey;
+      if (type === 'student') type = 'etudiant';
       
-      alert(error.message || "Erreur lors de l'initialisation du paiement.");
+      const res = await initiateSubscription(type as SubscriptionType);
+      
+      if (res?.paymentUrl) {
+        window.location.href = res.paymentUrl;
+      } else {
+        message.error("Erreur lors de la génération du lien de paiement.");
+      }
+    } catch (error: any) {
+      if (error.message?.includes('Session expirée')) {
+        navigate('/login', { state: { from: '/subscription' } });
+      } else {
+        message.error(error.message || "Erreur lors de l'initialisation du paiement.");
+      }
     }
   };
 

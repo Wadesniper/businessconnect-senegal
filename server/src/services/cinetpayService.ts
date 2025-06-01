@@ -32,15 +32,9 @@ export class CinetpayService {
   }
 
   async initializePayment(params: InitPaymentParams) {
-    // Validation de la configuration avant tout
     this.validateConfig();
-    
+
     const transaction_id = params.transaction_id || uuidv4();
-    
-    // Validation du montant (doit être un multiple de 5 selon la doc CinetPay)
-    if (params.amount % 5 !== 0) {
-      throw new Error('Le montant doit être un multiple de 5');
-    }
 
     const body = {
       apikey: config.CINETPAY_APIKEY,
@@ -51,10 +45,10 @@ export class CinetpayService {
       description: params.description || 'Abonnement BusinessConnect',
       return_url: config.CINETPAY_RETURN_URL || `${config.CLIENT_URL}/payment/return`,
       notify_url: config.CINETPAY_NOTIFY_URL || `${config.API_URL}/api/subscriptions/notify`,
-      customer_name: params.customer_name,
-      customer_surname: params.customer_surname,
-      customer_email: params.customer_email,
-      customer_phone_number: params.customer_phone_number,
+      customer_name: params.customer_name.trim(),
+      customer_surname: params.customer_surname.trim(),
+      customer_email: params.customer_email.toLowerCase().trim(),
+      customer_phone_number: params.customer_phone_number.trim(),
       customer_address: params.customer_address || 'Dakar',
       customer_city: params.customer_city || 'Dakar',
       customer_country: params.customer_country || 'SN',
@@ -69,14 +63,6 @@ export class CinetpayService {
     };
 
     try {
-      console.log('Envoi requête CinetPay:', {
-        url: config.CINETPAY_BASE_URL,
-        transaction_id,
-        amount: params.amount,
-        customer_name: params.customer_name,
-        customer_phone_number: params.customer_phone_number
-      });
-
       const response = await axios.post(
         config.CINETPAY_BASE_URL,
         body,
@@ -89,33 +75,27 @@ export class CinetpayService {
         }
       );
 
-      console.log('Réponse CinetPay:', response.data);
-
-      if (response.data?.data?.payment_url) {
+      if (response.data?.code === '201' && response.data?.data?.payment_url) {
         return {
           payment_url: response.data.data.payment_url,
           transaction_id,
         };
-      } else {
-        console.error('Réponse CinetPay incomplète:', response.data);
-        throw new Error('URL de paiement non disponible dans la réponse CinetPay');
       }
+
+      throw new Error(response.data?.message || 'URL de paiement non disponible dans la réponse CinetPay');
     } catch (error: any) {
-      console.error('Erreur complète CinetPay:', error);
-      
       if (error.response?.data) {
-        console.error('Détails erreur CinetPay:', error.response.data);
         const errorMsg = error.response.data.message || 
                         error.response.data.description || 
                         'Erreur CinetPay inconnue';
-        throw new Error(`CinetPay Error: ${errorMsg}`);
+        throw new Error(`Erreur CinetPay: ${errorMsg}`);
       }
       
       if (error.code === 'ECONNABORTED') {
-        throw new Error('Timeout lors de la connexion à CinetPay');
+        throw new Error('Le service de paiement ne répond pas. Veuillez réessayer.');
       }
       
-      throw new Error(`Erreur technique CinetPay: ${error.message}`);
+      throw new Error(`Erreur technique: ${error.message}`);
     }
   }
 }
