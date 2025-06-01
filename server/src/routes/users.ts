@@ -52,4 +52,26 @@ router.get('/me', async (req: AuthRequest, res: Response) => {
   }
 });
 
+// Routes protégées (nécessitent une authentification)
+router.get('/profile', authMiddleware, async (req: AuthRequest, res: Response) => {
+  try {
+    const user = await User.findById(req.user?.id).select('-password');
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Utilisateur non trouvé'
+      });
+    }
+    res.json({
+      success: true,
+      data: user
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération du profil'
+    });
+  }
+});
+
 export default router; 

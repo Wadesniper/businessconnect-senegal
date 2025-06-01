@@ -39,7 +39,7 @@ export const authService = {
   async register(data: UserRegistrationData): Promise<UserRegistrationResponse> {
     try {
       console.log('Données d\'inscription:', data);
-      const response = await api.post<UserRegistrationResponse>('/auth/register', data);
+      const response = await api.post<UserRegistrationResponse>('/api/auth/register', data);
       console.log('Réponse du serveur:', response.data);
       
       if (response.data.success && response.data.data) {
