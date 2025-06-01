@@ -64,11 +64,23 @@ const SubscriptionPage: React.FC = () => {
   const navigate = useNavigate();
   const { initiateSubscription } = useSubscription();
 
+  // Debug pour comprendre le problème
+  console.log('SubscriptionPage - User:', user);
+  console.log('SubscriptionPage - User disponible:', !!user);
+  console.log('SubscriptionPage - Token localStorage:', !!localStorage.getItem('token'));
+  console.log('SubscriptionPage - User localStorage:', !!localStorage.getItem('user'));
+
   const handleSubscribe = async (offerKey: string) => {
+    console.log('handleSubscribe - User avant vérification:', user);
+    
     if (!user) {
+      console.log('Redirection vers login - user est null/undefined');
       navigate('/login', { state: { from: '/subscription' } });
       return;
     }
+    
+    console.log('User disponible, continuons avec l\'abonnement');
+    
     if (!user.firstName || !user.lastName || !user.phoneNumber) {
       alert("Merci de compléter votre profil (prénom, nom, téléphone) avant de vous abonner.\nVous pouvez le faire dans votre tableau de bord ou lors de la prochaine connexion.");
       return;

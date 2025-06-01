@@ -19,12 +19,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const localUser = (() => {
     try {
       const u = localStorage.getItem('user');
+      console.log('AuthProvider - User dans localStorage:', u ? 'OUI' : 'NON');
       return u ? JSON.parse(u) : null;
-    } catch { return null; }
+    } catch (error) {
+      console.error('AuthProvider - Erreur parsing user localStorage:', error);
+      return null;
+    }
   })();
+  
   const [user, setUser] = useState<User | null>(localUser);
   const [loading, setLoading] = useState(!localUser); // pas de loading si user local
   const [error, setError] = useState<string | null>(null);
+
+  console.log('AuthProvider - Initialisation:', {
+    user: !!user,
+    loading,
+    token: !!localStorage.getItem('token')
+  });
 
   useEffect(() => {
     checkAuth();
@@ -34,15 +45,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const checkAuth = async () => {
+    console.log('AuthProvider - checkAuth appelé');
     try {
       const token = authService.getToken();
+      console.log('AuthProvider - Token trouvé:', !!token);
+      
       if (token) {
+        console.log('AuthProvider - Appel getCurrentUser...');
         const userData = await authService.getCurrentUser();
+        console.log('AuthProvider - getCurrentUser réussi:', !!userData);
         setUser(userData);
         localStorage.setItem('user', JSON.stringify(userData));
+      } else {
+        console.log('AuthProvider - Pas de token, user = null');
+        setUser(null);
       }
     } catch (error) {
-      console.error('Erreur lors de la vérification de l\'authentification:', error);
+      console.error('AuthProvider - Erreur lors de la vérification de l\'authentification:', error);
       authService.removeToken();
       setUser(null);
       localStorage.removeItem('user');
