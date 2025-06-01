@@ -6,95 +6,169 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   error: string | null;
+  isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   register: (data: UserRegistrationData) => Promise<{ token: string; user: User; } | void>;
   updateProfile: (data: Partial<User>) => Promise<void>;
+  refreshAuth: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Initialisation immédiate depuis le localStorage
-  const localUser = (() => {
-    try {
-      const u = localStorage.getItem('user');
-      console.log('AuthProvider - User dans localStorage:', u ? 'OUI' : 'NON');
-      return u ? JSON.parse(u) : null;
-    } catch (error) {
-      console.error('AuthProvider - Erreur parsing user localStorage:', error);
-      return null;
-    }
-  })();
-  
-  const [user, setUser] = useState<User | null>(localUser);
-  const [loading, setLoading] = useState(!localUser); // pas de loading si user local
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  console.log('AuthProvider - Initialisation:', {
-    user: !!user,
-    loading,
-    token: !!localStorage.getItem('token')
-  });
+  // Fonction centralisée pour vérifier l'authentification
+  const validateAuthState = (): boolean => {
+    const token = authService.getToken();
+    const localUser = authService.getUser();
+    
+    // Les deux doivent être présents pour être authentifié
+    const isValid = !!(token && localUser);
+    
+    console.log('AuthProvider - Validation état auth:', {
+      hasToken: !!token,
+      hasUser: !!localUser,
+      isValid
+    });
+    
+    if (!isValid) {
+      // Si état incohérent, nettoyer complètement
+      authService.removeToken();
+      authService.removeUser();
+      setUser(null);
+      setIsAuthenticated(false);
+      return false;
+    }
+    
+    return true;
+  };
 
-  useEffect(() => {
-    checkAuth();
-    const handleStorage = () => checkAuth();
-    window.addEventListener('storage', handleStorage);
-    return () => window.removeEventListener('storage', handleStorage);
-  }, []);
-
-  const checkAuth = async () => {
-    console.log('AuthProvider - checkAuth appelé');
+  // Fonction pour initialiser l'authentification
+  const initAuth = async (): Promise<void> => {
+    setLoading(true);
+    
     try {
-      const token = authService.getToken();
-      console.log('AuthProvider - Token trouvé:', !!token);
+      // Vérifier l'état local d'abord
+      if (!validateAuthState()) {
+        console.log('AuthProvider - État local invalide');
+        setLoading(false);
+        return;
+      }
+
+      const localUser = authService.getUser();
       
-      if (token) {
-        console.log('AuthProvider - Appel getCurrentUser...');
-        const userData = await authService.getCurrentUser();
-        console.log('AuthProvider - getCurrentUser réussi:', !!userData);
-        setUser(userData);
-        localStorage.setItem('user', JSON.stringify(userData));
-      } else {
-        console.log('AuthProvider - Pas de token, user = null');
+      // Vérifier la validité du token côté serveur
+      try {
+        const serverUser = await authService.getCurrentUser();
+        
+        // Synchroniser avec les données serveur
+        if (serverUser) {
+          authService.setUser(serverUser);
+          setUser(serverUser);
+          setIsAuthenticated(true);
+          console.log('AuthProvider - Authentification validée avec succès');
+        } else {
+          throw new Error('Utilisateur non trouvé côté serveur');
+        }
+      } catch (serverError) {
+        console.error('AuthProvider - Erreur validation serveur:', serverError);
+        
+        // Token invalide côté serveur, nettoyer
+        authService.removeToken();
+        authService.removeUser();
         setUser(null);
+        setIsAuthenticated(false);
       }
     } catch (error) {
-      console.error('AuthProvider - Erreur lors de la vérification de l\'authentification:', error);
+      console.error('AuthProvider - Erreur initialisation:', error);
+      setError('Erreur lors de la vérification de l\'authentification');
+      
+      // En cas d'erreur, nettoyer l'état
       authService.removeToken();
+      authService.removeUser();
       setUser(null);
-      localStorage.removeItem('user');
+      setIsAuthenticated(false);
     } finally {
       setLoading(false);
     }
   };
 
+  // Fonction pour rafraîchir l'authentification
+  const refreshAuth = async (): Promise<void> => {
+    await initAuth();
+  };
+
+  // Initialisation au chargement
+  useEffect(() => {
+    initAuth();
+    
+    // Écouter les changements de localStorage
+    const handleStorageChange = () => {
+      console.log('AuthProvider - Changement localStorage détecté');
+      initAuth();
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
   const login = async (email: string, password: string) => {
     try {
       setError(null);
+      setLoading(true);
+      
       const response = await authService.login({ phoneNumber: email, password });
+      
       if (response && response.token && response.user) {
+        // Sauvegarder de manière atomique
         authService.setToken(response.token);
+        authService.setUser(response.user);
+        
+        // Mettre à jour l'état
         setUser(response.user);
-        localStorage.setItem('user', JSON.stringify(response.user));
+        setIsAuthenticated(true);
+        
+        console.log('AuthProvider - Connexion réussie:', response.user.id);
       } else {
-        throw new Error('Erreur lors de la connexion');
+        throw new Error('Réponse de connexion invalide');
       }
-    } catch (error) {
-      setError('Erreur lors de la connexion');
+    } catch (error: any) {
+      console.error('AuthProvider - Erreur connexion:', error);
+      setError(error.message || 'Erreur lors de la connexion');
+      
+      // Nettoyer en cas d'erreur
+      authService.removeToken();
+      authService.removeUser();
+      setUser(null);
+      setIsAuthenticated(false);
+      
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
   const logout = async () => {
     try {
       setError(null);
-      await authService.logout();
+      
+      // Nettoyer localement d'abord
       authService.removeToken();
+      authService.removeUser();
       setUser(null);
-      localStorage.removeItem('user');
-    } catch (error) {
+      setIsAuthenticated(false);
+      
+      // Puis côté serveur
+      await authService.logout();
+      
+      console.log('AuthProvider - Déconnexion réussie');
+    } catch (error: any) {
+      console.error('AuthProvider - Erreur déconnexion:', error);
       setError('Erreur lors de la déconnexion');
       throw error;
     }
@@ -103,19 +177,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const register = async (data: UserRegistrationData) => {
     try {
       setError(null);
+      setLoading(true);
+      
       const response = await authService.register(data);
+      
       if (response.success && response.data) {
+        // Sauvegarder de manière atomique
         authService.setToken(response.data.token);
+        authService.setUser(response.data.user);
+        
+        // Mettre à jour l'état
         setUser(response.data.user);
-        localStorage.setItem('user', JSON.stringify(response.data.user));
+        setIsAuthenticated(true);
+        
+        console.log('AuthProvider - Inscription réussie:', response.data.user.id);
         return response.data;
       } else {
         throw new Error(response.message || 'Erreur lors de l\'inscription');
       }
     } catch (error: any) {
+      console.error('AuthProvider - Erreur inscription:', error);
       const errorMessage = error.response?.data?.message || error.message || 'Erreur lors de l\'inscription';
       setError(errorMessage);
+      
+      // Nettoyer en cas d'erreur
+      authService.removeToken();
+      authService.removeUser();
+      setUser(null);
+      setIsAuthenticated(false);
+      
       throw new Error(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -123,15 +216,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setError(null);
       const updatedUser = await authService.updateProfile(data);
+      
+      // Synchroniser les données
+      authService.setUser(updatedUser);
       setUser(updatedUser);
-    } catch (error) {
+      
+      console.log('AuthProvider - Profil mis à jour');
+    } catch (error: any) {
+      console.error('AuthProvider - Erreur mise à jour profil:', error);
       setError('Erreur lors de la mise à jour du profil');
       throw error;
     }
   };
 
+  const contextValue: AuthContextType = {
+    user,
+    loading,
+    error,
+    isAuthenticated,
+    login,
+    logout,
+    register,
+    updateProfile,
+    refreshAuth
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, error, login, logout, register, updateProfile }}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );

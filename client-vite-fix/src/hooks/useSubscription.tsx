@@ -36,11 +36,11 @@ export const useSubscription = () => {
       
       console.log('useSubscription - Réponse serveur:', {
         status: 'success',
-        hasPaymentUrl: !!(response.data as any)?.paymentUrl,
-        transactionId: (response.data as any)?.transactionId
+        hasPaymentUrl: !!response.data?.paymentUrl,
+        transactionId: response.data?.transactionId
       });
       
-      return response.data as PaymentInitiation;
+      return response.data;
     } catch (error: any) {
       console.error('useSubscription - Erreur:', {
         status: error.response?.status,
