@@ -2,49 +2,49 @@
 const API_URL = 'https://businessconnect-senegal-api-production.up.railway.app';
 
 export const endpoints = {
-  // Auth (sans préfixe /api)
-  login: `${API_URL}/auth/login`,
-  register: `${API_URL}/auth/register`,
-  verifyEmail: `${API_URL}/auth/verify`,
-  forgotPassword: `${API_URL}/auth/forgot-password`,
-  resetPassword: `${API_URL}/auth/reset-password`,
+  // Auth (avec préfixe /api comme sur le serveur)
+  login: `${API_URL}/api/auth/login`,
+  register: `${API_URL}/api/auth/register`,
+  verifyEmail: `${API_URL}/api/auth/verify`,
+  forgotPassword: `${API_URL}/api/auth/forgot-password`,
+  resetPassword: `${API_URL}/api/auth/reset-password`,
 
-  // Subscriptions (sans préfixe /api)
-  subscriptions: `${API_URL}/subscriptions`,
-  payment: `${API_URL}/payment/init`,
-  paymentCallback: `${API_URL}/payment/callback`,
+  // Subscriptions (avec préfixe /api comme sur le serveur)
+  subscriptions: `${API_URL}/api/subscriptions`,
+  payment: `${API_URL}/api/payment/init`,
+  paymentCallback: `${API_URL}/api/payment/callback`,
 
-  // CV Generator (sans préfixe /api)
-  cvs: `${API_URL}/cvs`,
-  cvTemplates: `${API_URL}/cv-templates`,
-  cvExport: `${API_URL}/cvs/export`,
+  // CV Generator (avec préfixe /api)
+  cvs: `${API_URL}/api/cvs`,
+  cvTemplates: `${API_URL}/api/cv-templates`,
+  cvExport: `${API_URL}/api/cvs/export`,
 
-  // Jobs (sans préfixe /api)
-  jobs: `${API_URL}/jobs`,
-  jobApplications: `${API_URL}/job-applications`,
+  // Jobs (avec préfixe /api)
+  jobs: `${API_URL}/api/jobs`,
+  jobApplications: `${API_URL}/api/job-applications`,
 
-  // Forum (sans préfixe /api)
-  forum: `${API_URL}/forum`,
-  forumPosts: `${API_URL}/forum/posts`,
-  forumComments: `${API_URL}/forum/comments`,
+  // Forum (avec préfixe /api)
+  forum: `${API_URL}/api/forum`,
+  forumPosts: `${API_URL}/api/forum/posts`,
+  forumComments: `${API_URL}/api/forum/comments`,
 
-  // Marketplace (sans préfixe /api)
-  marketplace: `${API_URL}/marketplace`,
-  marketplaceItems: `${API_URL}/marketplace/items`,
-  marketplaceCategories: `${API_URL}/marketplace/categories`,
+  // Marketplace (avec préfixe /api)
+  marketplace: `${API_URL}/api/marketplace`,
+  marketplaceItems: `${API_URL}/api/marketplace/items`,
+  marketplaceCategories: `${API_URL}/api/marketplace/categories`,
 
-  // User (sans préfixe /api)
-  profile: `${API_URL}/users/profile`,
-  updateProfile: `${API_URL}/users/profile/update`,
-  uploadAvatar: `${API_URL}/users/avatar/upload`,
+  // User (avec préfixe /api)
+  profile: `${API_URL}/api/users/profile`,
+  updateProfile: `${API_URL}/api/users/profile/update`,
+  uploadAvatar: `${API_URL}/api/users/avatar/upload`,
 
-  // Admin (sans préfixe /api)
+  // Admin (avec préfixe /api)
   admin: {
-    users: `${API_URL}/admin/users`,
-    subscriptions: `${API_URL}/admin/subscriptions`,
-    jobs: `${API_URL}/admin/jobs`,
-    forum: `${API_URL}/admin/forum`,
-    marketplace: `${API_URL}/admin/marketplace`,
-    statistics: `${API_URL}/admin/statistics`
+    users: `${API_URL}/api/admin/users`,
+    subscriptions: `${API_URL}/api/admin/subscriptions`,
+    jobs: `${API_URL}/api/admin/jobs`,
+    forum: `${API_URL}/api/admin/forum`,
+    marketplace: `${API_URL}/api/admin/marketplace`,
+    statistics: `${API_URL}/api/admin/statistics`
   }
 }; 

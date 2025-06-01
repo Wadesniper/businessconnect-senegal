@@ -113,26 +113,26 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
   const formatPhoneNumber = (value: string) => {
     if (!value) return value;
     
+    // Si l'utilisateur supprime tout, on retourne une chaîne vide
+    if (value.length === 0) return '';
+    
     // Enlève tout sauf les chiffres et le +
     const cleaned = value.replace(/[^0-9+]/g, '');
     
-    // Format spécifique pour le Sénégal (+221)
-    if (cleaned.startsWith('+221')) {
+    // Si l'utilisateur a juste tapé "+", on le laisse faire
+    if (cleaned === '+') return '+';
+    
+    // Format spécifique pour le Sénégal (+221) - OPTIONNEL
+    if (cleaned.startsWith('+221') && cleaned.length > 4) {
       const remaining = cleaned.slice(4); // Après +221
-      if (remaining.length === 0) return '+221 ';
       if (remaining.length <= 2) return `+221 ${remaining}`;
       if (remaining.length <= 5) return `+221 ${remaining.slice(0, 2)} ${remaining.slice(2)}`;
       if (remaining.length <= 7) return `+221 ${remaining.slice(0, 2)} ${remaining.slice(2, 5)} ${remaining.slice(5)}`;
       return `+221 ${remaining.slice(0, 2)} ${remaining.slice(2, 5)} ${remaining.slice(5, 7)} ${remaining.slice(7, 9)}`;
     }
     
-    // Format générique pour les autres pays (pas d'espacement automatique)
-    if (cleaned.startsWith('+')) {
-      return cleaned;
-    }
-    
-    // Si pas de +, on ajoute +221 et on applique le format sénégalais
-    return formatPhoneNumber('+221' + cleaned);
+    // Pour les autres formats internationaux, on garde tel quel
+    return cleaned;
   };
 
   // Si noCard ou noBg, on affiche juste le formulaire sans fond ni card

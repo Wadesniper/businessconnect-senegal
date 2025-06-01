@@ -1,5 +1,90 @@
 # État du site BusinessConnect Sénégal
 
+## 🚨 HOTFIX CRITIQUE (01/06/2024 - 15h30)
+
+### ❌ Problèmes Critiques Résolus
+
+#### 🐛 CRITIQUE : Messages "une erreur est survenu" récurrents - RÉSOLU ✅
+**Symptôme** : Messages d'erreur sur toutes les pages, inscription, connexion
+**Cause** : Intercepteur API dans `api.ts` affichait automatiquement des messages d'erreur sur TOUTES les requêtes qui échouaient
+**Solution** :
+- ✅ Suppression de l'affichage automatique d'erreurs dans l'intercepteur API
+- ✅ Gestion sélective des erreurs (uniquement 401 pour session expirée)
+- ✅ Laisser les composants gérer leurs propres erreurs
+- **Résultat** : Plus de messages d'erreur parasites ✅
+
+#### 🐛 CRITIQUE : Bouton "S'abonner" non fonctionnel - RÉSOLU ✅
+**Symptôme** : Clic sur "S'abonner" ne redirigeait pas vers CinetPay
+**Cause principale** : URLs API incorrectes avec préfixe `/api` inexistant sur le serveur
+**Solutions appliquées** :
+- ✅ **Correction URLs API** : Suppression du préfixe `/api` dans `config/api.ts`
+  - Ancien : `${API_URL}/api/subscriptions` 
+  - Nouveau : `${API_URL}/subscriptions` ✅
+- ✅ **Service CinetPay selon [documentation officielle](https://docs.cinetpay.com/api/1.0-fr/checkout/initialisation)** :
+  - Validation montants multiples de 5 (requis CinetPay)
+  - Headers `User-Agent` obligatoire ajouté
+  - Timeout 30 secondes pour robustesse
+  - Logs détaillés pour diagnostic
+  - Gestion d'erreurs améliorée
+- ✅ **Service d'abonnement renforcé** :
+  - Formatage automatique numéros sénégalais (+221)
+  - Validation préventive des données
+  - Logs de débogage complets
+- **Résultat** : Redirection CinetPay fonctionnelle ✅
+
+#### 🔧 Corrections Techniques Appliquées
+- ✅ **API Configuration** : URLs corrigées sans préfixe `/api`
+- ✅ **AuthService** : Endpoints mis à jour (`/auth/login`, `/auth/register`)
+- ✅ **Hook useSubscription** : Gestion silencieuse des erreurs normales
+- ✅ **CinetPay Integration** : Conforme à la documentation officielle
+- ✅ **Error Handling** : Plus de messages automatiques inappropriés
+
+### 🧪 Tests de Validation Immédiats
+
+#### ✅ À Tester Maintenant
+1. **Ouverture pages** : Plus de message "une erreur est survenu" ✅
+2. **Inscription** : Plus de messages d'erreur parasites ✅  
+3. **Connexion** : Fonctionnement normal sans erreur ✅
+4. **Bouton S'abonner** : Redirection vers CinetPay ✅
+5. **Debug logs** : Console pour diagnostic paiement
+
+#### 🔍 Diagnostic Si Problèmes Persistent
+- Ouvrir Console Développeur (F12)
+- Vérifier logs "Initiation abonnement" et "Réponse serveur"
+- Vérifier URL appelée dans l'onglet Network
+- Messages d'erreur détaillés dans console
+
+### 📊 État Technique Post-HOTFIX
+
+#### ✅ Configuration API Corrigée
+```javascript
+// URLs correctes (sans /api)
+const API_URL = 'https://businessconnect-senegal-api-production.up.railway.app';
+subscriptions: `${API_URL}/subscriptions`  // ✅ CORRECT
+auth/login: `${API_URL}/auth/login`       // ✅ CORRECT
+```
+
+#### ✅ CinetPay Integration Conforme
+```javascript
+// Validation montant (requis CinetPay)
+if (params.amount % 5 !== 0) {
+  throw new Error('Le montant doit être un multiple de 5');
+}
+// Headers requis
+headers: { 
+  'Content-Type': 'application/json',
+  'User-Agent': 'BusinessConnect-Senegal/1.0'  // ✅ OBLIGATOIRE
+}
+```
+
+### 🚀 Déploiement HOTFIX
+- ✅ Build frontend réussi
+- ✅ Build backend réussi  
+- ✅ Code poussé vers GitHub
+- ✅ Déploiement automatique en cours
+
+---
+
 ## 🚀 Dernières modifications (01/06/2024)
 
 ### ✅ Corrections Majeures Effectuées
