@@ -2,8 +2,8 @@ import axios from 'axios';
 import { message } from 'antd';
 import { authService } from './authService';
 
-// URL de base de l'API en production
-const BASE_URL = 'https://businessconnect-senegal-api-production.up.railway.app';
+// URL de base de l'API
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://businessconnect-senegal-api-production.up.railway.app';
 
 export const api = axios.create({
   baseURL: BASE_URL,
@@ -11,47 +11,38 @@ export const api = axios.create({
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
-    'Accept': 'application/json',
-    'Origin': window.location.origin
+    'Accept': 'application/json'
   }
 });
 
 // Intercepteur pour ajouter le token à chaque requête
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
-    if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
+    const token = authService.getToken();
+  if (token && config.headers) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
   },
   (error) => {
     return Promise.reject(error);
   }
 );
 
-// Intercepteur pour gérer les erreurs - CORRIGÉ pour éviter les messages automatiques
+// Intercepteur pour gérer les erreurs d'authentification
 api.interceptors.response.use(
   (response) => response,
-  async (error) => {
-    // Pour les erreurs d'authentification seulement
+  (error) => {
     if (error.response?.status === 401) {
-      const currentPath = window.location.pathname;
-      if (!currentPath.includes('/auth')) {
-        authService.removeToken();
+      // Ne pas rediriger si on est sur une route de paiement
+      const isPaymentRoute = error.config?.url?.includes('/subscriptions/');
+      if (!isPaymentRoute) {
+        // Token expiré ou invalide
+        authService.clearAuthState();
         message.error('Session expirée. Veuillez vous reconnecter.');
-        window.location.href = '/auth';
+        window.location.href = '/auth/login';
       }
-      return Promise.reject(error);
     }
-
-    // Pour les erreurs de connexion réseau seulement
-    if (!error.response && error.request) {
-      console.error('Erreur de connexion:', error.request);
-      // Ne pas afficher de message automatique - laisser les composants gérer
-    }
-
-    // Passer l'erreur sans afficher de message automatique
     return Promise.reject(error);
   }
 );

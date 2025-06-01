@@ -1,11 +1,17 @@
 import React from 'react';
-import { Button, CircularProgress } from '@mui/material';
+import { Button, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { api } from '../services/api';
 
 interface SubscriptionButtonProps {
   subscriptionType: string;
   label: string;
+}
+
+interface SubscriptionResponse {
+  paymentUrl: string;
+  error?: string;
 }
 
 export const SubscriptionButton: React.FC<SubscriptionButtonProps> = ({
@@ -14,49 +20,52 @@ export const SubscriptionButton: React.FC<SubscriptionButtonProps> = ({
 }) => {
   const [loading, setLoading] = React.useState(false);
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, isAuthenticated, refreshAuth } = useAuth();
 
   const handleSubscription = async () => {
     try {
-      if (!user) {
-        navigate('/login');
+      if (!isAuthenticated || !user) {
+        navigate('/auth/login', { state: { from: '/subscription' } });
         return;
       }
 
       setLoading(true);
 
-      const response = await fetch('/api/subscriptions/initiate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-          userId: user.id,
-          subscriptionType,
-          customer_name: user.lastName,
-          customer_surname: user.firstName,
-          customer_email: user.email || '',
-          customer_phone_number: user.phone,
-          customer_address: 'Dakar',
-          customer_city: 'Dakar',
-          customer_country: 'SN',
-          customer_state: 'DK',
-          customer_zip_code: '12000'
-        })
+      // Rafraîchir l'état d'authentification avant de procéder
+      await refreshAuth();
+
+      const response = await api.post<SubscriptionResponse>('/api/subscriptions/initiate', {
+        userId: user.id,
+        subscriptionType,
+        customer_name: user.firstName || '',
+        customer_surname: user.lastName || '',
+        customer_email: user.email || '',
+        customer_phone_number: user.phoneNumber || '',
+        customer_address: 'Dakar',
+        customer_city: 'Dakar',
+        customer_country: 'SN',
+        customer_state: 'DK',
+        customer_zip_code: '12000'
       });
 
-      const data = await response.json();
-
-      if (response.ok && data.paymentUrl) {
+      if (response.data?.paymentUrl) {
         // Rediriger vers l'interface de paiement CinetPay
-        window.location.href = data.paymentUrl;
+        console.log('Redirection vers CinetPay:', response.data.paymentUrl);
+        window.location.href = response.data.paymentUrl;
       } else {
-        throw new Error(data.error || 'Erreur lors de l\'initiation du paiement');
+        throw new Error(response.data?.error || 'Erreur lors de l\'initiation du paiement');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erreur:', error);
-      // TODO: Afficher un message d'erreur à l'utilisateur
+      
+      // Gérer les erreurs d'authentification
+      if (error.response?.status === 401) {
+        message.error('Votre session a expiré. Veuillez vous reconnecter.');
+        navigate('/auth/login', { state: { from: '/subscription' } });
+      } else {
+        // Afficher l'erreur à l'utilisateur
+        message.error(error.response?.data?.message || error.message || 'Une erreur est survenue lors de l\'initiation du paiement');
+      }
     } finally {
       setLoading(false);
     }
@@ -64,27 +73,13 @@ export const SubscriptionButton: React.FC<SubscriptionButtonProps> = ({
 
   return (
     <Button
-      variant="contained"
-      color="primary"
+      type="primary"
       onClick={handleSubscription}
-      disabled={loading}
-      sx={{ 
-        minWidth: 200,
-        position: 'relative'
-      }}
+      loading={loading}
+      size="large"
+      block
     >
-      {loading ? (
-        <CircularProgress
-          size={24}
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            marginTop: '-12px',
-            marginLeft: '-12px',
-          }}
-        />
-      ) : label}
+      {label}
     </Button>
   );
 }; 
