@@ -54,20 +54,22 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
     // Enlève tout sauf les chiffres et le +
     const cleaned = value.replace(/[^0-9+]/g, '');
     
-    // Format international
-    if (cleaned.startsWith('+')) {
-      let formatted = cleaned.slice(0, 4) + ' ';
-      const remaining = cleaned.slice(4);
-      for (let i = 0; i < remaining.length; i++) {
-        if (i > 0 && i % 2 === 0) {
-          formatted += ' ';
-        }
-        formatted += remaining[i];
-      }
-      return formatted.trim();
+    // Format spécifique pour le Sénégal (+221)
+    if (cleaned.startsWith('+221')) {
+      const remaining = cleaned.slice(4); // Après +221
+      if (remaining.length === 0) return '+221 ';
+      if (remaining.length <= 2) return `+221 ${remaining}`;
+      if (remaining.length <= 5) return `+221 ${remaining.slice(0, 2)} ${remaining.slice(2)}`;
+      if (remaining.length <= 7) return `+221 ${remaining.slice(0, 2)} ${remaining.slice(2, 5)} ${remaining.slice(5)}`;
+      return `+221 ${remaining.slice(0, 2)} ${remaining.slice(2, 5)} ${remaining.slice(5, 7)} ${remaining.slice(7, 9)}`;
     }
     
-    // Si pas de +, on ajoute +221
+    // Format générique pour les autres pays (pas d'espacement automatique)
+    if (cleaned.startsWith('+')) {
+      return cleaned;
+    }
+    
+    // Si pas de +, on ajoute +221 et on applique le format sénégalais
     return formatPhoneNumber('+221' + cleaned);
   };
 
