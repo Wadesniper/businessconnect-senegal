@@ -61,17 +61,11 @@ const offers = [
 ];
 
 const SubscriptionPage: React.FC = () => {
-  const { user, isAuthenticated, loading, error } = useAuth();
+  const { user, isAuthenticated, loading } = useAuth();
   const navigate = useNavigate();
   const { initiateSubscription } = useSubscription();
 
-  // Si erreur d'authentification (session expirée), rediriger vers login
-  if (error && error.includes('Session expirée')) {
-    navigate('/login', { state: { from: '/subscription' } });
-    return null;
-  }
-
-  // Attendre que l'authentification soit vérifiée
+  // Si en cours de chargement, afficher le loader
   if (loading) {
     return (
       <div style={{
@@ -81,18 +75,19 @@ const SubscriptionPage: React.FC = () => {
         alignItems: 'center',
         background: 'linear-gradient(135deg, #1890ff 0%, #43e97b 100%)',
       }}>
-        <div style={{ color: '#fff', fontSize: 18 }}>Vérification de l'authentification...</div>
+        <div style={{ color: '#fff', fontSize: 18 }}>Chargement...</div>
       </div>
     );
   }
 
+  // Si non authentifié, rediriger vers la page de connexion
+  if (!isAuthenticated) {
+    navigate('/login', { state: { from: '/subscription' } });
+    return null;
+  }
+
   const handleSubscribe = async (offerKey: string) => {
     try {
-      if (!isAuthenticated || !user) {
-        navigate('/login', { state: { from: '/subscription' } });
-        return;
-      }
-
       let type = offerKey;
       if (type === 'student') type = 'etudiant';
       
