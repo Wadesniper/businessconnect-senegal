@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import morgan from 'morgan';
 import helmet from 'helmet';
 import mongoose from 'mongoose';
 import { errorHandler } from './middleware/errorHandler';
@@ -13,6 +14,8 @@ import { config } from './config';
 import jobsRouter from './routes/jobs';
 import subscriptionsRoutes from './routes/subscriptions';
 import authRoutes from './routes/auth';
+import routes from './routes';
+import { logger } from './utils/logger';
 // import adminRoutes from './routes/admin.routes';
 dotenv.config();
 
@@ -20,6 +23,9 @@ const app = express();
 
 // Middleware de sécurité
 app.use(helmet());
+
+// Middleware de logging
+app.use(morgan('dev'));
 
 // Middleware pour parser le JSON et les formulaires
 app.use(express.json());
@@ -41,6 +47,7 @@ app.use(cors({
 app.use(rateLimiter);
 
 // Routes
+app.use('/api', routes);
 app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/jobs', jobsRouter);
@@ -52,26 +59,26 @@ app.use('/api/health', healthRoutes);
 // Middleware de gestion d'erreurs
 app.use(errorHandler);
 
+// Gestion des erreurs non capturées
+process.on('unhandledRejection', (error: Error) => {
+  logger.error('❌ Erreur non gérée:', error.message);
+  process.exit(1);
+});
+
 // Connexion à MongoDB
 mongoose.connect(config.MONGODB_URI)
   .then(() => {
-    console.log('Connecté à MongoDB');
+    logger.info('Connecté à MongoDB');
     
     // Démarrer le serveur une fois connecté à MongoDB
-    const PORT = config.PORT;
+    const PORT = config.PORT || 3000;
     app.listen(PORT, () => {
-      console.log(`Serveur démarré sur le port ${PORT}`);
+      logger.info(`Serveur démarré sur le port ${PORT}`);
     });
   })
   .catch((error) => {
-    console.error('Erreur de connexion à MongoDB:', error);
+    logger.error('Erreur de connexion à MongoDB:', error);
     process.exit(1);
   });
-
-// Gestion des erreurs non capturées
-process.on('unhandledRejection', (error: Error) => {
-  console.error('❌ Erreur non gérée:', error.message);
-  process.exit(1);
-});
 
 export default app; 

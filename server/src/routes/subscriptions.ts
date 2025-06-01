@@ -5,14 +5,22 @@ import { logger } from '../utils/logger';
 import { authenticate } from '../middleware/auth';
 import { CinetpayService } from '../services/cinetpayService';
 import { config } from '../config';
+import { SubscriptionController } from '../controllers/subscriptionController';
 
 const router = express.Router();
 
 // Initialisation des services
 const subscriptionService = new SubscriptionService();
 const cinetpayService = new CinetpayService();
+const subscriptionController = new SubscriptionController();
+
+// Routes protégées
+router.use(authenticate);
 
 // Récupérer l'abonnement d'un utilisateur
+router.get('/:userId', subscriptionController.getSubscription);
+
+// Vérifier le statut d'un abonnement
 router.get('/:userId', authenticate, async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
