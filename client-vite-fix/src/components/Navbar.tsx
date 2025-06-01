@@ -6,7 +6,7 @@ import { Drawer, Button } from 'antd';
 import './Navbar.css';
 
 const Navbar: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -45,7 +45,7 @@ const Navbar: React.FC = () => {
         <Button type="text" icon={<MenuOutlined style={{ fontSize: 28 }} />} onClick={() => setDrawerOpen(true)} />
       </div>
       <div className="navbar-end">
-        {user ? (
+        {isAuthenticated && user ? (
           <div className="user-menu">
             <Link to="/dashboard" className="navbar-link"><AppstoreOutlined /> Tableau de bord</Link>
           </div>
@@ -69,7 +69,7 @@ const Navbar: React.FC = () => {
             <Link to={link.to} className="navbar-link" key={link.to} onClick={() => setDrawerOpen(false)}>{link.icon} {link.label}</Link>
           ))}
           <div style={{ marginTop: 24 }}>
-            {user ? (
+            {isAuthenticated && user ? (
               <>
                 <Link to="/dashboard" className="navbar-link" onClick={() => setDrawerOpen(false)}><AppstoreOutlined /> Tableau de bord</Link>
               </>

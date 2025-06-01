@@ -62,6 +62,8 @@ export class CinetpayService {
       })
     };
 
+    console.log('CinetPay - Corps de la requête:', JSON.stringify(body, null, 2));
+
     try {
       const response = await axios.post(
         config.CINETPAY_BASE_URL,
@@ -75,6 +77,13 @@ export class CinetpayService {
         }
       );
 
+      console.log('CinetPay - Réponse:', {
+        status: response.status,
+        code: response.data?.code,
+        message: response.data?.message,
+        hasPaymentUrl: !!response.data?.data?.payment_url
+      });
+
       if (response.data?.code === '201' && response.data?.data?.payment_url) {
         return {
           payment_url: response.data.data.payment_url,
@@ -85,6 +94,11 @@ export class CinetpayService {
       throw new Error(response.data?.message || 'URL de paiement non disponible dans la réponse CinetPay');
     } catch (error: any) {
       if (error.response?.data) {
+        console.error('CinetPay - Erreur détaillée:', {
+          status: error.response.status,
+          data: error.response.data,
+          headers: error.response.headers
+        });
         const errorMsg = error.response.data.message || 
                         error.response.data.description || 
                         'Erreur CinetPay inconnue';

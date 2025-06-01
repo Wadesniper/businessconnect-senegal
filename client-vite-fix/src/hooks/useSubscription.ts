@@ -25,8 +25,8 @@ export const useSubscription = () => {
     const payload = {
       userId: user.id,
       subscriptionType: type,
-      customer_name: user.firstName || '',
-      customer_surname: user.lastName || '',
+      customer_name: user.firstName || user.phoneNumber || 'Client',
+      customer_surname: user.lastName || 'BusinessConnect',
       customer_phone_number: user.phoneNumber || '',
       ...(user.email && { customer_email: user.email })
     };
