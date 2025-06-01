@@ -1047,3 +1047,40 @@ interface MarketplaceItem {
 - Logs des paiements CinetPay
 - État des sessions utilisateur
 - Temps de réponse des requêtes API
+
+## 🚨 UPDATE DÉPLOIEMENT (01/06/2024 - 20h00)
+
+### ✅ Corrections de Déploiement
+
+#### 🔧 Configuration TypeScript Optimisée
+- ✅ Mise à jour du tsconfig.json pour une meilleure compatibilité production
+- ✅ Ajout de moduleResolution "node"
+- ✅ Activation des sourceMap pour un meilleur debugging
+- ✅ Configuration des déclarations TypeScript
+- ✅ Optimisation de la compilation avec removeComments
+
+#### 📦 Gestion des Dépendances
+- ✅ Déplacement des types TypeScript essentiels vers les dépendances principales
+- ✅ Optimisation des dépendances pour le build en production
+- ✅ Conservation de toutes les fonctionnalités sans compromis
+- ✅ Séparation claire des dépendances de développement
+
+#### 🏗️ Configuration Docker Multi-Stage
+- ✅ Build en deux étapes pour optimisation
+- ✅ Séparation des environnements de build et production
+- ✅ Gestion propre des dépendances TypeScript
+- ✅ Optimisation de la taille de l'image finale
+
+### 🔍 Points d'Attention
+
+1. **Build Production** :
+   - Utilisation de NODE_ENV=production
+   - Installation des dépendances avec --omit=dev
+   - Conservation des types TypeScript nécessaires
+   - Pas de compromis sur les fonctionnalités
+
+2. **Déploiement Railway** :
+   - Configuration multi-stage Docker
+   - Gestion optimisée du cache npm
+   - Healthcheck configuré
+   - Politique de redémarrage définie
