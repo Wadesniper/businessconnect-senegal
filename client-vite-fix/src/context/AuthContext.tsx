@@ -60,38 +60,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
 
-      // TOUJOURS vérifier la validité du token côté serveur
-      // Même si on a des données locales
+      // Si on a des données locales valides, on considère l'utilisateur comme authentifié
+      const localUser = authService.getUser();
+      if (localUser) {
+        setUser(localUser);
+        setIsAuthenticated(true);
+      }
+
+      // Vérifier la validité du token côté serveur en arrière-plan
       try {
         console.log('AuthProvider - Validation token côté serveur...');
         const serverUser = await authService.getCurrentUser();
         
-        // Token valide, synchroniser avec les données serveur
         if (serverUser) {
+          // Mettre à jour les données utilisateur si nécessaire
           authService.setUser(serverUser);
           setUser(serverUser);
-          setIsAuthenticated(true);
-          console.log('AuthProvider - Token valide, authentification confirmée');
-        } else {
-          throw new Error('Utilisateur non trouvé côté serveur');
         }
       } catch (serverError: any) {
         console.error('AuthProvider - Token invalide côté serveur:', serverError.message);
-        
-        // Token invalide côté serveur, nettoyer complètement
-        authService.clearAuthState();
-        setUser(null);
-        setIsAuthenticated(false);
-        setError('Session expirée. Veuillez vous reconnecter.');
+        // Ne pas déconnecter immédiatement, laisser l'utilisateur continuer
+        // Le serveur renverra 401 sur les prochaines requêtes si nécessaire
       }
     } catch (error) {
       console.error('AuthProvider - Erreur initialisation:', error);
       setError('Erreur lors de la vérification de l\'authentification');
-      
-      // En cas d'erreur, nettoyer l'état
-      authService.clearAuthState();
-      setUser(null);
-      setIsAuthenticated(false);
     } finally {
       setLoading(false);
     }
