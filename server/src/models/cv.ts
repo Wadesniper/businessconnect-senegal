@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { validatePhoneNumber } from '../utils/validation';
 
 const educationSchema = new mongoose.Schema({
   school: {
@@ -111,9 +112,23 @@ const cvSchema = new mongoose.Schema({
     },
     email: {
       type: String,
-      required: true
+      required: true,
+      validate: {
+        validator: function(v: string) {
+          return !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+        },
+        message: 'Format d\'email invalide'
+      }
     },
-    phone: String,
+    phone: {
+      type: String,
+      validate: {
+        validator: function(v: string) {
+          return !v || validatePhoneNumber(v) !== null;
+        },
+        message: 'Format de numéro de téléphone invalide'
+      }
+    },
     address: String,
     city: String,
     country: String,

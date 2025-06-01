@@ -18,7 +18,7 @@ export const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     // Ne pas ajouter de token pour les routes d'authentification
-    if (config.url?.includes('/auth/')) {
+    if (config.url?.includes('auth/')) {
       return config;
     }
 

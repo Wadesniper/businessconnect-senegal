@@ -6,7 +6,9 @@ import { config } from '../config';
 import { NotificationService } from '../services/notificationService';
 import { logger } from '../utils/logger';
 import { validatePhoneNumber } from '../utils/validation';
-import jwtConfig from '../config/jwt';
+
+const JWT_SECRET = 'fc5c01210b133afeb2c293bfd28c59df3bb9d3b272999be0eb838c930b1419fd';
+const JWT_EXPIRES_IN = '7d';
 
 export class AuthController {
   private notificationService: NotificationService;
@@ -48,7 +50,7 @@ export class AuthController {
       if (!normalizedPhone) {
         return res.status(400).json({
           success: false,
-          message: "Le numéro de téléphone doit être au format international (+221 7X XXX XX XX) ou sénégalais (7X XXX XX XX) et commencer par 70, 76, 77 ou 78"
+          message: "Le numéro doit être au format international. Exemples : +221 7X XXX XX XX (Sénégal), +33 X XX XX XX XX (France), etc."
         });
       }
 
@@ -118,8 +120,8 @@ export class AuthController {
           lastName: user.lastName,
           phoneNumber: user.phoneNumber
         },
-        jwtConfig.secret,
-        jwtConfig.signOptions
+        JWT_SECRET,
+        { expiresIn: JWT_EXPIRES_IN }
       );
 
       // Envoyer l'email de vérification si email fourni
@@ -174,7 +176,7 @@ export class AuthController {
       if (!normalizedPhone) {
         return res.status(400).json({
           success: false,
-          message: "Format de numéro de téléphone invalide"
+          message: "Le numéro doit être au format international. Exemples : +221 7X XXX XX XX (Sénégal), +33 X XX XX XX XX (France), etc."
         });
       }
 
@@ -205,8 +207,8 @@ export class AuthController {
           lastName: user.lastName,
           phoneNumber: user.phoneNumber
         },
-        jwtConfig.secret,
-        jwtConfig.signOptions
+        JWT_SECRET,
+        { expiresIn: JWT_EXPIRES_IN }
       );
 
       // Renvoyer la réponse
@@ -239,7 +241,7 @@ export class AuthController {
       const { token } = req.params;
 
       // Vérifier le token
-      const decoded = jwt.verify(token, jwtConfig.secret) as { id: string };
+      const decoded = jwt.verify(token, JWT_SECRET) as { id: string };
       const user = await User.findById(decoded.id);
 
       if (!user) {
@@ -283,8 +285,8 @@ export class AuthController {
       // Générer le token de réinitialisation
       const resetToken = jwt.sign(
         { id: user._id },
-        jwtConfig.secret,
-        jwtConfig.signOptions
+        JWT_SECRET,
+        { expiresIn: JWT_EXPIRES_IN }
       );
 
       // Sauvegarder le token
@@ -316,7 +318,7 @@ export class AuthController {
       const { password } = req.body;
 
       // Vérifier le token
-      const decoded = jwt.verify(token, jwtConfig.secret) as { id: string };
+      const decoded = jwt.verify(token, JWT_SECRET) as { id: string };
       const user = await User.findById(decoded.id);
 
       if (!user) {
@@ -364,7 +366,7 @@ export class AuthController {
       const { token } = req.params;
 
       // Vérifier le token
-      const decoded = jwt.verify(token, jwtConfig.secret) as { id: string };
+      const decoded = jwt.verify(token, JWT_SECRET) as { id: string };
       const user = await User.findById(decoded.id);
 
       if (!user) {

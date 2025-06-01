@@ -37,17 +37,13 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
 
       // Validation du numéro de téléphone
       const cleaned = values.phoneNumber.replace(/[^0-9+]/g, '');
-      let isValidPhone = false;
       
-      if (cleaned.startsWith('+221')) {
-        const digits = cleaned.slice(4);
-        isValidPhone = /^(70|76|77|78)[0-9]{7}$/.test(digits);
-      } else {
-        isValidPhone = /^(70|76|77|78)[0-9]{7}$/.test(cleaned);
-      }
-
-      if (!isValidPhone) {
-        message.error('Le numéro doit commencer par 70, 76, 77 ou 78 pour les numéros sénégalais');
+      // Vérifier si c'est un format valide
+      const isSenegalese = cleaned.startsWith('+221') && /^\+2217\d{8}$/.test(cleaned);
+      const isInternational = /^\+\d{1,4}\d{10,}$/.test(cleaned);
+      
+      if (!isSenegalese && !isInternational) {
+        message.error('Format de numéro de téléphone invalide');
         setLoading(false);
         return;
       }
@@ -55,17 +51,37 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
       const registrationData: UserRegistrationData = {
         firstName: values.firstName.trim(),
         lastName: values.lastName.trim(),
-        phoneNumber: values.phoneNumber,
+        phoneNumber: cleaned,
         email: values.email,
         password: values.password
       };
 
-      await register(registrationData);
+      console.log('Envoi des données:', registrationData);
+      const response = await register(registrationData);
+      console.log('Réponse:', response);
+      
       message.success('Inscription réussie ! Vous pouvez maintenant vous connecter.');
       navigate('/auth');
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || error.message || 'Erreur lors de l\'inscription';
-      message.error(errorMessage);
+      console.error('Erreur complète:', error);
+      
+      // Gestion des erreurs de validation du serveur
+      if (error.response?.data?.errors) {
+        const errors = error.response.data.errors;
+        if (Array.isArray(errors)) {
+          errors.forEach((err: any) => {
+            message.error(err.message || err);
+          });
+        } else {
+          message.error(errors.message || 'Erreur de validation');
+        }
+      } else if (error.response?.data?.message) {
+        message.error(error.response.data.message);
+      } else if (error.message) {
+        message.error(error.message);
+      } else {
+        message.error('Une erreur est survenue lors de l\'inscription');
+      }
     } finally {
       setLoading(false);
     }
@@ -80,24 +96,13 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
     // Nettoie le numéro en gardant uniquement les chiffres et le +
     const cleaned = value.replace(/[^0-9+]/g, '');
     
-    // Vérifie si c'est un numéro international sénégalais
-    if (cleaned.startsWith('+221')) {
-      const digits = cleaned.slice(4); // Enlève le +221
-      if (/^(70|76|77|78)[0-9]{7}$/.test(digits)) {
-        setPhoneError('');
-        return;
-      }
-      setPhoneError('Le numéro doit commencer par 70, 76, 77 ou 78 après +221');
-      return;
-    }
-    
-    // Vérifie si c'est un numéro sénégalais sans indicatif
-    if (/^(70|76|77|78)[0-9]{7}$/.test(cleaned)) {
+    // Format international : +XXXXXXXXXXXXX (minimum 10 chiffres après l'indicatif)
+    if (/^\+\d{1,4}\d{10,}$/.test(cleaned)) {
       setPhoneError('');
       return;
     }
     
-    setPhoneError("Le numéro doit être au format sénégalais (+221 7X XXX XX XX ou 7X XXX XX XX) et commencer par 70, 76, 77 ou 78");
+    setPhoneError("Le numéro doit être au format international (+XXX XXXXXXXXX)");
   };
 
   const formatPhoneNumber = (value: string) => {
@@ -106,35 +111,21 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
     // Enlève tout sauf les chiffres et le +
     const cleaned = value.replace(/[^0-9+]/g, '');
     
-    // Format avec +221
-    if (cleaned.startsWith('+221')) {
-      const digits = cleaned.slice(4);
-      if (digits.length <= 9) {
-        let formatted = '+221 ';
-        for (let i = 0; i < digits.length; i++) {
-          if (i === 2 || i === 5 || i === 7) {
-            formatted += ' ';
-          }
-          formatted += digits[i];
-        }
-        return formatted.trim();
-      }
-      return cleaned;
-    }
-    
-    // Format sans +221
-    if (cleaned.length <= 9) {
-      let formatted = '';
-      for (let i = 0; i < cleaned.length; i++) {
-        if (i === 2 || i === 5 || i === 7) {
+    // Format international
+    if (cleaned.startsWith('+')) {
+      let formatted = cleaned.slice(0, 4) + ' ';
+      const remaining = cleaned.slice(4);
+      for (let i = 0; i < remaining.length; i++) {
+        if (i > 0 && i % 2 === 0) {
           formatted += ' ';
         }
-        formatted += cleaned[i];
+        formatted += remaining[i];
       }
       return formatted.trim();
     }
     
-    return cleaned;
+    // Si pas de +, on ajoute +221
+    return formatPhoneNumber('+221' + cleaned);
   };
 
   // Si noCard ou noBg, on affiche juste le formulaire sans fond ni card
@@ -176,28 +167,26 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
             { required: true, message: 'Veuillez saisir votre numéro de téléphone' },
             { 
               validator: async (_, value) => {
-                if (!value) return;
+                if (!value) {
+                  throw new Error('Veuillez saisir votre numéro de téléphone');
+                }
                 
                 const cleaned = value.replace(/[^0-9+]/g, '');
                 
-                if (cleaned.startsWith('+221')) {
-                  const digits = cleaned.slice(4);
-                  if (!/^(70|76|77|78)[0-9]{7}$/.test(digits)) {
-                    throw new Error('Le numéro doit commencer par 70, 76, 77 ou 78 après +221');
-                  }
-                } else if (!/^(70|76|77|78)[0-9]{7}$/.test(cleaned)) {
-                  throw new Error('Le numéro doit commencer par 70, 76, 77 ou 78');
+                // Format international : +XXXXXXXXXXXXX
+                if (!/^\+\d{1,4}\d{10,}$/.test(cleaned)) {
+                  throw new Error('Le numéro doit être au format international (+XXX XXXXXXXXX)');
                 }
               }
             }
           ]}
-          validateTrigger="onBlur"
+          validateTrigger={['onBlur', 'onChange']}
           help={phoneError}
           validateStatus={phoneError ? 'error' : undefined}
         >
           <Input
             size="large"
-            placeholder="+221 7X XXX XX XX"
+            placeholder="+XXX XXXXXXXXX"
             className="auth-full-width"
             style={{ borderRadius: 8 }}
             onChange={(e) => {
@@ -346,13 +335,9 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
                   
                   const cleaned = value.replace(/[^0-9+]/g, '');
                   
-                  if (cleaned.startsWith('+221')) {
-                    const digits = cleaned.slice(4);
-                    if (!/^(70|76|77|78)[0-9]{7}$/.test(digits)) {
-                      throw new Error('Le numéro doit commencer par 70, 76, 77 ou 78 après +221');
-                    }
-                  } else if (!/^(70|76|77|78)[0-9]{7}$/.test(cleaned)) {
-                    throw new Error('Le numéro doit commencer par 70, 76, 77 ou 78');
+                  // Format international : +XXXXXXXXXXXXX
+                  if (!/^\+\d{1,4}\d{10,}$/.test(cleaned)) {
+                    throw new Error('Le numéro doit être au format international (+XXX XXXXXXXXX)');
                   }
                 }
               }
@@ -363,7 +348,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
           >
             <Input
               size="large"
-              placeholder="+221 7X XXX XX XX"
+              placeholder="+XXX XXXXXXXXX"
               className="auth-full-width"
               style={{ borderRadius: 8 }}
               onChange={(e) => {

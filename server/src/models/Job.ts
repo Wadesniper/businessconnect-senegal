@@ -1,4 +1,5 @@
 import mongoose, { Document } from 'mongoose';
+import { validatePhoneNumber } from '../utils/validation';
 
 export interface IJob extends Document {
   title: string;
@@ -22,8 +23,24 @@ const JobSchema = new mongoose.Schema({
   sector: { type: String },
   description: { type: String },
   requirements: [{ type: String }],
-  contactEmail: { type: String },
-  contactPhone: { type: String },
+  contactEmail: { 
+    type: String,
+    validate: {
+      validator: function(v: string) {
+        return !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+      },
+      message: 'Format d\'email invalide'
+    }
+  },
+  contactPhone: {
+    type: String,
+    validate: {
+      validator: function(v: string) {
+        return !v || validatePhoneNumber(v) !== null;
+      },
+      message: 'Format de numéro de téléphone invalide'
+    }
+  },
   createdBy: { type: String, required: true },
   // Ajoute ici d'autres champs métier si besoin
 }, { timestamps: true });
