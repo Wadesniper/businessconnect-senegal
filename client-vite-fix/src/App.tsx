@@ -13,6 +13,7 @@ const RegisterForm = lazy(() => import('./components/RegisterForm'));
 const SubscriptionPage = lazy(() => import('./pages/subscription/SubscriptionPage'));
 const PaymentSuccess = lazy(() => import('./pages/payment/PaymentSuccess'));
 const PaymentCancel = lazy(() => import('./pages/payment/PaymentCancel'));
+const PaymentReturnPage = lazy(() => import('./pages/payment/PaymentReturnPage'));
 const MarketplacePage = lazy(() => import('./pages/marketplace/MarketplacePage'));
 const MarketplaceItemPage = lazy(() => import('./pages/marketplace/MarketplaceItemPage'));
 const ForumPage = lazy(() => import('./pages/forum/ForumPage'));
@@ -139,6 +140,10 @@ const App: React.FC = () => {
                 element={
                   <ProtectedRoute element={<PaymentCancel />} requiresSubscription />
                 }
+              />
+              <Route
+                path="/payment/return"
+                element={<PaymentReturnPage />}
               />
 
               {/* Page 404 */}

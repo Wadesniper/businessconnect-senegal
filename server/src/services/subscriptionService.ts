@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { logger } from '../utils/logger';
 import { Subscription } from '../models/subscription';
+import { cinetpayService } from './cinetpayService';
 
 export class SubscriptionService {
   // Prix des abonnements en FCFA
@@ -10,8 +11,8 @@ export class SubscriptionService {
     recruteur: 9000    // 9,000 FCFA / mois
   };
 
-  private getSubscriptionPrice(type: string): number {
-    return this.SUBSCRIPTION_PRICES[type];
+  public getSubscriptionPrice(type: string): number {
+    return this.SUBSCRIPTION_PRICES[type] || 0;
   }
 
   public async initiatePayment(params: {
@@ -34,9 +35,20 @@ export class SubscriptionService {
       }
 
       const transaction_id = uuidv4();
-      // ... logique paiement (inchangée, dépend de cinetpayService)
+      
+      // Appel au service CinetPay pour obtenir le lien de paiement
+      const payment = await cinetpayService.initializePayment({
+        amount,
+        transaction_id,
+        customer_name: params.customer_name,
+        customer_surname: params.customer_surname,
+        customer_email: params.customer_email,
+        customer_phone_number: params.customer_phone_number,
+        description: `Abonnement ${params.type} BusinessConnect`
+      });
+
       return {
-        redirectUrl: '',
+        redirectUrl: payment.payment_url,
         paymentId: transaction_id
       };
     } catch (error) {
@@ -85,7 +97,7 @@ export class SubscriptionService {
     return Subscription.findOne({ paymentId }).lean();
   }
 
-  public async createSubscription(userId: string, plan: string): Promise<any> {
+  public async createSubscription(userId: string, plan: string, paymentId?: string): Promise<any> {
     const startDate = new Date();
     const endDate = new Date();
     endDate.setMonth(endDate.getMonth() + 1);
@@ -94,7 +106,8 @@ export class SubscriptionService {
       plan: String(plan),
       status: 'pending',
       startDate,
-      endDate
+      endDate,
+      paymentId
     });
     await subscription.save();
     return subscription;

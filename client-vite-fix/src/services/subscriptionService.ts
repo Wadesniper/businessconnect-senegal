@@ -99,7 +99,6 @@ class SubscriptionService {
     } catch (error: any) {
       // Si c'est une erreur 404, c'est normal (pas d'abonnement), donc on ne signale pas d'erreur
       if (error.response?.status === 404) {
-        console.log('Aucun abonnement trouvé pour cet utilisateur (normal pour un nouvel utilisateur)');
         return false;
       }
       

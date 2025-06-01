@@ -50,25 +50,33 @@ export const useSubscription = () => {
   useEffect(() => {
     const checkStatus = async () => {
       setLoading(true);
+      setError(null); // Réinitialiser l'erreur
+      
       if (!user?.id) {
         setHasActiveSubscription(false);
         setLoading(false);
         return;
       }
+      
       if (user?.role === 'admin') {
         setHasActiveSubscription(true);
         setLoading(false);
         return;
       }
+      
       try {
         const isActive = await subscriptionService.fetchSubscriptionStatus(user.id);
         setHasActiveSubscription(isActive);
-      } catch (err) {
+      } catch (err: any) {
+        // On ne définit pas d'erreur pour un 404 ou un problème d'abonnement
+        // car c'est normal pour un nouvel utilisateur
         setHasActiveSubscription(false);
+        setError(null);
       } finally {
         setLoading(false);
       }
     };
+    
     checkStatus();
   }, [user?.id, user?.role]);
 

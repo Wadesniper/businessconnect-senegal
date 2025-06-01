@@ -50,22 +50,20 @@ router.post('/initiate', authenticate, async (req: Request, res: Response) => {
       return;
     }
 
-    // Créer un abonnement réel en base (statut pending)
-    await subscriptionService.createSubscription(userId, subscriptionType);
-
-    // Appel au service CinetPay pour obtenir le lien de paiement
-    const amount = subscriptionService['SUBSCRIPTION_PRICES'][subscriptionType];
-    const cinetpayService = require('../services/cinetpayService');
-    const payment = await cinetpayService.cinetpayService.initializePayment({
-      amount,
+    // Utiliser la méthode publique du service d'abonnement
+    const payment = await subscriptionService.initiatePayment({
+      type: subscriptionType,
       customer_name,
       customer_surname,
       customer_email,
       customer_phone_number,
-      description: `Abonnement ${subscriptionType} BusinessConnect`
+      userId
     });
 
-    res.json({ paymentUrl: payment.payment_url });
+    // Créer un abonnement réel en base (statut pending) avec le paymentId
+    await subscriptionService.createSubscription(userId, subscriptionType, payment.paymentId);
+
+    res.json({ paymentUrl: payment.redirectUrl });
   } catch (error) {
     logger.error('Erreur lors de l\'initiation de l\'abonnement:', error);
     res.status(500).json({ error: 'Erreur serveur lors de l\'initiation de l\'abonnement' });
@@ -101,6 +99,58 @@ router.post('/payment-callback', async (req: Request, res: Response): Promise<vo
   } catch (error) {
     res.status(500).json({ error: 'Erreur serveur', details: (error as Error).message });
     return;
+  }
+});
+
+// Route de notification CinetPay
+router.post('/notify', async (req: Request, res: Response): Promise<void> => {
+  try {
+    logger.info('Notification CinetPay reçue:', req.body);
+    
+    const { cpm_trans_id, cpm_result, cpm_trans_status } = req.body;
+    
+    if (!cpm_trans_id) {
+      logger.error('Transaction ID manquant dans la notification CinetPay');
+      res.status(400).json({ error: 'Transaction ID manquant' });
+      return;
+    }
+
+    // Chercher l'abonnement correspondant au transaction_id
+    const subscription = await subscriptionService.getSubscriptionByPaymentId(cpm_trans_id);
+    
+    if (!subscription) {
+      logger.error(`Abonnement introuvable pour transaction ${cpm_trans_id}`);
+      res.status(404).json({ error: 'Abonnement non trouvé' });
+      return;
+    }
+
+    // Traiter selon le statut du paiement
+    if (cpm_result === '00' && cpm_trans_status === 'ACCEPTED') {
+      // Paiement réussi
+      const endDate = new Date();
+      endDate.setMonth(endDate.getMonth() + 1); // Ajouter 1 mois
+      
+      await subscriptionService.updateSubscription(subscription.userId, {
+        status: 'active',
+        paymentId: cpm_trans_id,
+        expiresAt: endDate
+      });
+      
+      logger.info(`Abonnement activé pour l'utilisateur ${subscription.userId}`);
+    } else {
+      // Paiement échoué ou annulé
+      await subscriptionService.updateSubscription(subscription.userId, {
+        status: 'cancelled',
+        paymentId: cpm_trans_id
+      });
+      
+      logger.info(`Paiement échoué pour l'utilisateur ${subscription.userId}`);
+    }
+
+    res.status(200).json({ status: 'success', message: 'Notification traitée' });
+  } catch (error) {
+    logger.error('Erreur lors du traitement de la notification CinetPay:', error);
+    res.status(500).json({ error: 'Erreur serveur lors du traitement de la notification' });
   }
 });
 
