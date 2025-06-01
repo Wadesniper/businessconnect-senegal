@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { logger } from '../utils/logger';
 import { UserPayload } from '../types/user';
-import jwtConfig from '../config/jwt';
+import { config } from '../config';
 
 export interface AuthRequest extends Request {
   user?: UserPayload;
@@ -32,7 +32,7 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
     }
 
     try {
-      const decoded = jwt.verify(token, jwtConfig.secret) as UserPayload;
+      const decoded = jwt.verify(token, config.JWT_SECRET) as UserPayload;
       req.user = decoded;
       return next();
     } catch (jwtError) {
