@@ -60,8 +60,13 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
       const response = await register(registrationData);
       console.log('Réponse:', response);
       
-      message.success('Inscription réussie ! Vous pouvez maintenant vous connecter.');
-      navigate('/auth');
+      message.success('Inscription réussie ! Bienvenue sur BusinessConnect Sénégal 🎉');
+      
+      // Redirection vers le dashboard après inscription réussie
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1500);
+      
     } catch (error: any) {
       console.error('Erreur complète:', error);
       

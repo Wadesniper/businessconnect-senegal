@@ -1,10 +1,10 @@
-import { Subscription } from '../types/user';
-import { localStorageService } from './localStorageService';
+import type { Subscription } from '../types/user';
 import { api } from './api';
 
 class SubscriptionService {
   async getSubscription(userId: string): Promise<Subscription | null> {
-    return localStorageService.getUserSubscription(userId);
+    // Pour l'instant, on retourne null car les abonnements sont gérés côté serveur
+    return null;
   }
 
   async subscribe(userId: string, plan: 'etudiant' | 'annonceur' | 'employeur'): Promise<Subscription> {
@@ -27,7 +27,7 @@ class SubscriptionService {
     };
 
     const newSubscription: Subscription = {
-      id: localStorageService.generateId(),
+      id: crypto.randomUUID(),
       userId,
       type: plan,
       status: 'active',
@@ -41,7 +41,7 @@ class SubscriptionService {
       updatedAt: new Date().toISOString()
     };
 
-    localStorageService.saveSubscription(newSubscription);
+    // TODO: Sauvegarder côté serveur via API
     return newSubscription;
   }
 
@@ -51,14 +51,7 @@ class SubscriptionService {
       throw new Error('Aucun abonnement trouvé');
     }
 
-    const updatedSubscription = {
-      ...subscription,
-      status: 'cancelled',
-      autoRenew: false,
-      updatedAt: new Date().toISOString()
-    };
-
-    localStorageService.saveSubscription(updatedSubscription);
+    // TODO: Annuler côté serveur via API
   }
 
   async renewSubscription(userId: string): Promise<Subscription> {
@@ -103,7 +96,15 @@ class SubscriptionService {
     try {
       const res = await api.get<{ isActive: boolean }>(`/subscriptions/${userId}/status`);
       return res.data.isActive;
-    } catch (error) {
+    } catch (error: any) {
+      // Si c'est une erreur 404, c'est normal (pas d'abonnement), donc on ne signale pas d'erreur
+      if (error.response?.status === 404) {
+        console.log('Aucun abonnement trouvé pour cet utilisateur (normal pour un nouvel utilisateur)');
+        return false;
+      }
+      
+      // Pour les autres erreurs, on log mais on retourne false silencieusement
+      console.warn('Erreur lors de la vérification du statut d\'abonnement:', error.message);
       return false;
     }
   }
