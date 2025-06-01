@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import type { SubscriptionType, PaymentInitiation } from '../types/subscription';
 import { subscriptionService } from '../services/subscriptionService';
 import { endpoints } from '../config/api';
+import { api } from '../services/api';
 
 export const useSubscription = () => {
   const { user } = useAuth();
@@ -10,12 +11,15 @@ export const useSubscription = () => {
   const [error, setError] = useState<string | null>(null);
   const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
 
-  const token = localStorage.getItem('auth_token');
+  const token = localStorage.getItem('token');
 
   const initiateSubscription = async (type: SubscriptionType): Promise<PaymentInitiation> => {
     if (!user?.id) {
       throw new Error('Utilisateur non connecté');
     }
+
+    console.log('Token disponible:', !!token);
+    console.log('User ID:', user.id);
 
     const payload: any = {
       userId: user.id,
@@ -28,30 +32,24 @@ export const useSubscription = () => {
     
     console.log('Initiation abonnement:', payload);
     
-    const response = await fetch(`${endpoints.subscriptions}/initiate`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-      },
-      body: JSON.stringify(payload)
-    });
-
-    console.log('Réponse serveur abonnement:', response.status);
-
-    if (!response.ok) {
+    try {
+      const response = await api.post('/api/subscriptions/initiate', payload);
+      console.log('Réponse serveur abonnement:', response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error('Erreur serveur abonnement:', error);
+      
       let errorMsg = 'Erreur lors de l\'initiation du paiement';
-      try {
-        const errorData = await response.json();
-        console.error('Erreur serveur abonnement:', errorData);
-        if (errorData && errorData.error) errorMsg = errorData.error;
-      } catch {}
+      if (error.response?.data?.error) {
+        errorMsg = error.response.data.error;
+      } else if (error.response?.data?.message) {
+        errorMsg = error.response.data.message;
+      } else if (error.message) {
+        errorMsg = error.message;
+      }
+      
       throw new Error(errorMsg);
     }
-
-    const result = await response.json();
-    console.log('Résultat abonnement:', result);
-    return result;
   };
 
   // Vérification dynamique du statut d'abonnement via l'API backend
