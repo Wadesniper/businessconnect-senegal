@@ -258,7 +258,7 @@ export class AuthController {
       }
 
       // Générer le token de réinitialisation
-      const signOptions: SignOptions = { expiresIn: '24h' };
+      const signOptions: SignOptions = { expiresIn: '7d' };
       const resetToken = jwt.sign(
         { id: user._id },
         config.JWT_SECRET as Secret,
