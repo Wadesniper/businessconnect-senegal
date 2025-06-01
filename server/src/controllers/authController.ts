@@ -1,14 +1,11 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import jwt, { Secret, SignOptions } from 'jsonwebtoken';
 import { User } from '../models/User';
 import { config } from '../config';
 import { NotificationService } from '../services/notificationService';
 import { logger } from '../utils/logger';
 import { validatePhoneNumber } from '../utils/validation';
-
-const JWT_SECRET = 'fc5c01210b133afeb2c293bfd28c59df3bb9d3b272999be0eb838c930b1419fd';
-const JWT_EXPIRES_IN = '7d';
 
 export class AuthController {
   private notificationService: NotificationService;
@@ -112,17 +109,7 @@ export class AuthController {
       }
       
       // Générer le token JWT
-      const token = jwt.sign(
-        { 
-          id: user._id,
-          role: user.role,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          phoneNumber: user.phoneNumber
-        },
-        JWT_SECRET,
-        { expiresIn: JWT_EXPIRES_IN }
-      );
+      const token = this.generateToken(user);
 
       // Envoyer l'email de vérification si email fourni
       if (email) {
@@ -199,17 +186,7 @@ export class AuthController {
       }
 
       // Générer le token JWT
-      const token = jwt.sign(
-        { 
-          id: user._id,
-          role: user.role,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          phoneNumber: user.phoneNumber
-        },
-        JWT_SECRET,
-        { expiresIn: JWT_EXPIRES_IN }
-      );
+      const token = this.generateToken(user);
 
       // Renvoyer la réponse
       res.json({
@@ -241,8 +218,8 @@ export class AuthController {
       const { token } = req.params;
 
       // Vérifier le token
-      const decoded = jwt.verify(token, JWT_SECRET) as { id: string };
-      const user = await User.findById(decoded.id);
+      const decodedEmail = jwt.verify(token, config.JWT_SECRET as Secret) as { id: string };
+      const user = await User.findById(decodedEmail.id);
 
       if (!user) {
         return res.status(400).json({
@@ -259,14 +236,12 @@ export class AuthController {
         success: true,
         message: 'Email vérifié avec succès'
       });
-      return;
     } catch (error) {
       logger.error('Erreur lors de la vérification de l\'email:', error);
       res.status(400).json({
         success: false,
         message: 'Token invalide ou expiré'
       });
-      return;
     }
   };
 
@@ -283,10 +258,11 @@ export class AuthController {
       }
 
       // Générer le token de réinitialisation
+      const signOptions: SignOptions = { expiresIn: '24h' };
       const resetToken = jwt.sign(
         { id: user._id },
-        JWT_SECRET,
-        { expiresIn: JWT_EXPIRES_IN }
+        config.JWT_SECRET as Secret,
+        signOptions
       );
 
       // Sauvegarder le token
@@ -301,14 +277,12 @@ export class AuthController {
         success: true,
         message: 'Email de réinitialisation envoyé'
       });
-      return;
     } catch (error) {
       logger.error('Erreur lors de l\'envoi de l\'email de réinitialisation:', error);
       res.status(500).json({
         success: false,
         message: 'Une erreur est survenue lors de l\'envoi de l\'email de réinitialisation'
       });
-      return;
     }
   };
 
@@ -318,8 +292,8 @@ export class AuthController {
       const { password } = req.body;
 
       // Vérifier le token
-      const decoded = jwt.verify(token, JWT_SECRET) as { id: string };
-      const user = await User.findById(decoded.id);
+      const decodedReset = jwt.verify(token, config.JWT_SECRET as Secret) as { id: string };
+      const user = await User.findById(decodedReset.id);
 
       if (!user) {
         return res.status(400).json({
@@ -350,14 +324,12 @@ export class AuthController {
         success: true,
         message: 'Mot de passe réinitialisé avec succès'
       });
-      return;
     } catch (error) {
       logger.error('Erreur lors de la réinitialisation du mot de passe:', error);
       res.status(400).json({
         success: false,
         message: 'Token invalide ou expiré'
       });
-      return;
     }
   };
 
@@ -366,8 +338,8 @@ export class AuthController {
       const { token } = req.params;
 
       // Vérifier le token
-      const decoded = jwt.verify(token, JWT_SECRET) as { id: string };
-      const user = await User.findById(decoded.id);
+      const decodedVerify = jwt.verify(token, config.JWT_SECRET as Secret) as { id: string };
+      const user = await User.findById(decodedVerify.id);
 
       if (!user) {
         return res.status(400).json({
@@ -389,14 +361,28 @@ export class AuthController {
           }
         }
       });
-      return;
     } catch (error) {
       logger.error('Erreur lors de la vérification du token:', error);
       res.status(400).json({
         success: false,
         message: 'Token invalide ou expiré'
       });
-      return;
     }
   };
+
+  // Générer le token JWT
+  private generateToken(user: any): string {
+    const signOptions: SignOptions = { expiresIn: '7d' };
+    return jwt.sign(
+      { 
+        id: user._id,
+        role: user.role,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        phoneNumber: user.phoneNumber
+      },
+      config.JWT_SECRET as Secret,
+      signOptions
+    );
+  }
 } 

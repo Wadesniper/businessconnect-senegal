@@ -1,11 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { AuthRequest, UserPayload } from '../types/user';
-import jwtConfig from '../config/jwt';
+import { config } from '../config';
 import { logger } from '../utils/logger';
 import { User } from '../models/User';
-
-const JWT_SECRET = 'fc5c01210b133afeb2c293bfd28c59df3bb9d3b272999be0eb838c930b1419fd';
 
 export const authMiddleware = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
@@ -19,7 +17,7 @@ export const authMiddleware = async (req: AuthRequest, res: Response, next: Next
     }
 
     // Vérifier et décoder le token
-    const decoded = jwt.verify(token, JWT_SECRET) as { id: string };
+    const decoded = jwt.verify(token, config.JWT_SECRET) as { id: string };
     
     // Vérifier si l'utilisateur existe
     const user = await User.findById(decoded.id);

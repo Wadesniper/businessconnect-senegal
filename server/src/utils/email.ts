@@ -1,13 +1,14 @@
 import nodemailer from 'nodemailer';
 import { logger } from './logger';
+import { config } from '../config';
 
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'smtp.gmail.com',
-  port: parseInt(process.env.SMTP_PORT || '587'),
-  secure: process.env.SMTP_SECURE === 'true',
+  host: config.SMTP_HOST,
+  port: config.SMTP_PORT,
+  secure: config.SMTP_SECURE,
   auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS
+    user: config.SMTP_USER,
+    pass: config.SMTP_PASSWORD
   }
 });
 

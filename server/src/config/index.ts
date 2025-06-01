@@ -9,6 +9,10 @@ export interface Config {
   PORT: number;
   MONGODB_URI: string;
   
+  // Configuration JWT
+  JWT_SECRET: string;
+  JWT_EXPIRES_IN: string;
+
   // Configuration SMTP
   SMTP_HOST: string;
   SMTP_PORT: number;
@@ -32,6 +36,10 @@ export const config: Config = {
   NODE_ENV: process.env.NODE_ENV || 'production',
   PORT: parseInt(process.env.PORT || '5000', 10),
   MONGODB_URI: process.env.MONGODB_URI || '',
+
+  // Configuration JWT
+  JWT_SECRET: process.env.JWT_SECRET || 'fc5c01210b133afeb2c293bfd28c59df3bb9d3b272999be0eb838c930b1419fd',
+  JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '7d',
 
   // Configuration SMTP
   SMTP_HOST: process.env.SMTP_HOST || '',
