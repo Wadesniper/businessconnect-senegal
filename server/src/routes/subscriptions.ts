@@ -43,6 +43,62 @@ router.get('/:userId/status', authenticate, async (req: Request, res: Response) 
   }
 });
 
+// Route de test PUBLIQUE pour CinetPay (sans authentification)
+router.get('/test-public', async (req: Request, res: Response) => {
+  try {
+    console.log('=== TEST PUBLIC CINETPAY ===');
+    
+    // Vérifier la configuration
+    const configStatus = {
+      hasApiKey: !!config.CINETPAY_APIKEY,
+      hasSiteId: !!config.CINETPAY_SITE_ID,
+      apiKeyLength: config.CINETPAY_APIKEY?.length || 0,
+      siteIdLength: config.CINETPAY_SITE_ID?.length || 0,
+      baseUrl: config.CINETPAY_BASE_URL
+    };
+    
+    console.log('Configuration:', configStatus);
+    
+    if (!configStatus.hasApiKey || !configStatus.hasSiteId) {
+      res.json({
+        success: false,
+        error: 'Configuration CinetPay manquante',
+        config: configStatus,
+        message: 'Les clés API CinetPay ne sont pas configurées sur le serveur'
+      });
+      return;
+    }
+    
+    // Test avec des données minimales
+    const testData = {
+      amount: 100,
+      customer_name: 'Test',
+      customer_surname: 'Public',
+      customer_email: 'test@public.com',
+      customer_phone_number: '+221700000000',
+      description: 'Test public payment'
+    };
+    
+    const result = await cinetpayService.initializePayment(testData);
+    
+    res.json({
+      success: true,
+      message: 'Test CinetPay réussi',
+      paymentUrl: result.payment_url,
+      transactionId: result.transaction_id,
+      config: configStatus
+    });
+    
+  } catch (error: any) {
+    console.error('Erreur test public:', error);
+    res.json({
+      success: false,
+      error: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
+  }
+});
+
 // Route de test pour diagnostiquer CinetPay
 router.get('/test-cinetpay', authenticate, async (req: Request, res: Response) => {
   try {

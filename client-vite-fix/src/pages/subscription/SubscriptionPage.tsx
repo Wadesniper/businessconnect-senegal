@@ -65,6 +65,17 @@ const SubscriptionPage: React.FC = () => {
   const navigate = useNavigate();
   const { initiateSubscription } = useSubscription();
 
+  // Debug logs
+  React.useEffect(() => {
+    console.log('SubscriptionPage - État:', {
+      user,
+      isAuthenticated,
+      loading,
+      hasUser: !!user,
+      hasToken: !!localStorage.getItem('token')
+    });
+  }, [user, isAuthenticated, loading]);
+
   // Si en cours de chargement, afficher le loader
   if (loading) {
     return (
@@ -82,6 +93,7 @@ const SubscriptionPage: React.FC = () => {
 
   // Si non authentifié, afficher un message avec des options
   if (!isAuthenticated) {
+    console.log('SubscriptionPage - Utilisateur non authentifié, affichage du message');
     return (
       <div style={{
         minHeight: '100vh',
@@ -100,14 +112,14 @@ const SubscriptionPage: React.FC = () => {
               key="login"
               icon={<LoginOutlined />}
               size="large"
-              onClick={() => navigate('/login', { state: { from: '/subscription' } })}
+              onClick={() => navigate('/auth')}
             >
               Se connecter
             </Button>,
             <Button 
               key="register"
               size="large"
-              onClick={() => navigate('/register', { state: { from: '/subscription' } })}
+              onClick={() => navigate('/auth')}
             >
               Créer un compte
             </Button>,
@@ -138,7 +150,7 @@ const SubscriptionPage: React.FC = () => {
     } catch (error: any) {
       if (error.message?.includes('Session expirée') || error.message?.includes('non connecté')) {
         message.error("Votre session a expiré. Veuillez vous reconnecter.");
-        navigate('/login', { state: { from: '/subscription' } });
+        navigate('/auth');
       } else {
         message.error(error.message || "Erreur lors de l'initialisation du paiement.");
       }
