@@ -6,8 +6,8 @@ WORKDIR /app
 COPY package*.json ./
 COPY tsconfig.json ./
 
-# Installer toutes les dépendances pour le build
-RUN npm ci
+# Installer toutes les dépendances
+RUN npm ci --ignore-scripts
 
 # Copier les sources
 COPY . .
@@ -21,14 +21,9 @@ FROM node:20-alpine AS production
 
 WORKDIR /app
 
-# Copier les fichiers de configuration
+# Copier les fichiers de configuration et les dépendances
 COPY package*.json ./
-
-# Installer uniquement les dépendances de production
-ENV NODE_ENV=production
-RUN npm ci --omit=dev
-
-# Copier le build depuis l'étape précédente
+COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 
 # Exposer le port

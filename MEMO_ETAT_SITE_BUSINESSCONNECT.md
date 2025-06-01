@@ -1048,40 +1048,41 @@ interface MarketplaceItem {
 - État des sessions utilisateur
 - Temps de réponse des requêtes API
 
-## 🚨 UPDATE DÉPLOIEMENT (01/06/2024 - 20h10)
+## 🚨 UPDATE DÉPLOIEMENT (01/06/2024 - 20h20)
 
-### ✅ Optimisations de Build et Déploiement
+### ✅ Optimisations Critiques du Build
 
-#### 🔧 Configuration TypeScript Améliorée
-- ✅ Ajout des libs ES2018 et ESNext.AsyncIterable
-- ✅ Support des décorateurs TypeScript
-- ✅ Configuration des chemins de modules
-- ✅ Optimisation de la résolution des modules
-- ✅ Meilleure gestion des sources et déclarations
+#### 🔧 Scripts de Build Renforcés
+- ✅ Ajout d'un script de nettoyage (clean)
+- ✅ Build en deux étapes (clean + tsc)
+- ✅ Gestion améliorée des dépendances
+- ✅ Meilleure séparation dev/prod
+- ✅ Support complet de TypeScript en production
 
-#### 🐳 Docker Multi-Stage Optimisé
-- ✅ Séparation claire des étapes de build et production
-- ✅ Gestion propre des variables d'environnement
-- ✅ Installation optimisée des dépendances
-- ✅ Build avec NODE_ENV=production
-- ✅ Image finale allégée
+#### 📦 Gestion des Dépendances Optimisée
+- ✅ Déplacement de ts-node vers les dépendances principales
+- ✅ Conservation de toutes les dépendances TypeScript nécessaires
+- ✅ Séparation claire des dépendances de développement
+- ✅ Installation des dépendances sans scripts superflus
+- ✅ Optimisation de la taille du bundle final
 
-#### 🚂 Configuration Railway
-- ✅ Utilisation du Dockerfile optimisé
-- ✅ Variables d'environnement correctement définies
-- ✅ Healthcheck configuré
-- ✅ Politique de redémarrage robuste
+#### 🐳 Docker Build Sécurisé
+- ✅ Installation des dépendances avec --ignore-scripts
+- ✅ Copie optimisée des node_modules
+- ✅ Réutilisation des dépendances entre étapes
+- ✅ Réduction des couches Docker
+- ✅ Optimisation de la taille de l'image
 
 ### 🔍 Points d'Attention
 
-1. **Build Production** :
-   - Configuration TypeScript complète maintenue
-   - Toutes les fonctionnalités préservées
-   - Pas de compromis sur les fonctionnalités
-   - Build optimisé pour la production
+1. **Intégrité du Build** :
+   - Scripts de build renforcés
+   - Nettoyage automatique avant build
+   - Gestion optimisée des dépendances
+   - Conservation de toutes les fonctionnalités
 
-2. **Déploiement** :
-   - Process de build en deux étapes
-   - Gestion propre des dépendances
-   - Configuration environnement production
-   - Monitoring santé application
+2. **Sécurité et Performance** :
+   - Installation sécurisée des dépendances
+   - Optimisation des layers Docker
+   - Réduction de la surface d'attaque
+   - Performances de build améliorées
