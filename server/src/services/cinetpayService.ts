@@ -19,7 +19,22 @@ interface InitPaymentParams {
 }
 
 export class CinetpayService {
+  private validateConfig() {
+    if (!config.CINETPAY_APIKEY || !config.CINETPAY_SITE_ID) {
+      throw new Error('Configuration CinetPay manquante: CINETPAY_APIKEY ou CINETPAY_SITE_ID non définis');
+    }
+    
+    console.log('Configuration CinetPay validée:', {
+      apikey: config.CINETPAY_APIKEY.substring(0, 8) + '...',
+      site_id: config.CINETPAY_SITE_ID,
+      base_url: config.CINETPAY_BASE_URL
+    });
+  }
+
   async initializePayment(params: InitPaymentParams) {
+    // Validation de la configuration avant tout
+    this.validateConfig();
+    
     const transaction_id = params.transaction_id || uuidv4();
     
     // Validation du montant (doit être un multiple de 5 selon la doc CinetPay)
@@ -57,7 +72,9 @@ export class CinetpayService {
       console.log('Envoi requête CinetPay:', {
         url: config.CINETPAY_BASE_URL,
         transaction_id,
-        amount: params.amount
+        amount: params.amount,
+        customer_name: params.customer_name,
+        customer_phone_number: params.customer_phone_number
       });
 
       const response = await axios.post(
