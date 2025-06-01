@@ -60,18 +60,15 @@ const offers = [
 ];
 
 const SubscriptionPage: React.FC = () => {
-  const { user, isAuthenticated, loading } = useAuth();
+  const { user, isAuthenticated, loading, error } = useAuth();
   const navigate = useNavigate();
   const { initiateSubscription } = useSubscription();
 
-  // DEBUG TEMPORAIRE - À supprimer après fix
-  console.log('🔍 SubscriptionPage DEBUG:', {
-    user: user ? { id: user.id, firstName: user.firstName, lastName: user.lastName } : null,
-    isAuthenticated,
-    loading,
-    tokenExists: !!localStorage.getItem('token'),
-    userExists: !!localStorage.getItem('user')
-  });
+  // Si erreur d'authentification (session expirée), rediriger vers login
+  if (error && error.includes('Session expirée')) {
+    navigate('/login', { state: { from: '/subscription' } });
+    return null;
+  }
 
   // Attendre que l'authentification soit vérifiée
   if (loading) {
@@ -89,29 +86,12 @@ const SubscriptionPage: React.FC = () => {
   }
 
   const handleSubscribe = async (offerKey: string) => {
-    // DEBUG TEMPORAIRE
-    console.log('🚀 HandleSubscribe - État complet:', {
-      isAuthenticated,
-      hasUser: !!user,
-      userId: user?.id,
-      userComplete: user ? {
-        firstName: !!user.firstName,
-        lastName: !!user.lastName,
-        phoneNumber: !!user.phoneNumber
-      } : null
-    });
-
     // Vérification robuste avec le nouvel état d'authentification
     if (!isAuthenticated || !user) {
-      console.log('❌ REDIRECTION VERS LOGIN - Raison:', {
-        isAuthenticated,
-        hasUser: !!user
-      });
+      console.log('SubscriptionPage - Utilisateur non authentifié, redirection vers login');
       navigate('/login', { state: { from: '/subscription' } });
       return;
     }
-    
-    console.log('✅ Utilisateur authentifié - Continuons:', user.id);
     
     // Vérification du profil complet
     if (!user.firstName || !user.lastName || !user.phoneNumber) {
@@ -123,18 +103,25 @@ const SubscriptionPage: React.FC = () => {
       let type = offerKey;
       if (type === 'student') type = 'etudiant';
       
-      console.log('🔄 Initiation abonnement pour:', type);
+      console.log('SubscriptionPage - Initiation abonnement pour:', type);
       const res = await initiateSubscription(type as SubscriptionType);
       
       if (res && res.paymentUrl) {
-        console.log('🎯 Redirection vers CinetPay:', res.paymentUrl);
+        console.log('SubscriptionPage - Redirection vers CinetPay:', res.paymentUrl);
         window.location.href = res.paymentUrl;
       } else {
-        console.error('❌ Pas d\'URL de paiement dans la réponse:', res);
+        console.error('SubscriptionPage - Pas d\'URL de paiement dans la réponse:', res);
         alert("Erreur lors de la génération du lien de paiement.");
       }
     } catch (error: any) {
-      console.error('❌ Erreur lors de l\'initiation:', error);
+      console.error('SubscriptionPage - Erreur lors de l\'initiation:', error);
+      
+      // Si erreur de session, rediriger vers login
+      if (error.message && error.message.includes('Session expirée')) {
+        navigate('/login', { state: { from: '/subscription' } });
+        return;
+      }
+      
       alert(error.message || "Erreur lors de l'initialisation du paiement.");
     }
   };
