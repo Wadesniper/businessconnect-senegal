@@ -19,7 +19,7 @@ export interface User {
 
 const USERS_FILE = path.join(__dirname, '../data/users.json');
 const jwtSecret: any = process.env.JWT_SECRET || 'default_secret';
-const jwtExpire: any = process.env.JWT_EXPIRE || process.env.JWT_EXPIRES_IN || '24h';
+const jwtExpire: any = process.env.JWT_EXPIRE || process.env.JWT_EXPIRES_IN || '7d';
 const options: jwt.SignOptions = { expiresIn: jwtExpire };
 
 // Assurez-vous que le dossier data existe
