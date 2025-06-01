@@ -6,13 +6,14 @@ WORKDIR /app
 COPY package*.json ./
 COPY tsconfig.json ./
 
-# Installer toutes les dépendances (dev incluses) pour le build
+# Installer toutes les dépendances pour le build
 RUN npm ci
 
 # Copier les sources
 COPY . .
 
-# Build
+# Build avec les variables d'environnement correctes
+ENV NODE_ENV=production
 RUN npm run build
 
 # Stage de production
@@ -24,6 +25,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Installer uniquement les dépendances de production
+ENV NODE_ENV=production
 RUN npm ci --omit=dev
 
 # Copier le build depuis l'étape précédente

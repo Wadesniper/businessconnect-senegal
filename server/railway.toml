@@ -3,12 +3,10 @@ builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "npm start"
 healthcheckPath = "/api/health"
 healthcheckTimeout = 100
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10
 
 [variables]
-NODE_ENV = "production"
-NPM_CONFIG_PRODUCTION = "true" 
+NODE_ENV = "production" 
