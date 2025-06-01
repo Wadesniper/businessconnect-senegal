@@ -4,7 +4,7 @@ import { Subscription } from '../models/subscription';
 import { cinetpayService } from './cinetpayService';
 
 export class SubscriptionService {
-  // Prix des abonnements en FCFA
+  // Prix des abonnements en FCFA (multiples de 5 pour CinetPay)
   private readonly SUBSCRIPTION_PRICES: { [key: string]: number } = {
     etudiant: 1000,    // 1,000 FCFA / mois
     annonceur: 5000,   // 5,000 FCFA / mois
@@ -24,6 +24,8 @@ export class SubscriptionService {
     userId: string
   }): Promise<{ redirectUrl: string; paymentId: string }> {
     try {
+      console.log('Initiation paiement pour:', params);
+
       const existingSubscription = await this.getActiveSubscription(params.userId);
       if (existingSubscription) {
         throw new Error('Utilisateur a déjà un abonnement actif');
@@ -31,10 +33,21 @@ export class SubscriptionService {
 
       const amount = this.getSubscriptionPrice(params.type);
       if (!amount) {
-        throw new Error('Type d\'abonnement invalide');
+        throw new Error(`Type d'abonnement invalide: ${params.type}`);
       }
 
+      console.log(`Montant calculé pour ${params.type}: ${amount} FCFA`);
+
       const transaction_id = uuidv4();
+      
+      // Validation préventive du numéro de téléphone
+      let phoneNumber = params.customer_phone_number;
+      if (!phoneNumber.startsWith('+')) {
+        // Si c'est un numéro sénégalais local, ajouter l'indicatif
+        if (phoneNumber.startsWith('7')) {
+          phoneNumber = '+221' + phoneNumber;
+        }
+      }
       
       // Appel au service CinetPay pour obtenir le lien de paiement
       const payment = await cinetpayService.initializePayment({
@@ -43,9 +56,16 @@ export class SubscriptionService {
         customer_name: params.customer_name,
         customer_surname: params.customer_surname,
         customer_email: params.customer_email,
-        customer_phone_number: params.customer_phone_number,
-        description: `Abonnement ${params.type} BusinessConnect`
+        customer_phone_number: phoneNumber,
+        description: `Abonnement ${params.type} BusinessConnect Sénégal`,
+        customer_country: 'SN',
+        customer_state: 'DK',
+        customer_city: 'Dakar',
+        customer_address: 'Dakar',
+        customer_zip_code: '12000'
       });
+
+      console.log('Paiement CinetPay initié:', payment);
 
       return {
         redirectUrl: payment.payment_url,

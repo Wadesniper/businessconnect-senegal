@@ -17,8 +17,11 @@ const USER_KEY = 'user';
 export const authService = {
   async login(credentials: LoginCredentials): Promise<AuthResponse['data']> {
     try {
-      const response = await api.post<AuthResponse>('/api/auth/login', credentials);
-      if (response.data.success) {
+      console.log('Tentative de connexion:', credentials);
+      const response = await api.post<AuthResponse>('/auth/login', credentials);
+      console.log('Réponse login:', response.data);
+      
+      if (response.data.success && response.data.data) {
         this.setToken(response.data.data.token);
         this.setUser(response.data.data.user);
         return response.data.data;
@@ -26,20 +29,18 @@ export const authService = {
       throw new Error(response.data.message || 'Erreur lors de la connexion');
     } catch (error: any) {
       console.error('Erreur de connexion:', error);
-      if (error.response) {
-        throw new Error(error.response.data.message || 'Erreur lors de la connexion');
-      } else if (error.request) {
-        throw new Error('Impossible de contacter le serveur. Veuillez vérifier votre connexion.');
-      } else {
-        throw new Error('Une erreur est survenue lors de la configuration de la requête.');
+      
+      if (error.response?.data?.message) {
+        throw new Error(error.response.data.message);
       }
+      throw new Error('Erreur lors de la connexion. Veuillez réessayer.');
     }
   },
 
   async register(data: UserRegistrationData): Promise<UserRegistrationResponse> {
     try {
       console.log('Données d\'inscription:', data);
-      const response = await api.post<UserRegistrationResponse>('/api/auth/register', data);
+      const response = await api.post<UserRegistrationResponse>('/auth/register', data);
       console.log('Réponse du serveur:', response.data);
       
       if (response.data.success && response.data.data) {

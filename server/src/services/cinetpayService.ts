@@ -21,6 +21,12 @@ interface InitPaymentParams {
 export class CinetpayService {
   async initializePayment(params: InitPaymentParams) {
     const transaction_id = params.transaction_id || uuidv4();
+    
+    // Validation du montant (doit être un multiple de 5 selon la doc CinetPay)
+    if (params.amount % 5 !== 0) {
+      throw new Error('Le montant doit être un multiple de 5');
+    }
+
     const body = {
       apikey: config.CINETPAY_APIKEY,
       site_id: config.CINETPAY_SITE_ID,
@@ -40,10 +46,20 @@ export class CinetpayService {
       customer_state: params.customer_state || 'DK',
       customer_zip_code: params.customer_zip_code || '12000',
       channels: 'ALL',
-      metadata: '{}',
+      lang: 'fr',
+      metadata: JSON.stringify({
+        service: 'BusinessConnect',
+        type: 'subscription'
+      })
     };
 
     try {
+      console.log('Envoi requête CinetPay:', {
+        url: config.CINETPAY_BASE_URL,
+        transaction_id,
+        amount: params.amount
+      });
+
       const response = await axios.post(
         config.CINETPAY_BASE_URL,
         body,
@@ -51,9 +67,12 @@ export class CinetpayService {
           headers: { 
             'Content-Type': 'application/json',
             'User-Agent': 'BusinessConnect-Senegal/1.0'
-          } 
+          },
+          timeout: 30000
         }
       );
+
+      console.log('Réponse CinetPay:', response.data);
 
       if (response.data?.data?.payment_url) {
         return {
@@ -61,13 +80,25 @@ export class CinetpayService {
           transaction_id,
         };
       } else {
-        throw new Error('Erreur lors de la génération du lien de paiement CinetPay');
+        console.error('Réponse CinetPay incomplète:', response.data);
+        throw new Error('URL de paiement non disponible dans la réponse CinetPay');
       }
     } catch (error: any) {
+      console.error('Erreur complète CinetPay:', error);
+      
       if (error.response?.data) {
-        throw new Error(`Erreur CinetPay: ${error.response.data.message || error.response.data.error}`);
+        console.error('Détails erreur CinetPay:', error.response.data);
+        const errorMsg = error.response.data.message || 
+                        error.response.data.description || 
+                        'Erreur CinetPay inconnue';
+        throw new Error(`CinetPay Error: ${errorMsg}`);
       }
-      throw error;
+      
+      if (error.code === 'ECONNABORTED') {
+        throw new Error('Timeout lors de la connexion à CinetPay');
+      }
+      
+      throw new Error(`Erreur technique CinetPay: ${error.message}`);
     }
   }
 }

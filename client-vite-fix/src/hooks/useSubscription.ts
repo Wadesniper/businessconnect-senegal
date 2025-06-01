@@ -25,6 +25,9 @@ export const useSubscription = () => {
       customer_phone_number: user.phoneNumber || ''
     };
     if (user.email) payload.customer_email = user.email;
+    
+    console.log('Initiation abonnement:', payload);
+    
     const response = await fetch(`${endpoints.subscriptions}/initiate`, {
       method: 'POST',
       headers: {
@@ -34,16 +37,21 @@ export const useSubscription = () => {
       body: JSON.stringify(payload)
     });
 
+    console.log('Réponse serveur abonnement:', response.status);
+
     if (!response.ok) {
       let errorMsg = 'Erreur lors de l\'initiation du paiement';
       try {
         const errorData = await response.json();
+        console.error('Erreur serveur abonnement:', errorData);
         if (errorData && errorData.error) errorMsg = errorData.error;
       } catch {}
       throw new Error(errorMsg);
     }
 
-    return response.json();
+    const result = await response.json();
+    console.log('Résultat abonnement:', result);
+    return result;
   };
 
   // Vérification dynamique du statut d'abonnement via l'API backend
@@ -68,16 +76,19 @@ export const useSubscription = () => {
         const isActive = await subscriptionService.fetchSubscriptionStatus(user.id);
         setHasActiveSubscription(isActive);
       } catch (err: any) {
-        // On ne définit pas d'erreur pour un 404 ou un problème d'abonnement
-        // car c'est normal pour un nouvel utilisateur
+        // Gérer silencieusement les erreurs d'abonnement
+        // C'est normal qu'un nouvel utilisateur n'ait pas d'abonnement
         setHasActiveSubscription(false);
-        setError(null);
+        setError(null); // Ne pas afficher d'erreur
+        console.log('Pas d\'abonnement actif (normal pour un nouvel utilisateur)');
       } finally {
         setLoading(false);
       }
     };
     
-    checkStatus();
+    // Attendre un peu avant de vérifier pour éviter les appels lors du chargement initial
+    const timer = setTimeout(checkStatus, 1000);
+    return () => clearTimeout(timer);
   }, [user?.id, user?.role]);
 
   return {
