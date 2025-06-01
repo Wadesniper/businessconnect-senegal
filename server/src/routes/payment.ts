@@ -1,11 +1,19 @@
 import { Router } from 'express';
 // import { paymentController } from '../controllers/paymentController';
 import { authenticate, isAdmin } from '../middleware/auth';
+import { WebhookController } from '../controllers/webhookController';
+import { Request, Response } from 'express';
 
 const router = Router();
+const webhookController = new WebhookController();
 
-// Routes protégées par authentification
-router.use(authenticate);
+// Routes protégées par authentification (sauf webhook)
+router.use((req: Request, res: Response, next) => {
+  if (req.path === '/webhook') {
+    return next();
+  }
+  return authenticate(req, res, next);
+});
 
 // Routes de configuration
 router.post('/setup-intent', (req: any, res: any) => {
@@ -34,10 +42,8 @@ router.post('/refund/:paymentId', isAdmin, (req: any, res: any) => {
   // paymentController.refundPayment(req, res);
 });
 
-// Webhooks
-router.post('/webhook', (req: any, res: any) => {
-  // paymentController.handleWebhook(req, res);
-});
+// Webhook CinetPay (non protégé)
+router.post('/webhook', webhookController.handlePaymentWebhook);
 
 // Routes de factures
 router.get('/invoices', (req: any, res: any) => {

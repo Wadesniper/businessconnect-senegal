@@ -27,10 +27,14 @@ app.use(express.urlencoded({ extended: true }));
 
 // Configuration CORS
 app.use(cors({
-  origin: 'https://businessconnectsenegal2025gooo.vercel.app',
+  origin: [
+    'https://businessconnectsenegal2025gooo.vercel.app',
+    'http://localhost:5173',
+    'http://localhost:3000'
+  ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin']
 }));
 
 // Middleware de limitation de requêtes

@@ -56,6 +56,6 @@ export const config: Config = {
   CINETPAY_APIKEY: process.env.CINETPAY_APIKEY || '',
   CINETPAY_SITE_ID: process.env.CINETPAY_SITE_ID || '',
   CINETPAY_BASE_URL: process.env.CINETPAY_BASE_URL || 'https://api-checkout.cinetpay.com/v2/payment',
-  CINETPAY_NOTIFY_URL: process.env.CINETPAY_NOTIFY_URL || '',
-  CINETPAY_RETURN_URL: process.env.CINETPAY_RETURN_URL || ''
+  CINETPAY_NOTIFY_URL: process.env.CINETPAY_NOTIFY_URL || `${process.env.API_URL || 'https://businessconnect-senegal-api-production.up.railway.app'}/api/subscriptions/notify`,
+  CINETPAY_RETURN_URL: process.env.CINETPAY_RETURN_URL || `${process.env.CLIENT_URL || 'https://businessconnectsenegal2025gooo.vercel.app'}/payment/return`
 }; 
