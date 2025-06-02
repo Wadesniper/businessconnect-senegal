@@ -7,13 +7,8 @@ RUN apk add --no-cache python3 make g++
 # Définition du répertoire de travail
 WORKDIR /app
 
-# Copie des fichiers de configuration du serveur
-COPY server/package*.json ./
-COPY server/tsconfig.json ./
-COPY server/jest.config.js ./
-
-# Copie du code source du serveur
-COPY server/src ./src
+# Copie de tout le dossier server
+COPY server ./
 
 # Installation des dépendances avec un cache optimisé
 RUN npm ci

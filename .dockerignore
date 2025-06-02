@@ -46,8 +46,10 @@ woman-4-test.png
 reset_admin.js
 generate_bcrypt.js
 
-# Garder les fichiers essentiels
-!server/src/**/*
+# Ne pas ignorer les fichiers essentiels du serveur
+!server/
+!server/src/
 !server/package*.json
 !server/tsconfig.json
-!server/jest.config.js 
+!server/jest.config.js
+!server/scripts/ 
