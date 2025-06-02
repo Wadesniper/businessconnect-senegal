@@ -1,8 +1,7 @@
-import { Router } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 // import { paymentController } from '../controllers/paymentController';
 import { authenticate } from '../middleware/auth';
 // import { checkInvoiceAccess } from '../middleware/invoiceAccess';
-import { Response } from 'express';
 import { AuthRequest } from '../types/express';
 import { paymentController } from '../controllers/paymentController';
 
@@ -17,27 +16,43 @@ router.use(authenticate);
 // router.delete('/payment-methods/:id', (req: any, res: any) => paymentController.deletePaymentMethod(req, res));
 
 // Handlers
-const createPayment = async (req: AuthRequest, res: Response, next: Function) => {
-  paymentController.createPayment(req, res).catch(next);
-};
+router.post('/create', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await paymentController.createPayment(req as AuthRequest, res);
+  } catch (error) {
+    next(error);
+  }
+});
 
-const confirmPayment = async (req: AuthRequest, res: Response, next: Function) => {
-  paymentController.confirmPayment(req, res).catch(next);
-};
+router.post('/confirm', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await paymentController.confirmPayment(req as AuthRequest, res);
+  } catch (error) {
+    next(error);
+  }
+});
 
-const getPaymentHistory = async (req: AuthRequest, res: Response, next: Function) => {
-  paymentController.getPaymentHistory(req, res).catch(next);
-};
+router.get('/history', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await paymentController.getPaymentHistory(req as AuthRequest, res);
+  } catch (error) {
+    next(error);
+  }
+});
 
-const getPaymentDetails = async (req: AuthRequest, res: Response, next: Function) => {
-  paymentController.getPaymentDetails(req, res).catch(next);
-};
+router.get('/:paymentId', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await paymentController.getPaymentDetails(req as AuthRequest, res);
+  } catch (error) {
+    next(error);
+  }
+});
 
 // Routes
-router.post('/create', createPayment);
-router.post('/confirm', confirmPayment);
-router.get('/history', getPaymentHistory);
-router.get('/:paymentId', getPaymentDetails);
+// router.post('/create', createPayment);
+// router.post('/confirm', confirmPayment);
+// router.get('/history', getPaymentHistory);
+// router.get('/:paymentId', getPaymentDetails);
 
 // Abonnements
 // router.post('/subscriptions', (req: AuthRequest, res: Response) => paymentController.createSubscription(req, res));

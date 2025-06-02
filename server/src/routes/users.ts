@@ -1,22 +1,26 @@
-import { Router } from 'express';
+import { Router, Request as ExpressRequest, Response as ExpressResponse, NextFunction } from 'express';
 // import { userController } from '../controllers/userController';
 import { authMiddleware } from '../middleware/authMiddleware';
 import { AuthController } from '../controllers/authController';
-import { Response } from 'express';
-import { AuthRequest } from '../types/user';
+import { Request, AuthRequest } from '../types/express';
 import { User } from '../models/User';
+import { authenticate } from '../middleware/auth';
 
 const router = Router();
 const authController = new AuthController();
 
 // Routes publiques
-router.post('/register', authController.register);
-router.post('/login', authController.login);
+router.post('/register', (req: Request, res: ExpressResponse, next: NextFunction) => {
+  authController.register(req, res).catch(next);
+});
+router.post('/login', (req: Request, res: ExpressResponse, next: NextFunction) => {
+  authController.login(req, res).catch(next);
+});
 // router.post('/forgot-password', userController.forgotPassword);
 // router.post('/reset-password', userController.resetPassword);
 
 // Routes protégées
-router.use(authMiddleware);
+router.use(authenticate);
 // router.get('/profile', userController.getProfile);
 // router.put('/profile', userController.updateProfile);
 // router.put('/password', userController.updatePassword);
@@ -31,9 +35,10 @@ router.use(authMiddleware);
 // });
 
 // Route pour obtenir le profil de l'utilisateur connecté
-router.get('/me', async (req: AuthRequest, res: Response) => {
+router.get('/me', async (req: Request, res: ExpressResponse, next: NextFunction) => {
   try {
-    const user = await User.findById(req.user?.id).select('-password');
+    const authReq = req as AuthRequest;
+    const user = await User.findById(authReq.user.id).select('-password');
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -45,17 +50,15 @@ router.get('/me', async (req: AuthRequest, res: Response) => {
       data: user
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Erreur lors de la récupération du profil'
-    });
+    next(error);
   }
 });
 
 // Routes protégées (nécessitent une authentification)
-router.get('/profile', authMiddleware, async (req: AuthRequest, res: Response) => {
+router.get('/profile', async (req: Request, res: ExpressResponse, next: NextFunction) => {
   try {
-    const user = await User.findById(req.user?.id).select('-password');
+    const authReq = req as AuthRequest;
+    const user = await User.findById(authReq.user.id).select('-password');
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -67,10 +70,7 @@ router.get('/profile', authMiddleware, async (req: AuthRequest, res: Response) =
       data: user
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Erreur lors de la récupération du profil'
-    });
+    next(error);
   }
 });
 

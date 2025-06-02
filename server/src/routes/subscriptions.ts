@@ -1,36 +1,32 @@
-import express, { Router } from 'express';
-import { Request, Response, AuthRequest } from '../types/express';
+import { Router, Request as ExpressRequestBase, Response as ExpressResponse, NextFunction } from 'express';
+import { Request, AuthRequest } from '../types/express';
 import { SubscriptionService } from '../services/subscriptionService';
 import { logger } from '../utils/logger';
 import { authenticate } from '../middleware/auth';
-import { CinetPayService } from '../services/cinetpayService';
+import { cinetpayService, PaymentResponse } from '../services/cinetpayService';
 import { config } from '../config';
 import { SubscriptionController } from '../controllers/subscriptionController';
-import { authMiddleware } from '../middleware/authMiddleware';
 import { WebhookController } from '../controllers/webhookController';
 
 const router = Router();
 
 // Initialisation des services
 const subscriptionService = new SubscriptionService();
-const cinetpayService = new CinetPayService();
 const subscriptionController = new SubscriptionController();
 const webhookController = new WebhookController();
 
 // Middleware d'authentification pour toutes les routes sauf le webhook
-router.use('/webhook', webhookController.handleCinetPayWebhook);
-router.use(authMiddleware);
-
-// Routes protégées
+router.post('/webhook/cinetpay', webhookController.handleCinetPayWebhook as any);
 router.use(authenticate);
 
-// Récupérer l'abonnement d'un utilisateur
-router.get('/:userId', subscriptionController.getSubscription);
+// Routes protégées
+router.get('/:userId', subscriptionController.getSubscription as any);
 
 // Vérifier le statut d'un abonnement
-router.get('/:userId/status', authenticate, async (req: Request, res: Response) => {
+router.get('/:userId/status', async (req: Request, res: ExpressResponse, next: NextFunction) => {
   try {
-    const { userId } = req.params;
+    const authReq = req as AuthRequest;
+    const { userId } = authReq.params;
     const subscription = await subscriptionService.getSubscription(userId);
     
     if (!subscription) {
@@ -39,26 +35,26 @@ router.get('/:userId/status', authenticate, async (req: Request, res: Response) 
     return res.json(subscription);
   } catch (error) {
     logger.error('Erreur lors de la récupération de l\'abonnement:', error);
-    return res.status(500).json({ error: 'Erreur serveur lors de la récupération de l\'abonnement' });
+    next(error);
   }
 });
 
 // Vérifier le statut d'un abonnement
-router.get('/:userId', authenticate, async (req: Request, res: Response) => {
+router.get('/:userId/access', async (req: Request, res: ExpressResponse, next: NextFunction) => {
   try {
-    const { userId } = req.params;
-    // @ts-ignore
-    const userRole = req.user?.role;
+    const authReq = req as AuthRequest;
+    const { userId } = authReq.params;
+    const userRole = authReq.user.role;
     const isActive = await subscriptionService.checkSubscriptionAccess(userId, userRole);
     res.json({ isActive });
   } catch (error) {
     logger.error('Erreur lors de la vérification du statut:', error);
-    res.status(500).json({ message: 'Erreur serveur lors de la vérification du statut' });
+    next(error);
   }
 });
 
 // Route de test PUBLIQUE pour CinetPay (sans authentification)
-router.get('/test-public', async (req: Request, res: Response) => {
+router.get('/test-public', async (req: ExpressRequestBase, res: ExpressResponse) => {
   try {
     console.log('=== TEST PUBLIC CINETPAY ===');
     
@@ -93,13 +89,13 @@ router.get('/test-public', async (req: Request, res: Response) => {
       description: 'Test public payment'
     };
     
-    const result = await cinetpayService.initializePayment(testData);
+    const result = await cinetpayService.createPayment(testData as any);
     
     res.json({
       success: true,
       message: 'Test CinetPay réussi',
-      paymentUrl: result.payment_url,
-      transactionId: result.transaction_id,
+      paymentUrl: (result as any).payment_url || (result as any).link,
+      transactionId: (result as any).transaction_id || (result as any).data?.transaction_id,
       config: configStatus
     });
     
@@ -113,41 +109,37 @@ router.get('/test-public', async (req: Request, res: Response) => {
   }
 });
 
-// Route de test pour diagnostiquer CinetPay
-router.get('/test-cinetpay', authenticate, async (req: Request, res: Response) => {
+// Route de test pour diagnostiquer CinetPay - req est Request, casté en AuthRequest à l'intérieur
+router.get('/test-cinetpay-diag', async (req: Request, res: ExpressResponse, next: NextFunction) => {
   try {
+    const authReq = req as AuthRequest; // Cast ici
     const testParams = {
-      amount: 1000, // Montant de test
-      customer_name: 'Test',
-      customer_surname: 'User',
-      customer_email: 'test@businessconnect.sn',
+      amount: 1000,
+      customer_name: authReq.user.firstName || 'Test',
+      customer_surname: authReq.user.lastName || 'User',
+      customer_email: authReq.user.email,
       customer_phone_number: '+221701234567',
       description: 'Test BusinessConnect'
     };
-
-    console.log('Test CinetPay avec:', testParams);
-    
-    const payment = await cinetpayService.initializePayment(testParams);
+    logger.info('Test CinetPay avec:', testParams);
+    const payment = await cinetpayService.createPayment(testParams as any);
     
     res.json({ 
       success: true, 
       message: 'CinetPay fonctionne correctement',
-      payment_url: payment.payment_url,
-      transaction_id: payment.transaction_id
+      payment_url: (payment as any).payment_url || (payment as any).link,
+      transaction_id: (payment as any).transaction_id || (payment as any).data?.transaction_id
     });
   } catch (error: any) {
-    console.error('Erreur test CinetPay:', error);
-    res.status(500).json({ 
-      success: false,
-      error: error.message,
-      details: error.stack
-    });
+    logger.error('Erreur test CinetPay:', error);
+    next(error); // Passer l'erreur au gestionnaire d'erreurs Express
   }
 });
 
 // Route de debug CinetPay - affiche la configuration et teste l'API
-router.get('/debug-cinetpay', authenticate, async (req: Request, res: Response) => {
+router.get('/debug-cinetpay', async (req: Request, res: ExpressResponse, next: NextFunction) => {
   try {
+    const authReq = req as AuthRequest;
     const hasApiKey = !!config.CINETPAY_APIKEY;
     const hasSiteId = !!config.CINETPAY_SITE_ID;
     
@@ -168,53 +160,47 @@ router.get('/debug-cinetpay', authenticate, async (req: Request, res: Response) 
       }
     };
     
-    // Test avec des données minimales
     const testData = {
       amount: 100,
-      customer_name: 'Test',
-      customer_surname: 'User',
-      customer_email: 'test@test.com',
-      customer_phone_number: '+221700000000',
-      description: 'Test payment'
+      userId: authReq.user.id,
+      description: 'Test payment debug'
     };
     
-    let testResult: { success: boolean; payment_url?: string; transaction_id?: string } | null = null;
+    let paymentDetails: PaymentResponse | null = null;
     let testError: { message: string; stack?: string } | null = null;
     
     try {
-      testResult = await cinetpayService.initializePayment(testData);
+      paymentDetails = await cinetpayService.createPayment(testData);
     } catch (err: any) {
-      testError = {
-        message: err.message,
-        stack: err.stack
-      };
+      testError = { message: err.message, stack: err.stack };
     }
     
     res.json({
       debugInfo,
       testData,
-      testResult,
+      testResult: paymentDetails ? {
+        success: paymentDetails.status === 'success' || paymentDetails.status === 'pending',
+        status: paymentDetails.status,
+        transaction_id: paymentDetails.id,
+      } : null,
       testError
     });
   } catch (error: any) {
-    res.status(500).json({ 
-      error: 'Erreur debug',
-      message: error.message
-    });
+    next(error);
   }
 });
 
 // Initier un nouvel abonnement
-router.post('/initiate', subscriptionController.initiateSubscription);
+router.post('/initiate', subscriptionController.initiateSubscription as any);
 
 // Activer un abonnement après paiement
-router.post('/activate', subscriptionController.activateSubscription);
+router.post('/activate', subscriptionController.activateSubscription as any);
 
 // Vérifier le statut d'un abonnement
-router.get('/status/:userId', subscriptionController.checkSubscriptionStatus);
+router.get('/status/:userId', subscriptionController.checkSubscriptionStatus as any);
 
 // Callback de paiement (simulation)
-router.post('/payment-callback', async (req: Request, res: Response) => {
+router.post('/payment-callback', async (req: ExpressRequestBase, res: ExpressResponse) => {
   try {
     const { userId, status } = req.body;
     if (!userId || !status) {
@@ -241,7 +227,7 @@ router.post('/payment-callback', async (req: Request, res: Response) => {
 });
 
 // Route de notification CinetPay
-router.post('/notify', async (req: Request, res: Response) => {
+router.post('/notify', async (req: ExpressRequestBase, res: ExpressResponse) => {
   try {
     logger.info('Notification CinetPay reçue:', req.body);
     
