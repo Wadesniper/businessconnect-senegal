@@ -1,4 +1,5 @@
-import { Router } from 'express';
+import { Router, Request as ExpressRequest, Response as ExpressResponse, NextFunction as ExpressNextFunction } from 'express';
+// Utiliser nos types personnalisés qui s'appuient sur les types Express
 import { Request, Response, NextFunction, AuthRequest } from '../types/express';
 // import { paymentController } from '../controllers/paymentController';
 import { authenticate, isAdmin } from '../middleware/auth';
@@ -10,118 +11,113 @@ const webhookController = new WebhookController();
 // Ce middleware est appliqué à toutes les routes de ce routeur.
 // Il exécute 'authenticate' sauf pour le webhook.
 const authMiddlewareApplicator = (req: Request, res: Response, next: NextFunction) => {
-  if (req.path === '/webhook') {
-    return next(); // Pas d'authentification pour le webhook
+  if (req.path === '/webhook' || req.path === '/webhook/cinetpay') { // Exclure aussi /webhook/cinetpay
+    return next();
   }
-  // 'authenticate' devrait maintenant modifier req pour y ajouter .user
-  // et le rendre conforme à AuthRequest pour les gestionnaires suivants.
-  return authenticate(req, res, next);
+  return authenticate(req, res, next); // Applique authenticate qui ajoute req.user
 };
 router.use(authMiddlewareApplicator);
 
 // Pour les routes après authMiddlewareApplicator (sauf /webhook), req devrait être une AuthRequest.
 
 // Routes de configuration
-const setupIntent = async (req: AuthRequest, res: Response) => {
+const setupIntent = async (req: Request, res: Response, next: NextFunction) => {
+  const authReq = req as AuthRequest;
   try {
-    // TODO: Implémenter la création d'intention de paiement
-    res.json({ success: true });
+    // TODO: Implémenter la création d'intention de paiement (utiliser authReq.user si besoin)
+    res.json({ success: true, userId: authReq.user.id });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Erreur lors de la création de l\'intention de paiement' });
+    next(error); // Gestion centralisée des erreurs
   }
 };
 
-const getPaymentMethods = async (req: AuthRequest, res: Response) => {
+const getPaymentMethods = async (req: Request, res: Response, next: NextFunction) => {
+  const authReq = req as AuthRequest;
   try {
-    // TODO: Implémenter la récupération des méthodes de paiement
+    // TODO: Implémenter la récupération des méthodes de paiement (utiliser authReq.user si besoin)
     res.json([]);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des méthodes de paiement' });
+    next(error);
   }
 };
 
-const deletePaymentMethod = async (req: AuthRequest, res: Response) => {
+const deletePaymentMethod = async (req: Request, res: Response, next: NextFunction) => {
+  const authReq = req as AuthRequest;
   try {
-    // TODO: Implémenter la suppression de méthode de paiement
-    res.json({ success: true, id: req.params.id });
+    res.json({ success: true, id: authReq.params.id }); 
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Erreur lors de la suppression de la méthode de paiement' });
+    next(error);
   }
 };
 
 // Routes de paiement
-const processPayment = async (req: AuthRequest, res: Response) => {
+const processPayment = async (req: Request, res: Response, next: NextFunction) => {
+  const authReq = req as AuthRequest;
   try {
-    // TODO: Implémenter le processus de paiement
-    res.json({ success: true, body: req.body });
+    res.json({ success: true, body: authReq.body }); 
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Erreur lors du traitement du paiement' });
+    next(error);
   }
 };
 
-const createSubscription = async (req: AuthRequest, res: Response) => {
+const createSubscription = async (req: Request, res: Response, next: NextFunction) => {
+  const authReq = req as AuthRequest;
   try {
-    // TODO: Implémenter la création d'abonnement
-    res.json({ success: true, body: req.body });
+    res.json({ success: true, body: authReq.body }); 
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Erreur lors de la création de l\'abonnement' });
+    next(error);
   }
 };
 
-const cancelSubscription = async (req: AuthRequest, res: Response) => {
+const cancelSubscription = async (req: Request, res: Response, next: NextFunction) => {
+  const authReq = req as AuthRequest;
   try {
-    // TODO: Implémenter l'annulation d'abonnement
-    res.json({ success: true });
+    // Utiliser authReq.user si besoin pour identifier l'abonnement à annuler
+    res.json({ success: true, userId: authReq.user.id });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Erreur lors de l\'annulation de l\'abonnement' });
+    next(error);
   }
 };
 
 // Routes de remboursement (admin uniquement)
-const refundPayment = async (req: AuthRequest, res: Response) => {
+const refundPayment = async (req: Request, res: Response, next: NextFunction) => {
+  const authReq = req as AuthRequest;
   try {
-    // TODO: Implémenter le remboursement
-    res.json({ success: true, paymentId: req.params.paymentId });
+    // isAdmin a déjà vérifié req.user.role. Utiliser authReq.user si besoin pour logs/etc.
+    res.json({ success: true, paymentId: authReq.params.paymentId }); 
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Erreur lors du remboursement' });
+    next(error);
   }
 };
 
 // Routes de factures
-const getInvoices = async (req: AuthRequest, res: Response) => {
+const getInvoices = async (req: Request, res: Response, next: NextFunction) => {
+  const authReq = req as AuthRequest;
   try {
-    // TODO: Implémenter la récupération des factures
+    // Utiliser authReq.user.id pour filtrer les factures
     res.json([]);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des factures' });
+    next(error);
   }
 };
 
-const getInvoice = async (req: AuthRequest, res: Response) => {
+const getInvoice = async (req: Request, res: Response, next: NextFunction) => {
+  const authReq = req as AuthRequest;
   try {
-    // TODO: Implémenter la récupération d'une facture
-    res.json({ id: req.params.id });
+    // Utiliser authReq.user.id et authReq.params.id
+    res.json({ id: authReq.params.id, userId: authReq.user.id }); 
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Erreur lors de la récupération de la facture' });
+    next(error);
   }
 };
 
-const downloadInvoice = async (req: AuthRequest, res: Response) => {
+const downloadInvoice = async (req: Request, res: Response, next: NextFunction) => {
+  const authReq = req as AuthRequest;
   try {
-    // TODO: Implémenter le téléchargement de facture
-    res.json({ success: true, id: req.params.id });
+    // Utiliser authReq.user.id et authReq.params.id
+    res.json({ success: true, id: authReq.params.id, userId: authReq.user.id }); 
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Erreur lors du téléchargement de la facture' });
+    next(error);
   }
 };
 

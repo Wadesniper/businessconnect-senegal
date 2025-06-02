@@ -1,5 +1,5 @@
-import { Router } from 'express';
-import { Request, Response, AuthRequest } from '../types/express';
+import { Router, Request as ExpressRequest, Response as ExpressResponse, NextFunction } from 'express';
+import { Request, AuthRequest } from '../types/express';
 import { authenticate } from '../middleware/auth';
 import { NotificationController } from '../controllers/notificationController';
 
@@ -10,44 +10,48 @@ const notificationController = new NotificationController();
 router.use(authenticate);
 
 // Obtenir toutes les notifications de l'utilisateur
-router.get('/', async (req: AuthRequest, res: Response) => {
+router.get('/', async (req: Request, res: ExpressResponse, next: NextFunction) => {
   try {
-    const notifications = await notificationController.getUserNotifications(req.user.id);
+    const authReq = req as AuthRequest;
+    const notifications = await notificationController.getUserNotifications(authReq.user.id);
     return res.json(notifications);
   } catch (error) {
-    return res.status(500).json({ error: 'Erreur lors de la récupération des notifications' });
+    next(error);
   }
 });
 
 // Marquer une notification comme lue
-router.put('/:id/read', async (req: AuthRequest, res: Response) => {
+router.put('/:id/read', async (req: Request, res: ExpressResponse, next: NextFunction) => {
   try {
-    const { id } = req.params;
-    await notificationController.markAsRead(id, req.user.id);
+    const authReq = req as AuthRequest;
+    const { id } = authReq.params;
+    await notificationController.markAsRead(id, authReq.user.id);
     return res.json({ success: true });
   } catch (error) {
-    return res.status(500).json({ error: 'Erreur lors du marquage de la notification' });
+    next(error);
   }
 });
 
 // Marquer toutes les notifications comme lues
-router.put('/read-all', async (req: AuthRequest, res: Response) => {
+router.put('/read-all', async (req: Request, res: ExpressResponse, next: NextFunction) => {
   try {
-    await notificationController.markAllAsRead(req.user.id);
+    const authReq = req as AuthRequest;
+    await notificationController.markAllAsRead(authReq.user.id);
     return res.json({ success: true });
   } catch (error) {
-    return res.status(500).json({ error: 'Erreur lors du marquage des notifications' });
+    next(error);
   }
 });
 
 // Supprimer une notification
-router.delete('/:id', async (req: AuthRequest, res: Response) => {
+router.delete('/:id', async (req: Request, res: ExpressResponse, next: NextFunction) => {
   try {
-    const { id } = req.params;
-    await notificationController.deleteNotification(id, req.user.id);
+    const authReq = req as AuthRequest;
+    const { id } = authReq.params;
+    await notificationController.deleteNotification(id, authReq.user.id);
     return res.json({ success: true });
   } catch (error) {
-    return res.status(500).json({ error: 'Erreur lors de la suppression de la notification' });
+    next(error);
   }
 });
 

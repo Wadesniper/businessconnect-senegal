@@ -1,4 +1,5 @@
-import { Router, RouteHandler, AuthRouteHandler, Request, Response, NextFunction } from '../types/express';
+import { Router } from 'express';
+import { RouteHandler, AuthRouteHandler, Request, Response, NextFunction } from '../types/express';
 import { MarketplaceController } from '../controllers/marketplaceController';
 import authMiddleware from '../middleware/auth';
 import { upload } from '../middleware/uploadMiddleware';

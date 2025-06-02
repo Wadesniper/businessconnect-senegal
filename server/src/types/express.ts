@@ -1,38 +1,40 @@
 import {
-  Request as ExpressRequestBase,
+  Request as ExpressRequest,
   Response as ExpressResponse,
   NextFunction as ExpressNextFunction
 } from 'express';
 import { ParamsDictionary, Query } from 'express-serve-static-core';
 import { UserPayload } from './user';
 
-// Grâce à express-request.d.ts, Express.Request a maintenant user?
-// Notre Request peut être plus simple ou directement utiliser Express.Request
-export type Request = ExpressRequestBase;
+// Type de base pour Request, alias direct de Express.Request
+// L'augmentation globale dans express-request.d.ts ajoute `user?` à ExpressRequest.
+export type Request = ExpressRequest;
 
-// AuthRequest garantit que req.user est défini
-export interface AuthRequest extends ExpressRequestBase {
-  user: UserPayload;
+// AuthRequest garantit que req.user est défini.
+// Étend ExpressRequest (qui inclut déjà `body`, `params`, etc.)
+export interface AuthRequest extends ExpressRequest {
+  user: UserPayload; // Rend `user` non optionnel
 }
 
-// Réexporter Response et NextFunction tels quels depuis express
+// Type de base pour Response, alias direct de Express.Response
 export type Response<ResBody = any> = ExpressResponse<ResBody>;
+
+// Type de base pour NextFunction, alias direct de Express.NextFunction
 export type NextFunction = ExpressNextFunction;
 
-// Types pour les gestionnaires de routes utilisant nos types Request/AuthRequest personnalisés
+// Types optionnels pour les gestionnaires de routes, si vous souhaitez les utiliser
 export type RouteHandler = (
   req: Request,
   res: Response,
   next: NextFunction
-) => Promise<void | Response> | void;
+) => Promise<void | Response<any>> | void;
 
 export type AuthRouteHandler = (
   req: AuthRequest,
   res: Response,
   next: NextFunction
-) => Promise<void | Response> | void;
+) => Promise<void | Response<any>> | void;
 
-// IMPORTANT: Route files must now import Router directly from 'express'
-// Example: import { Router } from 'express';
-// const router = Router();
-// Do not re-export ExpressRouter or a Router type from here. 
+// RAPPEL IMPORTANT : Ne PAS exporter de type 'Router' depuis ce fichier.
+// Les fichiers de routes doivent importer 'Router' directement depuis 'express'.
+// exemple: import { Router } from 'express'; 

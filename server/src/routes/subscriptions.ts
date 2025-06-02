@@ -3,7 +3,7 @@ import { Request, AuthRequest } from '../types/express';
 import { SubscriptionService } from '../services/subscriptionService';
 import { logger } from '../utils/logger';
 import { authenticate } from '../middleware/auth';
-import { cinetpayService, PaymentResponse } from '../services/cinetpayService';
+import { cinetpayService, CreatePaymentResult, PaymentResponse } from '../services/cinetpayService';
 import { config } from '../config';
 import { SubscriptionController } from '../controllers/subscriptionController';
 import { WebhookController } from '../controllers/webhookController';
@@ -86,16 +86,17 @@ router.get('/test-public', async (req: ExpressRequestBase, res: ExpressResponse)
       customer_surname: 'Public',
       customer_email: 'test@public.com',
       customer_phone_number: '+221700000000',
-      description: 'Test public payment'
+      description: 'Test public payment',
+      userId: 'public_test_user'
     };
     
-    const result = await cinetpayService.createPayment(testData as any);
+    const result = await cinetpayService.createPayment(testData);
     
     res.json({
-      success: true,
-      message: 'Test CinetPay réussi',
-      paymentUrl: (result as any).payment_url || (result as any).link,
-      transactionId: (result as any).transaction_id || (result as any).data?.transaction_id,
+      success: result.success,
+      message: result.message || (result.success ? 'Test CinetPay réussi' : 'Test CinetPay échoué'),
+      paymentUrl: result.paymentUrl,
+      transactionId: result.transactionId,
       config: configStatus
     });
     
@@ -119,16 +120,17 @@ router.get('/test-cinetpay-diag', async (req: Request, res: ExpressResponse, nex
       customer_surname: authReq.user.lastName || 'User',
       customer_email: authReq.user.email,
       customer_phone_number: '+221701234567',
-      description: 'Test BusinessConnect'
+      description: 'Test BusinessConnect',
+      userId: authReq.user.id
     };
     logger.info('Test CinetPay avec:', testParams);
-    const payment = await cinetpayService.createPayment(testParams as any);
+    const paymentResult = await cinetpayService.createPayment(testParams);
     
     res.json({ 
-      success: true, 
-      message: 'CinetPay fonctionne correctement',
-      payment_url: (payment as any).payment_url || (payment as any).link,
-      transaction_id: (payment as any).transaction_id || (payment as any).data?.transaction_id
+      success: paymentResult.success,
+      message: paymentResult.message || (paymentResult.success ? 'CinetPay fonctionne correctement' : 'Erreur CinetPay'),
+      payment_url: paymentResult.paymentUrl,
+      transaction_id: paymentResult.transactionId
     });
   } catch (error: any) {
     logger.error('Erreur test CinetPay:', error);
@@ -166,11 +168,11 @@ router.get('/debug-cinetpay', async (req: Request, res: ExpressResponse, next: N
       description: 'Test payment debug'
     };
     
-    let paymentDetails: PaymentResponse | null = null;
+    let paymentCreationResult: CreatePaymentResult | null = null;
     let testError: { message: string; stack?: string } | null = null;
     
     try {
-      paymentDetails = await cinetpayService.createPayment(testData);
+      paymentCreationResult = await cinetpayService.createPayment(testData);
     } catch (err: any) {
       testError = { message: err.message, stack: err.stack };
     }
@@ -178,10 +180,11 @@ router.get('/debug-cinetpay', async (req: Request, res: ExpressResponse, next: N
     res.json({
       debugInfo,
       testData,
-      testResult: paymentDetails ? {
-        success: paymentDetails.status === 'success' || paymentDetails.status === 'pending',
-        status: paymentDetails.status,
-        transaction_id: paymentDetails.id,
+      testResult: paymentCreationResult ? {
+        success: paymentCreationResult.success,
+        message: paymentCreationResult.message,
+        paymentUrl: paymentCreationResult.paymentUrl,
+        transactionId: paymentCreationResult.transactionId
       } : null,
       testError
     });
@@ -200,7 +203,7 @@ router.post('/activate', subscriptionController.activateSubscription as any);
 router.get('/status/:userId', subscriptionController.checkSubscriptionStatus as any);
 
 // Callback de paiement (simulation)
-router.post('/payment-callback', async (req: ExpressRequestBase, res: ExpressResponse) => {
+router.post('/payment-callback', async (req: ExpressRequestBase, res: ExpressResponse, next: NextFunction) => {
   try {
     const { userId, status } = req.body;
     if (!userId || !status) {
@@ -222,53 +225,30 @@ router.post('/payment-callback', async (req: ExpressRequestBase, res: ExpressRes
       return res.status(400).json({ error: 'Statut de paiement invalide' });
     }
   } catch (error) {
-    return res.status(500).json({ error: 'Erreur serveur', details: (error as Error).message });
+    logger.error('Erreur dans /payment-callback:', error);
+    next(error);
   }
 });
 
 // Route de notification CinetPay
-router.post('/notify', async (req: ExpressRequestBase, res: ExpressResponse) => {
+router.post('/notify', async (req: ExpressRequestBase, res: ExpressResponse, next: NextFunction) => {
   try {
     logger.info('Notification CinetPay reçue:', req.body);
     
-    const { cpm_trans_id, cpm_result, cpm_trans_status } = req.body;
+    const { cpm_trans_id, cpm_result, cpm_trans_status, cpm_custom } = req.body;
+    const userIdFromCallback = cpm_custom;
     
     if (!cpm_trans_id) {
       logger.error('Transaction ID manquant dans la notification CinetPay');
       return res.status(400).json({ error: 'Transaction ID manquant' });
     }
 
-    const subscription = await subscriptionService.getSubscriptionByPaymentId(cpm_trans_id);
-    
-    if (!subscription) {
-      logger.error(`Abonnement introuvable pour transaction ${cpm_trans_id}`);
-      return res.status(404).json({ error: 'Abonnement non trouvé' });
-    }
-
-    if (cpm_result === '00' && cpm_trans_status === 'ACCEPTED') {
-      const endDate = new Date();
-      endDate.setMonth(endDate.getMonth() + 1);
-      
-      await subscriptionService.updateSubscription(subscription.userId, {
-        status: 'active',
-        paymentId: cpm_trans_id,
-        expiresAt: endDate
-      });
-      
-      logger.info(`Abonnement activé pour l'utilisateur ${subscription.userId}`);
-    } else {
-      await subscriptionService.updateSubscription(subscription.userId, {
-        status: 'cancelled',
-        paymentId: cpm_trans_id
-      });
-      
-      logger.info(`Paiement échoué pour l'utilisateur ${subscription.userId}`);
-    }
+    await subscriptionService.handlePaymentCallback(req.body);
 
     return res.status(200).json({ status: 'success', message: 'Notification traitée' });
   } catch (error) {
     logger.error('Erreur lors du traitement de la notification CinetPay:', error);
-    return res.status(500).json({ error: 'Erreur serveur lors du traitement de la notification' });
+    next(error);
   }
 });
 
