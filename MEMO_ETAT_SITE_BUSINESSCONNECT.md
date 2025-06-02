@@ -43,6 +43,27 @@
 
 ### Corrections et Améliorations Récentes
 
+#### 2025-06-02 (Suite)
+- Optimisation de la structure du projet :
+  - Consolidation des configurations npm dans un seul package.json
+  - Déplacement de toutes les dépendances dans le dossier server/
+  - Optimisation des scripts npm pour la production
+  - Maintien de toutes les dépendances nécessaires pour le site complet
+  - Pas de version minimaliste pour garantir le fonctionnement complet en production
+- Mise à jour des configurations de build :
+  - Utilisation de cross-env pour la compatibilité multi-plateformes
+  - Scripts optimisés pour l'environnement de production
+  - Conservation de toutes les fonctionnalités pour le déploiement
+- Nettoyage et organisation :
+  - Suppression des fichiers de configuration en double
+  - Maintien de la structure complète du projet
+  - Pas de compromis sur les fonctionnalités
+- Mises à jour de sécurité :
+  - Mise à jour de multer vers la version 3.0.0-alpha.1 pour corriger les vulnérabilités
+  - Mise à jour d'express-rate-limit vers la version 7.1.5
+  - Suppression des types redondants qui sont maintenant fournis nativement
+  - Optimisation des dépendances de développement
+
 #### 2025-06-02
 - Suppression des services inutilisés (formationService et inAppNotificationService)
 - Nettoyage des dépendances node_modules
