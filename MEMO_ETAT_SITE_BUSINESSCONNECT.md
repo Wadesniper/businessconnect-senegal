@@ -44,6 +44,11 @@
 ### Corrections et Améliorations Récentes
 
 #### 2025-06-02 (Suite)
+- Correction de la configuration Docker :
+  - Ajustement des chemins pour respecter la structure du projet
+  - Maintien de la compatibilité avec le code source existant
+  - Optimisation du .dockerignore pour une meilleure sélection des fichiers
+  - Conservation de tous les fichiers essentiels pour le fonctionnement complet
 - Optimisation de la structure du projet :
   - Consolidation des configurations npm dans un seul package.json
   - Déplacement de toutes les dépendances dans le dossier server/

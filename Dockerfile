@@ -9,9 +9,8 @@ WORKDIR /app
 
 # Copie des fichiers de configuration du serveur
 COPY server/package*.json server/tsconfig.json ./
-
-# Copie du code source
-COPY server/src ./src
+COPY server/jest.config.js ./
+COPY src ./src
 
 # Installation des dépendances avec un cache optimisé
 RUN npm ci

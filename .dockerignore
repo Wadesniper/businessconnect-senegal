@@ -38,7 +38,19 @@ coverage
 .yarn
 README.md
 docs
-test
 __tests__
 *.test.ts
-*.spec.ts 
+*.spec.ts
+
+# Fichiers spécifiques au projet
+client-vite-fix
+insert_*.js
+woman-4-test.png
+reset_admin.js
+generate_bcrypt.js
+
+# Garder les fichiers essentiels
+!src/**/*
+!server/package*.json
+!server/tsconfig.json
+!server/jest.config.js 
