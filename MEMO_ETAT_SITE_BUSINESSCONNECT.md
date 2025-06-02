@@ -321,6 +321,23 @@
   - Pas de version minimaliste
   - Installation fiable des packages
 
+#### 2025-06-02 (Suite - Retour à Docker)
+- Retour à une configuration Docker complète :
+  - Création d'un Dockerfile optimisé
+  - Conservation de toutes les fonctionnalités
+  - Build en deux étapes pour optimisation
+  - Configuration robuste pour la production
+- Amélioration de la stabilité :
+  - Gestion optimisée de la mémoire
+  - Installation fiable des dépendances
+  - Configuration claire des variables d'environnement
+  - Processus de build robuste
+- Maintien de la qualité :
+  - Aucune fonctionnalité supprimée
+  - Structure complète préservée
+  - Support complet de TypeScript
+  - Déploiement stable et fiable
+
 ### Prochaines Étapes
 
 #### Court Terme

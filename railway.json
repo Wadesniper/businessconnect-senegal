@@ -1,28 +1,11 @@
 {
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
-    "builder": {
-      "nixpacks": {
-        "providers": ["node"],
-        "setup": ["nodejs-18_x", "python3", "gcc", "make"],
-        "install": {
-          "cmds": [
-            "cd server",
-            "npm ci --only=production"
-          ]
-        },
-        "build": {
-          "cmds": [
-            "cd server",
-            "npm run build"
-          ]
-        }
-      }
-    }
+    "builder": "DOCKERFILE",
+    "dockerfilePath": "Dockerfile"
   },
   "deploy": {
     "numReplicas": 1,
-    "startCommand": "cd server && node --max-old-space-size=2048 dist/index.js",
     "healthcheckPath": "/api/health",
     "healthcheckTimeout": 300,
     "restartPolicyType": "ON_FAILURE",
