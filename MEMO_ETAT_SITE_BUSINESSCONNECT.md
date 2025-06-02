@@ -270,6 +270,23 @@
   - Structure optimisée pour le déploiement
   - Pas de compromis sur les fonctionnalités
 
+#### 2025-06-02 (Suite - Suppression Docker)
+- Migration complète vers le buildpack Node.js :
+  - Suppression de toute la configuration Docker
+  - Optimisation pour le buildpack Heroku/Node.js
+  - Configuration du cache des modules
+  - Amélioration des scripts de build
+- Simplification du déploiement :
+  - Utilisation des standards Heroku/Node.js
+  - Configuration du heroku-postbuild
+  - Gestion optimisée du cache
+  - Build plus fiable
+- Maintien de la qualité :
+  - Conservation de toutes les fonctionnalités
+  - Structure complète préservée
+  - Pas de version minimaliste
+  - Déploiement plus stable
+
 ### Prochaines Étapes
 
 #### Court Terme

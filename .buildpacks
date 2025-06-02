@@ -1,2 +1,1 @@
-docker://Dockerfile
 https://buildpack-registry.s3.amazonaws.com/buildpacks/heroku/nodejs.tgz 

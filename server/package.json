@@ -5,9 +5,9 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
-    "build": "tsc",
+    "build": "npm run clean && tsc",
     "clean": "rimraf dist",
-    "postinstall": "npm run build"
+    "heroku-postbuild": "cd server && npm run build"
   },
   "dependencies": {
     "@google-cloud/storage": "7.1.0",
@@ -46,6 +46,11 @@
     "@types/uuid": "9.0.7"
   },
   "engines": {
-    "node": "18.x"
-  }
+    "node": "18.x",
+    "npm": "10.x"
+  },
+  "cacheDirectories": [
+    "node_modules",
+    "server/node_modules"
+  ]
 }
