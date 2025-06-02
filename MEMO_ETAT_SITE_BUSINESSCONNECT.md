@@ -236,6 +236,40 @@
   - Structure complète préservée
   - Installation fiable des packages
 
+#### 2025-06-02 (Suite - Migration vers Buildpack Natif)
+- Migration vers le buildpack Node.js natif :
+  - Abandon de Docker pour plus de stabilité
+  - Utilisation du buildpack Heroku/Node.js
+  - Configuration optimisée pour Railway
+  - Installation native des dépendances
+- Simplification du déploiement :
+  - Configuration via Procfile
+  - Optimisation du package.json
+  - Gestion native des dépendances
+  - Build plus fiable
+- Maintien de la qualité :
+  - Conservation de toutes les fonctionnalités
+  - Structure complète préservée
+  - Pas de version minimaliste
+  - Déploiement plus robuste
+
+#### 2025-06-02 (Suite - Optimisation Production)
+- Optimisation du package.json pour la production :
+  - Suppression des dépendances de développement
+  - Migration des types TypeScript en dépendances de production
+  - Suppression des scripts de développement
+  - Conservation uniquement des outils nécessaires
+- Amélioration de la configuration :
+  - Simplification des scripts npm
+  - Optimisation du processus de build
+  - Configuration plus claire pour la production
+  - Réduction de la taille du bundle
+- Maintien de la qualité :
+  - Conservation des fonctionnalités essentielles
+  - Support complet de TypeScript en production
+  - Structure optimisée pour le déploiement
+  - Pas de compromis sur les fonctionnalités
+
 ### Prochaines Étapes
 
 #### Court Terme
