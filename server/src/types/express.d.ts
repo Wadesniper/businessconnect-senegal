@@ -1,5 +1,5 @@
 import { IUser } from '../models/User';
-import express, { Request as ExpressRequest, Response, NextFunction, Router, RequestHandler as ExpressRequestHandler } from 'express';
+import express, { Request as ExpressRequest, Response, NextFunction, Router } from 'express';
 import { ParamsDictionary } from 'express-serve-static-core';
 import { ParsedQs } from 'qs';
 
@@ -14,13 +14,14 @@ export interface ApiResponse<T = any> {
 }
 
 export interface Request extends ExpressRequest {
-  user?: IUser;
+  user?: UserPayload;
   file?: Express.Multer.File;
   files?: Express.Multer.File[] | { [fieldname: string]: Express.Multer.File[] };
   params: ParamsDictionary;
   body: any;
   query: ParsedQs;
   path: string;
+  ip: string;
   headers: Record<string, string | string[] | undefined>;
   header(name: string): string | undefined;
 }
@@ -48,19 +49,19 @@ export interface TypedResponse<T = any> extends Response {
   status: (code: number) => TypedResponse<T>;
 }
 
-export interface TypedRequestHandler<T = any, R = any> extends ExpressRequestHandler {
+export interface TypedRequestHandler<T = any, R = any> {
   (req: TypedRequest<T>, res: TypedResponse<R>, next: NextFunction): Promise<void> | void;
 }
 
-export interface RequestHandler extends ExpressRequestHandler {
+export interface RequestHandler {
   (req: Request, res: Response, next: NextFunction): Promise<void> | void;
 }
 
-export interface RouteHandler extends ExpressRequestHandler {
+export interface RouteHandler {
   (req: Request, res: Response): Promise<void> | void;
 }
 
-export interface AuthRouteHandler extends ExpressRequestHandler {
+export interface AuthRouteHandler {
   (req: AuthRequest, res: Response): Promise<void> | void;
 }
 

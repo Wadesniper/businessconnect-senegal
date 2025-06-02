@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response, NextFunction } from '../types/express';
 import { WebhookController } from '../controllers/webhookController';
 import { logger } from '../utils/logger';
 
@@ -9,7 +9,7 @@ const webhookController = new WebhookController();
 router.post('/cinetpay', webhookController.handleCinetPayWebhook);
 
 // Middleware de logging pour tous les webhooks
-router.use((req, res, next) => {
+router.use((req: Request, res: Response, next: NextFunction) => {
   logger.info('Webhook reçu:', {
     path: req.path,
     method: req.method,

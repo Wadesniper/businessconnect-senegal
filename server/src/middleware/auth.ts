@@ -3,9 +3,9 @@ import jwt from 'jsonwebtoken';
 import { logger } from '../utils/logger';
 import { UserPayload } from '../types/express';
 import { config } from '../config';
-import { User, IUser } from '../models/User';
+import { User } from '../models/User';
 
-export const authMiddleware = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const authenticate = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     // Vérifier le header Authorization
     const authHeader = req.headers.authorization;
@@ -89,4 +89,4 @@ export const isAdmin = async (req: AuthRequest, res: Response, next: NextFunctio
   }
 };
 
-export { authMiddleware as default }; 
+export { authenticate as default }; 
