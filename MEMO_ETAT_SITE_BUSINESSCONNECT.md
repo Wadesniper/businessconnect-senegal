@@ -423,6 +423,23 @@
   - Démarrage fiable
   - Healthcheck fonctionnel
 
+#### 2025-06-02 (Suite - Optimisation Scripts Build)
+- Simplification des scripts de build :
+  - Utilisation des commandes système standard
+  - Suppression des dépendances non essentielles
+  - Scripts plus robustes et fiables
+  - Configuration optimisée
+- Amélioration de la gestion des dépendances :
+  - TypeScript en dépendance de production
+  - Organisation claire des dépendances
+  - Installation plus fiable
+  - Build plus stable
+- Maintien de l'intégrité :
+  - Conservation de toutes les fonctionnalités
+  - Structure complète préservée
+  - Déploiement robuste
+  - Site pleinement fonctionnel
+
 ### Prochaines Étapes
 
 #### Court Terme
