@@ -2,13 +2,12 @@
 FROM node:18-bullseye AS builder
 
 # Configuration du répertoire de travail
-WORKDIR /app
+WORKDIR /app/server
 
-# Copie de tout le dossier server
-COPY server ./server
+# Copie des fichiers du serveur
+COPY . .
 
 # Installation des dépendances et build
-WORKDIR /app/server
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=2048"
 RUN npm ci && \

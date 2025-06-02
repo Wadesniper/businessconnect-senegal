@@ -1,3 +1,24 @@
+# Ignore tout par défaut
+*
+
+# Inclure uniquement les fichiers nécessaires du serveur
+!server/
+!server/**/*
+
+# Exclure les fichiers non nécessaires dans server
+server/node_modules/
+server/.env
+server/dist/
+server/coverage/
+server/logs/
+server/tmp/
+server/*.log
+
+# Fichiers de configuration nécessaires
+!package*.json
+!tsconfig.json
+!jest.config.js
+
 # Dépendances
 **/node_modules
 **/npm-debug.log
