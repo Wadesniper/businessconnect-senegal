@@ -11,8 +11,22 @@
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "*": ["node_modules/*"]
-    }
+      "*": ["node_modules/*", "src/types/*"]
+    },
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types"
+    ],
+    "types": [
+      "node",
+      "express",
+      "pdfkit",
+      "multer",
+      "nodemailer",
+      "uuid",
+      "bcryptjs",
+      "jsonwebtoken"
+    ]
   },
   "include": [
     "src/**/*"
