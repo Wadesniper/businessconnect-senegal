@@ -3,47 +3,41 @@
     "target": "es2020",
     "module": "commonjs",
     "lib": ["es2020", "dom"],
-    "strict": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "outDir": "./dist",
-    "rootDir": ".",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "declaration": true,
     "sourceMap": true,
-    "jsx": "react-jsx",
     "allowJs": true,
     "noEmit": false,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"],
-      "@server/*": ["server/*"],
-      "@config/*": ["src/config/*"],
-      "@controllers/*": ["src/controllers/*"],
-      "@models/*": ["src/models/*"],
-      "@routes/*": ["src/routes/*"],
-      "@services/*": ["src/services/*"],
-      "@utils/*": ["src/utils/*"],
-      "@middleware/*": ["src/middleware/*"],
-      "@types/*": ["src/types/*"]
-    },
+    "jsx": "react",
     "typeRoots": ["./node_modules/@types", "./src/types"],
     "types": ["node", "express", "jest"],
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": false,
     "noImplicitThis": false,
-    "strictNullChecks": false
+    "strictNullChecks": false,
+    "baseUrl": ".",
+    "paths": {
+      "*": ["node_modules/*", "src/types/*"]
+    }
   },
   "include": [
-    "src/**/*",
-    "server/**/*"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",
     "**/*.test.ts",
     "dist",
-    "client-vite-fix"
+    "client-vite-fix",
+    "client",
+    "src/pages",
+    "src/components",
+    "src/data/cv-templates.ts"
   ]
 } 

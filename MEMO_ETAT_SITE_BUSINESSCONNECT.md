@@ -49,6 +49,10 @@
 - Mise à jour des packages npm
 - Optimisation de la compilation TypeScript
 - Génération des fichiers de distribution (dist/)
+- Correction des scripts de build pour compatibilité Linux
+- Mise à jour de la configuration TypeScript (tsconfig.json)
+- Ajout du support JSX et des types manquants
+- Optimisation des chemins de modules TypeScript
 
 #### 2024-03-20
 - Refonte complète du StorageService avec pattern Singleton pour une meilleure gestion des ressources
