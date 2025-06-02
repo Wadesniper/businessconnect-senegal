@@ -373,21 +373,21 @@
   - Déploiement stable et fiable
 
 #### 2025-06-02 (Suite - Optimisation Build TypeScript)
+- Correction de la configuration TypeScript :
+  - Organisation correcte des dépendances
+  - Configuration de build robuste
+  - Scripts npm optimisés
+  - Gestion appropriée des types
 - Amélioration du processus de build :
-  - Utilisation de npx pour exécuter tsc localement
-  - Meilleure portabilité du build
-  - Pas de dépendance globale
+  - Utilisation des commandes npm standard
+  - Meilleure gestion des dépendances
   - Build plus fiable
-- Optimisation de la configuration :
-  - Utilisation des outils locaux au projet
-  - Réduction des dépendances système
-  - Process de build plus robuste
-  - Meilleure isolation
-- Maintien de la qualité :
+  - Déploiement optimisé
+- Maintien de l'intégrité :
   - Conservation de toutes les fonctionnalités
-  - Build stable et reproductible
-  - Pas de compromis sur le code
-  - Déploiement fiable
+  - Structure complète préservée
+  - Support TypeScript complet
+  - Site pleinement fonctionnel
 
 #### 2025-06-02 (Suite - Configuration Healthcheck)
 - Ajout d'un endpoint de healthcheck public :
