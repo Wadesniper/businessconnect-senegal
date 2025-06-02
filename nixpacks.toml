@@ -5,14 +5,16 @@ aptPkgs = ['ca-certificates', 'curl', 'gnupg']
 [phases.install]
 cmds = [
     'cd server',
+    'npm config set registry https://registry.npmjs.org/',
     'npm config set fetch-retries 5',
-    'npm ci --only=production'
+    'npm config set network-timeout 300000',
+    'npm ci --only=production --no-audit --no-fund --prefer-offline'
 ]
 
 [phases.build]
 cmds = [
     'cd server',
-    'npm ci',
+    'npm ci --no-audit --no-fund --prefer-offline',
     'npm run build'
 ]
 
@@ -24,9 +26,13 @@ NODE_ENV = 'production'
 NODE_OPTIONS = '--max-old-space-size=2048'
 NPM_CONFIG_LOGLEVEL = 'error'
 NPM_CONFIG_FETCH_RETRIES = '5'
+NPM_CONFIG_REGISTRY = 'https://registry.npmjs.org/'
+NPM_CONFIG_NETWORK_TIMEOUT = '300000'
 PORT = '3000'
 
 [phases.setup.env]
 NODE_ENV = 'production'
 NODE_OPTIONS = '--max-old-space-size=2048'
-NPM_CONFIG_LOGLEVEL = 'error' 
+NPM_CONFIG_LOGLEVEL = 'error'
+NPM_CONFIG_REGISTRY = 'https://registry.npmjs.org/'
+NPM_CONFIG_NETWORK_TIMEOUT = '300000' 
