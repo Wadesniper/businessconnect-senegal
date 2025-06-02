@@ -134,6 +134,23 @@
 - Correction des types TypeScript pour améliorer la stabilité du backend
 - Mise à jour des interfaces d'authentification pour une meilleure sécurité
 
+#### 2025-06-02 (Suite - Migration vers Debian)
+- Migration vers une image Docker plus stable :
+  - Passage de Alpine Linux à Debian Bullseye
+  - Meilleure compatibilité avec les dépendances natives
+  - Installation plus fiable des packages système
+  - Optimisation de l'espace de build
+- Amélioration de la configuration npm :
+  - Réduction des logs pour optimiser les performances
+  - Configuration optimisée du cache npm
+  - Augmentation de la limite de mémoire à 2GB
+  - Installation plus efficace des dépendances
+- Optimisation de la production :
+  - Installation minimale des dépendances système
+  - Configuration robuste pour l'environnement de production
+  - Maintien de toutes les fonctionnalités du site
+  - Performance et stabilité améliorées
+
 ### Prochaines Étapes
 
 #### Court Terme
