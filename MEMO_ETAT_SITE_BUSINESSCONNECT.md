@@ -185,6 +185,23 @@
   - Structure complète préservée
   - Stabilité du déploiement renforcée
 
+#### 2025-06-02 (Suite - Optimisation Image Docker)
+- Amélioration de la stabilité du build Docker :
+  - Migration vers une image Debian plus légère
+  - Installation directe de Node.js via nodesource
+  - Réduction des couches Docker
+  - Optimisation de la taille de l'image
+- Simplification de la configuration :
+  - Installation plus directe des dépendances
+  - Réduction des étapes intermédiaires
+  - Meilleure gestion des certificats
+  - Configuration plus robuste
+- Maintien de la qualité :
+  - Conservation de toutes les fonctionnalités
+  - Pas de version minimaliste
+  - Structure complète préservée
+  - Stabilité du déploiement renforcée
+
 ### Prochaines Étapes
 
 #### Court Terme
