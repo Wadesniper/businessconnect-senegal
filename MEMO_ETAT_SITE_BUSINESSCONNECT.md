@@ -304,6 +304,23 @@
   - Pas de version minimaliste
   - Stabilité accrue du déploiement
 
+#### 2025-06-02 (Suite - Configuration Nixpacks)
+- Configuration explicite de nixpacks :
+  - Configuration détaillée dans railway.json
+  - Création du fichier nixpacks.toml dédié
+  - Définition claire des phases de build
+  - Optimisation des commandes d'installation
+- Amélioration de la stabilité :
+  - Configuration plus précise et robuste
+  - Meilleure gestion des dépendances
+  - Processus de build plus fiable
+  - Déploiement plus stable
+- Maintien de la qualité :
+  - Conservation de toutes les fonctionnalités
+  - Structure complète préservée
+  - Pas de version minimaliste
+  - Installation fiable des packages
+
 ### Prochaines Étapes
 
 #### Court Terme
