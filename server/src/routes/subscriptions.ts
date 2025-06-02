@@ -1,5 +1,5 @@
 import express, { Router } from 'express';
-import { Request, Response } from 'express';
+import { Request, Response, AuthRequest } from '../types/express';
 import { SubscriptionService } from '../services/subscriptionService';
 import { logger } from '../utils/logger';
 import { authenticate } from '../middleware/auth';
@@ -34,13 +34,12 @@ router.get('/:userId', authenticate, async (req: Request, res: Response) => {
     const subscription = await subscriptionService.getSubscription(userId);
     
     if (!subscription) {
-      res.status(404).json({ error: 'Abonnement non trouvé' });
-      return;
+      return res.status(404).json({ error: 'Abonnement non trouvé' });
     }
-    res.json(subscription);
+    return res.json(subscription);
   } catch (error) {
     logger.error('Erreur lors de la récupération de l\'abonnement:', error);
-    res.status(500).json({ error: 'Erreur serveur lors de la récupération de l\'abonnement' });
+    return res.status(500).json({ error: 'Erreur serveur lors de la récupération de l\'abonnement' });
   }
 });
 
@@ -215,34 +214,29 @@ router.post('/activate', subscriptionController.activateSubscription);
 router.get('/status/:userId', subscriptionController.checkSubscriptionStatus);
 
 // Callback de paiement (simulation)
-router.post('/payment-callback', async (req: Request, res: Response): Promise<void> => {
+router.post('/payment-callback', async (req: Request, res: Response) => {
   try {
     const { userId, status } = req.body;
     if (!userId || !status) {
-      res.status(400).json({ error: 'Paramètres manquants' });
-      return;
+      return res.status(400).json({ error: 'Paramètres manquants' });
     }
-    // Récupérer l'abonnement le plus récent
+    
     const subscription = await subscriptionService.getSubscription(userId);
     if (!subscription) {
-      res.status(404).json({ error: 'Abonnement non trouvé' });
-      return;
+      return res.status(404).json({ error: 'Abonnement non trouvé' });
     }
+    
     if (status === 'success') {
       const updated = await subscriptionService.updateSubscription(userId, { status: 'active' });
-      res.status(200).json({ message: 'Abonnement activé', subscription: updated });
-      return;
+      return res.status(200).json({ message: 'Abonnement activé', subscription: updated });
     } else if (status === 'expired') {
       const updated = await subscriptionService.updateSubscription(userId, { status: 'expired' });
-      res.status(200).json({ message: 'Abonnement expiré', subscription: updated });
-      return;
+      return res.status(200).json({ message: 'Abonnement expiré', subscription: updated });
     } else {
-      res.status(400).json({ error: 'Statut de paiement invalide' });
-      return;
+      return res.status(400).json({ error: 'Statut de paiement invalide' });
     }
   } catch (error) {
-    res.status(500).json({ error: 'Erreur serveur', details: (error as Error).message });
-    return;
+    return res.status(500).json({ error: 'Erreur serveur', details: (error as Error).message });
   }
 });
 

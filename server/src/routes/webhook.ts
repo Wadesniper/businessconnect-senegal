@@ -1,12 +1,11 @@
-import { Router, Request, Response, NextFunction, RouteHandler } from '../types/express';
-import { WebhookController } from '../controllers/webhookController';
+import { Router } from 'express';
+import { Request, Response, NextFunction } from '../types/express';
 import { logger } from '../utils/logger';
 
 const router = Router();
-const webhookController = new WebhookController();
 
-// Middleware de logging pour tous les webhooks
-const loggingMiddleware: RouteHandler = (req: Request, res: Response, next: NextFunction) => {
+// Middleware de logging pour les webhooks
+const logWebhook = (req: Request, res: Response, next: NextFunction) => {
   logger.info('Webhook reçu:', {
     path: req.path,
     method: req.method,
@@ -16,15 +15,20 @@ const loggingMiddleware: RouteHandler = (req: Request, res: Response, next: Next
   next();
 };
 
-router.use(loggingMiddleware);
+router.use(logWebhook);
 
-// Route pour le webhook CinetPay
-router.post('/cinetpay', async (req: Request, res: Response) => {
+// Route de webhook CinetPay
+router.post('/', async (req: Request, res: Response) => {
   try {
-    await webhookController.handleCinetPayWebhook(req, res);
+    // Traitement du webhook
+    logger.info('Traitement du webhook CinetPay:', req.body);
+    
+    // TODO: Implémenter la logique de traitement
+    
+    return res.status(200).json({ success: true });
   } catch (error) {
-    logger.error('Erreur lors du traitement du webhook CinetPay:', error);
-    res.status(500).json({ error: 'Erreur lors du traitement du webhook' });
+    logger.error('Erreur lors du traitement du webhook:', error);
+    return res.status(500).json({ success: false, error: 'Erreur interne' });
   }
 });
 
