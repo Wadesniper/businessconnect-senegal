@@ -254,21 +254,21 @@
   - Déploiement plus robuste
 
 #### 2025-06-02 (Suite - Optimisation Production)
-- Optimisation du package.json pour la production :
-  - Suppression des dépendances de développement
-  - Migration des types TypeScript en dépendances de production
-  - Suppression des scripts de développement
-  - Conservation uniquement des outils nécessaires
-- Amélioration de la configuration :
-  - Simplification des scripts npm
-  - Optimisation du processus de build
-  - Configuration plus claire pour la production
+- Optimisation du build de production :
+  - Séparation des configurations de développement et production
+  - Exclusion des tests du build de production
+  - Configuration TypeScript optimisée pour la production
   - Réduction de la taille du bundle
-- Maintien de la qualité :
-  - Conservation des fonctionnalités essentielles
-  - Support complet de TypeScript en production
-  - Structure optimisée pour le déploiement
+- Amélioration de la stabilité :
+  - Focus sur le code de production essentiel
+  - Élimination des dépendances de test non nécessaires
+  - Build plus rapide et plus léger
+  - Déploiement plus fiable
+- Maintien de l'intégrité :
+  - Conservation de toutes les fonctionnalités de production
+  - Structure complète du code métier préservée
   - Pas de compromis sur les fonctionnalités
+  - Site complet pleinement fonctionnel
 
 #### 2025-06-02 (Suite - Suppression Docker)
 - Migration complète vers le buildpack Node.js :

@@ -11,10 +11,9 @@ COPY . .
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=2048"
 
-# Installation des dépendances de développement nécessaires pour le build
+# Build de production sans les tests
 RUN npm ci && \
-    npm install --save-dev @types/jest && \
-    npm run build
+    tsc --project tsconfig.prod.json
 
 # Étape de production
 FROM node:18-bullseye
