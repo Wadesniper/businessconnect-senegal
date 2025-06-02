@@ -1,112 +1,117 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
-const mongoose_1 = require("mongoose");
-// Schéma Mongoose avec validation
+const mongoose_1 = __importStar(require("mongoose"));
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const userSchema = new mongoose_1.Schema({
-    firstName: {
-        type: String,
-        required: [true, 'Le prénom est requis'],
-        trim: true,
-        minlength: [2, 'Le prénom doit contenir au moins 2 caractères']
-    },
-    lastName: {
-        type: String,
-        required: [true, 'Le nom est requis'],
-        trim: true,
-        minlength: [2, 'Le nom doit contenir au moins 2 caractères']
-    },
-    email: {
-        type: String,
-        sparse: true,
-        unique: true,
-        trim: true,
-        lowercase: true,
-        validate: {
-            validator: function (v) {
-                // Si l'email n'est pas fourni, c'est valide
-                if (!v)
-                    return true;
-                // Sinon on vérifie le format
-                return /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v);
-            },
-            message: 'Veuillez fournir un email valide'
-        },
-        // Ne pas inclure le champ si la valeur est null ou undefined
-        set: function (v) {
-            if (!v)
-                return undefined;
-            return v.toLowerCase().trim();
-        }
-    },
-    password: {
-        type: String,
-        required: [true, 'Le mot de passe est requis'],
-        minlength: [6, 'Le mot de passe doit contenir au moins 6 caractères'],
-        select: false
-    },
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    phone: { type: String, required: true },
+    password: { type: String, required: true },
     role: {
         type: String,
-        enum: {
-            values: ['admin', 'etudiant', 'annonceur', 'recruteur'],
-            message: 'Le rôle doit être soit "admin", "etudiant", "annonceur" ou "recruteur"'
-        },
+        required: true,
+        enum: ['admin', 'etudiant', 'annonceur', 'recruteur'],
         default: 'etudiant'
     },
-    phoneNumber: {
-        type: String,
-        required: [true, 'Le numéro de téléphone est requis'],
-        unique: true,
-        trim: true,
-        validate: {
-            validator: function (v) {
-                // Nettoie le numéro en gardant uniquement les chiffres et le +
-                let cleaned = v.replace(/[^0-9+]/g, '');
-                // Si le numéro commence par +, c'est déjà au format international
-                if (cleaned.startsWith('+')) {
-                    // Vérifie que le numéro a une longueur valide (indicatif + 8 chiffres minimum)
-                    if (cleaned.length >= 10)
-                        return true;
-                    return false;
-                }
-                // Si le numéro commence par 77, 78, ou 76 (numéros sénégalais)
-                if (/^(77|78|76|70)\d{7}$/.test(cleaned)) {
-                    return true;
-                }
-                return false;
-            },
-            message: 'Le numéro de téléphone doit commencer par 70, 76, 77 ou 78 pour les numéros sénégalais'
+    isVerified: { type: Boolean, default: false },
+    verificationToken: String,
+    resetPasswordToken: String,
+    resetPasswordExpires: Date,
+    lastLogin: Date,
+    subscription: {
+        type: {
+            type: String,
+            enum: ['etudiant', 'annonceur', 'recruteur']
+        },
+        status: {
+            type: String,
+            enum: ['active', 'expired'],
+            default: 'active'
+        },
+        startDate: Date,
+        endDate: Date,
+        paymentId: String
+    }
+}, {
+    timestamps: true,
+    toObject: {
+        virtuals: true,
+        transform: function (doc, ret) {
+            ret.id = ret._id.toString();
+            delete ret._id;
+            delete ret.__v;
+            delete ret.password;
+            return ret;
         }
     },
-    isVerified: {
-        type: Boolean,
-        default: false
-    },
-    resetPasswordToken: String,
-    resetPasswordExpire: Date,
-    createdAt: {
-        type: Date,
-        default: Date.now
-    },
-    preferences: {
-        type: {
-            notifications: { type: Boolean, default: true },
-            newsletter: { type: Boolean, default: true },
-            language: { type: String, default: 'fr' }
-        },
-        default: {}
-    },
-    notifications: [{
-            message: { type: String, required: true },
-            read: { type: Boolean, default: false },
-            createdAt: { type: Date, default: Date.now }
-        }]
+    toJSON: {
+        virtuals: true,
+        transform: function (doc, ret) {
+            ret.id = ret._id.toString();
+            delete ret._id;
+            delete ret.__v;
+            delete ret.password;
+            return ret;
+        }
+    }
 });
-// Supprime l'index email existant
-userSchema.collection.dropIndex('email_1')
-    .catch(err => console.log('Index email_1 n\'existe pas encore'));
-// Recrée l'index avec les bonnes options
-userSchema.index({ email: 1 }, { unique: true, sparse: true, background: true });
-userSchema.index({ phoneNumber: 1 }, { unique: true });
-exports.User = (0, mongoose_1.model)('User', userSchema);
+userSchema.pre('save', async function (next) {
+    if (!this.isModified('password'))
+        return next();
+    try {
+        const salt = await bcryptjs_1.default.genSalt(10);
+        this.password = await bcryptjs_1.default.hash(this.password, salt);
+        next();
+    }
+    catch (error) {
+        next(error);
+    }
+});
+userSchema.methods.comparePassword = async function (candidatePassword) {
+    try {
+        return await bcryptjs_1.default.compare(candidatePassword, this.password);
+    }
+    catch (error) {
+        throw error;
+    }
+};
+exports.User = mongoose_1.default.model('User', userSchema);
 //# sourceMappingURL=User.js.map

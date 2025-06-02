@@ -1,70 +1,36 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authController = void 0;
+exports.authController = exports.authValidation = void 0;
+const express_validator_1 = require("express-validator");
 const User_1 = require("../models/User");
-const bcryptjs_1 = __importDefault(require("bcryptjs"));
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const config_1 = require("../config");
-const emailService_1 = require("../services/emailService");
+const authService_1 = require("../services/authService");
+const notificationService_1 = require("../services/notificationService");
 const logger_1 = require("../utils/logger");
+exports.authValidation = [
+    (0, express_validator_1.check)('email').isEmail().withMessage('Email invalide'),
+    (0, express_validator_1.check)('password').isLength({ min: 6 }).withMessage('Le mot de passe doit contenir au moins 6 caractères')
+];
 exports.authController = {
-    register: async (req, res) => {
+    async register(req, res) {
         try {
-            const { firstName, lastName, email, phoneNumber, password } = req.body;
-            // Validation des champs requis
-            if (!firstName || !lastName || !phoneNumber || !password) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Veuillez remplir tous les champs obligatoires'
-                });
-            }
-            // Vérifier si l'utilisateur existe déjà
-            const existingUser = await User_1.User.findOne({
-                $or: [
-                    { email: email?.toLowerCase() },
-                    { phoneNumber }
-                ]
-            });
+            const { firstName, lastName, email, phone, password, role } = req.body;
+            const existingUser = await User_1.User.findOne({ email });
             if (existingUser) {
-                const field = existingUser.phoneNumber === phoneNumber ? 'téléphone' : 'email';
                 return res.status(400).json({
                     success: false,
-                    message: `Un utilisateur avec cet ${field} existe déjà`
+                    message: 'Un utilisateur avec cet email existe déjà'
                 });
             }
-            // Hasher le mot de passe
-            const salt = await bcryptjs_1.default.genSalt(10);
-            const hashedPassword = await bcryptjs_1.default.hash(password, salt);
-            // Créer le nouvel utilisateur
             const user = await User_1.User.create({
                 firstName,
                 lastName,
-                email: email?.toLowerCase(),
-                phoneNumber,
-                password: hashedPassword,
-                role: 'etudiant'
+                email,
+                phone,
+                password,
+                role
             });
-            // Générer le token JWT
-            const token = jsonwebtoken_1.default.sign({
-                id: user._id,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                email: user.email,
-                phoneNumber: user.phoneNumber,
-                role: user.role
-            }, config_1.config.JWT_SECRET, { expiresIn: config_1.config.JWT_EXPIRES_IN });
-            // Si un email est fourni, envoyer l'email de vérification
-            if (email) {
-                try {
-                    await (0, emailService_1.sendVerificationEmail)(email, user._id.toString());
-                }
-                catch (error) {
-                    logger_1.logger.error('Erreur lors de l\'envoi de l\'email de vérification:', error);
-                }
-            }
+            const token = await authService_1.AuthService.generateAuthToken(user);
+            await notificationService_1.NotificationService.sendWelcomeEmail(user);
             res.status(201).json({
                 success: true,
                 token,
@@ -73,7 +39,7 @@ exports.authController = {
                     firstName: user.firstName,
                     lastName: user.lastName,
                     email: user.email,
-                    phoneNumber: user.phoneNumber,
+                    phone: user.phone,
                     role: user.role
                 }
             });
@@ -86,46 +52,18 @@ exports.authController = {
             });
         }
     },
-    login: async (req, res) => {
+    async login(req, res) {
         try {
-            const { email, phoneNumber, password } = req.body;
-            if (!password || (!email && !phoneNumber)) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Veuillez fournir un email ou un numéro de téléphone et un mot de passe'
-                });
-            }
-            // Trouver l'utilisateur par email ou téléphone
-            const user = await User_1.User.findOne({
-                $or: [
-                    { email: email?.toLowerCase() },
-                    { phoneNumber }
-                ]
-            });
+            const { email, password } = req.body;
+            const user = await authService_1.AuthService.validateUser(email, password);
             if (!user) {
                 return res.status(401).json({
                     success: false,
-                    message: 'Identifiants incorrects'
+                    message: 'Email ou mot de passe incorrect'
                 });
             }
-            // Vérifier le mot de passe
-            const isMatch = await bcryptjs_1.default.compare(password, user.password);
-            if (!isMatch) {
-                return res.status(401).json({
-                    success: false,
-                    message: 'Identifiants incorrects'
-                });
-            }
-            // Générer le token JWT
-            const token = jsonwebtoken_1.default.sign({
-                id: user._id,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                email: user.email,
-                phoneNumber: user.phoneNumber,
-                role: user.role
-            }, config_1.config.JWT_SECRET, { expiresIn: config_1.config.JWT_EXPIRES_IN });
-            res.json({
+            const token = await authService_1.AuthService.generateAuthToken(user);
+            res.status(200).json({
                 success: true,
                 token,
                 user: {
@@ -133,9 +71,8 @@ exports.authController = {
                     firstName: user.firstName,
                     lastName: user.lastName,
                     email: user.email,
-                    phoneNumber: user.phoneNumber,
-                    role: user.role,
-                    isVerified: user.isVerified
+                    phone: user.phone,
+                    role: user.role
                 }
             });
         }

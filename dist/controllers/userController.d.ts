@@ -1,0 +1,20 @@
+import { Request, Response } from 'express';
+type AuthRequest = Request;
+export declare const userController: {
+    register: (req: Request, res: Response) => Promise<void>;
+    login: (req: Request, res: Response) => Promise<Response<any, Record<string, any>>>;
+    forgotPassword: (req: Request, res: Response) => Promise<Response<any, Record<string, any>>>;
+    resetPassword: (req: Request, res: Response) => Promise<Response<any, Record<string, any>>>;
+    getProfile: (req: Request, res: Response) => Promise<Response<any, Record<string, any>>>;
+    updateProfile: (req: Request, res: Response) => Promise<Response<any, Record<string, any>>>;
+    updatePassword: (req: Request, res: Response) => Promise<Response<any, Record<string, any>>>;
+    deleteAccount: (req: Request, res: Response) => Promise<Response<any, Record<string, any>>>;
+    getAllUsers: (req: Request, res: Response) => Promise<Response<any, Record<string, any>>>;
+    updateUser: (req: Request, res: Response) => Promise<Response<any, Record<string, any>>>;
+    deleteUser: (req: Request, res: Response) => Promise<Response<any, Record<string, any>>>;
+    getPreferences(req: AuthRequest, res: Response): Promise<Response<any, Record<string, any>>>;
+    updatePreferences(req: AuthRequest, res: Response): Promise<Response<any, Record<string, any>>>;
+    getNotifications(req: AuthRequest, res: Response): Promise<Response<any, Record<string, any>>>;
+    updateNotificationStatus(req: AuthRequest, res: Response): Promise<Response<any, Record<string, any>>>;
+};
+export {};

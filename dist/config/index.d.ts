@@ -1,21 +1,20 @@
-export interface Config {
+export declare const config: {
     NODE_ENV: string;
-    PORT: number;
+    PORT: string | number;
     MONGODB_URI: string;
     JWT_SECRET: string;
     JWT_EXPIRES_IN: string;
     SMTP_HOST: string;
-    SMTP_PORT: number;
+    SMTP_PORT: string | number;
     SMTP_SECURE: boolean;
+    SMTP_SERVICE: string;
     SMTP_USER: string;
     SMTP_PASSWORD: string;
     SMTP_FROM: string;
+    FRONTEND_URL: string;
     CLIENT_URL: string;
     API_URL: string;
-    CINETPAY_APIKEY: string;
-    CINETPAY_SITE_ID: string;
-    CINETPAY_BASE_URL: string;
-    CINETPAY_NOTIFY_URL: string;
-    CINETPAY_RETURN_URL: string;
-}
-export declare const config: Config;
+    MAX_FILE_SIZE: string;
+    UPLOAD_PATH: string;
+    LOG_LEVEL: string;
+};

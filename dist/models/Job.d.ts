@@ -3,17 +3,15 @@ export interface IJob extends Document {
     title: string;
     company: string;
     location: string;
-    jobType?: string;
+    type?: string;
     sector?: string;
     description?: string;
     requirements?: string[];
-    contactEmail?: string;
-    contactPhone?: string;
-    createdBy: string;
+    createdAt: Date;
+    updatedAt: Date;
 }
-declare const _default: mongoose.Model<IJob, {}, {}, {}, mongoose.Document<unknown, {}, IJob, {}> & IJob & Required<{
+export declare const Job: mongoose.Model<IJob, {}, {}, {}, mongoose.Document<unknown, {}, IJob, {}> & IJob & Required<{
     _id: unknown;
 }> & {
     __v: number;
 }, any>;
-export default _default;

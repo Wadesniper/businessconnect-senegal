@@ -1,29 +1,31 @@
-export interface IUser {
-    _id: string;
+import mongoose, { Document } from 'mongoose';
+export interface ISubscription {
+    type: 'etudiant' | 'annonceur' | 'recruteur';
+    status: 'active' | 'expired';
+    startDate: Date;
+    endDate: Date;
+    paymentId?: string;
+}
+export interface IUser extends Document {
+    id: string;
     firstName: string;
     lastName: string;
-    email?: string;
+    email: string;
+    phone: string;
     password: string;
     role: 'admin' | 'etudiant' | 'annonceur' | 'recruteur';
-    phoneNumber: string;
     isVerified: boolean;
+    verificationToken?: string;
     resetPasswordToken?: string;
-    resetPasswordExpire?: Date;
+    resetPasswordExpires?: Date;
+    lastLogin?: Date;
     createdAt: Date;
-    preferences?: {
-        notifications: boolean;
-        newsletter: boolean;
-        language: string;
-    };
-    notifications?: Array<{
-        _id: string;
-        message: string;
-        read: boolean;
-        createdAt: Date;
-    }>;
+    updatedAt: Date;
+    subscription?: ISubscription;
+    comparePassword(candidatePassword: string): Promise<boolean>;
 }
-export declare const User: import("mongoose").Model<IUser, {}, {}, {}, import("mongoose").Document<unknown, {}, IUser, {}> & IUser & Required<{
-    _id: string;
+export declare const User: mongoose.Model<IUser, {}, {}, {}, mongoose.Document<unknown, {}, IUser, {}> & IUser & Required<{
+    _id: unknown;
 }> & {
     __v: number;
 }, any>;
