@@ -69,6 +69,23 @@
   - Suppression des types redondants qui sont maintenant fournis nativement
   - Optimisation des dépendances de développement
 
+#### 2025-06-02 (Suite - Correction Déploiement)
+- Correction des erreurs de build Docker :
+  - Ajustement des chemins de copie dans le Dockerfile pour correspondre à la structure du projet
+  - Correction de la copie des fichiers de configuration (package.json, tsconfig.json, jest.config.js)
+  - Maintien de la structure complète du projet sans version minimaliste
+  - Vérification de la présence de tous les fichiers nécessaires
+- Organisation optimisée des fichiers :
+  - Scripts d'insertion d'emplois déplacés dans server/scripts/jobs/
+  - Scripts utilitaires (reset_admin.js, generate_bcrypt.js) déplacés dans server/scripts/
+  - Suppression des fichiers redondants à la racine (node_modules, dist, tsconfig.json)
+  - Conservation de toutes les fonctionnalités et du code essentiel
+- Structure du projet clarifiée :
+  - Backend complet dans le dossier server/
+  - Configuration de build dans les bons emplacements
+  - Pas de compromis sur les fonctionnalités pour la production
+  - Maintien de toutes les dépendances nécessaires
+
 #### 2025-06-02
 - Suppression des services inutilisés (formationService et inAppNotificationService)
 - Nettoyage des dépendances node_modules

@@ -38,9 +38,6 @@ coverage
 .yarn
 README.md
 docs
-__tests__
-*.test.ts
-*.spec.ts
 
 # Fichiers spécifiques au projet
 client-vite-fix
@@ -50,7 +47,7 @@ reset_admin.js
 generate_bcrypt.js
 
 # Garder les fichiers essentiels
-!src/**/*
+!server/src/**/*
 !server/package*.json
 !server/tsconfig.json
 !server/jest.config.js 

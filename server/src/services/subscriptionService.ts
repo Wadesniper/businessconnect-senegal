@@ -2,27 +2,75 @@ import { v4 as uuidv4 } from 'uuid';
 import { logger } from '../utils/logger';
 import { Subscription } from '../models/subscription';
 import { cinetpayService } from './cinetpayService';
+import { StorageService } from './storageService';
+
+interface SubscriptionPlan {
+  type: 'etudiant' | 'annonceur' | 'recruteur';
+  price: number;
+  duration: number;
+}
+
+interface InitiateSubscriptionParams {
+  type: string;
+  customer_name: string;
+  customer_surname: string;
+  customer_email: string;
+  customer_phone_number: string;
+  userId: string;
+}
+
+interface Subscription {
+  id: string;
+  userId: string;
+  type: string;
+  status: 'pending' | 'active' | 'expired' | 'cancelled';
+  paymentId: string;
+  createdAt: Date;
+  activatedAt?: Date;
+  expiresAt?: Date;
+  [key: string]: unknown;
+}
+
+interface SubscriptionStatus {
+  isActive: boolean;
+  type?: string;
+  expiresAt?: Date;
+}
+
+interface SubscriptionUpdateData extends Partial<Subscription> {
+  status?: 'pending' | 'active' | 'expired' | 'cancelled';
+}
 
 export class SubscriptionService {
-  // Prix des abonnements en FCFA (multiples de 5 pour CinetPay)
-  private readonly SUBSCRIPTION_PRICES: { [key: string]: number } = {
-    etudiant: 1000,    // 1,000 FCFA / mois
-    annonceur: 5000,   // 5,000 FCFA / mois
-    recruteur: 9000    // 9,000 FCFA / mois
+  private plans: Record<string, SubscriptionPlan> = {
+    etudiant: {
+      type: 'etudiant',
+      price: 1000,
+      duration: 30
+    },
+    annonceur: {
+      type: 'annonceur',
+      price: 5000,
+      duration: 30
+    },
+    recruteur: {
+      type: 'recruteur',
+      price: 9000,
+      duration: 30
+    }
   };
 
-  public getSubscriptionPrice(type: string): number {
-    return this.SUBSCRIPTION_PRICES[type] || 0;
+  private storageService: StorageService;
+
+  constructor() {
+    this.storageService = new StorageService();
   }
 
-  public async initiatePayment(params: {
-    type: string,
-    customer_name: string,
-    customer_surname: string,
-    customer_email: string,
-    customer_phone_number: string,
-    userId: string
-  }): Promise<{ redirectUrl: string; paymentId: string }> {
+  public getSubscriptionPrice(type: string): number {
+    return this.plans[type]?.price || 0;
+  }
+
+  async initiateSubscription(params: InitiateSubscriptionParams) {
     try {
       // Vérifier si l'utilisateur a déjà un abonnement actif
       const existingSubscription = await this.getActiveSubscription(params.userId);
@@ -30,65 +78,165 @@ export class SubscriptionService {
         throw new Error('Vous avez déjà un abonnement actif');
       }
 
-      // Calculer le montant
-      const amount = this.getSubscriptionPrice(params.type);
-      if (!amount) {
-        throw new Error(`Type d'abonnement invalide: ${params.type}`);
+      // Initier le paiement avec CinetPay
+      const plan = this.plans[params.type];
+      if (!plan) {
+        throw new Error('Type d\'abonnement invalide');
       }
 
-      // Générer un ID de transaction unique
-      const transaction_id = uuidv4();
-      
-      // Formater le numéro de téléphone
-      let phoneNumber = params.customer_phone_number;
-      if (!phoneNumber.startsWith('+')) {
-        if (phoneNumber.startsWith('7')) {
-          phoneNumber = '+221' + phoneNumber;
-        }
-      }
-      
-      // Initialiser le paiement avec CinetPay
       const payment = await cinetpayService.initializePayment({
-        amount,
-        transaction_id,
+        amount: plan.price,
         customer_name: params.customer_name,
         customer_surname: params.customer_surname,
-        customer_email: params.customer_email || `user${phoneNumber.replace(/[^0-9]/g, '')}@businessconnect.sn`,
-        customer_phone_number: phoneNumber,
-        description: `Abonnement ${params.type} BusinessConnect Sénégal`,
-        customer_country: 'SN',
-        customer_state: 'DK',
-        customer_city: 'Dakar',
-        customer_address: 'Dakar',
-        customer_zip_code: '12000'
+        customer_email: params.customer_email,
+        customer_phone_number: params.customer_phone_number,
+        description: `Abonnement ${plan.type} - BusinessConnect`
       });
 
-      // Créer un abonnement en attente
-      await this.createPendingSubscription(params.userId, params.type, transaction_id);
+      if (!payment.success || !payment.transaction_id) {
+        throw new Error(payment.message || 'Erreur lors de l\'initialisation du paiement');
+      }
+
+      // Créer l'abonnement en attente
+      await this.createSubscription(params.userId, params.type, payment.transaction_id);
 
       return {
-        redirectUrl: payment.payment_url,
-        paymentId: transaction_id
+        paymentUrl: payment.payment_url,
+        transactionId: payment.transaction_id
       };
-    } catch (error: any) {
-      logger.error('Erreur lors de l\'initiation du paiement CinetPay:', error);
-      throw new Error(error.message || 'Erreur lors de l\'initiation du paiement');
+    } catch (error) {
+      logger.error('Erreur lors de l\'initiation de l\'abonnement:', error);
+      throw error;
     }
   }
 
-  private async createPendingSubscription(userId: string, type: string, paymentId: string) {
+  async activateSubscription(userId: string, type: string, paymentId: string) {
     try {
-      const subscription = new Subscription({
+      const subscription = await this.getSubscriptionByPaymentId(paymentId);
+      if (!subscription) {
+        throw new Error('Abonnement non trouvé');
+      }
+
+      if (subscription.status === 'active') {
+        throw new Error('Cet abonnement est déjà actif');
+      }
+
+      const plan = this.plans[type];
+      if (!plan) {
+        throw new Error('Type d\'abonnement invalide');
+      }
+
+      const expiresAt = new Date();
+      expiresAt.setDate(expiresAt.getDate() + plan.duration);
+
+      const updatedSubscription: Subscription = {
+        ...subscription,
+        status: 'active',
+        activatedAt: new Date(),
+        expiresAt
+      };
+
+      await this.storageService.save('subscriptions', updatedSubscription);
+
+      return {
+        success: true,
+        subscription: updatedSubscription
+      };
+    } catch (error) {
+      logger.error('Erreur lors de l\'activation de l\'abonnement:', error);
+      throw error;
+    }
+  }
+
+  async checkSubscriptionStatus(userId: string): Promise<SubscriptionStatus> {
+    try {
+      const subscription = await this.getActiveSubscription(userId);
+      
+      if (!subscription) {
+        return { isActive: false };
+      }
+
+      const now = new Date();
+      const expiresAt = new Date(subscription.expiresAt || now);
+      const isActive = now < expiresAt;
+
+      return {
+        isActive,
+        type: subscription.type,
+        expiresAt
+      };
+    } catch (error) {
+      logger.error('Erreur lors de la vérification du statut de l\'abonnement:', error);
+      throw error;
+    }
+  }
+
+  async getActiveSubscription(userId: string): Promise<Subscription | null> {
+    try {
+      const subscriptions = await this.storageService.list<Subscription>('subscriptions', {
+        userId,
+        status: 'active'
+      });
+
+      if (subscriptions.length === 0) {
+        return null;
+      }
+
+      const subscription = subscriptions[0];
+      const now = new Date();
+      const expiresAt = new Date(subscription.expiresAt || now);
+
+      if (now > expiresAt) {
+        // Marquer l'abonnement comme expiré
+        const expiredSubscription: Subscription = {
+          ...subscription,
+          status: 'expired'
+        };
+        await this.storageService.save('subscriptions', expiredSubscription);
+        return null;
+      }
+
+      return subscription;
+    } catch (error) {
+      logger.error('Erreur lors de la récupération de l\'abonnement actif:', error);
+      throw error;
+    }
+  }
+
+  async getSubscriptionByPaymentId(paymentId: string): Promise<Subscription | null> {
+    try {
+      const subscriptions = await this.storageService.list<Subscription>('subscriptions', {
+        paymentId
+      });
+
+      return subscriptions.length > 0 ? subscriptions[0] : null;
+    } catch (error) {
+      logger.error('Erreur lors de la récupération de l\'abonnement par paymentId:', error);
+      throw error;
+    }
+  }
+
+  async createSubscription(userId: string, type: string, paymentId: string): Promise<Subscription> {
+    try {
+      const plan = this.plans[type];
+      if (!plan) {
+        throw new Error('Type d\'abonnement invalide');
+      }
+
+      const subscription: Subscription = {
+        id: paymentId,
         userId,
         type,
         status: 'pending',
         paymentId,
         createdAt: new Date()
-      });
-      await subscription.save();
+      };
+
+      await this.storageService.save('subscriptions', subscription);
+      return subscription;
     } catch (error) {
-      logger.error('Erreur lors de la création de l\'abonnement en attente:', error);
-      throw new Error('Erreur lors de la création de l\'abonnement');
+      logger.error('Erreur lors de la création de l\'abonnement:', error);
+      throw error;
     }
   }
 
@@ -124,39 +272,19 @@ export class SubscriptionService {
     return Subscription.find().sort({ createdAt: -1 }).lean();
   }
 
-  public async getActiveSubscription(userId: string): Promise<any> {
-    return Subscription.findOne({ userId, status: 'active', endDate: { $gt: new Date() } }).sort({ createdAt: -1 }).lean();
-  }
+  async updateSubscription(userId: string, data: SubscriptionUpdateData): Promise<Subscription> {
+    try {
+      const subscription = await this.getActiveSubscription(userId);
+      if (!subscription) {
+        throw new Error('Abonnement non trouvé');
+      }
 
-  public async getSubscriptionByPaymentId(paymentId: string): Promise<any> {
-    return Subscription.findOne({ paymentId }).lean();
-  }
-
-  public async createSubscription(userId: string, plan: string, paymentId?: string): Promise<any> {
-    const startDate = new Date();
-    const endDate = new Date();
-    endDate.setMonth(endDate.getMonth() + 1);
-    const subscription = new Subscription({
-      userId,
-      plan: String(plan),
-      status: 'pending',
-      startDate,
-      endDate,
-      paymentId
-    });
-    await subscription.save();
-    return subscription;
-  }
-
-  public async updateSubscription(userId: string, data: { status?: string; paymentId?: string; expiresAt?: Date }) {
-    const last = await Subscription.findOne({ userId }).sort({ createdAt: -1 });
-    if (!last) return null;
-    if (data.status) last.status = data.status as 'pending' | 'active' | 'expired' | 'cancelled';
-    if (data.paymentId) last.paymentId = data.paymentId;
-    if (data.expiresAt) last.endDate = data.expiresAt;
-    last.updatedAt = new Date();
-    await last.save();
-    return last;
+      const updatedSubscription = await this.storageService.update<Subscription>('subscriptions', subscription.id, data);
+      return updatedSubscription;
+    } catch (error) {
+      logger.error('Erreur lors de la mise à jour de l\'abonnement:', error);
+      throw error;
+    }
   }
 
   public async cancelSubscription(subscriptionId: string): Promise<void> {

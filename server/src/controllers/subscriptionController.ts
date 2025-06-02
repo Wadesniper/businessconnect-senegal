@@ -3,6 +3,15 @@ import { AuthRequest } from '../types/user';
 import { SubscriptionService } from '../services/subscriptionService';
 import { logger } from '../utils/logger';
 
+interface InitiateSubscriptionRequest {
+  userId: string;
+  subscriptionType: 'etudiant' | 'annonceur' | 'recruteur';
+  customer_name: string;
+  customer_surname: string;
+  customer_email: string;
+  customer_phone_number: string;
+}
+
 export class SubscriptionController {
   private subscriptionService: SubscriptionService;
 
@@ -10,20 +19,19 @@ export class SubscriptionController {
     this.subscriptionService = new SubscriptionService();
   }
 
-  initiateSubscription = async (req: AuthRequest, res: Response) => {
+  async initiateSubscription(req: Request, res: Response) {
     try {
-      const { userId, subscriptionType, customer_name, customer_surname, customer_email, customer_phone_number } = req.body;
-
-      logger.info('Initiation de l\'abonnement:', {
+      const {
         userId,
         subscriptionType,
         customer_name,
         customer_surname,
+        customer_email,
         customer_phone_number
-      });
+      } = req.body as InitiateSubscriptionRequest;
 
-      // Vérification des paramètres requis
-      const missingParams = [];
+      const missingParams: string[] = [];
+
       if (!userId) missingParams.push('userId');
       if (!subscriptionType) missingParams.push('subscriptionType');
       if (!customer_name) missingParams.push('customer_name');
@@ -31,71 +39,82 @@ export class SubscriptionController {
       if (!customer_phone_number) missingParams.push('customer_phone_number');
 
       if (missingParams.length > 0) {
-        logger.error('Paramètres manquants:', missingParams);
         return res.status(400).json({
           success: false,
-          message: 'Paramètres manquants',
-          missing: missingParams
+          message: `Paramètres manquants : ${missingParams.join(', ')}`
         });
       }
 
-      // Email obligatoire pour CinetPay - générer un fallback si manquant
-      let email = customer_email;
-      if (!email || !email.includes('@')) {
-        const phoneDigits = customer_phone_number.replace(/[^0-9]/g, '');
-        email = `user${phoneDigits}@businessconnect.sn`;
-        logger.info('Email généré:', email);
-      }
-
-      // Vérifier si l'utilisateur a déjà un abonnement actif
-      const existingSubscription = await this.subscriptionService.getActiveSubscription(userId);
-      if (existingSubscription) {
-        logger.warn('Utilisateur a déjà un abonnement actif:', {
-          userId,
-          subscriptionId: existingSubscription._id
-        });
-        return res.status(400).json({
-          success: false,
-          message: 'Vous avez déjà un abonnement actif'
-        });
-      }
-
-      // Initier le paiement
-      const payment = await this.subscriptionService.initiatePayment({
+      const result = await this.subscriptionService.initiateSubscription({
         type: subscriptionType,
         customer_name,
         customer_surname,
-        customer_email: email,
+        customer_email,
         customer_phone_number,
         userId
       });
 
-      logger.info('Paiement initié:', {
-        userId,
-        paymentId: payment.paymentId,
-        redirectUrl: payment.redirectUrl
-      });
-
-      // Créer l'abonnement en attente
-      await this.subscriptionService.createSubscription(userId, subscriptionType, payment.paymentId);
-
       res.json({
         success: true,
-        paymentUrl: payment.redirectUrl,
-        transactionId: payment.paymentId
+        paymentUrl: result.paymentUrl
       });
-    } catch (error: any) {
-      logger.error('Erreur lors de l\'initiation de l\'abonnement:', {
-        error: error.message,
-        stack: error.stack
-      });
-
+    } catch (error) {
+      logger.error('Erreur lors de l\'initiation de l\'abonnement:', error);
       res.status(500).json({
         success: false,
-        message: error.message || 'Erreur lors de l\'initiation de l\'abonnement'
+        message: error instanceof Error ? error.message : 'Erreur inconnue'
       });
     }
-  };
+  }
+
+  async activateSubscription(req: Request, res: Response) {
+    try {
+      const { userId, subscriptionType, paymentId } = req.body;
+
+      if (!userId || !subscriptionType || !paymentId) {
+        return res.status(400).json({
+          success: false,
+          message: 'userId, subscriptionType et paymentId sont requis'
+        });
+      }
+
+      const result = await this.subscriptionService.activateSubscription(
+        userId,
+        subscriptionType,
+        paymentId
+      );
+
+      res.json(result);
+    } catch (error) {
+      logger.error('Erreur lors de l\'activation de l\'abonnement:', error);
+      res.status(500).json({
+        success: false,
+        message: error instanceof Error ? error.message : 'Erreur inconnue'
+      });
+    }
+  }
+
+  async checkSubscriptionStatus(req: Request, res: Response) {
+    try {
+      const { userId } = req.params;
+
+      if (!userId) {
+        return res.status(400).json({
+          success: false,
+          message: 'userId est requis'
+        });
+      }
+
+      const status = await this.subscriptionService.checkSubscriptionStatus(userId);
+      res.json(status);
+    } catch (error) {
+      logger.error('Erreur lors de la vérification du statut de l\'abonnement:', error);
+      res.status(500).json({
+        success: false,
+        message: error instanceof Error ? error.message : 'Erreur inconnue'
+      });
+    }
+  }
 
   getSubscription = async (req: AuthRequest, res: Response) => {
     try {

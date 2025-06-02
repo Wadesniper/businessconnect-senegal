@@ -43,7 +43,7 @@ router.post('/refund/:paymentId', isAdmin, (req: any, res: any) => {
 });
 
 // Webhook CinetPay (non protégé)
-router.post('/webhook', webhookController.handlePaymentWebhook);
+router.post('/webhook', webhookController.handleCinetPayWebhook);
 
 // Routes de factures
 router.get('/invoices', (req: any, res: any) => {

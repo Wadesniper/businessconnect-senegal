@@ -1,17 +1,22 @@
-import express from 'express';
+import { Router } from 'express';
 import { WebhookController } from '../controllers/webhookController';
 import { logger } from '../utils/logger';
 
-const router = express.Router();
+const router = Router();
 const webhookController = new WebhookController();
 
-// Route de notification CinetPay (non protégée)
-router.post('/payment', (req, res) => {
-  logger.info('Webhook CinetPay reçu:', {
+// Route pour le webhook CinetPay
+router.post('/cinetpay', webhookController.handleCinetPayWebhook);
+
+// Middleware de logging pour tous les webhooks
+router.use((req, res, next) => {
+  logger.info('Webhook reçu:', {
+    path: req.path,
+    method: req.method,
     body: req.body,
     headers: req.headers
   });
-  return webhookController.handlePaymentWebhook(req, res);
+  next();
 });
 
 export default router; 

@@ -8,6 +8,8 @@ import { pipeline } from 'stream';
 import { createReadStream, createWriteStream } from 'fs';
 import os from 'os';
 import { createGunzip } from 'zlib';
+import { Storage } from '@google-cloud/storage';
+import { config } from '../config';
 
 const pipelineAsync = promisify(pipeline);
 
@@ -40,201 +42,267 @@ const ensureDirectories = async () => {
 ensureDirectories().catch(logger.error);
 
 export class StorageService {
-  static async save(collection: string, data: any): Promise<string> {
-    const id = data.id || uuidv4();
-    const filePath = path.join(DATA_DIR, collection, `${id}.json`);
-    
-    await fs.writeFile(filePath, JSON.stringify({
-      ...data,
-      id,
-      updatedAt: new Date().toISOString()
-    }, null, 2));
+  private storage: Storage;
+  private bucket: string;
+  private static instance: StorageService;
 
-    return id;
+  constructor() {
+    this.storage = new Storage({
+      projectId: config.GOOGLE_CLOUD_PROJECT_ID,
+      credentials: {
+        client_email: config.GOOGLE_CLOUD_CLIENT_EMAIL,
+        private_key: config.GOOGLE_CLOUD_PRIVATE_KEY
+      }
+    });
+    this.bucket = config.GOOGLE_CLOUD_STORAGE_BUCKET;
   }
 
-  static async get(collection: string, id: string): Promise<any> {
-    const filePath = path.join(DATA_DIR, collection, `${id}.json`);
+  static getInstance(): StorageService {
+    if (!StorageService.instance) {
+      StorageService.instance = new StorageService();
+    }
+    return StorageService.instance;
+  }
+
+  async uploadFile(file: Express.Multer.File, destination: string): Promise<string> {
     try {
-      const data = await fs.readFile(filePath, 'utf-8');
-      return JSON.parse(data);
+      const bucket = this.storage.bucket(this.bucket);
+      const blob = bucket.file(destination);
+      
+      await blob.save(file.buffer, {
+        contentType: file.mimetype,
+        metadata: {
+          originalname: file.originalname
+        }
+      });
+
+      const publicUrl = `https://storage.googleapis.com/${this.bucket}/${destination}`;
+      return publicUrl;
     } catch (error) {
-      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-        return null;
-      }
-      throw error;
+      logger.error('Erreur lors du téléchargement du fichier:', error);
+      throw new Error('Erreur lors du téléchargement du fichier');
     }
   }
 
-  static async find(collection: string, query: Record<string, any> = {}): Promise<any[]> {
-    const dirPath = path.join(DATA_DIR, collection);
-    const files = await fs.readdir(dirPath);
-    const results = [];
+  async list<T extends Record<string, unknown>>(collection: string, query: Partial<T> = {}): Promise<T[]> {
+    try {
+      const bucket = this.storage.bucket(this.bucket);
+      const [files] = await bucket.getFiles({ prefix: `${collection}/` });
+      const results: T[] = [];
 
-    for (const file of files) {
-      if (path.extname(file) === '.json') {
-        const data = await this.get(collection, path.parse(file).name);
-        if (this.matchesQuery(data, query)) {
+      for (const file of files) {
+        const [content] = await file.download();
+        const data = JSON.parse(content.toString()) as T;
+        
+        const matches = Object.entries(query).every(([key, value]) => {
+          return data[key as keyof T] === value;
+        });
+
+        if (matches) {
           results.push(data);
         }
       }
-    }
 
-    return results;
+      return results;
+    } catch (error) {
+      logger.error('Erreur lors de la liste des documents:', error);
+      throw new Error('Erreur lors de la liste des documents');
+    }
+  }
+
+  async save<T extends { id: string }>(collection: string, data: T): Promise<T> {
+    try {
+      const bucket = this.storage.bucket(this.bucket);
+      const blob = bucket.file(`${collection}/${data.id}.json`);
+      
+      await blob.save(JSON.stringify(data, null, 2), {
+        contentType: 'application/json'
+      });
+
+      return data;
+    } catch (error) {
+      logger.error('Erreur lors de la sauvegarde:', error);
+      throw new Error('Erreur lors de la sauvegarde');
+    }
+  }
+
+  async update<T extends { id: string }>(collection: string, id: string, data: Partial<T>): Promise<T> {
+    try {
+      const bucket = this.storage.bucket(this.bucket);
+      const blob = bucket.file(`${collection}/${id}.json`);
+      const [content] = await blob.download();
+      const existingData = JSON.parse(content.toString()) as T;
+      
+      const updated = {
+        ...existingData,
+        ...data,
+        updatedAt: new Date()
+      } as T;
+
+      await blob.save(JSON.stringify(updated, null, 2), {
+        contentType: 'application/json'
+      });
+
+      return updated;
+    } catch (error) {
+      logger.error('Erreur lors de la mise à jour:', error);
+      throw new Error('Erreur lors de la mise à jour');
+    }
+  }
+
+  async deleteFile(filename: string): Promise<void> {
+    try {
+      await this.storage.bucket(this.bucket).file(filename).delete();
+    } catch (error) {
+      logger.error('Erreur lors de la suppression du fichier:', error);
+      throw new Error('Erreur lors de la suppression du fichier');
+    }
+  }
+
+  // Méthodes statiques pour la compatibilité
+  static async get<T>(collection: string, id: string): Promise<T | null> {
+    try {
+      const instance = StorageService.getInstance();
+      const bucket = instance.storage.bucket(instance.bucket);
+      const blob = bucket.file(`${collection}/${id}.json`);
+      
+      try {
+        const [content] = await blob.download();
+        return JSON.parse(content.toString()) as T;
+      } catch (error) {
+        if ((error as any).code === 404) {
+          return null;
+        }
+        throw error;
+      }
+    } catch (error) {
+      logger.error('Erreur lors de la récupération:', error);
+      return null;
+    }
+  }
+
+  static async find<T extends Record<string, unknown>>(collection: string, query: Partial<T> = {}): Promise<T[]> {
+    const instance = StorageService.getInstance();
+    return instance.list<T>(collection, query);
+  }
+
+  static async save<T extends { id: string }>(collection: string, data: T): Promise<T> {
+    const instance = StorageService.getInstance();
+    return instance.save(collection, data);
+  }
+
+  static async update<T extends { id: string }>(collection: string, id: string, data: Partial<T>): Promise<T | null> {
+    const instance = StorageService.getInstance();
+    return instance.update(collection, id, data);
   }
 
   static async delete(collection: string, id: string): Promise<boolean> {
-    const filePath = path.join(DATA_DIR, collection, `${id}.json`);
     try {
-      await fs.unlink(filePath);
+      const instance = StorageService.getInstance();
+      await instance.deleteFile(`${collection}/${id}.json`);
       return true;
     } catch (error) {
-      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+      if ((error as any).code === 404) {
         return false;
       }
       throw error;
     }
   }
 
-  static async update(collection: string, id: string, data: any): Promise<any> {
-    const existing = await this.get(collection, id);
-    if (!existing) return null;
-
-    const updated = {
-      ...existing,
-      ...data,
-      id,
-      updatedAt: new Date().toISOString()
-    };
-
-    await this.save(collection, updated);
-    return updated;
-  }
-
-  private static matchesQuery(data: any, query: Record<string, any>): boolean {
-    return Object.entries(query).every(([key, value]) => {
-      if (value instanceof RegExp) {
-        return value.test(data[key]);
-      }
-      return data[key] === value;
-    });
-  }
-
-  // Cache en mémoire pour les performances
-  private static cache = new Map<string, any>();
-  private static cacheTimeout = 5 * 60 * 1000; // 5 minutes
-
-  static async getWithCache(collection: string, id: string): Promise<any> {
-    const cacheKey = `${collection}:${id}`;
-    
-    if (this.cache.has(cacheKey)) {
-      const { data, timestamp } = this.cache.get(cacheKey);
-      if (Date.now() - timestamp < this.cacheTimeout) {
-        return data;
-      }
-      this.cache.delete(cacheKey);
-    }
-
-    const data = await this.get(collection, id);
-    if (data) {
-      this.cache.set(cacheKey, {
-        data,
-        timestamp: Date.now()
-      });
-    }
-
-    return data;
-  }
-
   static async archive(collection: string, id: string): Promise<boolean> {
-    const sourcePath = path.join(DATA_DIR, collection, `${id}.json`);
-    const archivePath = path.join(ARCHIVE_DIR, collection, `${id}.json.gz`);
-
     try {
-      // Créer le répertoire d'archive si nécessaire
-      await fs.mkdir(path.dirname(archivePath), { recursive: true });
+      const instance = StorageService.getInstance();
+      const bucket = instance.storage.bucket(instance.bucket);
+      const sourceBlob = bucket.file(`${collection}/${id}.json`);
+      const archiveBlob = bucket.file(`archives/${collection}/${id}.json.gz`);
 
-      // Compresser et archiver le fichier
+      const [content] = await sourceBlob.download();
       const gzip = createGzip();
-      const source = createReadStream(sourcePath);
-      const destination = createWriteStream(archivePath);
+      
+      const tempPath = path.join(os.tmpdir(), `bc-temp-${id}.json.gz`);
+      await pipelineAsync(
+        Buffer.from(content),
+        gzip,
+        createWriteStream(tempPath)
+      );
 
-      await pipelineAsync(source, gzip, destination);
+      await archiveBlob.save(await fs.readFile(tempPath), {
+        contentType: 'application/gzip'
+      });
 
-      // Supprimer le fichier original
-      await fs.unlink(sourcePath);
+      await sourceBlob.delete();
+      await fs.unlink(tempPath);
 
-      logger.info(`Fichier archivé avec succès: ${collection}/${id}`);
       return true;
     } catch (error) {
-      logger.error(`Erreur lors de l'archivage: ${collection}/${id}`, error);
+      logger.error('Erreur lors de l\'archivage:', error);
       return false;
     }
   }
 
-  static async getArchived(collection: string, id: string): Promise<any> {
-    const archivePath = path.join(ARCHIVE_DIR, collection, `${id}.json.gz`);
+  static async getArchived<T>(collection: string, id: string): Promise<T | null> {
     try {
-      // Décompresser et lire le fichier
+      const instance = StorageService.getInstance();
+      const bucket = instance.storage.bucket(instance.bucket);
+      const archiveBlob = bucket.file(`archives/${collection}/${id}.json.gz`);
+
+      const [content] = await archiveBlob.download();
       const tempPath = path.join(os.tmpdir(), `bc-temp-${id}.json`);
-      const gunzip = createGunzip();
-      const source = createReadStream(archivePath);
-      const destination = createWriteStream(tempPath);
-
-      await pipelineAsync(source, gunzip, destination);
-
-      // Lire le fichier temporaire
-      const data = await fs.readFile(tempPath, 'utf-8');
       
-      // Nettoyer
+      await pipelineAsync(
+        Buffer.from(content),
+        createGunzip(),
+        createWriteStream(tempPath)
+      );
+
+      const data = await fs.readFile(tempPath, 'utf-8');
       await fs.unlink(tempPath);
 
-      return JSON.parse(data);
+      return JSON.parse(data) as T;
     } catch (error) {
-      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+      if ((error as any).code === 404) {
         return null;
       }
-      throw error;
+      logger.error('Erreur lors de la récupération de l\'archive:', error);
+      return null;
     }
   }
 
-  // Méthode pour obtenir les statistiques d'utilisation
   static async getStats(): Promise<StorageStats> {
-    const stats = {
-      totalFiles: 0,
-      totalSize: 0,
-      collections: {} as Record<string, { files: number; size: number }>
-    };
+    try {
+      const instance = StorageService.getInstance();
+      const bucket = instance.storage.bucket(instance.bucket);
+      const [files] = await bucket.getFiles();
 
-    const collections = ['users', 'cvs', 'formations', 'jobs', 'subscriptions'];
+      const stats: StorageStats = {
+        totalFiles: 0,
+        totalSize: 0,
+        collections: {}
+      };
 
-    for (const collection of collections) {
-      const dirPath = path.join(DATA_DIR, collection);
-      try {
-        const files = await fs.readdir(dirPath);
-        let collectionSize = 0;
-
-        for (const file of files) {
-          if (path.extname(file) === '.json') {
-            const filePath = path.join(dirPath, file);
-            const fileStats = await fs.stat(filePath);
-            collectionSize += fileStats.size;
-          }
+      for (const file of files) {
+        const [metadata] = await file.getMetadata();
+        const collection = file.name.split('/')[0];
+        const size = typeof metadata.size === 'string' ? parseInt(metadata.size) : (metadata.size || 0);
+        
+        if (!stats.collections[collection]) {
+          stats.collections[collection] = {
+            files: 0,
+            size: 0
+          };
         }
 
-        stats.collections[collection] = {
-          files: files.length,
-          size: collectionSize
-        };
-
-        stats.totalFiles += files.length;
-        stats.totalSize += collectionSize;
-      } catch (error) {
-        logger.error(`Erreur lors du calcul des stats pour ${collection}:`, error);
+        stats.collections[collection].files++;
+        stats.collections[collection].size += size;
+        stats.totalFiles++;
+        stats.totalSize += size;
       }
-    }
 
-    return stats;
+      return stats;
+    } catch (error) {
+      logger.error('Erreur lors du calcul des statistiques:', error);
+      throw new Error('Erreur lors du calcul des statistiques');
+    }
   }
 }
 
