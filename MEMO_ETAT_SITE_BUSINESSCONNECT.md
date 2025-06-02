@@ -69,6 +69,23 @@
   - Suppression des types redondants qui sont maintenant fournis nativement
   - Optimisation des dépendances de développement
 
+#### 2025-06-02 (Suite - Correction Docker)
+- Optimisation de la configuration Docker :
+  - Restructuration complète du Dockerfile pour un build plus fiable
+  - Séparation claire des étapes de build et de production
+  - Conservation de tous les scripts et fonctionnalités
+  - Maintien de la structure complète du projet
+- Amélioration des règles .dockerignore :
+  - Règles plus précises pour les fichiers à inclure/exclure
+  - Protection contre l'exclusion accidentelle de fichiers essentiels
+  - Support des sous-dossiers avec patterns globaux
+  - Maintien de l'accès à tous les scripts nécessaires
+- Organisation optimisée :
+  - Structure de dossiers cohérente dans /app/server
+  - Conservation des scripts d'insertion d'emplois
+  - Maintien de tous les fichiers de configuration
+  - Pas de compromis sur les fonctionnalités
+
 #### 2025-06-02 (Suite - Correction Déploiement)
 - Correction des erreurs de build Docker :
   - Ajustement des chemins de copie dans le Dockerfile pour correspondre à la structure du projet

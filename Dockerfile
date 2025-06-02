@@ -5,10 +5,16 @@ FROM node:18-alpine as builder
 RUN apk add --no-cache python3 make g++
 
 # Définition du répertoire de travail
-WORKDIR /app
+WORKDIR /app/server
 
-# Copie de tout le dossier server
-COPY server ./
+# Copie des fichiers de configuration du serveur
+COPY server/package*.json ./
+COPY server/tsconfig.json ./
+COPY server/jest.config.js ./
+
+# Copie du code source et des scripts
+COPY server/src ./src
+COPY server/scripts ./scripts
 
 # Installation des dépendances avec un cache optimisé
 RUN npm ci
@@ -19,11 +25,12 @@ RUN npm run build
 # Étape de production
 FROM node:18-alpine
 
-WORKDIR /app
+WORKDIR /app/server
 
-# Copie des dépendances de production et du build depuis l'étape précédente
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/dist ./dist
+# Copie des fichiers de configuration et du build depuis l'étape précédente
+COPY --from=builder /app/server/package*.json ./
+COPY --from=builder /app/server/dist ./dist
+COPY --from=builder /app/server/scripts ./scripts
 
 # Installation des dépendances de production uniquement
 RUN npm ci --only=production
