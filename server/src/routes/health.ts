@@ -1,9 +1,9 @@
-import { Router } from 'express';
+import { Router, RouteHandler } from '../types/express';
 import mongoose from 'mongoose';
 
 const router = Router();
 
-router.get('/', async (_req, res) => {
+const healthCheck: RouteHandler = async (_req, res) => {
   try {
     // Vérifier la connexion à MongoDB
     const dbState = mongoose.connection.readyState;
@@ -38,6 +38,8 @@ router.get('/', async (_req, res) => {
       error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
-});
+};
+
+router.get('/', healthCheck);
 
 export default router; 

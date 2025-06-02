@@ -1,52 +1,64 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction, AuthRequest } from '../types/express';
 import jwt from 'jsonwebtoken';
 import { logger } from '../utils/logger';
-import { UserPayload } from '../types/user';
+import { UserPayload } from '../types/express';
 import { config } from '../config';
+import { User, IUser } from '../models/User';
 
-export interface AuthRequest extends Request {
-  user?: UserPayload;
-}
-
-export const authenticate = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const authMiddleware = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    // Routes publiques qui ne nécessitent pas d'authentification
-    if (req.path.startsWith('/auth/') || req.path.startsWith('/webhooks/')) {
-      return next();
-    }
-
+    // Vérifier le header Authorization
     const authHeader = req.headers.authorization;
-    if (!authHeader) {
-      return res.status(401).json({ 
+    if (!authHeader || (typeof authHeader === 'string' && !authHeader.startsWith('Bearer '))) {
+      res.status(401).json({
         success: false,
         message: 'Accès non autorisé. Token manquant'
       });
+      return;
     }
 
-    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
-    if (!token) {
-      return res.status(401).json({ 
+    // Extraire et vérifier le token
+    const token = typeof authHeader === 'string' ? authHeader.split(' ')[1] : '';
+    const decoded = jwt.verify(token, config.JWT_SECRET) as { id: string };
+
+    // Vérifier l'utilisateur
+    const user = await User.findById(decoded.id).select('+isVerified +role +firstName +lastName +phoneNumber +email');
+    if (!user) {
+      res.status(401).json({
         success: false,
-        message: 'Accès non autorisé. Token invalide'
+        message: 'Utilisateur non trouvé'
       });
+      return;
     }
 
-    try {
-      const decoded = jwt.verify(token, config.JWT_SECRET) as UserPayload;
-      req.user = decoded;
-      return next();
-    } catch (jwtError) {
-      logger.error('Erreur de vérification JWT:', jwtError);
-      return res.status(401).json({ 
+    // Vérifier si l'utilisateur est vérifié
+    if (!user.isVerified) {
+      res.status(401).json({
         success: false,
-        message: 'Accès non autorisé. Token invalide ou expiré'
+        message: 'Veuillez vérifier votre email'
       });
+      return;
     }
+
+    // Ajouter l'utilisateur à la requête avec toutes les propriétés nécessaires
+    const userPayload: UserPayload = {
+      id: user._id.toString(),
+      role: user.role,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      phoneNumber: user.phoneNumber,
+      email: user.email,
+      isVerified: user.isVerified
+    };
+
+    (req as AuthRequest).user = userPayload;
+
+    next();
   } catch (error) {
     logger.error('Erreur d\'authentification:', error);
-    return res.status(500).json({ 
+    res.status(401).json({
       success: false,
-      message: 'Erreur interne du serveur'
+      message: 'Token invalide'
     });
   }
 };
@@ -75,4 +87,6 @@ export const isAdmin = async (req: AuthRequest, res: Response, next: NextFunctio
       message: 'Erreur interne du serveur'
     });
   }
-}; 
+};
+
+export { authMiddleware as default }; 
