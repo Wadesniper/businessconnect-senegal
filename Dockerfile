@@ -1,17 +1,18 @@
 # Étape de build
 FROM node:18-alpine as builder
 
+# Installation des dépendances système nécessaires
+RUN apk add --no-cache python3 make g++
+
 # Définition du répertoire de travail
 WORKDIR /app
 
-# Copie des fichiers package
-COPY package*.json ./
+# Copie des fichiers de configuration
+COPY package*.json tsconfig.json ./
+COPY src ./src
 
-# Installation des dépendances
-RUN npm install
-
-# Copie des sources
-COPY . .
+# Installation des dépendances avec un cache optimisé
+RUN npm ci
 
 # Build du serveur
 RUN npm run build
@@ -21,10 +22,12 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Copie des dépendances et du build depuis l'étape précédente
-COPY --from=builder /app/node_modules ./node_modules
+# Copie des dépendances de production et du build depuis l'étape précédente
+COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/package.json ./package.json
+
+# Installation des dépendances de production uniquement
+RUN npm ci --only=production
 
 # Variables d'environnement
 ENV NODE_ENV=production

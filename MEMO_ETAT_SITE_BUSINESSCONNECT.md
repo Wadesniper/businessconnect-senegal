@@ -57,6 +57,12 @@
 - Correction des conflits de dépendances et types
 - Séparation claire des dépendances de production et développement
 - Mise à jour des versions de packages pour compatibilité
+- Optimisation du processus de build Docker :
+  - Installation des dépendances système nécessaires
+  - Utilisation de npm ci pour une installation plus fiable
+  - Séparation des dépendances de production
+  - Configuration du cache npm
+  - Ajout d'un .dockerignore optimisé
 
 #### 2024-03-20
 - Refonte complète du StorageService avec pattern Singleton pour une meilleure gestion des ressources

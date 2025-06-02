@@ -1,12 +1,44 @@
-.git
-.gitignore
+# Dépendances
 node_modules
 npm-debug.log
-Dockerfile
-.dockerignore
-.env
-*.md
-.DS_Store
-coverage
+yarn-debug.log
+yarn-error.log
+
+# Build
 dist
-logs 
+build
+.next
+
+# Environnement
+.env
+.env.local
+.env.*.local
+
+# Système
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Tests
+coverage
+.nyc_output
+
+# Git
+.git
+.gitignore
+
+# Divers
+*.log
+.npm
+.yarn
+README.md
+docs
+test
+__tests__
+*.test.ts
+*.spec.ts 
