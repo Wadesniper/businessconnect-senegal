@@ -35,7 +35,8 @@ export const authMiddleware = async (req: AuthRequest, res: Response, next: Next
       firstName: user.firstName,
       lastName: user.lastName,
       phoneNumber: user.phoneNumber,
-      email: user.email
+      email: user.email,
+      isVerified: user.isVerified
     };
 
     // Ajouter l'utilisateur à la requête
