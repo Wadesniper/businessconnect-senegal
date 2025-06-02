@@ -38,10 +38,10 @@ ENV NODE_OPTIONS="--max-old-space-size=2048"
 RUN npm ci --only=production
 
 # Variables d'environnement
-ENV PORT=3000
+ENV PORT=8080
 
 # Exposition du port
-EXPOSE 3000
+EXPOSE 8080
 
 # Démarrage de l'application
-CMD ["node", "--max-old-space-size=2048", "dist/index.js"] 
+CMD ["node", "--max-old-space-size=2048", "dist/server.js"] 
