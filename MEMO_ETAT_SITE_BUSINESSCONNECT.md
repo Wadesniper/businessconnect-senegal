@@ -53,6 +53,10 @@
 - Mise à jour de la configuration TypeScript (tsconfig.json)
 - Ajout du support JSX et des types manquants
 - Optimisation des chemins de modules TypeScript
+- Harmonisation des versions de dépendances entre les package.json
+- Correction des conflits de dépendances et types
+- Séparation claire des dépendances de production et développement
+- Mise à jour des versions de packages pour compatibilité
 
 #### 2024-03-20
 - Refonte complète du StorageService avec pattern Singleton pour une meilleure gestion des ressources
