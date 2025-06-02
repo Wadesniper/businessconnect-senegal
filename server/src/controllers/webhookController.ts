@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response } from '../types/express';
 import { SubscriptionService } from '../services/subscriptionService';
 import { logger } from '../utils/logger';
 
@@ -24,64 +24,60 @@ export class WebhookController {
 
   async handleCinetPayWebhook(req: Request, res: Response) {
     try {
-      const data = req.body as CinetPayWebhookData;
-      const { cpm_trans_id, cpm_trans_status } = data;
-
-      logger.info('Webhook CinetPay reçu:', data);
-
-      // Récupérer l'abonnement associé au paiement
-      const subscription = await this.subscriptionService.getSubscriptionByPaymentId(cpm_trans_id);
-      if (!subscription) {
-        logger.error('Aucun abonnement trouvé pour le paiement:', cpm_trans_id);
-        return res.status(404).json({
-          success: false,
-          message: 'Abonnement non trouvé'
-        });
+      const payload = req.body;
+      
+      // Vérification de la signature du webhook
+      // TODO: Implémenter la vérification de la signature
+      
+      // Traitement du webhook selon le type d'événement
+      switch (payload.event_type) {
+        case 'payment_success':
+          await this.handlePaymentSuccess(payload);
+          break;
+        case 'payment_failed':
+          await this.handlePaymentFailed(payload);
+          break;
+        case 'payment_pending':
+          await this.handlePaymentPending(payload);
+          break;
+        default:
+          logger.warn('Type d\'événement webhook non géré:', payload.event_type);
       }
-
-      // Traiter le statut du paiement
-      if (cpm_trans_status === 'ACCEPTED') {
-        // Activer l'abonnement
-        await this.subscriptionService.activateSubscription(
-          subscription.userId,
-          subscription.type,
-          cpm_trans_id
-        );
-
-        logger.info('Abonnement activé:', {
-          userId: subscription.userId,
-          type: subscription.type,
-          paymentId: cpm_trans_id
-        });
-
-        res.json({
-          success: true,
-          message: 'Abonnement activé avec succès'
-        });
-      } else {
-        // Marquer l'abonnement comme échoué
-        await this.subscriptionService.updateSubscription(subscription.userId, {
-          status: 'expired'
-        });
-
-        logger.warn('Paiement échoué:', {
-          userId: subscription.userId,
-          type: subscription.type,
-          paymentId: cpm_trans_id,
-          status: cpm_trans_status
-        });
-
-        res.json({
-          success: false,
-          message: 'Paiement échoué'
-        });
-      }
+      
+      res.status(200).json({ received: true });
     } catch (error) {
       logger.error('Erreur lors du traitement du webhook CinetPay:', error);
-      res.status(500).json({
-        success: false,
-        message: error instanceof Error ? error.message : 'Erreur inconnue'
-      });
+      res.status(500).json({ error: 'Erreur lors du traitement du webhook' });
+    }
+  }
+
+  private async handlePaymentSuccess(payload: any) {
+    try {
+      // TODO: Implémenter le traitement du paiement réussi
+      logger.info('Paiement réussi:', payload);
+    } catch (error) {
+      logger.error('Erreur lors du traitement du paiement réussi:', error);
+      throw error;
+    }
+  }
+
+  private async handlePaymentFailed(payload: any) {
+    try {
+      // TODO: Implémenter le traitement du paiement échoué
+      logger.info('Paiement échoué:', payload);
+    } catch (error) {
+      logger.error('Erreur lors du traitement du paiement échoué:', error);
+      throw error;
+    }
+  }
+
+  private async handlePaymentPending(payload: any) {
+    try {
+      // TODO: Implémenter le traitement du paiement en attente
+      logger.info('Paiement en attente:', payload);
+    } catch (error) {
+      logger.error('Erreur lors du traitement du paiement en attente:', error);
+      throw error;
     }
   }
 } 

@@ -1,15 +1,12 @@
-import { Router, Request, Response, NextFunction } from '../types/express';
+import { Router, Request, Response, NextFunction, RouteHandler } from '../types/express';
 import { WebhookController } from '../controllers/webhookController';
 import { logger } from '../utils/logger';
 
 const router = Router();
 const webhookController = new WebhookController();
 
-// Route pour le webhook CinetPay
-router.post('/cinetpay', webhookController.handleCinetPayWebhook);
-
 // Middleware de logging pour tous les webhooks
-router.use((req: Request, res: Response, next: NextFunction) => {
+const loggingMiddleware: RouteHandler = (req: Request, res: Response, next: NextFunction) => {
   logger.info('Webhook reçu:', {
     path: req.path,
     method: req.method,
@@ -17,6 +14,18 @@ router.use((req: Request, res: Response, next: NextFunction) => {
     headers: req.headers
   });
   next();
+};
+
+router.use(loggingMiddleware);
+
+// Route pour le webhook CinetPay
+router.post('/cinetpay', async (req: Request, res: Response) => {
+  try {
+    await webhookController.handleCinetPayWebhook(req, res);
+  } catch (error) {
+    logger.error('Erreur lors du traitement du webhook CinetPay:', error);
+    res.status(500).json({ error: 'Erreur lors du traitement du webhook' });
+  }
 });
 
 export default router; 
