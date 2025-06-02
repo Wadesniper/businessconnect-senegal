@@ -151,6 +151,23 @@
   - Maintien de toutes les fonctionnalités du site
   - Performance et stabilité améliorées
 
+#### 2025-06-02 (Suite - Optimisation Railway)
+- Optimisation de la configuration Railway :
+  - Mise à jour vers Node.js 18.x
+  - Augmentation des ressources allouées (conteneur 2x)
+  - Configuration optimisée de la mémoire (2GB)
+  - Amélioration des paramètres de redémarrage
+- Configuration Nixpacks améliorée :
+  - Installation explicite des dépendances système
+  - Optimisation des phases de build
+  - Réduction des logs pour de meilleures performances
+  - Gestion améliorée de la mémoire
+- Robustesse du déploiement :
+  - Augmentation du timeout des healthchecks
+  - Amélioration de la politique de redémarrage
+  - Conservation de toutes les fonctionnalités
+  - Stabilité accrue en production
+
 ### Prochaines Étapes
 
 #### Court Terme

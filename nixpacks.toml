@@ -1,7 +1,21 @@
 [phases.setup]
-nixPkgs = ['nodejs']
+nixPkgs = ['nodejs-18_x', 'python3', 'gcc', 'make']
 
 [phases.install]
-cmds = ['npm install --production']
+cmds = ['npm ci --only=production']
 
-[start] 
+[phases.build]
+cmds = ['npm ci', 'npm run build']
+
+[start]
+cmd = 'node dist/index.js'
+
+[env]
+NODE_ENV = 'production'
+NODE_OPTIONS = '--max-old-space-size=2048'
+NPM_CONFIG_LOGLEVEL = 'error'
+
+[phases.setup.env]
+NODE_ENV = 'production'
+NODE_OPTIONS = '--max-old-space-size=2048'
+NPM_CONFIG_LOGLEVEL = 'error' 
