@@ -2,24 +2,17 @@
 FROM node:18-bullseye AS builder
 
 # Configuration du répertoire de travail
+WORKDIR /app
+
+# Copie de tout le dossier server
+COPY server ./server
+
+# Installation des dépendances et build
 WORKDIR /app/server
-
-# Copie des fichiers de configuration
-COPY server/package*.json ./
-COPY server/tsconfig.json ./
-COPY server/jest.config.js ./
-
-# Installation des dépendances
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=2048"
-RUN npm ci
-
-# Copie des sources
-COPY server/src ./src
-COPY server/scripts ./scripts
-
-# Build de l'application
-RUN npm run build
+RUN npm ci && \
+    npm run build
 
 # Étape de production
 FROM node:18-bullseye

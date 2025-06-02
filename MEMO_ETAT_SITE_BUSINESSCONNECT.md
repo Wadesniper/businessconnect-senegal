@@ -104,21 +104,21 @@
   - Maintien de toutes les dépendances nécessaires
 
 #### 2025-06-02 (Suite - Optimisation Docker)
-- Correction de la configuration Docker :
-  - Restructuration du Dockerfile pour respecter la structure du projet
-  - Optimisation des chemins de copie des fichiers
-  - Configuration correcte des workdir
-  - Maintien de tous les fichiers essentiels
-- Amélioration du .dockerignore :
-  - Règles plus précises pour les fichiers à inclure/exclure
-  - Protection des fichiers essentiels du serveur
-  - Optimisation de la taille de l'image
-  - Conservation de la structure complète du projet
-- Robustesse du build :
-  - Vérification des chemins de fichiers
-  - Installation fiable des dépendances
-  - Maintien de toutes les fonctionnalités
+- Optimisation des chemins Docker :
+  - Simplification de la structure de copie
+  - Copie unique du dossier server
+  - Réduction des étapes de build
+  - Amélioration de la fiabilité
+- Amélioration de la stabilité :
+  - Chemins plus directs et robustes
+  - Réduction des points de défaillance
+  - Installation plus fiable
+  - Build plus stable
+- Maintien de la qualité :
+  - Conservation de toutes les fonctionnalités
+  - Structure complète préservée
   - Pas de version minimaliste
+  - Déploiement optimisé
 
 #### 2024-03-20
 - Refonte complète du StorageService avec pattern Singleton pour une meilleure gestion des ressources
