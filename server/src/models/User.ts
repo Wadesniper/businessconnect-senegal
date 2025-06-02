@@ -1,18 +1,23 @@
-import { Schema, model, Document } from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
+import bcrypt from 'bcryptjs';
 import { validatePhoneNumber } from '../utils/validation';
+import { UserRole } from '../types/user';
 
 // Interface TypeScript
 export interface IUser extends Document {
   firstName: string;
   lastName: string;
-  email?: string;
+  email: string;
   password: string;
-  role: 'user' | 'admin' | 'recruiter';
+  role: UserRole;
   phoneNumber: string;
   isVerified: boolean;
+  verificationToken?: string;
   resetPasswordToken?: string;
   resetPasswordExpire?: Date;
   createdAt: Date;
+  updatedAt: Date;
+  comparePassword(candidatePassword: string): Promise<boolean>;
   preferences?: {
     notifications: boolean;
     newsletter: boolean;
@@ -44,29 +49,24 @@ const userSchema = new Schema<IUser>({
   },
   email: {
     type: String,
+    required: [true, 'L\'email est requis'],
     unique: true,
-    sparse: true,
-    trim: true,
     lowercase: true,
-    validate: {
-      validator: function(v: string) {
-        return !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-      },
-      message: 'Format d\'email invalide'
-    }
+    trim: true
   },
   password: {
     type: String,
     required: [true, 'Le mot de passe est requis'],
-    minlength: [6, 'Le mot de passe doit contenir au moins 6 caractères']
+    minlength: [8, 'Le mot de passe doit contenir au moins 8 caractères'],
+    select: false
   },
   role: {
     type: String,
     enum: {
-      values: ['user', 'admin', 'recruiter'],
-      message: 'Rôle invalide'
+      values: ['admin', 'etudiant', 'annonceur', 'employeur'] as UserRole[],
+      message: 'Rôle invalide. Les rôles autorisés sont: admin, etudiant, annonceur, employeur'
     },
-    default: 'user'
+    default: 'etudiant'
   },
   phoneNumber: {
     type: String,
@@ -83,9 +83,14 @@ const userSchema = new Schema<IUser>({
     type: Boolean,
     default: false
   },
+  verificationToken: String,
   resetPasswordToken: String,
   resetPasswordExpire: Date,
   createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
     type: Date,
     default: Date.now
   },
@@ -142,4 +147,28 @@ userSchema.pre('save', function(next) {
   next();
 });
 
-export const User = model<IUser>('User', userSchema); 
+// Hash du mot de passe avant sauvegarde
+userSchema.pre('save', async function(next) {
+  if (!this.isModified('password')) {
+    return next();
+  }
+  
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (error) {
+    next(error as Error);
+  }
+});
+
+// Méthode pour comparer les mots de passe
+userSchema.methods.comparePassword = async function(candidatePassword: string): Promise<boolean> {
+  try {
+    return await bcrypt.compare(candidatePassword, this.password);
+  } catch (error) {
+    throw new Error('Erreur lors de la comparaison des mots de passe');
+  }
+};
+
+export const User = mongoose.model<IUser>('User', userSchema); 
