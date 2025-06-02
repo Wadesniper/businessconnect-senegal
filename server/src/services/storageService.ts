@@ -90,7 +90,7 @@ export class StorageService {
       const [files] = await bucket.getFiles({ prefix: `${collection}/` });
       const results: T[] = [];
 
-      for (const file of files) {
+    for (const file of files) {
         const [content] = await file.download();
         const data = JSON.parse(content.toString()) as T;
         
@@ -275,10 +275,10 @@ export class StorageService {
       const [files] = await bucket.getFiles();
 
       const stats: StorageStats = {
-        totalFiles: 0,
-        totalSize: 0,
+      totalFiles: 0,
+      totalSize: 0,
         collections: {}
-      };
+    };
 
       for (const file of files) {
         const [metadata] = await file.getMetadata();
@@ -299,7 +299,7 @@ export class StorageService {
       }
 
       return stats;
-    } catch (error) {
+      } catch (error) {
       logger.error('Erreur lors du calcul des statistiques:', error);
       throw new Error('Erreur lors du calcul des statistiques');
     }

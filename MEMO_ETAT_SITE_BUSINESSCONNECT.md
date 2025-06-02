@@ -287,6 +287,23 @@
   - Pas de version minimaliste
   - Déploiement plus stable
 
+#### 2025-06-02 (Suite - Configuration Railway)
+- Migration vers la configuration Railway native :
+  - Création du fichier railway.json
+  - Configuration explicite du builder nixpacks
+  - Optimisation des commandes de build et démarrage
+  - Suppression des configurations redondantes
+- Amélioration du déploiement :
+  - Configuration plus claire et centralisée
+  - Meilleure gestion des healthchecks
+  - Paramètres de redémarrage optimisés
+  - Déploiement plus fiable
+- Maintien de la qualité :
+  - Conservation de toutes les fonctionnalités
+  - Structure complète préservée
+  - Pas de version minimaliste
+  - Stabilité accrue du déploiement
+
 ### Prochaines Étapes
 
 #### Court Terme

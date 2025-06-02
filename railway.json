@@ -1,36 +1,14 @@
 {
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
-    "builder": "DOCKERFILE",
-    "watchPatterns": [
-      "/src/**",
-      "/package.json",
-      "/package-lock.json"
-    ]
+    "builder": "NIXPACKS",
+    "buildCommand": "cd server && npm ci && npm run build"
   },
   "deploy": {
-    "startCommand": "npm start",
+    "startCommand": "cd server && node --max-old-space-size=2048 dist/index.js",
     "healthcheckPath": "/api/health",
-    "healthcheckTimeout": 100,
+    "healthcheckTimeout": 300,
     "restartPolicyType": "ON_FAILURE",
-    "restartPolicyMaxRetries": 3,
-    "envVarKeys": [
-      "NODE_ENV",
-      "PORT",
-      "MONGODB_URI",
-      "JWT_SECRET",
-      "JWT_EXPIRES_IN",
-      "SMTP_HOST",
-      "SMTP_PORT",
-      "SMTP_SECURE",
-      "SMTP_USER",
-      "SMTP_PASSWORD",
-      "SMTP_FROM",
-      "PAYTECH_API_KEY",
-      "PAYTECH_API_SECRET",
-      "PAYTECH_API_URL",
-      "CLIENT_URL",
-      "API_URL"
-    ]
+    "restartPolicyMaxRetries": 5
   }
 } 

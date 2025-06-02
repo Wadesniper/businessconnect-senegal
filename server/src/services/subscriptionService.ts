@@ -82,7 +82,7 @@ export class SubscriptionService {
       const plan = this.plans[params.type];
       if (!plan) {
         throw new Error('Type d\'abonnement invalide');
-      }
+        }
 
       const payment = await cinetpayService.initializePayment({
         amount: plan.price,
