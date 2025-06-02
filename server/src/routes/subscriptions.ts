@@ -28,7 +28,7 @@ router.use(authenticate);
 router.get('/:userId', subscriptionController.getSubscription);
 
 // Vérifier le statut d'un abonnement
-router.get('/:userId', authenticate, async (req: Request, res: Response) => {
+router.get('/:userId/status', authenticate, async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const subscription = await subscriptionService.getSubscription(userId);
@@ -241,7 +241,7 @@ router.post('/payment-callback', async (req: Request, res: Response) => {
 });
 
 // Route de notification CinetPay
-router.post('/notify', async (req: Request, res: Response): Promise<void> => {
+router.post('/notify', async (req: Request, res: Response) => {
   try {
     logger.info('Notification CinetPay reçue:', req.body);
     
@@ -249,24 +249,19 @@ router.post('/notify', async (req: Request, res: Response): Promise<void> => {
     
     if (!cpm_trans_id) {
       logger.error('Transaction ID manquant dans la notification CinetPay');
-      res.status(400).json({ error: 'Transaction ID manquant' });
-      return;
+      return res.status(400).json({ error: 'Transaction ID manquant' });
     }
 
-    // Chercher l'abonnement correspondant au transaction_id
     const subscription = await subscriptionService.getSubscriptionByPaymentId(cpm_trans_id);
     
     if (!subscription) {
       logger.error(`Abonnement introuvable pour transaction ${cpm_trans_id}`);
-      res.status(404).json({ error: 'Abonnement non trouvé' });
-      return;
+      return res.status(404).json({ error: 'Abonnement non trouvé' });
     }
 
-    // Traiter selon le statut du paiement
     if (cpm_result === '00' && cpm_trans_status === 'ACCEPTED') {
-      // Paiement réussi
       const endDate = new Date();
-      endDate.setMonth(endDate.getMonth() + 1); // Ajouter 1 mois
+      endDate.setMonth(endDate.getMonth() + 1);
       
       await subscriptionService.updateSubscription(subscription.userId, {
         status: 'active',
@@ -276,7 +271,6 @@ router.post('/notify', async (req: Request, res: Response): Promise<void> => {
       
       logger.info(`Abonnement activé pour l'utilisateur ${subscription.userId}`);
     } else {
-      // Paiement échoué ou annulé
       await subscriptionService.updateSubscription(subscription.userId, {
         status: 'cancelled',
         paymentId: cpm_trans_id
@@ -285,10 +279,10 @@ router.post('/notify', async (req: Request, res: Response): Promise<void> => {
       logger.info(`Paiement échoué pour l'utilisateur ${subscription.userId}`);
     }
 
-    res.status(200).json({ status: 'success', message: 'Notification traitée' });
+    return res.status(200).json({ status: 'success', message: 'Notification traitée' });
   } catch (error) {
     logger.error('Erreur lors du traitement de la notification CinetPay:', error);
-    res.status(500).json({ error: 'Erreur serveur lors du traitement de la notification' });
+    return res.status(500).json({ error: 'Erreur serveur lors du traitement de la notification' });
   }
 });
 
