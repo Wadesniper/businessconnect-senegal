@@ -389,6 +389,23 @@
   - Pas de compromis sur le code
   - Déploiement fiable
 
+#### 2025-06-02 (Suite - Configuration Healthcheck)
+- Ajout d'un endpoint de healthcheck public :
+  - Création d'un endpoint `/health` non authentifié
+  - Configuration du healthcheck dans Railway
+  - Amélioration de la fiabilité du déploiement
+  - Monitoring plus précis
+- Optimisation du déploiement :
+  - Healthcheck plus fiable
+  - Meilleure détection des problèmes
+  - Redémarrages plus efficaces
+  - Stabilité accrue
+- Maintien de la sécurité :
+  - Endpoint de healthcheck minimal
+  - Pas d'information sensible exposée
+  - Routes API toujours protégées
+  - Sécurité globale préservée
+
 ### Prochaines Étapes
 
 #### Court Terme
