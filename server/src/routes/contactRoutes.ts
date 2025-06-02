@@ -1,12 +1,12 @@
-import express from 'express';
-import { sendContactEmail } from '../controllers/contactController';
-import { Request, Response } from 'express';
+import { Router, RequestHandler } from 'express';
+import { contactController } from '../controllers/contactController';
 
-const router = express.Router();
+const router = Router();
 
-// Route pour envoyer un email de contact
-router.post('/', async (req: Request, res: Response): Promise<void> => {
-  await sendContactEmail(req, res);
-});
+const sendMessage: RequestHandler = (req, res, next) => {
+  contactController.sendMessage(req, res).catch(next);
+};
+
+router.post('/send', sendMessage);
 
 export default router; 

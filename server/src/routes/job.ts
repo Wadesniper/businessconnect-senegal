@@ -1,103 +1,78 @@
-import express from 'express';
-import { body } from 'express-validator';
-// import { jobController } from '../controllers/jobController';
-import { authMiddleware } from '../middleware/authMiddleware';
-import { AuthRequest } from '../types/user';
-import { Response } from 'express';
-import { createJob } from '../controllers/jobController';
-import { Router, Request, NextFunction, RouteHandler } from '../types/express';
-import * as jobController from '../controllers/jobController';
+import { Router, RequestHandler } from 'express';
+import { Request, Response } from '../types/express';
+import { jobController } from '../controllers/jobController';
 import { authenticate } from '../middleware/auth';
 import { Job } from '../models/Job';
 
 const router = Router();
 
-// Routes publiques
-router.get('/', async (req: Request, res: Response) => {
-  await jobController.getAllJobs(req, res);
-});
+// Handlers
+const getAllJobs: RequestHandler = (req, res, next) => {
+  jobController.getAllJobs(req as Request, res as Response).catch(next);
+};
 
-router.get('/:id', async (req: Request, res: Response) => {
-  await jobController.getJob(req, res);
-});
+const getJobById: RequestHandler = (req, res, next) => {
+  jobController.getJobById(req as Request, res as Response).catch(next);
+};
+
+const searchJobs: RequestHandler = (req, res, next) => {
+  jobController.searchJobs(req as Request, res as Response).catch(next);
+};
+
+const getCategories: RequestHandler = (req, res, next) => {
+  Job.distinct('category')
+    .then(categories => res.json(categories))
+    .catch(err => {
+      res.status(500).json({ error: 'Erreur lors de la récupération des catégories' });
+    });
+};
+
+const createJob: RequestHandler = (req, res, next) => {
+  jobController.createJob(req as Request, res as Response).catch(next);
+};
+
+const updateJob: RequestHandler = (req, res, next) => {
+  jobController.updateJob(req as Request, res as Response).catch(next);
+};
+
+const deleteJob: RequestHandler = (req, res, next) => {
+  jobController.deleteJob(req as Request, res as Response).catch(next);
+};
+
+const applyForJob: RequestHandler = (req, res, next) => {
+  jobController.applyForJob(req as Request, res as Response).catch(next);
+};
+
+const getMyApplications: RequestHandler = (req, res, next) => {
+  jobController.getMyApplications(req as Request, res as Response).catch(next);
+};
+
+const getJobApplications: RequestHandler = (req, res, next) => {
+  jobController.getJobApplications(req as Request, res as Response).catch(next);
+};
+
+const updateApplicationStatus: RequestHandler = (req, res, next) => {
+  jobController.updateApplicationStatus(req as Request, res as Response).catch(next);
+};
+
+// Routes publiques
+router.get('/categories', getCategories);
+router.get('/search', searchJobs);
+router.get('/:id', getJobById);
+router.get('/', getAllJobs);
 
 // Routes authentifiées
-router.use(authenticate);
+const authenticatedRouter = Router();
+authenticatedRouter.use(authenticate);
 
-// Route de création d'offre
-router.post('/', async (req: AuthRequest, res: Response) => {
-  await jobController.createJob(req, res);
-});
+authenticatedRouter.post('/', createJob);
+authenticatedRouter.put('/:id', updateJob);
+authenticatedRouter.delete('/:id', deleteJob);
+authenticatedRouter.post('/:id/apply', applyForJob);
+authenticatedRouter.get('/applications', getMyApplications);
+authenticatedRouter.get('/:id/applications', getJobApplications);
+authenticatedRouter.put('/:id/applications/:applicationId', updateApplicationStatus);
 
-// Route des catégories
-router.get('/categories', async (req: Request, res: Response) => {
-  try {
-    const categories = await Job.distinct('category');
-    res.json(categories);
-  } catch (err) {
-    res.status(500).json({ error: 'Erreur lors de la récupération des catégories' });
-  }
-});
-
-// Routes de gestion des offres
-router.put('/:id', async (req: AuthRequest, res: Response) => {
-  try {
-    const job = await Job.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!job) {
-      return res.status(404).json({ error: 'Offre non trouvée' });
-    }
-    res.json(job);
-  } catch (err) {
-    res.status(500).json({ error: 'Erreur lors de la mise à jour de l\'offre' });
-  }
-});
-
-router.delete('/:id', async (req: AuthRequest, res: Response) => {
-  try {
-    const job = await Job.findByIdAndDelete(req.params.id);
-    if (!job) {
-      return res.status(404).json({ error: 'Offre non trouvée' });
-    }
-    res.json({ message: 'Offre supprimée avec succès' });
-  } catch (err) {
-    res.status(500).json({ error: 'Erreur lors de la suppression de l\'offre' });
-  }
-});
-
-// Routes de candidature
-router.post('/:id/apply', async (req: AuthRequest, res: Response) => {
-  try {
-    const job = await Job.findById(req.params.id);
-    if (!job) {
-      return res.status(404).json({ error: 'Offre non trouvée' });
-    }
-    // TODO: Implémenter la logique de candidature
-    res.json({ message: 'Candidature envoyée avec succès' });
-  } catch (err) {
-    res.status(500).json({ error: 'Erreur lors de l\'envoi de la candidature' });
-  }
-});
-
-router.get('/applications/:jobId', async (req: AuthRequest, res: Response) => {
-  try {
-    const job = await Job.findById(req.params.jobId);
-    if (!job) {
-      return res.status(404).json({ error: 'Offre non trouvée' });
-    }
-    // TODO: Implémenter la récupération des candidatures
-    res.json([]);
-  } catch (err) {
-    res.status(500).json({ error: 'Erreur lors de la récupération des candidatures' });
-  }
-});
-
-router.put('/applications/:applicationId', async (req: AuthRequest, res: Response) => {
-  try {
-    // TODO: Implémenter la mise à jour des candidatures
-    res.json({ message: 'Candidature mise à jour avec succès' });
-  } catch (err) {
-    res.status(500).json({ error: 'Erreur lors de la mise à jour de la candidature' });
-  }
-});
+router.use('/', authenticatedRouter);
 
 export default router; 

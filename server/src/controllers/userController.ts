@@ -1,15 +1,18 @@
-import { Request, Response } from 'express';
-import { AuthRequest } from '../types/user';
+import { Request, Response } from '../types/express';
+import { AuthRequest } from '../types/express';
 import { User } from '../models/User';
 import { logger } from '../utils/logger';
 import { generateToken } from '../utils/jwt';
 import { hashPassword, comparePassword } from '../utils/password';
-import { sendResetPasswordEmail } from '../services/emailService';
+import { emailService } from '../services/emailService';
+import bcrypt from 'bcryptjs';
+import { Types } from 'mongoose';
+import { UserPayload } from '../types/user';
 
 export class UserController {
   async getPublicProfile(req: Request, res: Response) {
     try {
-      const user = await User.findById(req.params.id).select('-password -resetPasswordToken -resetPasswordExpires -verificationToken');
+      const user = await User.findById(req.params.id).select('-password -resetPasswordToken -resetPasswordExpire -verificationToken');
       if (!user) {
         return res.status(404).json({ error: 'Utilisateur non trouvé' });
       }
@@ -20,39 +23,34 @@ export class UserController {
     }
   }
 
-  async getProfile(req: AuthRequest, res: Response) {
+  async getProfile(req: Request, res: Response) {
     try {
-      const userId = req.user?.id;
-      if (!userId) {
-        return res.status(401).json({ error: 'Non autorisé' });
-      }
-
-      const user = await User.findById(userId);
+      const user = await User.findById(req.user?.id);
       if (!user) {
         return res.status(404).json({ error: 'Utilisateur non trouvé' });
       }
 
-      res.json(user);
+      res.json({
+        user: {
+          id: user._id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role
+        }
+      });
     } catch (error) {
       logger.error('Erreur lors de la récupération du profil:', error);
       res.status(500).json({ error: 'Erreur lors de la récupération du profil' });
     }
   }
 
-  async updateProfile(req: AuthRequest, res: Response) {
+  async updateProfile(req: Request, res: Response) {
     try {
-      const userId = req.user?.id;
-      if (!userId) {
-        return res.status(401).json({ error: 'Non autorisé' });
-      }
-
+      const updates = req.body;
       const user = await User.findByIdAndUpdate(
-        userId,
-        { 
-          firstName: req.body.firstName,
-          lastName: req.body.lastName,
-          email: req.body.email
-        },
+        req.user?.id,
+        { $set: updates },
         { new: true }
       );
 
@@ -60,29 +58,32 @@ export class UserController {
         return res.status(404).json({ error: 'Utilisateur non trouvé' });
       }
 
-      res.json(user);
+      res.json({
+        user: {
+          id: user._id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role
+        }
+      });
     } catch (error) {
       logger.error('Erreur lors de la mise à jour du profil:', error);
       res.status(500).json({ error: 'Erreur lors de la mise à jour du profil' });
     }
   }
 
-  async deleteProfile(req: AuthRequest, res: Response) {
+  async deleteAccount(req: Request, res: Response) {
     try {
-      const userId = req.user?.id;
-      if (!userId) {
-        return res.status(401).json({ error: 'Non autorisé' });
-      }
-
-      const user = await User.findByIdAndDelete(userId);
+      const user = await User.findByIdAndDelete(req.user?.id);
       if (!user) {
         return res.status(404).json({ error: 'Utilisateur non trouvé' });
       }
 
-      res.json({ message: 'Profil supprimé avec succès' });
+      res.json({ message: 'Compte supprimé avec succès' });
     } catch (error) {
-      logger.error('Erreur lors de la suppression du profil:', error);
-      res.status(500).json({ error: 'Erreur lors de la suppression du profil' });
+      logger.error('Erreur lors de la suppression du compte:', error);
+      res.status(500).json({ error: 'Erreur lors de la suppression du compte' });
     }
   }
 
@@ -204,7 +205,7 @@ export class UserController {
         return res.status(403).json({ error: 'Accès non autorisé' });
       }
 
-      const users = await User.find().select('-password -resetPasswordToken -resetPasswordExpires -verificationToken');
+      const users = await User.find().select('-password -resetPasswordToken -resetPasswordExpire -verificationToken');
       res.json(users);
     } catch (error) {
       logger.error('Erreur lors de la récupération des utilisateurs:', error);
@@ -218,7 +219,7 @@ export class UserController {
         return res.status(403).json({ error: 'Accès non autorisé' });
       }
 
-      const user = await User.findById(req.params.id).select('-password -resetPasswordToken -resetPasswordExpires -verificationToken');
+      const user = await User.findById(req.params.id).select('-password -resetPasswordToken -resetPasswordExpire -verificationToken');
       if (!user) {
         return res.status(404).json({ error: 'Utilisateur non trouvé' });
       }
@@ -243,7 +244,7 @@ export class UserController {
         userId,
         { status },
         { new: true }
-      ).select('-password -resetPasswordToken -resetPasswordExpires -verificationToken');
+      ).select('-password -resetPasswordToken -resetPasswordExpire -verificationToken');
 
       if (!user) {
         return res.status(404).json({ error: 'Utilisateur non trouvé' });
@@ -278,42 +279,79 @@ export class UserController {
 
   async register(req: Request, res: Response) {
     try {
-      const { email, password, name } = req.body;
-      const existingUser = await User.findOne({ email });
-      
-      if (existingUser) {
+      const { email, password, firstName, lastName, role } = req.body;
+
+      const userExists = await User.findOne({ email });
+      if (userExists) {
         return res.status(400).json({ error: 'Cet email est déjà utilisé' });
       }
 
-      const hashedPassword = await hashPassword(password);
       const user = await User.create({
         email,
-        password: hashedPassword,
-        name
+        password,
+        firstName,
+        lastName,
+        role
       });
 
-      const token = generateToken(user);
-      return res.status(201).json({ token, user: { id: user._id, email: user.email, name: user.name } });
+      const payload: UserPayload = {
+        id: user._id.toString(),
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role
+      };
+
+      const token = generateToken(payload);
+
+      res.status(201).json({
+        token,
+        user: {
+          id: user._id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role
+        }
+      });
     } catch (error) {
       logger.error('Erreur lors de l\'inscription:', error);
-      return res.status(500).json({ error: 'Erreur lors de l\'inscription' });
+      res.status(500).json({ error: 'Erreur lors de l\'inscription' });
     }
   }
 
   async login(req: Request, res: Response) {
     try {
       const { email, password } = req.body;
+
       const user = await User.findOne({ email }).select('+password');
-      
-      if (!user || !(await comparePassword(password, user.password))) {
+      if (!user || !(await bcrypt.compare(password, user.password))) {
         return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
       }
 
-      const token = generateToken(user);
-      return res.json({ token, user: { id: user._id, email: user.email, name: user.name } });
+      const payload: UserPayload = {
+        id: user._id.toString(),
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role
+      };
+
+      const token = generateToken(payload);
+
+      res.json({
+        token,
+        user: {
+          id: user._id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role
+        }
+      });
     } catch (error) {
       logger.error('Erreur lors de la connexion:', error);
-      return res.status(500).json({ error: 'Erreur lors de la connexion' });
+      res.status(500).json({ error: 'Erreur lors de la connexion' });
     }
   }
 
@@ -321,37 +359,55 @@ export class UserController {
     try {
       const { email } = req.body;
       const user = await User.findOne({ email });
-      
+
       if (!user) {
         return res.status(404).json({ error: 'Utilisateur non trouvé' });
       }
 
-      const resetToken = generateToken(user, '1h');
-      await sendResetPasswordEmail(email, resetToken);
-      
-      return res.json({ message: 'Email de réinitialisation envoyé' });
+      const payload: UserPayload = {
+        id: user._id.toString(),
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role
+      };
+
+      const resetToken = generateToken(payload, '1h');
+      user.resetPasswordToken = resetToken;
+      user.resetPasswordExpire = new Date(Date.now() + 3600000); // 1 hour
+      await user.save();
+
+      await emailService.sendResetPasswordEmail(email, resetToken);
+
+      res.json({ message: 'Email de réinitialisation envoyé' });
     } catch (error) {
       logger.error('Erreur lors de la demande de réinitialisation:', error);
-      return res.status(500).json({ error: 'Erreur lors de la demande de réinitialisation' });
+      res.status(500).json({ error: 'Erreur lors de la demande de réinitialisation' });
     }
   }
 
   async resetPassword(req: Request, res: Response) {
     try {
-      const { token, newPassword } = req.body;
-      // TODO: Vérifier le token et mettre à jour le mot de passe
-      return res.json({ message: 'Mot de passe réinitialisé avec succès' });
+      const { token, password } = req.body;
+
+      const user = await User.findOne({
+        resetPasswordToken: token,
+        resetPasswordExpire: { $gt: Date.now() }
+      });
+
+      if (!user) {
+        return res.status(400).json({ error: 'Token invalide ou expiré' });
+      }
+
+      user.password = password;
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpire = undefined;
+      await user.save();
+
+      res.json({ message: 'Mot de passe réinitialisé avec succès' });
     } catch (error) {
       logger.error('Erreur lors de la réinitialisation:', error);
-      return res.status(500).json({ error: 'Erreur lors de la réinitialisation du mot de passe' });
+      res.status(500).json({ error: 'Erreur lors de la réinitialisation du mot de passe' });
     }
-  }
-
-  async getProfile(userId: string) {
-    return User.findById(userId).select('-password');
-  }
-
-  async updateProfile(userId: string, updateData: Partial<typeof User>) {
-    return User.findByIdAndUpdate(userId, updateData, { new: true }).select('-password');
   }
 } 

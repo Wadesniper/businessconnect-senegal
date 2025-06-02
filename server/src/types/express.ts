@@ -2,8 +2,8 @@ import { Request as ExpressRequest, Response as ExpressResponse, NextFunction as
 import { ParamsDictionary, Query, Send } from 'express-serve-static-core';
 import { UserPayload } from './user';
 
-// Extend Request with our custom properties
-export interface Request extends Omit<ExpressRequest, 'body'> {
+// Base Request interface extending ExpressRequest
+export interface Request extends ExpressRequest {
   user?: UserPayload;
   body: any;
   params: ParamsDictionary;
@@ -11,27 +11,28 @@ export interface Request extends Omit<ExpressRequest, 'body'> {
   ip: string;
   path: string;
   method: string;
-  headers: any;
+  headers: Record<string, string | string[] | undefined>;
 }
 
-// Extend Response with necessary methods
-export interface Response extends Omit<ExpressResponse, 'json' | 'send' | 'status'> {
-  json: Send<any, this>;
-  send: Send<any, this>;
+// Base Response interface extending ExpressResponse
+export interface Response<ResBody = any> extends ExpressResponse<ResBody> {
+  json(body: ResBody): this;
+  send: Send<ResBody, this>;
   status(code: number): this;
 }
 
-// Define NextFunction
+// Export NextFunction
 export type NextFunction = ExpressNextFunction;
 
 // Define AuthRequest with required user
-export interface AuthRequest extends Omit<Request, 'user'> {
+export interface AuthRequest extends Request {
   user: UserPayload;
 }
 
 // Define route handlers
-export type RouteHandler = (req: Request, res: Response, next: NextFunction) => Promise<void> | void;
-export type AuthRouteHandler = (req: AuthRequest, res: Response, next: NextFunction) => Promise<void> | void;
+export type RouteHandler = (req: Request, res: Response, next: NextFunction) => Promise<void | Response> | void;
+export type AuthRouteHandler = (req: AuthRequest, res: Response, next: NextFunction) => Promise<void | Response> | void;
 
 // Export Router
-export const Router = ExpressRouter; 
+export type Router = ExpressRouter;
+export { ExpressRouter }; 

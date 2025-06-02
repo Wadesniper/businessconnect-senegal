@@ -41,6 +41,24 @@ class EmailService {
     }
   }
 
+  async sendResetPasswordEmail(email: string, resetToken: string): Promise<void> {
+    const resetUrl = `${config.CLIENT_URL}/reset-password?token=${resetToken}`;
+    const html = `
+      <h1>Réinitialisation de votre mot de passe</h1>
+      <p>Vous avez demandé la réinitialisation de votre mot de passe.</p>
+      <p>Cliquez sur le lien ci-dessous pour réinitialiser votre mot de passe :</p>
+      <a href="${resetUrl}">Réinitialiser mon mot de passe</a>
+      <p>Ce lien expirera dans 1 heure.</p>
+      <p>Si vous n'avez pas demandé cette réinitialisation, ignorez cet email.</p>
+    `;
+
+    await this.sendEmail({
+      to: email,
+      subject: 'Réinitialisation de votre mot de passe - BusinessConnect Senegal',
+      html
+    });
+  }
+
   // Templates d'emails
   async sendPaymentSuccessEmail(to: string, data: any): Promise<void> {
     const html = `
@@ -129,4 +147,34 @@ class EmailService {
   }
 }
 
-export const emailService = new EmailService(); 
+export const emailService = new EmailService();
+
+// Configure nodemailer transporter
+const transporter = nodemailer.createTransport({
+  // TODO: Add your email service configuration here
+  service: 'gmail',
+  auth: {
+    user: config.email.user,
+    pass: config.email.password
+  }
+});
+
+export const sendResetPasswordEmail = async (email: string, resetToken: string) => {
+  const resetUrl = `${config.clientUrl}/reset-password?token=${resetToken}`;
+  
+  const mailOptions = {
+    from: config.email.from,
+    to: email,
+    subject: 'Réinitialisation de votre mot de passe - BusinessConnect Senegal',
+    html: `
+      <h1>Réinitialisation de votre mot de passe</h1>
+      <p>Vous avez demandé la réinitialisation de votre mot de passe.</p>
+      <p>Cliquez sur le lien ci-dessous pour réinitialiser votre mot de passe :</p>
+      <a href="${resetUrl}">Réinitialiser mon mot de passe</a>
+      <p>Ce lien expirera dans 1 heure.</p>
+      <p>Si vous n'avez pas demandé cette réinitialisation, ignorez cet email.</p>
+    `
+  };
+
+  await transporter.sendMail(mailOptions);
+}; 

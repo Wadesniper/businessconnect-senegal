@@ -1,31 +1,21 @@
-import { Types } from 'mongoose';
+import { Document } from 'mongoose';
 
 export type UserRole = 'admin' | 'etudiant' | 'annonceur' | 'employeur';
 
-export interface UserPayload {
-  id: string;
-  role: UserRole;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
-  isVerified: boolean;
-}
-
-export interface IUser {
-  _id: Types.ObjectId;
-  firstName: string;
-  lastName: string;
+export interface IUser extends Document {
   email: string;
   password: string;
+  firstName: string;
+  lastName: string;
   role: UserRole;
-  phoneNumber: string;
-  isVerified: boolean;
-  verificationToken?: string;
+  status: 'active' | 'inactive';
   resetPasswordToken?: string;
-  resetPasswordExpire?: Date;
+  resetPasswordExpires?: Date;
+  verificationToken?: string;
+  isVerified: boolean;
   createdAt: Date;
   updatedAt: Date;
+  phoneNumber: string;
   preferences?: {
     notifications: boolean;
     newsletter: boolean;
@@ -39,4 +29,12 @@ export interface IUser {
   }>;
 }
 
-// Suppression de l'interface AuthRequest car elle est déjà dans express.ts 
+export interface UserPayload {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: UserRole;
+}
+
+export { AuthRequest } from './express'; 

@@ -2,108 +2,140 @@ import axios from 'axios';
 import { config } from '../config';
 import { logger } from '../utils/logger';
 
-interface CinetPayParams {
+interface PaymentData {
   amount: number;
-  customer_name: string;
-  customer_surname: string;
-  customer_email: string;
-  customer_phone_number: string;
   description: string;
+  userId: string;
 }
 
-interface CinetPayResponse {
-  code: string;
-  message: string;
-  data?: {
-    payment_token: string;
-    payment_url: string;
-  };
+interface PaymentResponse {
+  id: string;
+  amount: number;
+  currency: string;
+  status: 'pending' | 'success' | 'failed';
+  userId: string;
+  description: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-interface CinetPayResult {
-  success: boolean;
-  message?: string;
-  payment_url?: string;
-  transaction_id?: string;
-}
+class CinetPayService {
+  private apiKey: string;
+  private siteId: string;
+  private baseUrl: string;
 
-export class CinetPayService {
-  private validateConfig() {
-    const missingConfig: string[] = [];
-
-    if (!config.CINETPAY_APIKEY) missingConfig.push('CINETPAY_APIKEY');
-    if (!config.CINETPAY_SITE_ID) missingConfig.push('CINETPAY_SITE_ID');
-    if (!config.CINETPAY_BASE_URL) missingConfig.push('CINETPAY_BASE_URL');
-    if (!config.CINETPAY_NOTIFY_URL) missingConfig.push('CINETPAY_NOTIFY_URL');
-    if (!config.CINETPAY_RETURN_URL) missingConfig.push('CINETPAY_RETURN_URL');
-
-    if (missingConfig.length > 0) {
-      throw new Error(`Configuration CinetPay manquante : ${missingConfig.join(', ')}`);
-    }
+  constructor() {
+    this.apiKey = config.CINETPAY_APIKEY;
+    this.siteId = config.CINETPAY_SITE_ID;
+    this.baseUrl = config.CINETPAY_BASE_URL;
   }
 
-  private validateParams(params: CinetPayParams) {
-    const missingParams: string[] = [];
-
-    if (!params.amount || params.amount <= 0) missingParams.push('amount');
-    if (!params.customer_name) missingParams.push('customer_name');
-    if (!params.customer_surname) missingParams.push('customer_surname');
-    if (!params.customer_phone_number) missingParams.push('customer_phone_number');
-    if (!params.customer_email) missingParams.push('customer_email');
-
-    if (missingParams.length > 0) {
-      throw new Error(`Paramètres manquants : ${missingParams.join(', ')}`);
-    }
-  }
-
-  async initializePayment(params: CinetPayParams): Promise<CinetPayResult> {
+  async createPayment(data: PaymentData): Promise<PaymentResponse> {
     try {
-      this.validateConfig();
-      this.validateParams(params);
-
-      const transaction_id = `TRANS_${Date.now()}`;
-
-      const paymentData = {
-        apikey: config.CINETPAY_APIKEY,
-        site_id: config.CINETPAY_SITE_ID,
-        transaction_id,
-        amount: params.amount,
+      const response = await axios.post(`${this.baseUrl}/payment`, {
+        apikey: this.apiKey,
+        site_id: this.siteId,
+        amount: data.amount,
         currency: 'XOF',
-        description: params.description,
-        customer_name: params.customer_name,
-        customer_surname: params.customer_surname,
-        customer_email: params.customer_email,
-        customer_phone_number: params.customer_phone_number,
-        notify_url: config.CINETPAY_NOTIFY_URL,
+        description: data.description,
+        customer_id: data.userId,
         return_url: config.CINETPAY_RETURN_URL,
-        channels: 'ALL',
-        metadata: 'subscription_payment'
-      };
+        cancel_url: `${config.CLIENT_URL}/payment/cancel`,
+        notify_url: config.CINETPAY_NOTIFY_URL
+      });
 
-      const response = await axios.post<CinetPayResponse>(
-        `${config.CINETPAY_BASE_URL}/payment`,
-        paymentData
-      );
-
-      if (response.data?.data?.payment_url) {
-        return {
-          success: true,
-          payment_url: response.data.data.payment_url,
-          transaction_id
-        };
-      }
-
-      logger.error('Erreur CinetPay:', response.data);
       return {
-        success: false,
-        message: response.data.message || 'Erreur lors de l\'initialisation du paiement'
+        id: response.data.payment_token,
+        amount: data.amount,
+        currency: 'XOF',
+        status: 'pending',
+        userId: data.userId,
+        description: data.description,
+        createdAt: new Date(),
+        updatedAt: new Date()
       };
     } catch (error) {
-      logger.error('Erreur lors de l\'initialisation du paiement CinetPay:', error);
+      logger.error('Erreur lors de la création du paiement CinetPay:', error);
+      throw new Error('Erreur lors de la création du paiement');
+    }
+  }
+
+  async confirmPayment(token: string): Promise<PaymentResponse> {
+    try {
+      const response = await axios.post(`${this.baseUrl}/payment/check`, {
+        apikey: this.apiKey,
+        site_id: this.siteId,
+        payment_token: token
+      });
+
       return {
-        success: false,
-        message: error instanceof Error ? error.message : 'Erreur inconnue'
+        id: token,
+        amount: response.data.amount,
+        currency: response.data.currency,
+        status: response.data.status === 'ACCEPTED' ? 'success' : 'failed',
+        userId: response.data.customer_id,
+        description: response.data.description,
+        createdAt: new Date(response.data.created_at),
+        updatedAt: new Date()
       };
+    } catch (error) {
+      logger.error('Erreur lors de la vérification du paiement CinetPay:', error);
+      throw new Error('Erreur lors de la vérification du paiement');
+    }
+  }
+
+  async getPaymentHistory(userId: string): Promise<PaymentResponse[]> {
+    try {
+      const response = await axios.get(`${this.baseUrl}/payments`, {
+        params: {
+          apikey: this.apiKey,
+          site_id: this.siteId,
+          customer_id: userId
+        }
+      });
+
+      return response.data.payments.map((payment: any) => ({
+        id: payment.payment_token,
+        amount: payment.amount,
+        currency: payment.currency,
+        status: payment.status === 'ACCEPTED' ? 'success' : 'failed',
+        userId: payment.customer_id,
+        description: payment.description,
+        createdAt: new Date(payment.created_at),
+        updatedAt: new Date(payment.updated_at)
+      }));
+    } catch (error) {
+      logger.error('Erreur lors de la récupération de l\'historique CinetPay:', error);
+      throw new Error('Erreur lors de la récupération de l\'historique');
+    }
+  }
+
+  async getPaymentDetails(paymentId: string): Promise<PaymentResponse | null> {
+    try {
+      const response = await axios.get(`${this.baseUrl}/payment/${paymentId}`, {
+        params: {
+          apikey: this.apiKey,
+          site_id: this.siteId
+        }
+      });
+
+      if (!response.data) {
+        return null;
+      }
+
+      return {
+        id: paymentId,
+        amount: response.data.amount,
+        currency: response.data.currency,
+        status: response.data.status === 'ACCEPTED' ? 'success' : 'failed',
+        userId: response.data.customer_id,
+        description: response.data.description,
+        createdAt: new Date(response.data.created_at),
+        updatedAt: new Date(response.data.updated_at)
+      };
+    } catch (error) {
+      logger.error('Erreur lors de la récupération des détails CinetPay:', error);
+      throw new Error('Erreur lors de la récupération des détails');
     }
   }
 }

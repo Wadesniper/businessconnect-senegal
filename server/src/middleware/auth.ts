@@ -4,66 +4,22 @@ import { config } from '../config';
 import { User } from '../models/User';
 import { UserPayload, UserRole } from '../types/user';
 import { logger } from '../utils/logger';
+import { verifyToken } from '../utils/jwt';
+import { RequestHandler } from 'express';
 
-export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
+export const authenticate: RequestHandler = (req, res, next) => {
   try {
-    const token = req.header('Authorization')?.replace('Bearer ', '');
-    if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: 'Token manquant'
-      });
-    }
-
-    const decoded = jwt.verify(token, config.JWT_SECRET) as { id: string };
-    const user = await User.findById(decoded.id).select('+email +role +isVerified');
+    const token = req.headers.authorization?.split(' ')[1];
     
-    if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: 'Utilisateur non trouvé'
-      });
+    if (!token) {
+      return res.status(401).json({ error: 'Token manquant' });
     }
 
-    if (!user.isVerified) {
-      return res.status(401).json({
-        success: false,
-        message: 'Veuillez vérifier votre compte'
-      });
-    }
-
-    const userPayload: UserPayload = {
-      id: user._id.toString(),
-      role: user.role as UserRole,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email || '',
-      phoneNumber: user.phoneNumber,
-      isVerified: user.isVerified
-    };
-
-    (req as AuthRequest).user = userPayload;
+    const decoded = jwt.verify(token, config.JWT_SECRET) as UserPayload;
+    (req as any).user = decoded;
     next();
   } catch (error) {
-    if (error instanceof jwt.JsonWebTokenError) {
-      return res.status(401).json({
-        success: false,
-        message: 'Token invalide'
-      });
-    }
-    
-    if (error instanceof jwt.TokenExpiredError) {
-      return res.status(401).json({
-        success: false,
-        message: 'Token expiré'
-      });
-    }
-
-    logger.error('Erreur d\'authentification:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Erreur lors de l\'authentification'
-    });
+    return res.status(401).json({ error: 'Token invalide' });
   }
 };
 

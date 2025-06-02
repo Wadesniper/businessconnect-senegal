@@ -29,6 +29,8 @@ export interface IUser extends Document {
     read: boolean;
     createdAt: Date;
   }>;
+  name: string;
+  status: string;
 }
 
 // Schéma Mongoose avec validation
@@ -57,16 +59,13 @@ const userSchema = new Schema<IUser>({
   password: {
     type: String,
     required: [true, 'Le mot de passe est requis'],
-    minlength: [8, 'Le mot de passe doit contenir au moins 8 caractères'],
+    minlength: [6, 'Le mot de passe doit contenir au moins 6 caractères'],
     select: false
   },
   role: {
     type: String,
-    enum: {
-      values: ['admin', 'etudiant', 'annonceur', 'employeur'] as UserRole[],
-      message: 'Rôle invalide. Les rôles autorisés sont: admin, etudiant, annonceur, employeur'
-    },
-    default: 'etudiant'
+    enum: ['admin', 'etudiant', 'annonceur', 'employeur'],
+    required: [true, 'Le rôle est requis']
   },
   phoneNumber: {
     type: String,
@@ -125,7 +124,9 @@ const userSchema = new Schema<IUser>({
       type: Date,
       default: Date.now
     }
-  }]
+  }],
+  name: { type: String, required: true },
+  status: { type: String, enum: ['active', 'inactive'], default: 'active' }
 }, {
   timestamps: true
 });
