@@ -1,46 +1,43 @@
-import Job, { IJob } from '../models/Job';
 import { Request, Response } from '../types/express';
+import { Job } from '../models/Job';
+import { logger } from '../utils/logger';
 
-export const getAllJobs = async (req: Request, res: Response) => {
+export async function getAllJobs(req: Request, res: Response) {
   try {
-    const jobs = await Job.find();
+    const jobs = await Job.find().sort({ createdAt: -1 });
     res.json(jobs);
-  } catch (err) {
-    res.status(500).json({ error: 'Erreur lors de la récupération des offres' });
+  } catch (error) {
+    logger.error('Erreur lors de la récupération des jobs:', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des jobs' });
   }
-};
+}
 
-export const getJob = async (req: Request, res: Response) => {
+export async function getJob(req: Request, res: Response) {
   try {
-    const job = await Job.findById(req.params.id) as IJob | null;
+    const job = await Job.findById(req.params.id);
     if (!job) {
-      return res.status(404).json({ error: 'Offre non trouvée' });
+      return res.status(404).json({ error: 'Job non trouvé' });
     }
-    const jobObj = job.toObject();
-    res.json({
-      ...jobObj,
-      email: jobObj.contactEmail,
-      phone: jobObj.contactPhone
-    });
-  } catch (err) {
-    res.status(500).json({ error: 'Erreur lors de la récupération de l\'offre' });
+    res.json(job);
+  } catch (error) {
+    logger.error('Erreur lors de la récupération du job:', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération du job' });
   }
-};
+}
 
-export const createJob = async (req: Request, res: Response) => {
+export async function createJob(req: Request, res: Response) {
   try {
-    const userId = req.user?.id;
-    if (!userId) {
-      return res.status(401).json({ error: 'Non autorisé' });
-    }
-    const jobData = { ...req.body, createdBy: userId };
-    const job = new Job(jobData);
+    const job = new Job({
+      ...req.body,
+      createdBy: req.user?.id
+    });
     await job.save();
     res.status(201).json(job);
-  } catch (err) {
-    res.status(500).json({ error: 'Erreur lors de la création de l\'offre' });
+  } catch (error) {
+    logger.error('Erreur lors de la création du job:', error);
+    res.status(500).json({ error: 'Erreur lors de la création du job' });
   }
-};
+}
 
 export const getCategories = async (req: Request, res: Response) => {
   try {
