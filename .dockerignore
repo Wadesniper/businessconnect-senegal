@@ -8,6 +8,8 @@
 **/dist
 **/build
 **/.next
+**/.nuxt
+**/.output
 
 # Environnement
 **/.env
@@ -40,12 +42,23 @@
 **/docs
 
 # Fichiers spécifiques au projet
-client-vite-fix/
+/client-vite-fix
 
 # Ne pas ignorer les fichiers essentiels du serveur
-!server/src/**/*
-!server/scripts/**/*
-!server/package.json
-!server/package-lock.json
+!server/src
+!server/scripts
+!server/package*.json
 !server/tsconfig.json
-!server/jest.config.js 
+!server/jest.config.js
+
+# Fichiers de test
+**/__tests__
+**/*.test.*
+**/*.spec.*
+
+# Fichiers de configuration spécifiques à l'environnement de développement
+**/.editorconfig
+**/.eslintrc
+**/.prettierrc
+**/.babelrc
+**/tsconfig.tsbuildinfo 

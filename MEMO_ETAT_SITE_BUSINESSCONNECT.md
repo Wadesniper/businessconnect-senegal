@@ -104,21 +104,21 @@
   - Maintien de toutes les dépendances nécessaires
 
 #### 2025-06-02 (Suite - Optimisation Docker)
-- Optimisation de la consommation mémoire :
-  - Installation séquentielle des dépendances système pour réduire l'empreinte mémoire
-  - Ajout de limites de mémoire explicites pour Node.js
-  - Installation optimisée des dépendances npm
-  - Configuration du build pour une meilleure gestion des ressources
-- Amélioration de la stabilité du build :
-  - Installation séparée des dépendances de production et de développement
-  - Optimisation du cache Docker
-  - Réduction des dépendances optionnelles
-  - Maintien de toutes les fonctionnalités essentielles
-- Configuration de production robuste :
-  - Démarrage optimisé du serveur avec limites de mémoire appropriées
-  - Conservation de tous les scripts et fonctionnalités
-  - Pas de compromis sur les fonctionnalités du site
-  - Structure complète maintenue pour la production
+- Correction de la configuration Docker :
+  - Restructuration du Dockerfile pour respecter la structure du projet
+  - Optimisation des chemins de copie des fichiers
+  - Configuration correcte des workdir
+  - Maintien de tous les fichiers essentiels
+- Amélioration du .dockerignore :
+  - Règles plus précises pour les fichiers à inclure/exclure
+  - Protection des fichiers essentiels du serveur
+  - Optimisation de la taille de l'image
+  - Conservation de la structure complète du projet
+- Robustesse du build :
+  - Vérification des chemins de fichiers
+  - Installation fiable des dépendances
+  - Maintien de toutes les fonctionnalités
+  - Pas de version minimaliste
 
 #### 2024-03-20
 - Refonte complète du StorageService avec pattern Singleton pour une meilleure gestion des ressources

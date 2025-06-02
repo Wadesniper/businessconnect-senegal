@@ -10,22 +10,18 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 # Définition du répertoire de travail
-WORKDIR /app/server
+WORKDIR /app
 
-# Copie et installation des dépendances d'abord pour optimiser le cache
+# Copie des fichiers de configuration du serveur
 COPY server/package*.json ./
+COPY server/tsconfig.json ./
+COPY server/jest.config.js ./
 
 # Installation des dépendances avec une configuration npm optimisée
 ENV NPM_CONFIG_LOGLEVEL=error
 ENV NODE_OPTIONS="--max-old-space-size=2048"
-RUN npm set progress=false && \
-    npm config set depth 0 && \
-    npm ci --only=production && \
+RUN npm ci --only=production && \
     npm ci
-
-# Copie des fichiers de configuration
-COPY server/tsconfig.json ./
-COPY server/jest.config.js ./
 
 # Copie du code source et des scripts
 COPY server/src ./src
@@ -43,12 +39,12 @@ RUN apt-get update && \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app/server
+WORKDIR /app
 
 # Copie des fichiers de configuration et du build depuis l'étape précédente
-COPY --from=builder /app/server/package*.json ./
-COPY --from=builder /app/server/dist ./dist
-COPY --from=builder /app/server/scripts ./scripts
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/scripts ./scripts
 
 # Installation des dépendances de production uniquement
 ENV NODE_ENV=production
@@ -57,6 +53,7 @@ RUN npm ci --only=production --no-optional
 
 # Variables d'environnement
 ENV PORT=3000
+ENV NODE_OPTIONS="--max-old-space-size=2048"
 
 # Exposition du port
 EXPOSE 3000
