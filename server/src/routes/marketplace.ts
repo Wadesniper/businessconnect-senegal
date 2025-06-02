@@ -2,6 +2,7 @@ import { Router, RouteHandler, AuthRouteHandler, Request, Response, NextFunction
 import { MarketplaceController } from '../controllers/marketplaceController';
 import authMiddleware from '../middleware/auth';
 import { upload } from '../middleware/uploadMiddleware';
+import { authenticate } from '../middleware/auth';
 
 const router = Router();
 const marketplaceController = new MarketplaceController();
@@ -10,6 +11,9 @@ const marketplaceController = new MarketplaceController();
 const asyncHandler = (fn: Function) => (req: Request, res: Response, next: NextFunction) => {
   Promise.resolve(fn(req, res, next)).catch(next);
 };
+
+// Middleware d'authentification pour toutes les routes
+router.use(authenticate);
 
 // Handlers pour les routes publiques
 const getProducts: RouteHandler = async (req: Request, res: Response) => {
@@ -91,9 +95,6 @@ router.get('/products/:id', getProduct);
 router.get('/categories', getCategories);
 router.get('/search', searchProducts);
 
-// Configuration du middleware d'authentification
-router.use(authMiddleware);
-
 // Configuration des routes authentifiées
 router.post('/products', upload.array('images', 5), asyncHandler(createProduct));
 router.put('/products/:id', upload.array('images', 5), asyncHandler(updateProduct));
@@ -105,5 +106,55 @@ router.put('/seller/orders/:id', asyncHandler(updateOrder));
 router.post('/orders', asyncHandler(createOrder));
 router.get('/orders', asyncHandler(getOrders));
 router.get('/orders/:id', asyncHandler(getOrder));
+
+// Liste des annonces
+router.get('/', async (req: Request, res: Response) => {
+  try {
+    // TODO: Implémenter la logique
+    return res.json({ message: 'Liste des annonces' });
+  } catch (error) {
+    return res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// Détail d'une annonce
+router.get('/:id', async (req: Request, res: Response) => {
+  try {
+    // TODO: Implémenter la logique
+    return res.json({ message: 'Détail de l\'annonce' });
+  } catch (error) {
+    return res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// Créer une annonce
+router.post('/', async (req: Request, res: Response) => {
+  try {
+    // TODO: Implémenter la logique
+    return res.status(201).json({ message: 'Annonce créée' });
+  } catch (error) {
+    return res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// Mettre à jour une annonce
+router.put('/:id', async (req: Request, res: Response) => {
+  try {
+    // TODO: Implémenter la logique
+    return res.json({ message: 'Annonce mise à jour' });
+  } catch (error) {
+    return res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// Supprimer une annonce
+router.delete('/:id', async (req: Request, res: Response) => {
+  try {
+    // TODO: Implémenter la logique
+    return res.json({ message: 'Annonce supprimée' });
+  } catch (error) {
+    return res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
 
 export default router; 

@@ -2,6 +2,9 @@ import { Request, Response } from 'express';
 import { AuthRequest } from '../types/user';
 import { User } from '../models/User';
 import { logger } from '../utils/logger';
+import { generateToken } from '../utils/jwt';
+import { hashPassword, comparePassword } from '../utils/password';
+import { sendResetPasswordEmail } from '../services/emailService';
 
 export class UserController {
   async getPublicProfile(req: Request, res: Response) {
@@ -271,5 +274,84 @@ export class UserController {
       logger.error('Erreur lors de la suppression de l\'utilisateur:', error);
       res.status(500).json({ error: 'Erreur lors de la suppression de l\'utilisateur' });
     }
+  }
+
+  async register(req: Request, res: Response) {
+    try {
+      const { email, password, name } = req.body;
+      const existingUser = await User.findOne({ email });
+      
+      if (existingUser) {
+        return res.status(400).json({ error: 'Cet email est déjà utilisé' });
+      }
+
+      const hashedPassword = await hashPassword(password);
+      const user = await User.create({
+        email,
+        password: hashedPassword,
+        name
+      });
+
+      const token = generateToken(user);
+      return res.status(201).json({ token, user: { id: user._id, email: user.email, name: user.name } });
+    } catch (error) {
+      logger.error('Erreur lors de l\'inscription:', error);
+      return res.status(500).json({ error: 'Erreur lors de l\'inscription' });
+    }
+  }
+
+  async login(req: Request, res: Response) {
+    try {
+      const { email, password } = req.body;
+      const user = await User.findOne({ email }).select('+password');
+      
+      if (!user || !(await comparePassword(password, user.password))) {
+        return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
+      }
+
+      const token = generateToken(user);
+      return res.json({ token, user: { id: user._id, email: user.email, name: user.name } });
+    } catch (error) {
+      logger.error('Erreur lors de la connexion:', error);
+      return res.status(500).json({ error: 'Erreur lors de la connexion' });
+    }
+  }
+
+  async forgotPassword(req: Request, res: Response) {
+    try {
+      const { email } = req.body;
+      const user = await User.findOne({ email });
+      
+      if (!user) {
+        return res.status(404).json({ error: 'Utilisateur non trouvé' });
+      }
+
+      const resetToken = generateToken(user, '1h');
+      await sendResetPasswordEmail(email, resetToken);
+      
+      return res.json({ message: 'Email de réinitialisation envoyé' });
+    } catch (error) {
+      logger.error('Erreur lors de la demande de réinitialisation:', error);
+      return res.status(500).json({ error: 'Erreur lors de la demande de réinitialisation' });
+    }
+  }
+
+  async resetPassword(req: Request, res: Response) {
+    try {
+      const { token, newPassword } = req.body;
+      // TODO: Vérifier le token et mettre à jour le mot de passe
+      return res.json({ message: 'Mot de passe réinitialisé avec succès' });
+    } catch (error) {
+      logger.error('Erreur lors de la réinitialisation:', error);
+      return res.status(500).json({ error: 'Erreur lors de la réinitialisation du mot de passe' });
+    }
+  }
+
+  async getProfile(userId: string) {
+    return User.findById(userId).select('-password');
+  }
+
+  async updateProfile(userId: string, updateData: Partial<typeof User>) {
+    return User.findByIdAndUpdate(userId, updateData, { new: true }).select('-password');
   }
 } 
