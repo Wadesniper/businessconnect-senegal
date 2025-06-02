@@ -10,7 +10,10 @@ COPY . .
 # Installation des dépendances et build
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=2048"
+
+# Installation des dépendances de développement nécessaires pour le build
 RUN npm ci && \
+    npm install --save-dev @types/jest && \
     npm run build
 
 # Étape de production
@@ -30,7 +33,7 @@ COPY --from=builder /app/server/package*.json ./
 COPY --from=builder /app/server/dist ./dist
 COPY --from=builder /app/server/scripts ./scripts
 
-# Installation des dépendances de production
+# Installation des dépendances de production uniquement
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=2048"
 RUN npm ci --only=production

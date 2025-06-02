@@ -71,11 +71,8 @@ server/*.log
 !server/package*.json
 !server/tsconfig.json
 !server/jest.config.js
-
-# Fichiers de test
-**/__tests__
-**/*.test.*
-**/*.spec.*
+!server/src/__tests__
+!server/src/tests
 
 # Fichiers de configuration spécifiques à l'environnement de développement
 **/.editorconfig
