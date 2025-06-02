@@ -13,7 +13,7 @@ ENV NODE_OPTIONS="--max-old-space-size=2048"
 
 # Build de production sans les tests
 RUN npm ci && \
-    tsc --project tsconfig.prod.json
+    npx tsc --project tsconfig.prod.json
 
 # Étape de production
 FROM node:18-bullseye

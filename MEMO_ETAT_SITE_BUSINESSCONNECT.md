@@ -372,6 +372,23 @@
   - Structure complète préservée
   - Déploiement stable et fiable
 
+#### 2025-06-02 (Suite - Optimisation Build TypeScript)
+- Amélioration du processus de build :
+  - Utilisation de npx pour exécuter tsc localement
+  - Meilleure portabilité du build
+  - Pas de dépendance globale
+  - Build plus fiable
+- Optimisation de la configuration :
+  - Utilisation des outils locaux au projet
+  - Réduction des dépendances système
+  - Process de build plus robuste
+  - Meilleure isolation
+- Maintien de la qualité :
+  - Conservation de toutes les fonctionnalités
+  - Build stable et reproductible
+  - Pas de compromis sur le code
+  - Déploiement fiable
+
 ### Prochaines Étapes
 
 #### Court Terme
