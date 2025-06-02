@@ -6,39 +6,23 @@ import { AuthRequest } from '../types/user';
 import { Response } from 'express';
 import { createJob } from '../controllers/jobController';
 import { Router, RouteHandler, AuthRequestHandler } from '../types/express';
-import { JobController } from '../controllers/jobController';
+import * as jobController from '../controllers/jobController';
+import { authenticate } from '../middleware/auth';
 
 const router = Router();
-const jobController = new JobController();
 
 // Routes publiques
-router.get('/', async (req: AuthRequest, res: Response): Promise<void> => {
-  // await jobController.getAllJobs(req, res);
-});
+router.get('/', jobController.getAllJobs);
+router.get('/:id', jobController.getJob);
 
-const getJob: RouteHandler = async (req, res) => {
-  const job = await jobController.getJob(req.params.id);
-  res.json(job);
-};
+// Routes authentifiées
+router.use(authenticate);
+router.post('/', jobController.createJob);
 
 const getCategories: RouteHandler = async (req, res) => {
   const categories = await jobController.getCategories();
   res.json(categories);
 };
-
-// Routes protégées
-router.post(
-  '/',
-  authMiddleware,
-  [
-    body('title').not().isEmpty().withMessage('Le titre est requis'),
-    body('description').not().isEmpty().withMessage('La description est requise'),
-    body('company').not().isEmpty().withMessage('Le nom de l\'entreprise est requis'),
-    body('location').not().isEmpty().withMessage('La localisation est requise'),
-    body('type').isIn(['CDI', 'CDD', 'Stage', 'Freelance']).withMessage('Type de contrat invalide'),
-  ],
-  createJob
-);
 
 const updateJob: AuthRequestHandler = async (req, res) => {
   const job = await jobController.updateJob(req.params.id, req.body);
@@ -66,7 +50,6 @@ const updateApplication: AuthRequestHandler = async (req, res) => {
   res.json(application);
 };
 
-router.get('/:id', getJob);
 router.get('/categories', getCategories);
 router.put('/:id', authMiddleware, updateJob);
 router.delete('/:id', authMiddleware, deleteJob);

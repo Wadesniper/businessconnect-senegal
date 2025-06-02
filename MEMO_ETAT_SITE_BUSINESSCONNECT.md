@@ -676,6 +676,28 @@
   - Clarification des types d'authentification
   - Support complet du typage en production
 
+#### 2025-06-02 (Suite - Correction des Types Utilisateur et Contrôleurs)
+- Amélioration des types utilisateur :
+  - Ajout de isVerified dans UserPayload
+  - Correction de l'interface AuthRequest
+  - Types plus stricts pour les requêtes authentifiées
+  - Meilleure cohérence des types
+- Optimisation des contrôleurs :
+  - Correction des exports des contrôleurs
+  - Amélioration de la gestion des routes
+  - Types plus précis pour les handlers
+  - Meilleure organisation du code
+- Maintien de l'intégrité :
+  - Conservation de toutes les fonctionnalités
+  - Structure complète préservée
+  - Support TypeScript robuste
+  - Site pleinement fonctionnel
+- Documentation améliorée :
+  - Mise à jour des interfaces utilisateur
+  - Documentation des contrôleurs
+  - Clarification des types
+  - Support complet du typage en production
+
 ### Prochaines Étapes
 
 #### Court Terme

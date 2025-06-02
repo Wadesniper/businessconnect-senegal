@@ -1,4 +1,4 @@
-import { Request } from 'express';
+import { Request } from '../types/express';
 
 export type UserRole = 'user' | 'admin' | 'recruiter';
 
@@ -9,6 +9,7 @@ export interface User {
   email?: string;
   role: UserRole;
   phoneNumber: string;
+  isVerified: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -20,8 +21,9 @@ export interface UserPayload {
   lastName: string;
   phoneNumber: string;
   email?: string;
+  isVerified: boolean;
 }
 
 export interface AuthRequest extends Request {
-  user?: UserPayload;
+  user: UserPayload;
 } 
