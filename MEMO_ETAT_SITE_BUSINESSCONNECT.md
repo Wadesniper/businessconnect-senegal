@@ -103,26 +103,22 @@
   - Pas de compromis sur les fonctionnalités pour la production
   - Maintien de toutes les dépendances nécessaires
 
-#### 2025-06-02
-- Suppression des services inutilisés (formationService et inAppNotificationService)
-- Nettoyage des dépendances node_modules
-- Mise à jour des packages npm
-- Optimisation de la compilation TypeScript
-- Génération des fichiers de distribution (dist/)
-- Correction des scripts de build pour compatibilité Linux
-- Mise à jour de la configuration TypeScript (tsconfig.json)
-- Ajout du support JSX et des types manquants
-- Optimisation des chemins de modules TypeScript
-- Harmonisation des versions de dépendances entre les package.json
-- Correction des conflits de dépendances et types
-- Séparation claire des dépendances de production et développement
-- Mise à jour des versions de packages pour compatibilité
-- Optimisation du processus de build Docker :
-  - Installation des dépendances système nécessaires
-  - Utilisation de npm ci pour une installation plus fiable
-  - Séparation des dépendances de production
-  - Configuration du cache npm
-  - Ajout d'un .dockerignore optimisé
+#### 2025-06-02 (Suite - Optimisation Docker)
+- Optimisation de la consommation mémoire :
+  - Installation séquentielle des dépendances système pour réduire l'empreinte mémoire
+  - Ajout de limites de mémoire explicites pour Node.js
+  - Installation optimisée des dépendances npm
+  - Configuration du build pour une meilleure gestion des ressources
+- Amélioration de la stabilité du build :
+  - Installation séparée des dépendances de production et de développement
+  - Optimisation du cache Docker
+  - Réduction des dépendances optionnelles
+  - Maintien de toutes les fonctionnalités essentielles
+- Configuration de production robuste :
+  - Démarrage optimisé du serveur avec limites de mémoire appropriées
+  - Conservation de tous les scripts et fonctionnalités
+  - Pas de compromis sur les fonctionnalités du site
+  - Structure complète maintenue pour la production
 
 #### 2024-03-20
 - Refonte complète du StorageService avec pattern Singleton pour une meilleure gestion des ressources
