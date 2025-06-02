@@ -1,27 +1,39 @@
-import { ValidationChain, ValidationError } from 'express-validator';
-
-export type ValidatorFunction = ValidationChain;
-
-export interface ValidationError {
-  field: string;
-  message: string;
-  param: string;
-  msg: string;
-}
-
-export interface ValidationResult {
-  success: boolean;
-  message: string;
-  errors: ValidationError[];
-}
-
-export { ValidationChain };
+import { Request } from 'express';
 
 declare module 'express-validator' {
-  export function check(field: string): ValidationChain;
-  export function validationResult(req: any): {
+  interface ValidationError {
+    param: string;
+    msg: string;
+    location?: string;
+    value?: any;
+  }
+
+  interface ValidationResult {
     isEmpty(): boolean;
     array(): ValidationError[];
-  };
-  export { ValidationChain, ValidationError };
+    formatWith(formatter: (error: ValidationError) => any): ValidationResult;
+  }
+
+  interface ValidationChain {
+    notEmpty(): ValidationChain;
+    isEmail(): ValidationChain;
+    isLength(options: { min?: number; max?: number }): ValidationChain;
+    isArray(): ValidationChain;
+    withMessage(message: string): ValidationChain;
+    optional(options?: { nullable?: boolean; checkFalsy?: boolean }): ValidationChain;
+    trim(): ValidationChain;
+    escape(): ValidationChain;
+    isString(): ValidationChain;
+    isNumeric(): ValidationChain;
+    isBoolean(): ValidationChain;
+    isDate(): ValidationChain;
+    isIn(values: any[]): ValidationChain;
+    custom(validator: (value: any, { req }: { req: Request }) => boolean | Promise<boolean>): ValidationChain;
+  }
+
+  function check(field: string): ValidationChain;
+  function body(field: string): ValidationChain;
+  function param(field: string): ValidationChain;
+  function query(field: string): ValidationChain;
+  function validationResult(req: Request): ValidationResult;
 } 

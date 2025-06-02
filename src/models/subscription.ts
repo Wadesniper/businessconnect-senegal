@@ -1,56 +1,56 @@
-import { Schema, model, Document } from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
 
 export interface ISubscription extends Document {
-  userId: Schema.Types.ObjectId;
-  planId: string;
-  status: string;
+  userId: string;
+  type: 'basic' | 'premium';
+  status: 'active' | 'pending' | 'expired' | 'cancelled';
   startDate: Date;
   endDate: Date;
-  cancelledAt?: Date;
-  renewedAt?: Date;
+  autoRenew: boolean;
   paymentId?: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-const subscriptionSchema = new Schema({
-  userId: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  },
-  planId: {
-    type: String,
-    required: true
+const subscriptionSchema = new Schema<ISubscription>({
+  userId: { type: String, required: true },
+  type: { 
+    type: String, 
+    required: true,
+    enum: ['basic', 'premium']
   },
   status: {
     type: String,
-    enum: ['active', 'inactive', 'pending', 'cancelled'],
+    required: true,
+    enum: ['active', 'pending', 'expired', 'cancelled'],
     default: 'pending'
   },
-  startDate: {
-    type: Date,
-    required: true
-  },
-  endDate: {
-    type: Date,
-    required: true
-  },
-  cancelledAt: {
-    type: Date
-  },
-  renewedAt: {
-    type: Date
-  },
-  paymentId: {
-    type: String
-  }
+  startDate: { type: Date, required: true },
+  endDate: { type: Date, required: true },
+  autoRenew: { type: Boolean, default: false },
+  paymentId: { type: String }
 }, {
-  timestamps: true
+  timestamps: true,
+  toObject: {
+    transform: function(doc, ret) {
+      ret.id = ret._id.toString();
+      delete ret._id;
+      delete ret.__v;
+      return ret;
+    }
+  },
+  toJSON: {
+    transform: function(doc, ret) {
+      ret.id = ret._id.toString();
+      delete ret._id;
+      delete ret.__v;
+      return ret;
+    }
+  }
 });
 
 // Indexes pour améliorer les performances
 subscriptionSchema.index({ userId: 1, status: 1 });
 subscriptionSchema.index({ paymentId: 1 });
 
-export const Subscription = model<ISubscription>('Subscription', subscriptionSchema); 
+export const Subscription = mongoose.model<ISubscription>('Subscription', subscriptionSchema); 

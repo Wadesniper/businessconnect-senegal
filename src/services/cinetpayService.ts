@@ -1,5 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import { config } from '../config';
+import { AppError } from '../utils/appError';
+import { logger } from '../utils/logger';
 
 interface CinetPayResponse {
   code: string;
@@ -28,15 +30,24 @@ interface PaymentResponse {
   message?: string;
 }
 
+interface CinetPayPaymentData {
+  amount: number;
+  customer_name: string;
+  customer_surname: string;
+  customer_email: string;
+  customer_phone_number: string;
+  description: string;
+}
+
 export class CinetPayService {
-  private readonly apiKey: string;
-  private readonly siteId: string;
-  private readonly apiUrl: string;
+  private apiKey: string;
+  private apiUrl: string;
+  private siteId: string;
 
   constructor() {
-    this.apiKey = config.CINETPAY_API_KEY;
+    this.apiKey = config.CINETPAY_APIKEY;
     this.siteId = config.CINETPAY_SITE_ID;
-    this.apiUrl = config.CINETPAY_URL;
+    this.apiUrl = config.CINETPAY_BASE_URL;
   }
 
   async createPayment(paymentData: PaymentData): Promise<PaymentResponse> {
@@ -78,6 +89,19 @@ export class CinetPayService {
         success: false,
         message: 'Erreur lors de la création du paiement'
       };
+    }
+  }
+
+  async initializePayment(paymentData: CinetPayPaymentData) {
+    try {
+      // TODO: Implémenter l'intégration CinetPay
+      return {
+        transaction_id: `TRANS_${Date.now()}`,
+        payment_url: `https://checkout.cinetpay.com/${Date.now()}`
+      };
+    } catch (error) {
+      logger.error('Erreur lors de l\'initialisation du paiement CinetPay:', error);
+      throw new AppError('Erreur lors de l\'initialisation du paiement', 500);
     }
   }
 } 

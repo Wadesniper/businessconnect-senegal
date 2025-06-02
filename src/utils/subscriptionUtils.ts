@@ -1,32 +1,39 @@
-import { User } from '../models/User';
+import { IUser } from '../models/User';
 import { AppError } from './appError';
 
-export const checkSubscription = async (userId: string): Promise<boolean> => {
-  const user = await User.findById(userId);
-  if (!user) {
-    return false;
-  }
+interface Subscription {
+  type: 'basic' | 'premium';
+  status: 'active' | 'expired' | 'cancelled';
+  expiresAt: Date;
+  autoRenew: boolean;
+}
 
-  if (!user.subscription) {
-    return false;
-  }
+export const isSubscriptionActive = (user: IUser): boolean => {
+  if (!user.subscription) return false;
 
   const now = new Date();
-  return user.subscription.status === 'active' &&
-    user.subscription.endDate > now;
+  return (
+    user.subscription.status === 'active' &&
+    user.subscription.expiresAt > now
+  );
 };
 
-export const getSubscriptionDetails = async (userId: string) => {
-  const user = await User.findById(userId);
-  if (!user || !user.subscription) {
-    return null;
+export const getSubscriptionDetails = (user: IUser) => {
+  if (!user.subscription) {
+    return {
+      isActive: false,
+      type: null,
+      status: null,
+      expiresAt: null,
+      autoRenew: false
+    };
   }
 
   return {
-    status: user.subscription.status,
+    isActive: isSubscriptionActive(user),
     type: user.subscription.type,
-    startDate: user.subscription.startDate,
-    endDate: user.subscription.endDate,
+    status: user.subscription.status,
+    expiresAt: user.subscription.expiresAt,
     autoRenew: user.subscription.autoRenew
   };
 }; 

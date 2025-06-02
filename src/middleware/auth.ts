@@ -3,6 +3,18 @@ import jwt from 'jsonwebtoken';
 import { config } from '../config';
 import { User, IUser } from '../models/User';
 import { AppError } from '../utils/appError';
+import { logger } from '../utils/logger';
+
+export interface AuthRequest extends Request {
+  user?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email?: string;
+    phone: string;
+    role: 'admin' | 'etudiant' | 'annonceur' | 'employeur';
+  };
+}
 
 // Déclaration de module pour étendre la définition de Express
 declare module 'express-serve-static-core' {
@@ -18,7 +30,7 @@ declare module 'express-serve-static-core' {
   }
 }
 
-export const protect = async (req: Request, res: Response, next: NextFunction) => {
+export const protect = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     let token;
     if (req.headers.authorization?.startsWith('Bearer')) {
@@ -26,17 +38,22 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
     }
 
     if (!token) {
-      return next(new AppError('Vous n\'êtes pas connecté', 401));
+      return res.status(401).json({
+        success: false,
+        message: 'Non autorisé - Token manquant'
+      });
     }
 
     const decoded = jwt.verify(token, config.JWT_SECRET) as { id: string };
     const user = await User.findById(decoded.id).select('-password');
 
     if (!user) {
-      return next(new AppError('L\'utilisateur n\'existe plus', 401));
+      return res.status(401).json({
+        success: false,
+        message: 'Non autorisé - Utilisateur non trouvé'
+      });
     }
 
-    // Transformer l'utilisateur en format attendu par req.user
     req.user = {
       id: user._id.toString(),
       firstName: user.firstName,
@@ -48,18 +65,28 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
 
     next();
   } catch (error) {
-    next(new AppError('Token invalide', 401));
+    logger.error('Erreur d\'authentification:', error);
+    return res.status(401).json({
+      success: false,
+      message: 'Non autorisé - Token invalide'
+    });
   }
 };
 
-export const restrictTo = (...roles: IUser['role'][]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+export const restrictTo = (...roles: string[]) => {
+  return (req: AuthRequest, res: Response, next: NextFunction) => {
     if (!req.user) {
-      return next(new AppError('Vous n\'êtes pas connecté', 401));
+      return res.status(401).json({
+        success: false,
+        message: 'Non autorisé - Utilisateur non connecté'
+      });
     }
 
     if (!roles.includes(req.user.role)) {
-      return next(new AppError('Vous n\'avez pas la permission d\'effectuer cette action', 403));
+      return res.status(403).json({
+        success: false,
+        message: 'Accès refusé - Rôle insuffisant'
+      });
     }
 
     next();

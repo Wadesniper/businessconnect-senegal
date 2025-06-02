@@ -1,4 +1,5 @@
 import { CV } from '../models/cv';
+import { IUser } from '../models/User';
 import { logger } from '../utils/logger';
 import PDFDocument from 'pdfkit';
 import fs from 'fs';
@@ -221,6 +222,72 @@ export class CVService {
         .fontSize(11)
         .fillColor('#666')
         .text(cv.languages.map((lang: any) => `${lang.name} (${lang.level})`).join(' • '));
+    }
+  }
+
+  static async createCV(userId: string, cvData: any) {
+    try {
+      const cv = await CV.create({
+        ...cvData,
+        userId
+      });
+      return cv;
+    } catch (error) {
+      logger.error('Erreur lors de la création du CV:', error);
+      throw new Error('Erreur lors de la création du CV');
+    }
+  }
+
+  static async getCVsByUser(userId: string) {
+    try {
+      const cvs = await CV.find({ userId });
+      return cvs;
+    } catch (error) {
+      logger.error('Erreur lors de la récupération des CVs:', error);
+      throw new Error('Erreur lors de la récupération des CVs');
+    }
+  }
+
+  static async getCVById(cvId: string) {
+    try {
+      const cv = await CV.findById(cvId);
+      if (!cv) {
+        throw new Error('CV non trouvé');
+      }
+      return cv;
+    } catch (error) {
+      logger.error('Erreur lors de la récupération du CV:', error);
+      throw new Error('Erreur lors de la récupération du CV');
+    }
+  }
+
+  static async updateCV(cvId: string, userId: string, cvData: any) {
+    try {
+      const cv = await CV.findOneAndUpdate(
+        { _id: cvId, userId },
+        cvData,
+        { new: true }
+      );
+      if (!cv) {
+        throw new Error('CV non trouvé');
+      }
+      return cv;
+    } catch (error) {
+      logger.error('Erreur lors de la mise à jour du CV:', error);
+      throw new Error('Erreur lors de la mise à jour du CV');
+    }
+  }
+
+  static async deleteCV(cvId: string, userId: string) {
+    try {
+      const cv = await CV.findOneAndDelete({ _id: cvId, userId });
+      if (!cv) {
+        throw new Error('CV non trouvé');
+      }
+      return cv;
+    } catch (error) {
+      logger.error('Erreur lors de la suppression du CV:', error);
+      throw new Error('Erreur lors de la suppression du CV');
     }
   }
 } 

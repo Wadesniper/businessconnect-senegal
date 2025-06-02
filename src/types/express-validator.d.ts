@@ -1,27 +1,40 @@
-declare module 'express-validator' {
-  import { Request } from 'express';
+import { Request } from 'express';
+import { ValidationChain, ValidationError, Result } from 'express-validator';
 
-  export interface ValidationError {
+declare module 'express-validator' {
+  interface CustomValidationError extends ValidationError {
     param: string;
     msg: string;
     location?: string;
     value?: any;
   }
 
-  export interface ValidationResult {
+  interface CustomValidationResult extends Result<ValidationError> {
     isEmpty(): boolean;
-    array(): ValidationError[];
-    formatWith(formatter: (error: ValidationError) => any): ValidationResult;
+    array(): CustomValidationError[];
+    formatWith(formatter: (error: CustomValidationError) => any): CustomValidationResult;
   }
 
-  export interface ValidationChain {
-    notEmpty(): ValidationChain;
-    isEmail(): ValidationChain;
-    isLength(options: { min?: number; max?: number }): ValidationChain;
-    isArray(): ValidationChain;
-    withMessage(message: string): ValidationChain;
+  interface CustomValidationChain extends ValidationChain {
+    notEmpty(): this;
+    isEmail(): this;
+    isLength(options: { min?: number; max?: number }): this;
+    isArray(): this;
+    withMessage(message: string): this;
+    optional(options?: { nullable?: boolean; checkFalsy?: boolean }): this;
+    trim(): this;
+    escape(): this;
+    isString(): this;
+    isNumeric(): this;
+    isBoolean(): this;
+    isDate(): this;
+    isIn(values: any[]): this;
+    custom(validator: (value: any, { req }: { req: Request }) => boolean | Promise<boolean>): this;
   }
 
-  export function check(field: string): ValidationChain;
-  export function validationResult(req: Request): ValidationResult;
+  export function check(field: string): CustomValidationChain;
+  export function body(field: string): CustomValidationChain;
+  export function param(field: string): CustomValidationChain;
+  export function query(field: string): CustomValidationChain;
+  export function validationResult(req: Request): CustomValidationResult;
 } 

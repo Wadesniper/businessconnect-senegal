@@ -1,30 +1,49 @@
 import { Document } from 'mongoose';
-
-export type UserRole = 'user' | 'admin';
+import { Request } from 'express';
 
 export interface IUser extends Document {
-  _id: string;
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
+  phone: string;
   password: string;
-  role: UserRole;
+  role: 'admin' | 'etudiant' | 'annonceur' | 'employeur';
   isVerified: boolean;
-  resetPasswordToken?: string;
-  resetPasswordExpire?: Date;
+  verificationToken?: string;
+  resetPasswordExpires?: Date;
+  lastLogin?: Date;
   createdAt: Date;
   updatedAt: Date;
-  comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
-// Étendre l'interface Request d'Express pour inclure l'utilisateur
-declare global {
-  namespace Express {
-    interface Request {
-      user?: {
-        id: string;
-        [key: string]: any;
-      };
-    }
-  }
+export interface IUserResponse {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  role: 'admin' | 'etudiant' | 'annonceur' | 'employeur';
+}
+
+export interface IUserRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  password: string;
+  role: 'admin' | 'etudiant' | 'annonceur' | 'employeur';
+}
+
+export interface AuthRequest extends Request {
+  user?: IUser;
+}
+
+export interface UserPayload {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email?: string;
+  phone: string;
+  role: 'admin' | 'etudiant' | 'annonceur' | 'employeur';
 } 

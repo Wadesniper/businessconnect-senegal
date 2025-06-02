@@ -1,91 +1,63 @@
 import { User, IUser } from '../models/User';
-import { AppError } from '../utils/errors';
-import { generateToken } from '../utils/jwt';
 import { config } from '../config';
+import jwt from 'jsonwebtoken';
+import { logger } from '../utils/logger';
+import { AppError } from '../utils/appError';
 
 export class AuthService {
-  async validateUser(phone: string, password: string): Promise<IUser> {
+  static async validateUser(email: string, password: string): Promise<IUser | null> {
     try {
-      const user = await User.findOne({ phone }).select('+password');
-      if (!user) {
-        throw new AppError('Utilisateur non trouvé', 404);
-      }
+      const user = await User.findOne({ email }).select('+password');
+      if (!user) return null;
 
-      const isValidPassword = await user.comparePassword(password);
-      if (!isValidPassword) {
-        throw new AppError('Mot de passe incorrect', 401);
-      }
-
-      return user;
+      const isValid = await user.comparePassword(password);
+      return isValid ? user : null;
     } catch (error) {
-      console.error('Erreur lors de la validation de l\'utilisateur:', error);
-      throw error;
+      logger.error('Error validating user:', error);
+      throw new AppError('Error validating user', 500);
     }
   }
 
-  async register(userData: {
-    firstName: string;
-    lastName: string;
-    phone: string;
-    email?: string;
-    password: string;
-    role: IUser['role'];
-  }): Promise<IUser> {
+  static async generateAuthToken(user: IUser): Promise<string> {
+    return jwt.sign({ id: user._id.toString() }, config.JWT_SECRET, {
+      expiresIn: Number(config.JWT_EXPIRES_IN) || '30d'
+    });
+  }
+
+  static async register(userData: Partial<IUser>): Promise<IUser> {
     try {
-      const existingUser = await User.findOne({ 
-        $or: [
-          { phone: userData.phone },
-          { email: userData.email }
-        ]
-      });
-
-      if (existingUser) {
-        throw new AppError('Un utilisateur avec ce numéro de téléphone ou cet email existe déjà', 400);
-      }
-
       const user = await User.create(userData);
       return user;
     } catch (error) {
-      console.error('Erreur lors de l\'inscription:', error);
-      throw error;
+      logger.error('Error registering user:', error);
+      throw new AppError('Error registering user', 500);
     }
   }
 
-  generateAuthToken(userId: string): string {
-    return generateToken(
-      { id: userId },
-      config.JWT_SECRET,
-      { expiresIn: config.JWT_EXPIRES_IN }
-    );
-  }
-
-  async requestPasswordReset(phone: string): Promise<void> {
+  static async requestPasswordReset(email: string): Promise<void> {
     try {
-      const user = await User.findOne({ phone });
+      const user = await User.findOne({ email });
       if (!user) {
-        throw new AppError('Utilisateur non trouvé', 404);
+        throw new AppError('No user found with that email address', 404);
       }
 
-      const resetToken = generateToken(
-        { id: user._id },
-        config.JWT_SECRET,
-        { expiresIn: '1h' }
-      );
-
+      const resetToken = jwt.sign({ id: user._id }, config.JWT_SECRET, {
+        expiresIn: '1h'
+      });
       user.resetPasswordToken = resetToken;
       user.resetPasswordExpire = new Date(Date.now() + 3600000); // 1 heure
       await user.save();
 
-      // TODO: Envoyer le token par SMS
+      // TODO: Send reset password email
     } catch (error) {
-      console.error('Erreur lors de la demande de réinitialisation du mot de passe:', error);
-      throw error;
+      logger.error('Error requesting password reset:', error);
+      throw new AppError('Error requesting password reset', 500);
     }
   }
 
-  async resetPassword(token: string, newPassword: string): Promise<void> {
+  static async resetPassword(token: string, newPassword: string): Promise<void> {
     try {
-      const decoded = generateToken(token, config.JWT_SECRET) as { id: string };
+      const decoded = jwt.verify(token, config.JWT_SECRET) as { id: string };
       const user = await User.findOne({
         _id: decoded.id,
         resetPasswordToken: token,
@@ -93,7 +65,7 @@ export class AuthService {
       });
 
       if (!user) {
-        throw new AppError('Token invalide ou expiré', 400);
+        throw new AppError('Invalid or expired reset token', 400);
       }
 
       user.password = newPassword;
@@ -101,8 +73,8 @@ export class AuthService {
       user.resetPasswordExpire = undefined;
       await user.save();
     } catch (error) {
-      console.error('Erreur lors de la réinitialisation du mot de passe:', error);
-      throw error;
+      logger.error('Error resetting password:', error);
+      throw new AppError('Error resetting password', 500);
     }
   }
 } 

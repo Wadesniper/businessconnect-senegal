@@ -1,18 +1,27 @@
-import { Secret, SignOptions, JwtPayload } from 'jsonwebtoken';
+import { Secret, JwtPayload, Algorithm } from 'jsonwebtoken';
+import { StringValue } from 'ms';
 
 export interface JWTPayload extends JwtPayload {
   id: string;
-  [key: string]: any;
+  role: string;
 }
 
 export interface JWTConfig {
   secret: Secret;
   expiresIn: string | number;
+  algorithm: 'HS256';
 }
 
-export interface JWTSignOptions extends SignOptions {
+export interface JWTSignOptions {
   expiresIn?: string | number;
+  algorithm?: Algorithm;
 }
+
+export const defaultJWTConfig: JWTConfig = {
+  secret: process.env.JWT_SECRET || 'your-secret-key',
+  expiresIn: '24h',
+  algorithm: 'HS256'
+};
 
 export const generateToken = (
   payload: JWTPayload,
@@ -20,11 +29,10 @@ export const generateToken = (
   options: JWTSignOptions = {}
 ): string => {
   const jwt = require('jsonwebtoken');
-  const signOptions: SignOptions = {
+  return jwt.sign(payload, secret, {
     ...options,
     algorithm: 'HS256'
-  };
-  return jwt.sign(payload, secret, signOptions);
+  });
 };
 
 export const verifyToken = (token: string, secret: Secret): JWTPayload => {
@@ -35,7 +43,7 @@ export const verifyToken = (token: string, secret: Secret): JWTPayload => {
 };
 
 // Ajouter des types pour les options de signature
-export interface SignOptions extends jwt.SignOptions {
+export interface SignOptions extends SignOptions {
   expiresIn?: string | number;
-  algorithm?: jwt.Algorithm;
+  algorithm?: SignOptions['algorithm'];
 } 

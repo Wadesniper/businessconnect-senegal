@@ -4,6 +4,9 @@ import { User } from '../models/User';
 import { generateToken } from '../types/jwt';
 import { config } from '../config';
 import { ValidatorFunction } from '../types/express-validator';
+import { AuthService } from '../services/authService';
+import { NotificationService } from '../services/notificationService';
+import { logger } from '../utils/logger';
 
 export const authValidation: ValidatorFunction[] = [
   check('email').isEmail().withMessage('Email invalide'),
@@ -13,41 +16,43 @@ export const authValidation: ValidatorFunction[] = [
 export const authController = {
   async register(req: Request, res: Response) {
     try {
-      const { email, password, name } = req.body;
+      const { firstName, lastName, email, phone, password, role } = req.body;
 
       const existingUser = await User.findOne({ email });
       if (existingUser) {
         return res.status(400).json({
           success: false,
-          message: 'Cet email est déjà utilisé'
+          message: 'Un utilisateur avec cet email existe déjà'
         });
       }
 
-      const user = new User({
+      const user = await User.create({
+        firstName,
+        lastName,
         email,
+        phone,
         password,
-        name
+        role
       });
 
-      await user.save();
+      const token = await AuthService.generateAuthToken(user);
 
-      const token = generateToken(
-        { id: user._id.toString() },
-        config.JWT_SECRET,
-        { expiresIn: config.JWT_EXPIRES_IN }
-      );
+      await NotificationService.sendWelcomeEmail(user);
 
       res.status(201).json({
         success: true,
         token,
         user: {
           id: user._id,
+          firstName: user.firstName,
+          lastName: user.lastName,
           email: user.email,
-          name: user.name
+          phone: user.phone,
+          role: user.role
         }
       });
     } catch (error) {
-      console.error('Erreur lors de l\'inscription:', error);
+      logger.error('Erreur lors de l\'inscription:', error);
       res.status(500).json({
         success: false,
         message: 'Erreur lors de l\'inscription'
@@ -59,39 +64,30 @@ export const authController = {
     try {
       const { email, password } = req.body;
 
-      const user = await User.findOne({ email }).select('+password');
+      const user = await AuthService.validateUser(email, password);
       if (!user) {
-        return res.status(404).json({
-          success: false,
-          message: 'Utilisateur non trouvé'
-        });
-      }
-
-      const isValidPassword = await user.comparePassword(password);
-      if (!isValidPassword) {
         return res.status(401).json({
           success: false,
-          message: 'Mot de passe incorrect'
+          message: 'Email ou mot de passe incorrect'
         });
       }
 
-      const token = generateToken(
-        { id: user._id.toString() },
-        config.JWT_SECRET,
-        { expiresIn: config.JWT_EXPIRES_IN }
-      );
+      const token = await AuthService.generateAuthToken(user);
 
-      res.json({
+      res.status(200).json({
         success: true,
         token,
         user: {
           id: user._id,
+          firstName: user.firstName,
+          lastName: user.lastName,
           email: user.email,
-          name: user.name
+          phone: user.phone,
+          role: user.role
         }
       });
     } catch (error) {
-      console.error('Erreur lors de la connexion:', error);
+      logger.error('Erreur lors de la connexion:', error);
       res.status(500).json({
         success: false,
         message: 'Erreur lors de la connexion'

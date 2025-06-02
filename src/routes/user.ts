@@ -1,30 +1,29 @@
 import { Router } from 'express';
-import { check } from 'express-validator';
 import { userController } from '../controllers/userController';
-import { auth } from '../middleware/auth';
-import { ValidatorFunction } from '../types/express-validator';
+import { userValidation } from '../middleware/validation';
+import { validateRequest } from '../middleware/validateRequest';
+import { authMiddleware } from '../middleware/authMiddleware';
 
 const router = Router();
 
-export const userValidation: ValidatorFunction[] = [
-  check('email').isEmail().withMessage('Email invalide'),
-  check('password').isLength({ min: 6 }).withMessage('Le mot de passe doit contenir au moins 6 caractères')
-];
-
 // Routes publiques
-router.post('/register', userValidation, userController.register);
-router.post('/login', userValidation, userController.login);
+router.post('/register', userValidation.create, validateRequest, userController.register);
+router.post('/login', userValidation.create, validateRequest, userController.login);
 router.post('/forgot-password', userController.forgotPassword);
 router.post('/reset-password/:token', userController.resetPassword);
 
 // Routes protégées
-router.use(auth);
+router.use(authMiddleware.authenticate);
+
 router.get('/profile', userController.getProfile);
-router.put('/profile', userController.updateProfile);
+router.put('/profile', userValidation.update, validateRequest, userController.updateProfile);
+router.delete('/profile', userController.deleteProfile);
 router.put('/password', userController.updatePassword);
 router.delete('/account', userController.deleteAccount);
 
 // Routes admin
+router.use(authMiddleware.isAdmin);
+
 router.get('/users', userController.getAllUsers);
 router.put('/users/:id', userController.updateUser);
 router.delete('/users/:id', userController.deleteUser);

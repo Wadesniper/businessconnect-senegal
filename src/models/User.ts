@@ -1,140 +1,106 @@
-import { Schema, model, Document } from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
+export interface ISubscription {
+  type: 'etudiant' | 'annonceur' | 'recruteur';
+  status: 'active' | 'expired';
+  startDate: Date;
+  endDate: Date;
+  paymentId?: string;
+}
+
 export interface IUser extends Document {
+  id: string;
   firstName: string;
   lastName: string;
-  email?: string;
+  email: string;
   phone: string;
   password: string;
-  role: 'admin' | 'etudiant' | 'annonceur' | 'employeur';
+  role: 'admin' | 'etudiant' | 'annonceur' | 'recruteur';
   isVerified: boolean;
+  verificationToken?: string;
   resetPasswordToken?: string;
-  resetPasswordExpire?: Date;
-  subscription?: {
-    status: 'active' | 'inactive' | 'expired';
-    type: 'basic' | 'premium';
-    startDate: Date;
-    endDate: Date;
-    autoRenew: boolean;
-  };
-  preferences?: {
-    notifications: boolean;
-    emailNotifications: boolean;
-    language: string;
-  };
-  notifications?: Array<{
-    id: string;
-    type: string;
-    message: string;
-    read: boolean;
-    createdAt: Date;
-  }>;
+  resetPasswordExpires?: Date;
+  lastLogin?: Date;
   createdAt: Date;
   updatedAt: Date;
+  subscription?: ISubscription;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
 const userSchema = new Schema<IUser>({
-  firstName: {
-    type: String,
-    required: [true, 'Le prénom est requis']
-  },
-  lastName: {
-    type: String,
-    required: [true, 'Le nom est requis']
-  },
-  email: {
-    type: String,
-    required: false,
-    unique: true,
-    sparse: true,
-    lowercase: true,
-    match: [/^\S+@\S+\.\S+$/, 'Email invalide']
-  },
-  phone: {
-    type: String,
-    required: [true, 'Le numéro de téléphone est requis'],
-    unique: true
-  },
-  password: {
-    type: String,
-    required: [true, 'Le mot de passe est requis'],
-    minlength: [6, 'Le mot de passe doit contenir au moins 6 caractères'],
-    select: false
-  },
-  role: {
-    type: String,
-    enum: ['admin', 'etudiant', 'annonceur', 'employeur'],
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  phone: { type: String, required: true },
+  password: { type: String, required: true },
+  role: { 
+    type: String, 
+    required: true, 
+    enum: ['admin', 'etudiant', 'annonceur', 'recruteur'],
     default: 'etudiant'
   },
-  isVerified: {
-    type: Boolean,
-    default: false
-  },
+  isVerified: { type: Boolean, default: false },
+  verificationToken: String,
   resetPasswordToken: String,
-  resetPasswordExpire: Date,
+  resetPasswordExpires: Date,
+  lastLogin: Date,
   subscription: {
-    status: {
-      type: String,
-      enum: ['active', 'inactive', 'expired'],
-      default: 'inactive'
-    },
     type: {
       type: String,
-      enum: ['basic', 'premium'],
-      default: 'basic'
+      enum: ['etudiant', 'annonceur', 'recruteur']
+    },
+    status: {
+      type: String,
+      enum: ['active', 'expired'],
+      default: 'active'
     },
     startDate: Date,
     endDate: Date,
-    autoRenew: {
-      type: Boolean,
-      default: false
-    }
-  },
-  preferences: {
-    notifications: {
-      type: Boolean,
-      default: true
-    },
-    emailNotifications: {
-      type: Boolean,
-      default: true
-    },
-    language: {
-      type: String,
-      default: 'fr'
-    }
-  },
-  notifications: [{
-    id: String,
-    type: String,
-    message: String,
-    read: {
-      type: Boolean,
-      default: false
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now
-    }
-  }]
+    paymentId: String
+  }
 }, {
-  timestamps: true
+  timestamps: true,
+  toObject: {
+    virtuals: true,
+    transform: function(doc, ret) {
+      ret.id = ret._id.toString();
+      delete ret._id;
+      delete ret.__v;
+      delete ret.password;
+      return ret;
+    }
+  },
+  toJSON: {
+    virtuals: true,
+    transform: function(doc, ret) {
+      ret.id = ret._id.toString();
+      delete ret._id;
+      delete ret.__v;
+      delete ret.password;
+      return ret;
+    }
+  }
 });
 
-// Middleware pour hasher le mot de passe avant la sauvegarde
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
-
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
-  next();
+  
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (error) {
+    next(error as Error);
+  }
 });
 
-// Méthode pour comparer les mots de passe
 userSchema.methods.comparePassword = async function(candidatePassword: string): Promise<boolean> {
-  return bcrypt.compare(candidatePassword, this.password);
+  try {
+    return await bcrypt.compare(candidatePassword, this.password);
+  } catch (error) {
+    throw error;
+  }
 };
 
-export const User = model<IUser>('User', userSchema); 
+export const User = mongoose.model<IUser>('User', userSchema); 

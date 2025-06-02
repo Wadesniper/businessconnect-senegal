@@ -1,12 +1,10 @@
 import { Request, Response } from 'express';
-import { User } from '../models/User';
+import { User, IUser } from '../models/User';
 import { logger } from '../utils/logger';
 
 // Type pour req.user
 interface AuthRequest extends Request {
-  user?: {
-    id: string;
-  };
+  user?: IUser;
 }
 
 export const userController = {

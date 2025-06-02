@@ -2,14 +2,14 @@ import { Schema, model, Document } from 'mongoose';
 
 export interface IModule {
   title: string;
-  description?: string;
+  description: string;
   duration: number;
   content: string;
-  order: number;
 }
 
 export interface IFormation extends Document {
   title: string;
+  slug: string;
   description: string;
   instructor: string;
   level: 'débutant' | 'intermédiaire' | 'avancé';
@@ -18,60 +18,39 @@ export interface IFormation extends Document {
   category: string;
   tags: string[];
   modules: IModule[];
-  thumbnail?: string;
-  status: 'draft' | 'published' | 'archived';
-  enrolledCount: number;
-  rating: number;
-  reviews: {
-    userId: string;
-    rating: number;
-    comment: string;
-    createdAt: Date;
-  }[];
-  featured: boolean;
+  enrollments: number;
+  cursaUrl?: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-const moduleSchema = new Schema<IModule>({
-  title: { type: String, required: true },
-  description: { type: String },
-  duration: { type: Number, required: true },
-  content: { type: String, required: true },
-  order: { type: Number, required: true }
-});
-
-const formationSchema = new Schema<IFormation>({
+const moduleSchema = new Schema({
   title: { type: String, required: true },
   description: { type: String, required: true },
+  duration: { type: Number, required: true },
+  content: { type: String, required: true }
+});
+
+const formationSchema = new Schema({
+  title: { type: String, required: true },
+  slug: { type: String, required: true, unique: true },
+  description: { type: String, required: true },
   instructor: { type: String, required: true },
-  level: { 
-    type: String, 
-    enum: ['débutant', 'intermédiaire', 'avancé'],
-    required: true 
-  },
+  level: { type: String, enum: ['débutant', 'intermédiaire', 'avancé'], required: true },
   duration: { type: Number, required: true },
   price: { type: Number, required: true },
   category: { type: String, required: true },
   tags: [{ type: String }],
   modules: [moduleSchema],
-  thumbnail: { type: String },
-  status: { 
-    type: String, 
-    enum: ['draft', 'published', 'archived'],
-    default: 'draft' 
-  },
-  enrolledCount: { type: Number, default: 0 },
-  rating: { type: Number, default: 0 },
-  reviews: [{
-    userId: { type: String, required: true },
-    rating: { type: Number, required: true },
-    comment: { type: String, required: true },
-    createdAt: { type: Date, default: Date.now }
-  }],
-  featured: { type: Boolean, default: false }
-}, {
-  timestamps: true
+  enrollments: { type: Number, default: 0 },
+  cursaUrl: { type: String },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+});
+
+formationSchema.pre('save', function(next) {
+  this.updatedAt = new Date();
+  next();
 });
 
 // Indexes pour améliorer les performances

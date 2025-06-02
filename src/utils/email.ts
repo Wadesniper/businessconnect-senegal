@@ -1,31 +1,30 @@
 import nodemailer from 'nodemailer';
 import { config } from '../config';
+import { logger } from './logger';
 
-interface EmailOptions {
-  to: string;
-  subject: string;
-  text?: string;
-  html?: string;
-}
+const transporter = nodemailer.createTransport({
+  host: config.SMTP_HOST,
+  port: parseInt(config.SMTP_PORT),
+  secure: config.SMTP_SECURE,
+  auth: {
+    user: config.SMTP_USER,
+    pass: config.SMTP_PASSWORD
+  }
+});
 
-export const sendEmail = async (options: EmailOptions): Promise<void> => {
-  const transporter = nodemailer.createTransport({
-    host: config.SMTP_HOST,
-    port: config.SMTP_PORT,
-    secure: config.SMTP_SECURE,
-    auth: {
-      user: config.SMTP_USER,
-      pass: config.SMTP_PASSWORD
-    }
-  });
+export const sendEmail = async (to: string, subject: string, html: string) => {
+  try {
+    const mailOptions = {
+      from: config.SMTP_FROM,
+      to,
+      subject,
+      html
+    };
 
-  const mailOptions = {
-    from: config.SMTP_FROM,
-    to: options.to,
-    subject: options.subject,
-    text: options.text,
-    html: options.html
-  };
-
-  await transporter.sendMail(mailOptions);
+    await transporter.sendMail(mailOptions);
+    logger.info(`Email envoyé à ${to}`);
+  } catch (error) {
+    logger.error('Erreur lors de l\'envoi de l\'email:', error);
+    throw error;
+  }
 }; 

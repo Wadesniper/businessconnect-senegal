@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import { config } from '../config';
 
 export const generateToken = (
-  payload: object,
+  payload: string | object | Buffer,
   secret: string = config.JWT_SECRET,
   options?: jwt.SignOptions
 ): string => {
@@ -12,10 +12,10 @@ export const generateToken = (
 export const verifyToken = (
   token: string,
   secret: string = config.JWT_SECRET
-): any => {
+): object | string => {
   try {
     return jwt.verify(token, secret);
   } catch (error) {
-    throw new Error('Token invalide');
+    throw new Error('Invalid token');
   }
 }; 

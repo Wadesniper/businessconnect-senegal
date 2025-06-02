@@ -1,22 +1,19 @@
 import { Request, Response, NextFunction } from 'express';
-import { validationResult, ValidationError } from 'express-validator';
-import { ValidationResult } from '../types/express-validator';
+import { validationResult } from 'express-validator';
+import { logger } from '../utils/logger';
 
-export const validateRequest = (req: Request, res: Response, next: NextFunction): void => {
+export const validateRequest = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    const validationResponse: ValidationResult = {
+    logger.warn('Validation errors:', errors.array());
+    return res.status(400).json({
       success: false,
       message: 'Erreur de validation',
-      errors: errors.array().map((error: ValidationError) => ({
-        field: error.param,
-        message: error.msg,
-        param: error.param,
-        msg: error.msg
+      errors: errors.array().map(error => ({
+        field: error.path,
+        message: error.msg
       }))
-    };
-    res.status(400).json(validationResponse);
-    return;
+    });
   }
   next();
 }; 

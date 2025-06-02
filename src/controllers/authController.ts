@@ -10,7 +10,7 @@ import { AppError } from '../utils/errors';
 export const authController = {
   async register(req: Request, res: Response) {
     try {
-      const { name, email, password } = req.body;
+      const { firstName, lastName, email, phone, password, role } = req.body;
 
       const existingUser = await User.findOne({ email });
       if (existingUser) {
@@ -23,33 +23,39 @@ export const authController = {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
 
-      const user = new User({
-        name,
+      const user = await User.create({
+        firstName,
+        lastName,
         email,
-        password: hashedPassword
+        phone,
+        password: hashedPassword,
+        role
       });
 
-      await user.save();
+      const token = jwt.sign({ id: user._id }, config.JWT_SECRET, {
+        expiresIn: Number(config.JWT_EXPIRES_IN) || '30d'
+      });
 
-      const token = jwt.sign(
-        { id: user._id },
-        config.JWT_SECRET,
-        { expiresIn: '24h' }
-      );
+      await NotificationService.sendWelcomeEmail(user);
 
       res.status(201).json({
         success: true,
         token,
         user: {
           id: user._id,
-          name: user.name,
+          firstName: user.firstName,
+          lastName: user.lastName,
           email: user.email,
+          phone: user.phone,
           role: user.role
         }
       });
     } catch (error) {
       logger.error('Erreur lors de l\'inscription:', error);
-      throw new AppError('Erreur lors de l\'inscription', 500);
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors de l\'inscription'
+      });
     }
   },
 
@@ -58,40 +64,35 @@ export const authController = {
       const { email, password } = req.body;
 
       const user = await User.findOne({ email }).select('+password');
-      if (!user) {
+      if (!user || !(await user.comparePassword(password))) {
         return res.status(401).json({
           success: false,
           message: 'Email ou mot de passe incorrect'
         });
       }
 
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-        return res.status(401).json({
-          success: false,
-          message: 'Email ou mot de passe incorrect'
-        });
-      }
-
-      const token = jwt.sign(
-        { id: user._id },
-        config.JWT_SECRET,
-        { expiresIn: config.JWT_EXPIRES_IN }
-      );
+      const token = jwt.sign({ id: user._id }, config.JWT_SECRET, {
+        expiresIn: Number(config.JWT_EXPIRES_IN) || '30d'
+      });
 
       res.status(200).json({
         success: true,
         token,
         user: {
           id: user._id,
-          name: user.name,
+          firstName: user.firstName,
+          lastName: user.lastName,
           email: user.email,
+          phone: user.phone,
           role: user.role
         }
       });
     } catch (error) {
       logger.error('Erreur lors de la connexion:', error);
-      throw new AppError('Erreur lors de la connexion', 500);
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la connexion'
+      });
     }
   },
 
@@ -103,30 +104,30 @@ export const authController = {
       if (!user) {
         return res.status(404).json({
           success: false,
-          message: 'Aucun compte associé à cet email'
+          message: 'Aucun utilisateur trouvé avec cet email'
         });
       }
 
-      const resetToken = jwt.sign(
-        { id: user._id },
-        config.JWT_SECRET,
-        { expiresIn: '1h' }
-      );
+      const resetToken = jwt.sign({ id: user._id }, config.JWT_SECRET, {
+        expiresIn: '1h'
+      });
 
       user.resetPasswordToken = resetToken;
-      user.resetPasswordExpire = new Date(Date.now() + 3600000); // 1 heure
+      user.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 heure
       await user.save();
 
-      const notificationService = new NotificationService();
-      await notificationService.sendPasswordResetEmail(email, resetToken);
+      await NotificationService.sendPasswordResetEmail(user, resetToken);
 
-      res.status(200).json({
+      res.json({
         success: true,
         message: 'Email de réinitialisation envoyé'
       });
     } catch (error) {
-      logger.error('Erreur lors de la demande de réinitialisation:', error);
-      throw new AppError('Erreur lors de la demande de réinitialisation', 500);
+      logger.error('Erreur lors de la réinitialisation du mot de passe:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la réinitialisation du mot de passe'
+      });
     }
   },
 
@@ -139,7 +140,7 @@ export const authController = {
       const user = await User.findOne({
         _id: decoded.id,
         resetPasswordToken: token,
-        resetPasswordExpire: { $gt: Date.now() }
+        resetPasswordExpires: { $gt: Date.now() }
       });
 
       if (!user) {
@@ -154,7 +155,7 @@ export const authController = {
 
       user.password = hashedPassword;
       user.resetPasswordToken = undefined;
-      user.resetPasswordExpire = undefined;
+      user.resetPasswordExpires = undefined;
       await user.save();
 
       res.status(200).json({
@@ -181,8 +182,10 @@ export const authController = {
         success: true,
         user: {
           id: user._id,
-          name: user.name,
+          firstName: user.firstName,
+          lastName: user.lastName,
           email: user.email,
+          phone: user.phone,
           role: user.role
         }
       });
@@ -211,8 +214,10 @@ export const authController = {
         success: true,
         user: {
           id: user._id,
-          name: user.name,
+          firstName: user.firstName,
+          lastName: user.lastName,
           email: user.email,
+          phone: user.phone,
           role: user.role
         }
       });
