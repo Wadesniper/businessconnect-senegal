@@ -1,6 +1,5 @@
 [build]
 builder = "NIXPACKS"
-buildCommand = "cd server && npm ci && npm run build"
 
 [deploy]
 startCommand = "cd server && node --max-old-space-size=2048 dist/index.js"
@@ -13,6 +12,7 @@ restartPolicyMaxRetries = 5
 NODE_ENV = "production"
 NODE_OPTIONS = "--max-old-space-size=2048"
 NPM_CONFIG_LOGLEVEL = "error"
+NPM_CONFIG_FETCH_RETRIES = "5"
 
 [service]
 rootDirectory = "server"

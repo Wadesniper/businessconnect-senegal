@@ -202,6 +202,23 @@
   - Structure complète préservée
   - Stabilité du déploiement renforcée
 
+#### 2025-06-02 (Suite - Optimisation Déploiement Railway)
+- Migration vers le build system nixpacks :
+  - Utilisation directe du builder nixpacks de Railway
+  - Configuration optimisée des phases de build
+  - Meilleure gestion des dépendances système
+  - Installation plus fiable des packages
+- Amélioration de la stabilité :
+  - Suppression des étapes Docker intermédiaires
+  - Configuration directe des variables d'environnement
+  - Optimisation des chemins de build
+  - Gestion améliorée des ressources
+- Maintien de la qualité :
+  - Conservation de toutes les fonctionnalités
+  - Structure complète du projet préservée
+  - Pas de version minimaliste
+  - Déploiement robuste et fiable
+
 ### Prochaines Étapes
 
 #### Court Terme

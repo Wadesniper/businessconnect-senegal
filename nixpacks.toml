@@ -1,19 +1,30 @@
 [phases.setup]
-nixPkgs = ['nodejs-18_x', 'python3', 'gcc', 'make']
+nixPkgs = ['nodejs-18_x', 'python3', 'gcc', 'make', 'gnumake']
+aptPkgs = ['ca-certificates', 'curl', 'gnupg']
 
 [phases.install]
-cmds = ['npm ci --only=production']
+cmds = [
+    'cd server',
+    'npm config set fetch-retries 5',
+    'npm ci --only=production'
+]
 
 [phases.build]
-cmds = ['npm ci', 'npm run build']
+cmds = [
+    'cd server',
+    'npm ci',
+    'npm run build'
+]
 
 [start]
-cmd = 'node dist/index.js'
+cmd = 'cd server && node --max-old-space-size=2048 dist/index.js'
 
 [env]
 NODE_ENV = 'production'
 NODE_OPTIONS = '--max-old-space-size=2048'
 NPM_CONFIG_LOGLEVEL = 'error'
+NPM_CONFIG_FETCH_RETRIES = '5'
+PORT = '3000'
 
 [phases.setup.env]
 NODE_ENV = 'production'
