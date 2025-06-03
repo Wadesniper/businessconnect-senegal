@@ -1,6 +1,8 @@
 import { api } from './api';
 import { message } from 'antd';
 import type { User, UserRole, UserRegistrationData, LoginCredentials, UserRegistrationResponse } from '../types/user';
+// import { API_URL } from '../config'; // Commented out or removed
+const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 export interface AuthResponse {
   success: boolean;
@@ -15,73 +17,47 @@ export class AuthService {
   private readonly TOKEN_KEY = 'token';
   private readonly USER_KEY = 'user';
 
-  async login(credentials: LoginCredentials): Promise<AuthResponse['data']> {
-    try {
-      console.log('Tentative de connexion:', credentials);
-      const response = await api.post<AuthResponse>('/api/auth/login', credentials);
-      console.log('Réponse login:', response.data);
-      
-      if (response.data.success && response.data.data) {
-        this.setToken(response.data.data.token);
-        this.setUser(response.data.data.user);
-        return response.data.data;
-      }
-      throw new Error(response.data.message || 'Erreur lors de la connexion');
-    } catch (error: any) {
-      console.error('Erreur de connexion:', error);
-      
-      if (error.response?.data?.message) {
-        throw new Error(error.response.data.message);
-      }
-      throw new Error('Erreur lors de la connexion. Veuillez réessayer.');
+  async login(credentials: LoginCredentials): Promise<User> {
+    const response = await fetch(`${API_URL}/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(credentials),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Erreur lors de la connexion');
     }
+
+    const data = await response.json();
+    this.setToken(data.token);
+    this.setUser(data.user);
+    return data.user;
   }
 
-  async register(data: UserRegistrationData): Promise<UserRegistrationResponse> {
-    try {
-      console.log('Données d\'inscription:', data);
-      const response = await api.post<UserRegistrationResponse>('/api/auth/register', data);
-      console.log('Réponse du serveur:', response.data);
-      
-      if (response.data.success && response.data.data) {
-        this.setToken(response.data.data.token);
-        this.setUser(response.data.data.user);
-        return response.data;
-      }
-      throw new Error(response.data.message || 'Erreur lors de l\'inscription');
-    } catch (error: any) {
-      console.error('Erreur d\'inscription:', error);
-      
-      // Erreur avec réponse du serveur
-      if (error.response) {
-        const errorData = error.response.data;
-        
-        // Si nous avons des erreurs de validation multiples
-        if (errorData.errors && Array.isArray(errorData.errors)) {
-          throw new Error(errorData.errors.join('\n'));
-        }
-        
-        // Si nous avons un message d'erreur spécifique
-        if (errorData.message) {
-          throw new Error(errorData.message);
-        }
-        
-        throw new Error('Erreur lors de l\'inscription. Veuillez vérifier vos informations.');
-      } 
-      
-      // Erreur de connexion
-      if (error.request) {
-        throw new Error('Impossible de contacter le serveur. Veuillez vérifier votre connexion et réessayer.');
-      }
-      
-      // Autres erreurs
-      throw new Error('Une erreur est survenue lors de l\'inscription. Veuillez réessayer.');
+  async register(userData: UserRegistrationData): Promise<UserRegistrationResponse> {
+    const response = await fetch(`${API_URL}/auth/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Erreur lors de l\'inscription');
     }
+
+    const data = await response.json();
+    return data;
   }
 
-  logout() {
-    this.clearAuthState();
-    window.location.href = '/login';
+  logout(): void {
+    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.USER_KEY);
   }
 
   async getCurrentUser(): Promise<User> {
@@ -158,12 +134,11 @@ export class AuthService {
   }
 
   getUser(): User | null {
+    const userStr = localStorage.getItem(this.USER_KEY);
+    if (!userStr) return null;
     try {
-      const userStr = localStorage.getItem(this.USER_KEY);
-      return userStr ? JSON.parse(userStr) : null;
-    } catch (error) {
-      console.error('Erreur parsing user localStorage:', error);
-      localStorage.removeItem(this.USER_KEY);
+      return JSON.parse(userStr);
+    } catch {
       return null;
     }
   }
@@ -172,10 +147,8 @@ export class AuthService {
     localStorage.removeItem(this.USER_KEY);
   }
 
-  isAuthStateValid(): boolean {
-    const token = this.getToken();
-    const user = this.getUser();
-    return !!(token && user);
+  isAuthenticated(): boolean {
+    return !!this.getToken() && !!this.getUser();
   }
 
   clearAuthState(): void {

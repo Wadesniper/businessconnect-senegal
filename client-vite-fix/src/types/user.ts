@@ -1,39 +1,48 @@
-export type UserRole = 'user' | 'admin' | 'employeur' | 'etudiant' | 'annonceur';
+export type UserRole = 'admin' | 'etudiant' | 'annonceur' | 'employeur';
+
+export interface CompanyInformation {
+  name?: string;
+  secteur?: string;
+  taille?: string;
+  description?: string;
+}
+
+export interface ProfileInformation {
+  titre?: string;
+  competences?: string[];
+  experiences?: {
+    poste: string;
+    entreprise: string;
+    debut: string;
+    fin?: string;
+    description?: string;
+  }[];
+  education?: {
+    diplome: string;
+    etablissement: string;
+    annee: number;
+    domaine?: string;
+  }[];
+  langues?: string[];
+}
 
 export interface User {
-  _id: string;
-  id?: string;  // Pour la compatibilité avec l'API
+  id: string;
   firstName: string;
   lastName: string;
-  email?: string;
-  phoneNumber: string;  // Changé de phone à phoneNumber pour la cohérence
+  email: string;
+  phoneNumber: string;
   role: UserRole;
   isVerified: boolean;
   createdAt: string;
-  company?: {
-    name?: string;
-    secteur?: string;
-    taille?: string;
-    description?: string;
+  updatedAt: string;
+  preferences?: {
+    notifications: boolean;
+    newsletter: boolean;
+    language: string;
   };
-  profile?: {
-    titre?: string;
-    competences?: string[];
-    experiences?: {
-      poste: string;
-      entreprise: string;
-      debut: string;
-      fin?: string;
-      description?: string;
-    }[];
-    education?: {
-      diplome: string;
-      etablissement: string;
-      annee: number;
-      domaine?: string;
-    }[];
-    langues?: string[];
-  };
+  company?: CompanyInformation;
+  profile?: ProfileInformation;
 }
 
 export interface UserLoginData {
@@ -44,14 +53,10 @@ export interface UserLoginData {
 export interface UserRegistrationData {
   firstName: string;
   lastName: string;
-  email?: string;
-  phoneNumber: string;
+  email: string;
   password: string;
+  phoneNumber: string;
   role?: UserRole;
-  company?: {
-    name?: string;
-    secteur?: string;
-  };
 }
 
 export interface UserUpdateData {
@@ -118,15 +123,13 @@ export interface UserPreferences {
 }
 
 export interface LoginCredentials {
-  phoneNumber: string;  // Changé de phone à phoneNumber pour la cohérence
+  email: string;
   password: string;
 }
 
 export interface UserRegistrationResponse {
   success: boolean;
   message: string;
-  data?: {
-    token: string;
-    user: User;
-  };
+  user?: User;
+  token?: string;
 } 

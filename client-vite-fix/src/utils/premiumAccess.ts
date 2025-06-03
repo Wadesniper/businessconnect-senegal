@@ -1,3 +1,22 @@
+import { User } from '../types/user';
+
+export const hasAdminAccess = (user: User | null): boolean => {
+  if (!user) return false;
+  return user.role === 'admin';
+};
+
+export const hasAdminAccessFromStorage = (): boolean => {
+  const localUserStr = localStorage.getItem('user');
+  if (!localUserStr) return false;
+  
+  try {
+    const localUser = JSON.parse(localUserStr) as User;
+    return localUser.role === 'admin';
+  } catch {
+    return false;
+  }
+};
+
 export function hasPremiumAccess(user: any, isSubscribed: boolean): boolean {
   // Accès premium garanti pour l'admin, même si user est partiellement chargé
   if (user && (user.role === 'admin' || user.role === 'superadmin')) return true;
