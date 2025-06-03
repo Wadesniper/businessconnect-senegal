@@ -1,102 +1,90 @@
 import { Router } from 'express';
-import { RouteHandler, AuthRouteHandler, Request, Response, NextFunction } from '../types/express';
+import { Request, Response, NextFunction, AuthRequest } from '../types/custom.express';
 import { MarketplaceController } from '../controllers/marketplaceController';
-import authMiddleware from '../middleware/auth';
 import { upload } from '../middleware/uploadMiddleware';
 import { authenticate } from '../middleware/auth';
 
 const router = Router();
 const marketplaceController = new MarketplaceController();
 
-// Middleware pour gérer les erreurs async
-const asyncHandler = (fn: Function) => (req: Request, res: Response, next: NextFunction) => {
-  Promise.resolve(fn(req, res, next)).catch(next);
+// asyncHandler prend une fonction qui correspond à la signature d'un RequestHandler standard.
+// L'assertion vers AuthRequest se fera à l'intérieur de la fonction passée si nécessaire.
+const asyncHandler = (fn: (req: Request, res: Response, next: NextFunction) => Promise<any> | any) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
 };
 
-// Middleware d'authentification pour toutes les routes
+// Middleware d'authentification pour toutes les routes définies APRÈS cette ligne
 router.use(authenticate);
 
-// Handlers pour les routes publiques
-const getProducts: RouteHandler = async (req: Request, res: Response) => {
-  // await marketplaceController.getAllProducts(req, res);
+// Handlers. req est typé comme notre Request personnalisé (user est optionnel).
+// Si le contrôleur attend AuthRequest (user défini), une assertion sera utilisée lors de l'appel.
+
+const getProducts = async (req: Request, res: Response, next: NextFunction) => {
+  // Exemple: await marketplaceController.getAllProducts(req as AuthRequest, res);
   res.send('getAllProducts');
 };
 
-const getProduct: RouteHandler = async (req: Request, res: Response) => {
-  // await marketplaceController.getProduct(req, res);
+const getProduct = async (req: Request, res: Response, next: NextFunction) => {
   res.send('getProduct');
 };
 
-const getCategories: RouteHandler = async (req: Request, res: Response) => {
-  // await marketplaceController.getCategories(req, res);
+const getCategories = async (req: Request, res: Response, next: NextFunction) => {
   res.send('getCategories');
 };
 
-const searchProducts: RouteHandler = async (req: Request, res: Response) => {
-  // await marketplaceController.searchProducts(req, res);
+const searchProducts = async (req: Request, res: Response, next: NextFunction) => {
   res.send('searchProducts');
 };
 
-// Handlers pour les routes authentifiées
-const createProduct: AuthRouteHandler = async (req, res) => {
-  // await marketplaceController.createProduct(req, res);
+const createProduct = async (req: Request, res: Response, next: NextFunction) => {
+  // Exemple: await marketplaceController.createProduct(req as AuthRequest, res);
   res.send('createProduct');
 };
 
-const updateProduct: AuthRouteHandler = async (req, res) => {
-  // await marketplaceController.updateProduct(req, res);
+const updateProduct = async (req: Request, res: Response, next: NextFunction) => {
   res.send('updateProduct');
 };
 
-const deleteProduct: AuthRouteHandler = async (req, res) => {
-  // await marketplaceController.deleteProduct(req, res);
+const deleteProduct = async (req: Request, res: Response, next: NextFunction) => {
   res.send('deleteProduct');
 };
 
-const favoriteProduct: AuthRouteHandler = async (req, res) => {
-  // await marketplaceController.toggleFavorite(req, res);
+const favoriteProduct = async (req: Request, res: Response, next: NextFunction) => {
   res.send('toggleFavorite');
 };
 
-// Handlers pour les routes vendeur
-const getSellerProducts: AuthRouteHandler = async (req, res) => {
-  // await marketplaceController.getSellerProducts(req, res);
+const getSellerProducts = async (req: Request, res: Response, next: NextFunction) => {
   res.send('getSellerProducts');
 };
 
-const getSellerOrders: AuthRouteHandler = async (req, res) => {
-  // await marketplaceController.getSellerOrders(req, res);
+const getSellerOrders = async (req: Request, res: Response, next: NextFunction) => {
   res.send('getSellerOrders');
 };
 
-const updateOrder: AuthRouteHandler = async (req, res) => {
-  // await marketplaceController.updateOrderStatus(req, res);
+const updateOrder = async (req: Request, res: Response, next: NextFunction) => {
   res.send('updateOrderStatus');
 };
 
-// Handlers pour les routes acheteur
-const createOrder: AuthRouteHandler = async (req, res) => {
-  // await marketplaceController.createOrder(req, res);
+const createOrder = async (req: Request, res: Response, next: NextFunction) => {
   res.send('createOrder');
 };
 
-const getOrders: AuthRouteHandler = async (req, res) => {
-  // await marketplaceController.getBuyerOrders(req, res);
+const getOrders = async (req: Request, res: Response, next: NextFunction) => {
   res.send('getBuyerOrders');
 };
 
-const getOrder: AuthRouteHandler = async (req, res) => {
-  // await marketplaceController.getOrder(req, res);
+const getOrder = async (req: Request, res: Response, next: NextFunction) => {
   res.send('getOrder');
 };
 
-// Configuration des routes publiques
-router.get('/products', getProducts);
-router.get('/products/:id', getProduct);
-router.get('/categories', getCategories);
-router.get('/search', searchProducts);
+// Configuration des routes.
+router.get('/products', asyncHandler(getProducts));
+router.get('/products/:id', asyncHandler(getProduct));
+router.get('/categories', asyncHandler(getCategories));
+router.get('/search', asyncHandler(searchProducts));
 
-// Configuration des routes authentifiées
 router.post('/products', upload.array('images', 5), asyncHandler(createProduct));
 router.put('/products/:id', upload.array('images', 5), asyncHandler(updateProduct));
 router.delete('/products/:id', asyncHandler(deleteProduct));
@@ -108,53 +96,46 @@ router.post('/orders', asyncHandler(createOrder));
 router.get('/orders', asyncHandler(getOrders));
 router.get('/orders/:id', asyncHandler(getOrder));
 
-// Liste des annonces
-router.get('/', async (req: Request, res: Response) => {
+// Routes anonymes finales. req est typé Request. Utiliser (req as AuthRequest).user si besoin.
+router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    // TODO: Implémenter la logique
+    // Pour accéder à req.user, qui est défini par le middleware authenticate:
+    // const user = (req as AuthRequest).user; // ou if (req.user)
     return res.json({ message: 'Liste des annonces' });
   } catch (error) {
-    return res.status(500).json({ error: 'Erreur serveur' });
+    next(error);
   }
 });
 
-// Détail d'une annonce
-router.get('/:id', async (req: Request, res: Response) => {
+router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    // TODO: Implémenter la logique
     return res.json({ message: 'Détail de l\'annonce' });
   } catch (error) {
-    return res.status(500).json({ error: 'Erreur serveur' });
+    next(error);
   }
 });
 
-// Créer une annonce
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    // TODO: Implémenter la logique
     return res.status(201).json({ message: 'Annonce créée' });
   } catch (error) {
-    return res.status(500).json({ error: 'Erreur serveur' });
+    next(error);
   }
 });
 
-// Mettre à jour une annonce
-router.put('/:id', async (req: Request, res: Response) => {
+router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    // TODO: Implémenter la logique
     return res.json({ message: 'Annonce mise à jour' });
   } catch (error) {
-    return res.status(500).json({ error: 'Erreur serveur' });
+    next(error);
   }
 });
 
-// Supprimer une annonce
-router.delete('/:id', async (req: Request, res: Response) => {
+router.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    // TODO: Implémenter la logique
     return res.json({ message: 'Annonce supprimée' });
   } catch (error) {
-    return res.status(500).json({ error: 'Erreur serveur' });
+    next(error);
   }
 });
 

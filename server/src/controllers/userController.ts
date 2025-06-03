@@ -1,5 +1,4 @@
-import { Request, Response } from '../types/express';
-import { AuthRequest } from '../types/express';
+import { Request, Response, AuthRequest } from '../types/custom.express';
 import { User } from '../models/User';
 import { logger } from '../utils/logger';
 import { generateToken } from '../utils/jwt';

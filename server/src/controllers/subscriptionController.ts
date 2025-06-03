@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { AuthRequest } from '../types/user';
+import { AuthRequest } from '../types/custom.express';
 import { SubscriptionService } from '../services/subscriptionService';
 import { logger } from '../utils/logger';
 
@@ -80,8 +80,7 @@ export class SubscriptionController {
 
       const result = await this.subscriptionService.activateSubscription(
         userId,
-        subscriptionType,
-        paymentId
+        paymentId 
       );
 
       res.json(result);

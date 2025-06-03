@@ -1,4 +1,4 @@
-import { Request, Response, Controller, ApiResponse } from '../types/express';
+import { Request, Response, Controller, ApiResponse } from '../types/custom.express';
 import { validationResult } from 'express-validator';
 import { logger } from '../utils/logger';
 

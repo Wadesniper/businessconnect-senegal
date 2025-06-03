@@ -1,8 +1,8 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import { Router } from 'express';
+import { Request, Response, NextFunction, AuthRequest } from '../types/custom.express';
 // import { paymentController } from '../controllers/paymentController';
 import { authenticate } from '../middleware/auth';
 // import { checkInvoiceAccess } from '../middleware/invoiceAccess';
-import { AuthRequest } from '../types/express';
 import { paymentController } from '../controllers/paymentController';
 
 const router = Router();

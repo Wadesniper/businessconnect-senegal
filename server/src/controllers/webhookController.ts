@@ -1,4 +1,4 @@
-import { Request, Response } from '../types/express';
+import { Request, Response } from '../types/custom.express';
 import { SubscriptionService } from '../services/subscriptionService';
 import { logger } from '../utils/logger';
 

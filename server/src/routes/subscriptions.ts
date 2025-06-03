@@ -1,5 +1,5 @@
 import { Router, Request as ExpressRequestBase, Response as ExpressResponse, NextFunction } from 'express';
-import { Request, AuthRequest } from '../types/express';
+import { Request, AuthRequest } from '../types/custom.express';
 import { SubscriptionService } from '../services/subscriptionService';
 import { logger } from '../utils/logger';
 import { authenticate } from '../middleware/auth';
@@ -26,6 +26,7 @@ router.get('/:userId', subscriptionController.getSubscription as any);
 router.get('/:userId/status', async (req: Request, res: ExpressResponse, next: NextFunction) => {
   try {
     const authReq = req as AuthRequest;
+    if (!authReq.user) { return res.status(401).json({ error: 'Authentification requise' }); }
     const { userId } = authReq.params;
     const subscription = await subscriptionService.getSubscription(userId);
     
@@ -43,6 +44,7 @@ router.get('/:userId/status', async (req: Request, res: ExpressResponse, next: N
 router.get('/:userId/access', async (req: Request, res: ExpressResponse, next: NextFunction) => {
   try {
     const authReq = req as AuthRequest;
+    if (!authReq.user) { return res.status(401).json({ error: 'Authentification requise' }); }
     const { userId } = authReq.params;
     const userRole = authReq.user.role;
     const isActive = await subscriptionService.checkSubscriptionAccess(userId, userRole);
@@ -113,7 +115,8 @@ router.get('/test-public', async (req: ExpressRequestBase, res: ExpressResponse)
 // Route de test pour diagnostiquer CinetPay - req est Request, casté en AuthRequest à l'intérieur
 router.get('/test-cinetpay-diag', async (req: Request, res: ExpressResponse, next: NextFunction) => {
   try {
-    const authReq = req as AuthRequest; // Cast ici
+    const authReq = req as AuthRequest;
+    if (!authReq.user) { return res.status(401).json({ error: 'Authentification requise' }); }
     const testParams = {
       amount: 1000,
       customer_name: authReq.user.firstName || 'Test',
@@ -142,6 +145,7 @@ router.get('/test-cinetpay-diag', async (req: Request, res: ExpressResponse, nex
 router.get('/debug-cinetpay', async (req: Request, res: ExpressResponse, next: NextFunction) => {
   try {
     const authReq = req as AuthRequest;
+    if (!authReq.user) { return res.status(401).json({ error: 'Authentification requise' }); }
     const hasApiKey = !!config.CINETPAY_APIKEY;
     const hasSiteId = !!config.CINETPAY_SITE_ID;
     

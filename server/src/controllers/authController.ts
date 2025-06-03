@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { AuthRequest, NextFunction } from '../types/custom.express';
 import bcrypt from 'bcryptjs';
 import jwt, { Secret, SignOptions } from 'jsonwebtoken';
 import { User } from '../models/User';
@@ -14,7 +15,7 @@ export class AuthController {
     this.notificationService = new NotificationService({ daysBeforeExpiration: [] });
   }
 
-  register = async (req: Request, res: Response) => {
+  register = async (req: Request, res: Response, next?: NextFunction) => {
     try {
       const { firstName, lastName, email, phoneNumber, password } = req.body;
 
@@ -146,7 +147,7 @@ export class AuthController {
     }
   };
 
-  login = async (req: Request, res: Response) => {
+  login = async (req: Request, res: Response, next?: NextFunction) => {
     try {
       const { phoneNumber, password } = req.body;
 
@@ -213,7 +214,7 @@ export class AuthController {
     }
   };
 
-  verifyEmail = async (req: Request, res: Response) => {
+  verifyEmail = async (req: Request, res: Response, next?: NextFunction) => {
     try {
       const { token } = req.params;
 
@@ -245,7 +246,7 @@ export class AuthController {
     }
   };
 
-  forgotPassword = async (req: Request, res: Response) => {
+  forgotPassword = async (req: Request, res: Response, next?: NextFunction) => {
     try {
       const { email } = req.body;
 
@@ -286,7 +287,7 @@ export class AuthController {
     }
   };
 
-  resetPassword = async (req: Request, res: Response) => {
+  resetPassword = async (req: Request, res: Response, next?: NextFunction) => {
     try {
       const { token } = req.params;
       const { password } = req.body;
@@ -333,7 +334,7 @@ export class AuthController {
     }
   };
 
-  verifyToken = async (req: Request, res: Response) => {
+  verifyToken = async (req: Request, res: Response, next?: NextFunction) => {
     try {
       const { token } = req.params;
 
@@ -385,95 +386,64 @@ export class AuthController {
     return jwt.sign(payload, config.JWT_SECRET as Secret, signOptions);
   }
 
-  getCurrentUser = async (req: any, res: Response) => {
+  getCurrentUser = async (req: AuthRequest, res: Response, next?: NextFunction) => {
     try {
-      const user = await User.findById(req.user?.id).select('-password');
+      if (!req.user) {
+        return res.status(401).json({
+          success: false,
+          message: 'Non authentifié ou utilisateur non trouvé dans le token'
+        });
+      }
+      const user = await User.findById(req.user.id).select('-password');
       if (!user) {
         return res.status(404).json({
           success: false,
-          message: 'Utilisateur non trouvé'
+          message: 'Utilisateur non trouvé en base de données'
         });
       }
-
-      res.json({
+      res.status(200).json({
         success: true,
-        data: {
-          id: user._id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          phoneNumber: user.phoneNumber,
-          role: user.role,
-          isVerified: user.isVerified
-        }
+        data: user
       });
     } catch (error) {
-      logger.error('Erreur lors de la récupération du profil:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Erreur lors de la récupération du profil'
-      });
+      logger.error("Erreur lors de la récupération de l'utilisateur courant:", error);
+      if (next) next(error);
+      else res.status(500).json({ success: false, message: 'Erreur serveur' });
     }
   };
 
-  updateProfile = async (req: any, res: Response) => {
+  updateProfile = async (req: AuthRequest, res: Response, next?: NextFunction) => {
     try {
-      const { firstName, lastName, email } = req.body;
-      
-      const updateData: any = {};
-      if (firstName) updateData.firstName = firstName.trim();
-      if (lastName) updateData.lastName = lastName.trim();
-      if (email) {
-        // Validation de l'email
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-          return res.status(400).json({
-            success: false,
-            message: 'Format d\'email invalide'
-          });
-        }
-        updateData.email = email.toLowerCase();
+      if (!req.user) {
+        return res.status(401).json({
+          success: false,
+          message: 'Non authentifié ou utilisateur non trouvé dans le token'
+        });
       }
+      const userId = req.user.id;
+      const updates = req.body;
+      
+      delete updates.password;
+      delete updates.role;
+      delete updates.isVerified;
+      delete updates.email;
+      delete updates.phoneNumber;
 
-      const user = await User.findByIdAndUpdate(
-        req.user?.id,
-        { $set: updateData },
-        { new: true, runValidators: true }
-      ).select('-password');
+      const user = await User.findByIdAndUpdate(userId, { $set: updates }, { new: true, runValidators: true }).select('-password');
 
       if (!user) {
-        return res.status(404).json({
-          success: false,
-          message: 'Utilisateur non trouvé'
-        });
+        return res.status(404).json({ success: false, message: 'Utilisateur non trouvé' });
       }
 
-      res.json({
+      res.status(200).json({
         success: true,
         message: 'Profil mis à jour avec succès',
-        data: {
-          id: user._id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          phoneNumber: user.phoneNumber,
-          role: user.role,
-          isVerified: user.isVerified
-        }
+        data: user
       });
-    } catch (error: any) {
+    } catch (error) {
       logger.error('Erreur lors de la mise à jour du profil:', error);
-      
-      if (error.code === 11000) {
-        return res.status(400).json({
-          success: false,
-          message: 'Cet email est déjà utilisé par un autre utilisateur'
-        });
-      }
-      
-      res.status(500).json({
-        success: false,
-        message: 'Erreur lors de la mise à jour du profil'
-      });
+      if (next) next(error);
+      else res.status(500).json({ success: false, message: 'Erreur serveur' });
     }
   };
 } 

@@ -35,6 +35,8 @@ export interface UserPayload {
   firstName: string;
   lastName: string;
   role: UserRole;
+  phoneNumber?: string;
+  isVerified?: boolean;
 }
 
-export { AuthRequest } from './express'; 
+// export { AuthRequest } from './express'; // Supprimé pour éviter la dépendance circulaire 

@@ -2,7 +2,7 @@ import { Response } from 'express';
 import { CVService } from '../services/cvService';
 import { logger } from '../utils/logger';
 import { body, validationResult } from 'express-validator';
-import { AuthRequest } from '../types/user';
+import { AuthRequest } from '../types/custom.express';
 
 export class CVController {
   private cvService: CVService;

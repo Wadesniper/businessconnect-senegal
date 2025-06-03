@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { AuthRequest } from '../types/user';
+import { AuthRequest } from '../types/custom.express';
 import { MarketplaceItem } from '../models/marketplace';
 
 export class MarketplaceController {

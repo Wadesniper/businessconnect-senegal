@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { Request, Response, NextFunction } from '../types/express';
+import { Request, Response, NextFunction } from '../types/custom.express';
 import { logger } from '../utils/logger';
 
 const router = Router();

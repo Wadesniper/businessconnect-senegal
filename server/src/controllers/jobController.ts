@@ -1,4 +1,4 @@
-import { Request, Response } from '../types/express';
+import { Request, Response } from '../types/custom.express';
 import { Job } from '../models/Job';
 import { logger } from '../utils/logger';
 import { Types } from 'mongoose';

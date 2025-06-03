@@ -1,12 +1,15 @@
-import { Request, Response } from '../types/express';
+import { Request, Response } from '../types/custom.express';
 import { logger } from '../utils/logger';
 import { cinetpayService } from '../services/cinetpayService';
 import { emailService } from '../services/emailService';
-import { AuthRequest } from '../types/express';
+import { AuthRequest } from '../types/custom.express';
 
 class PaymentController {
   async createPayment(req: AuthRequest, res: Response) {
     try {
+      if (!req.user) {
+        return res.status(401).json({ error: 'Authentification requise' });
+      }
       const { amount, description } = req.body;
 
       const payment = await cinetpayService.createPayment({
@@ -26,16 +29,24 @@ class PaymentController {
 
   async confirmPayment(req: AuthRequest, res: Response) {
     try {
+      if (!req.user) {
+        return res.status(401).json({ error: 'Authentification requise' });
+      }
       const { token } = req.body;
 
       const payment = await cinetpayService.confirmPayment(token);
 
       if (payment.status === 'success') {
-        await emailService.sendPaymentSuccessEmail(req.user.email, {
-          amount: payment.amount,
-          currency: payment.currency,
-          payment_intent_id: payment.id
-        });
+        // S'assurer que req.user.email existe si UserPayload le rend optionnel
+        if (!req.user.email) {
+            logger.warn('Email utilisateur non disponible pour la notification de paiement réussi.');
+        } else {
+            await emailService.sendPaymentSuccessEmail(req.user.email, {
+              amount: payment.amount,
+              currency: payment.currency,
+              payment_intent_id: payment.id
+            });
+        }
       }
 
       res.json(payment);
@@ -49,6 +60,9 @@ class PaymentController {
 
   async getPaymentHistory(req: AuthRequest, res: Response) {
     try {
+      if (!req.user) {
+        return res.status(401).json({ error: 'Authentification requise' });
+      }
       const payments = await cinetpayService.getPaymentHistory(req.user.id);
       res.json(payments);
     } catch (error) {
@@ -61,6 +75,9 @@ class PaymentController {
 
   async getPaymentDetails(req: AuthRequest, res: Response) {
     try {
+      if (!req.user) {
+        return res.status(401).json({ error: 'Authentification requise' });
+      }
       const { paymentId } = req.params;
       const payment = await cinetpayService.getPaymentDetails(paymentId);
 

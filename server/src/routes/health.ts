@@ -1,4 +1,5 @@
-import { Router, RouteHandler } from '../types/express';
+import { Router } from 'express';
+import { RouteHandler } from '../types/custom.express';
 import mongoose from 'mongoose';
 
 const router = Router();

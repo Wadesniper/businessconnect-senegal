@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { AuthRequest, UserPayload } from '../types/user';
+import { AuthRequest } from '../types/custom.express';
+import { UserPayload } from '../types/user';
 import { config } from '../config';
 import { logger } from '../utils/logger';
 import { User } from '../models/User';
 
-export const authMiddleware = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
     // Vérifier si le token est présent
     const token = req.header('Authorization')?.replace('Bearer ', '');
@@ -39,8 +40,9 @@ export const authMiddleware = async (req: AuthRequest, res: Response, next: Next
       isVerified: user.isVerified
     };
 
-    // Ajouter l'utilisateur à la requête
-    req.user = userPayload;
+    // Maintenant, nous pouvons traiter req comme AuthRequest pour assigner user
+    // et pour les middlewares/handlers suivants
+    (req as AuthRequest).user = userPayload;
     next();
   } catch (error) {
     if (error instanceof jwt.JsonWebTokenError) {
@@ -64,9 +66,10 @@ export const authMiddleware = async (req: AuthRequest, res: Response, next: Next
   }
 };
 
-export const isAdmin = (req: AuthRequest, res: Response, next: NextFunction) => {
+export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
   try {
-    if (req.user?.role !== 'admin') {
+    // Utiliser une assertion ici aussi car on s'attend à ce que authMiddleware ait été appelé avant
+    if ((req as AuthRequest).user?.role !== 'admin') {
       return res.status(403).json({
         success: false,
         message: 'Accès non autorisé. Privilèges administrateur requis.'

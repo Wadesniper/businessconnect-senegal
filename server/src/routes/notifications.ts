@@ -1,5 +1,5 @@
-import { Router, Request as ExpressRequest, Response as ExpressResponse, NextFunction } from 'express';
-import { Request, AuthRequest } from '../types/express';
+import { Router } from 'express';
+import { Request, Response, NextFunction, AuthRequest } from '../types/custom.express';
 import { authenticate } from '../middleware/auth';
 import { NotificationController } from '../controllers/notificationController';
 
@@ -10,49 +10,65 @@ const notificationController = new NotificationController();
 router.use(authenticate);
 
 // Obtenir toutes les notifications de l'utilisateur
-router.get('/', async (req: Request, res: ExpressResponse, next: NextFunction) => {
+const getUserNotificationsHandler = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const authReq = req as AuthRequest;
+    if (!authReq.user) {
+      return res.status(401).json({ error: 'Authentification requise' });
+    }
     const notifications = await notificationController.getUserNotifications(authReq.user.id);
-    return res.json(notifications);
+    res.json(notifications);
   } catch (error) {
     next(error);
   }
-});
+};
+router.get('/', getUserNotificationsHandler);
 
 // Marquer une notification comme lue
-router.put('/:id/read', async (req: Request, res: ExpressResponse, next: NextFunction) => {
+const markAsReadHandler = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const authReq = req as AuthRequest;
+    if (!authReq.user) {
+      return res.status(401).json({ error: 'Authentification requise' });
+    }
     const { id } = authReq.params;
     await notificationController.markAsRead(id, authReq.user.id);
-    return res.json({ success: true });
+    res.json({ message: 'Notification marquée comme lue' });
   } catch (error) {
     next(error);
   }
-});
+};
+router.put('/:id/read', markAsReadHandler);
 
 // Marquer toutes les notifications comme lues
-router.put('/read-all', async (req: Request, res: ExpressResponse, next: NextFunction) => {
+const markAllAsReadHandler = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const authReq = req as AuthRequest;
+    if (!authReq.user) {
+      return res.status(401).json({ error: 'Authentification requise' });
+    }
     await notificationController.markAllAsRead(authReq.user.id);
-    return res.json({ success: true });
+    res.json({ message: 'Toutes les notifications marquées comme lues' });
   } catch (error) {
     next(error);
   }
-});
+};
+router.put('/read-all', markAllAsReadHandler);
 
 // Supprimer une notification
-router.delete('/:id', async (req: Request, res: ExpressResponse, next: NextFunction) => {
+const deleteNotificationHandler = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const authReq = req as AuthRequest;
+    if (!authReq.user) {
+      return res.status(401).json({ error: 'Authentification requise' });
+    }
     const { id } = authReq.params;
     await notificationController.deleteNotification(id, authReq.user.id);
-    return res.json({ success: true });
+    res.json({ message: 'Notification supprimée' });
   } catch (error) {
     next(error);
   }
-});
+};
+router.delete('/:id', deleteNotificationHandler);
 
 export default router; 

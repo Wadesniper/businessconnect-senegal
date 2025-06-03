@@ -1,9 +1,9 @@
-import { Router, Request as ExpressRequest, Response as ExpressResponse, NextFunction as ExpressNextFunction } from 'express';
+import { Router } from 'express';
 // Utiliser nos types personnalisés qui s'appuient sur les types Express
-import { Request, Response, NextFunction, AuthRequest } from '../types/express';
-// import { paymentController } from '../controllers/paymentController';
+import { Request, Response, NextFunction, AuthRequest } from '../types/custom.express';
 import { authenticate, isAdmin } from '../middleware/auth';
 import { WebhookController } from '../controllers/webhookController';
+import { paymentController } from '../controllers/paymentController';
 
 const router = Router();
 const webhookController = new WebhookController();
@@ -19,10 +19,12 @@ const authMiddlewareApplicator = (req: Request, res: Response, next: NextFunctio
 router.use(authMiddlewareApplicator);
 
 // Pour les routes après authMiddlewareApplicator (sauf /webhook), req devrait être une AuthRequest.
+// Les handlers utilisent req: Request, et font un cast vers AuthRequest si besoin.
 
 // Routes de configuration
 const setupIntent = async (req: Request, res: Response, next: NextFunction) => {
   const authReq = req as AuthRequest;
+  if (!authReq.user) { return res.status(401).json({ error: 'Authentification requise' }); }
   try {
     // TODO: Implémenter la création d'intention de paiement (utiliser authReq.user si besoin)
     res.json({ success: true, userId: authReq.user.id });
@@ -33,6 +35,7 @@ const setupIntent = async (req: Request, res: Response, next: NextFunction) => {
 
 const getPaymentMethods = async (req: Request, res: Response, next: NextFunction) => {
   const authReq = req as AuthRequest;
+  if (!authReq.user) { return res.status(401).json({ error: 'Authentification requise' }); }
   try {
     // TODO: Implémenter la récupération des méthodes de paiement (utiliser authReq.user si besoin)
     res.json([]);
@@ -43,6 +46,7 @@ const getPaymentMethods = async (req: Request, res: Response, next: NextFunction
 
 const deletePaymentMethod = async (req: Request, res: Response, next: NextFunction) => {
   const authReq = req as AuthRequest;
+  if (!authReq.user) { return res.status(401).json({ error: 'Authentification requise' }); }
   try {
     res.json({ success: true, id: authReq.params.id }); 
   } catch (error) {
@@ -53,6 +57,7 @@ const deletePaymentMethod = async (req: Request, res: Response, next: NextFuncti
 // Routes de paiement
 const processPayment = async (req: Request, res: Response, next: NextFunction) => {
   const authReq = req as AuthRequest;
+  if (!authReq.user) { return res.status(401).json({ error: 'Authentification requise' }); }
   try {
     res.json({ success: true, body: authReq.body }); 
   } catch (error) {
@@ -62,6 +67,7 @@ const processPayment = async (req: Request, res: Response, next: NextFunction) =
 
 const createSubscription = async (req: Request, res: Response, next: NextFunction) => {
   const authReq = req as AuthRequest;
+  if (!authReq.user) { return res.status(401).json({ error: 'Authentification requise' }); }
   try {
     res.json({ success: true, body: authReq.body }); 
   } catch (error) {
@@ -71,6 +77,7 @@ const createSubscription = async (req: Request, res: Response, next: NextFunctio
 
 const cancelSubscription = async (req: Request, res: Response, next: NextFunction) => {
   const authReq = req as AuthRequest;
+  if (!authReq.user) { return res.status(401).json({ error: 'Authentification requise' }); }
   try {
     // Utiliser authReq.user si besoin pour identifier l'abonnement à annuler
     res.json({ success: true, userId: authReq.user.id });
@@ -82,6 +89,7 @@ const cancelSubscription = async (req: Request, res: Response, next: NextFunctio
 // Routes de remboursement (admin uniquement)
 const refundPayment = async (req: Request, res: Response, next: NextFunction) => {
   const authReq = req as AuthRequest;
+  if (!authReq.user) { return res.status(401).json({ error: 'Authentification requise' }); }
   try {
     // isAdmin a déjà vérifié req.user.role. Utiliser authReq.user si besoin pour logs/etc.
     res.json({ success: true, paymentId: authReq.params.paymentId }); 
@@ -93,6 +101,7 @@ const refundPayment = async (req: Request, res: Response, next: NextFunction) =>
 // Routes de factures
 const getInvoices = async (req: Request, res: Response, next: NextFunction) => {
   const authReq = req as AuthRequest;
+  if (!authReq.user) { return res.status(401).json({ error: 'Authentification requise' }); }
   try {
     // Utiliser authReq.user.id pour filtrer les factures
     res.json([]);
@@ -103,6 +112,7 @@ const getInvoices = async (req: Request, res: Response, next: NextFunction) => {
 
 const getInvoice = async (req: Request, res: Response, next: NextFunction) => {
   const authReq = req as AuthRequest;
+  if (!authReq.user) { return res.status(401).json({ error: 'Authentification requise' }); }
   try {
     // Utiliser authReq.user.id et authReq.params.id
     res.json({ id: authReq.params.id, userId: authReq.user.id }); 
@@ -113,6 +123,7 @@ const getInvoice = async (req: Request, res: Response, next: NextFunction) => {
 
 const downloadInvoice = async (req: Request, res: Response, next: NextFunction) => {
   const authReq = req as AuthRequest;
+  if (!authReq.user) { return res.status(401).json({ error: 'Authentification requise' }); }
   try {
     // Utiliser authReq.user.id et authReq.params.id
     res.json({ success: true, id: authReq.params.id, userId: authReq.user.id }); 

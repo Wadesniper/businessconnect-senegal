@@ -1,5 +1,5 @@
-import { Router, Request as ExpressRequest, Response as ExpressResponse, NextFunction } from 'express';
-import { Request, AuthRequest } from '../types/express';
+import { Router } from 'express';
+import { Request, Response, NextFunction, AuthRequest } from '../types/custom.express';
 import { UserController } from '../controllers/userController';
 import { authenticate } from '../middleware/auth';
 import { validateUser } from '../middleware/validation';
@@ -8,26 +8,26 @@ const router = Router();
 const userController = new UserController();
 
 // Routes publiques
-router.post('/register', validateUser, (req: Request, res: ExpressResponse, next: NextFunction) => {
+router.post('/register', validateUser, (req: Request, res: Response, next: NextFunction) => {
   userController.register(req, res).catch(next);
 });
 
-router.post('/login', (req: Request, res: ExpressResponse, next: NextFunction) => {
+router.post('/login', (req: Request, res: Response, next: NextFunction) => {
   userController.login(req, res).catch(next);
 });
 
-router.post('/forgot-password', (req: Request, res: ExpressResponse, next: NextFunction) => {
+router.post('/forgot-password', (req: Request, res: Response, next: NextFunction) => {
   userController.forgotPassword(req, res).catch(next);
 });
 
-router.post('/reset-password', (req: Request, res: ExpressResponse, next: NextFunction) => {
+router.post('/reset-password', (req: Request, res: Response, next: NextFunction) => {
   userController.resetPassword(req, res).catch(next);
 });
 
 // Routes protégées
 router.use(authenticate);
 
-router.get('/profile', async (req: Request, res: ExpressResponse, next: NextFunction) => {
+router.get('/profile', async (req: Request, res: Response, next: NextFunction) => {
   try {
     await userController.getProfile(req as AuthRequest, res);
   } catch (error) {
@@ -35,7 +35,7 @@ router.get('/profile', async (req: Request, res: ExpressResponse, next: NextFunc
   }
 });
 
-router.put('/profile', async (req: Request, res: ExpressResponse, next: NextFunction) => {
+router.put('/profile', async (req: Request, res: Response, next: NextFunction) => {
   try {
     await userController.updateProfile(req as AuthRequest, res);
   } catch (error) {
