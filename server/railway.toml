@@ -1,9 +1,13 @@
 [build]
-builder = "DOCKERFILE"
-dockerfilePath = "Dockerfile"
+# Nous utilisons Nixpacks, le builder natif de Railway, au lieu de Docker.
+builder = "NIXPACKS"
 
 [deploy]
-healthcheckPath = "/health"
+# La commande pour construire votre projet, trouvée dans package.json
+buildCommand = "npm run build"
+# La commande pour démarrer le serveur une fois construit
+startCommand = "node dist/server.js"
+healthcheckPath = "/api/v1/health"
 healthcheckTimeout = 100
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10
