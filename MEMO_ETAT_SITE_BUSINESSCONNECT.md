@@ -1,6 +1,42 @@
 # État du Site BusinessConnect
 
-## Dernière mise à jour : 2025-06-02
+## Dernière mise à jour : 2025-06-04
+
+### État Général :
+Le projet vise à migrer une application existante de MongoDB vers Supabase (PostgreSQL) et à déployer le backend Node.js/Express sur Railway. Le frontend est déjà déployé et ne doit pas être perturbé.
+
+### Backend (Node.js/Express avec Prisma) :
+-   **Base de données :**
+    -   Migration de MongoDB vers Supabase (PostgreSQL).
+    -   Schéma Prisma (`prisma/schema.prisma`) mis à jour pour refléter la structure de données MongoDB pour les modèles `User` et `Job`, incluant tous les champs requis.
+    -   **Synchronisation du schéma avec Supabase : TERMINÉE.** La commande `npx prisma db push` a été exécutée avec succès après configuration de la `DATABASE_URL` pour utiliser le Session Pooler de Supabase (compatible IPv4). Les tables `User` et `Job` dans Supabase ont maintenant la structure définie dans `prisma/schema.prisma`.
+    -   **Migration des données : TERMINÉE.** Le script `server/src/scripts/migrateMongoToSupabase.ts` a été exécuté avec succès. L'utilisateur admin et 159 offres d'emploi ont été insérés dans la base de données Supabase.
+-   **Prochaines étapes pour le backend :**
+    1.  **Déploiement sur Railway :**
+        -   **Variable d'environnement `DATABASE_URL` :** Doit être configurée dans Railway avec l'URL du Session Pooler de Supabase : `postgresql://postgres.rvflbgylqjhnworrjjis:[MOT_DE_PASSE_SUPABASE]@aws-0-eu-central-1.pooler.supabase.com:5432/postgres` (remplacer `[MOT_DE_PASSE_SUPABASE]` par `Qi6DqS4LA2025`).
+        -   **Variable d'environnement `MONGODB_URI` :** N'est plus nécessaire pour le fonctionnement en production sur Railway et peut être supprimée des variables d'environnement de Railway.
+        -   **Health Check :** Le fichier `railway.toml` spécifie `healthcheckPath = "/api/health"`. Il est **CRUCIAL** que cet endpoint existe dans l'application Express (`server/src/server.ts`) et renvoie un statut `200 OK`. Sinon, le déploiement Railway échouera ou sera instable.
+        -   Vérifier les autres variables d'environnement nécessaires pour la production (secrets JWT, etc.).
+    2.  **Tests Post-Déploiement :**
+        -   Tester tous les endpoints de l'API une fois le backend déployé sur Railway.
+        -   S'assurer de la communication correcte entre le frontend déployé et le backend nouvellement déployé sur Railway.
+
+### Frontend :
+-   Déjà déployé (détails de la plateforme de déploiement non spécifiés, mais l'objectif est de ne pas le perturber).
+-   Devra pointer vers l'URL du backend une fois celui-ci déployé sur Railway.
+
+### Scripts de Migration :
+-   Le script `server/src/scripts/migrateMongoToSupabase.ts` est maintenant finalisé et a été utilisé pour la migration des données. Il a été nettoyé de la journalisation verbeuse.
+
+### Points d'Attention / Risques :
+-   **Configuration du Health Check (`/api/health`) :** C'est un point bloquant pour le succès du déploiement sur Railway.
+-   **Variables d'environnement en production (Railway) :** Doivent être configurées avec soin, notamment `DATABASE_URL` et les secrets de l'application.
+-   Assurer que le frontend utilise bien l'URL du backend déployé sur Railway.
+
+### Objectif Immédiat :
+-   Déployer avec succès le backend complet sur Railway.
+-   Configurer et vérifier le health check `/api/health`.
+-   Vérifier la configuration des variables d'environnement sur Railway.
 
 ### Fonctionnalités implémentées
 
@@ -723,6 +759,8 @@
 ### Prochaines Étapes
 
 #### Court Terme
+- [ ] Migration des données de MongoDB vers Supabase.
+- [ ] Adaptation du code applicatif pour utiliser Prisma avec Supabase.
 - [ ] Tests de bout en bout du processus de paiement
 - [ ] Amélioration des messages d'erreur de paiement
 - [ ] Documentation des variables d'environnement requises
@@ -742,7 +780,8 @@
 #### Architecture
 - Backend : Node.js avec Express et TypeScript (déployé sur Railway)
 - Stockage : Google Cloud Storage pour les fichiers
-- Base de données : MongoDB
+- Base de données : Supabase (PostgreSQL)
+- Schéma de base de données : Structure des tables créée dans Supabase via Prisma migrate (script SQL).
 - Frontend : React avec TypeScript (déployé sur Vercel)
 - Authentification : JWT
 - Paiement : CinetPay

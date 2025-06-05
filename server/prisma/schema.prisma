@@ -1,0 +1,423 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  admin
+  etudiant
+  annonceur
+  employeur
+}
+
+enum UserStatus {
+  active
+  inactive
+}
+
+enum Language {
+  fr
+  en
+}
+
+model User {
+  id                  String    @id @default(cuid()) // ID unique, auto-généré
+  firstName           String    // Rétabli comme obligatoire
+  lastName            String    // Rétabli comme obligatoire
+  email               String?   @unique             // Optionnel mais unique si fourni
+  password            String                      // Le hashage se fera dans la logique applicative
+  role                UserRole
+  phoneNumber         String    @unique             // Le numéro de téléphone doit être unique
+  isVerified          Boolean   @default(false)
+  verificationToken   String?                     // Optionnel (peut être null)
+  resetPasswordToken  String?                     // Optionnel
+  resetPasswordExpire DateTime?                   // Optionnel
+
+  // Champs pour les préférences
+  preferences_notifications Boolean   @default(true)
+  preferences_newsletter    Boolean   @default(true)
+  preferences_language      Language  @default(fr)
+
+  // La gestion des notifications embarquées est plus complexe à traduire directement.
+  // Nous allons créer un modèle séparé "Notification" plus tard et le lier.
+
+  // 'name' semble redondant si firstName et lastName existent. À discuter.
+  // Pour l'instant, je le garde, en supposant qu'il a un usage spécifique.
+  name                String
+  status              UserStatus @default(active)
+
+  createdAt           DateTime  @default(now())     // Date de création, auto-générée
+  updatedAt           DateTime  @updatedAt          // Date de mise à jour, auto-gérée par Prisma
+
+  jobsPosted           Job[]            @relation("JobsPosted")
+  applicationsMade     JobApplication[] @relation("ApplicationsMade")
+  notifications        Notification[]   @relation("UserNotifications")
+  cvs                  CV[]
+  marketplaceItemsSold MarketplaceItem[] @relation("ItemsSold")
+  subscriptions        Subscription[]   @relation("UserSubscriptions")
+  transactions         Transaction[]    @relation("UserTransactions")
+
+  // Relations (seront ajoutées au fur et à mesure qu'on définit les autres modèles)
+  // exemple: cvs Cv[]
+  // exemple: jobs Job[]
+  // exemple: marketplaceItems MarketplaceItem[]
+  // exemple: subscriptions Subscription[]
+}
+
+enum JobType {
+  full_time
+  part_time
+  contract
+  internship
+}
+
+enum JobStatus {
+  active
+  closed
+}
+
+enum ApplicationStatus {
+  pending
+  accepted
+  rejected
+}
+
+model Job {
+  id           String    @id @default(cuid())
+  title        String
+  company      String
+  location     String
+  description  String
+  requirements String[]
+  salary_min   Float?
+  salary_max   Float?
+  salary_currency String? @default("XOF")
+  type         JobType?
+  status       JobStatus @default(active)
+
+  // New fields to match MongoDB structure
+  sector          String?
+  jobTypeDetail   String?    // For the original jobType string from MongoDB
+  missions        String[]   @default([]) // Default to empty array
+  contactEmail    String?
+  contactPhone    String?
+  keywords        String[]   @default([]) // Default to empty array
+  isActive        Boolean?   // From MongoDB's isActive field
+
+  postedById   String
+  postedBy     User      @relation("JobsPosted", fields: [postedById], references: [id])
+
+  applications JobApplication[] // Relation vers les candidatures
+
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([company])
+  @@index([location])
+  @@index([type])
+  @@index([status])
+  @@index([postedById])
+  @@index([createdAt])
+}
+
+model JobApplication {
+  id          String            @id @default(cuid())
+  jobId       String
+  job         Job               @relation(fields: [jobId], references: [id])
+  applicantId String
+  applicant   User              @relation("ApplicationsMade", fields: [applicantId], references: [id])
+  status      ApplicationStatus @default(pending)
+  appliedAt   DateTime          @default(now())
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([jobId, applicantId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  message   String
+  read      Boolean  @default(false)
+  userId    String
+  user      User     @relation("UserNotifications", fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+//----------------------------------------------------
+// Enums pour le modèle CV et ses sous-modèles
+//----------------------------------------------------
+enum CvTemplate {
+  modern
+  classic
+  creative
+  professional
+}
+
+enum SkillLevel {
+  debutant
+  intermediaire
+  avance
+  expert
+}
+
+enum SkillCategory {
+  technique
+  soft
+  langue
+}
+
+enum LanguageProficiency {
+  A1
+  A2
+  B1
+  B2
+  C1
+  C2
+  natif
+}
+
+//----------------------------------------------------
+// Modèle principal CV
+//----------------------------------------------------
+model CV {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  template      CvTemplate
+  isPublic      Boolean  @default(false)
+  lastGenerated DateTime?
+  pdfUrl        String?
+  color         String   @default("#2196f3")
+  font          String   @default("Roboto")
+
+  firstName     String
+  lastName      String
+  email         String
+  phone         String?
+  address       String?
+  city          String?
+  country       String?
+  title         String?
+  summary       String?
+  photo         String?
+  linkedin      String?
+  github        String?
+  website       String?
+
+  educations    Education[]
+  experiences   Experience[]
+  skills        Skill[]
+  languages     CvLanguage[]
+  certifications Certification[]
+  projects      Project[]
+  customSections CustomSection[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
+  @@index([isPublic])
+}
+
+//----------------------------------------------------
+// Sous-modèles pour CV
+//----------------------------------------------------
+
+model Education {
+  id          String   @id @default(cuid())
+  cvId        String
+  cv          CV       @relation(fields: [cvId], references: [id], onDelete: Cascade)
+  school      String
+  degree      String
+  field       String?
+  startDate   DateTime
+  endDate     DateTime?
+  description String?
+  location    String?
+
+  @@index([cvId])
+}
+
+model Experience {
+  id           String   @id @default(cuid())
+  cvId         String
+  cv           CV       @relation(fields: [cvId], references: [id], onDelete: Cascade)
+  company      String
+  position     String
+  startDate    DateTime
+  endDate      DateTime?
+  current      Boolean  @default(false)
+  description  String?
+  location     String?
+  achievements String[]
+
+  @@index([cvId])
+}
+
+model Skill {
+  id       String        @id @default(cuid())
+  cvId     String
+  cv       CV            @relation(fields: [cvId], references: [id], onDelete: Cascade)
+  name     String
+  level    SkillLevel
+  category SkillCategory
+
+  @@index([cvId])
+}
+
+model CvLanguage {
+  id    String             @id @default(cuid())
+  cvId  String
+  cv    CV                 @relation(fields: [cvId], references: [id], onDelete: Cascade)
+  name  String
+  level LanguageProficiency
+
+  @@index([cvId])
+}
+
+model Certification {
+  id            String   @id @default(cuid())
+  cvId          String
+  cv            CV       @relation(fields: [cvId], references: [id], onDelete: Cascade)
+  name          String
+  issuer        String
+  date          DateTime
+  expiryDate    DateTime?
+  credentialId  String?
+  credentialUrl String?
+
+  @@index([cvId])
+}
+
+model Project {
+  id           String   @id @default(cuid())
+  cvId         String
+  cv           CV       @relation(fields: [cvId], references: [id], onDelete: Cascade)
+  name         String
+  description  String?
+  technologies String[]
+  url          String?
+  startDate    DateTime?
+  endDate      DateTime?
+
+  @@index([cvId])
+}
+
+model CustomSection {
+  id      String @id @default(cuid())
+  cvId    String
+  cv      CV     @relation(fields: [cvId], references: [id], onDelete: Cascade)
+  title   String
+  content String
+
+  @@index([cvId])
+}
+
+enum MarketplaceItemStatus {
+  pending
+  approved
+  rejected
+}
+
+model MarketplaceItem {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  price       Float
+  category    String
+  status      MarketplaceItemStatus @default(pending)
+  images      String[]
+  reports     Int      @default(0)
+
+  sellerId    String
+  seller      User     @relation("ItemsSold", fields: [sellerId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  transactions Transaction[] @relation("MarketplaceItemTransactions")
+
+  @@index([sellerId])
+  @@index([category])
+  @@index([status])
+}
+
+enum SubscriptionStatus {
+  pending
+  active
+  expired
+  cancelled
+}
+
+model Subscription {
+  id        String             @id @default(cuid())
+  plan      String
+  status    SubscriptionStatus @default(pending)
+  paymentId String?
+  startDate DateTime           @default(now())
+  endDate   DateTime
+
+  userId    String
+  user      User               @relation("UserSubscriptions", fields: [userId], references: [id])
+
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+  transactions Transaction[] @relation("SubscriptionTransactions")
+
+  @@index([userId, status])
+  @@index([paymentId])
+}
+
+enum TransactionStatus {
+  pending
+  completed
+  failed
+  refunded
+}
+
+enum PaymentGateway {
+  cinetpay
+  // Ajoutez d'autres passerelles ici si nécessaire à l'avenir
+}
+
+model Transaction {
+  id                 String            @id @default(cuid())
+  amount             Float             // Montant de la transaction
+  currency           String            @default("XOF") // Devise
+  status             TransactionStatus @default(pending) // Statut de la transaction
+  paymentGateway     PaymentGateway?   // Passerelle de paiement utilisée (ex: cinetpay)
+  gatewayTransactionId String?           @unique // ID unique de la transaction fourni par la passerelle
+  description        String?           // Description de la transaction (ex: "Abonnement Premium", "Achat annonce X")
+  errorMessage       String?           // Message d'erreur si la transaction a échoué
+
+  userId             String            // Qui a fait la transaction
+  user               User              @relation("UserTransactions", fields: [userId], references: [id])
+
+  // Liens optionnels vers d'autres modèles
+  subscriptionId     String?           // Si cette transaction est pour un abonnement
+  subscription       Subscription?     @relation("SubscriptionTransactions", fields: [subscriptionId], references: [id])
+
+  marketplaceItemId  String?           // Si cette transaction est pour un article de la marketplace (ads)
+  marketplaceItem    MarketplaceItem?  @relation("MarketplaceItemTransactions", fields: [marketplaceItemId], references: [id])
+
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([gatewayTransactionId])
+  @@index([subscriptionId])
+  @@index([marketplaceItemId])
+}

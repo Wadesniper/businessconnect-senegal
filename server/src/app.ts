@@ -15,8 +15,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Healthcheck endpoint (public) - DOIT ÊTRE AVANT LES AUTRES ROUTES
-app.get('/health', (req: Request, res: Response) => {
-  res.status(200).json({ status: 'ok' });
+app.get('/api/health', (req: Request, res: Response) => {
+  res.status(200).json({ status: 'UP', message: 'Backend is healthy' });
 });
 
 // Montage des routes
