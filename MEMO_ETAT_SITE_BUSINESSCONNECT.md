@@ -844,3 +844,10 @@ Le projet vise à migrer une application existante de MongoDB vers Supabase (Pos
    - Meilleure gestion des types pour l'authentification
    - Types plus stricts pour les contrôleurs
    - Meilleure documentation des interfaces
+
+## Intervention du 2024-06-06
+
+- **Contexte :** Le déploiement du backend sur Railway échouait systématiquement avec une erreur `tsc: not found`.
+- **Cause :** Le script de build dans `server/package.json` n'utilisait pas `npx` pour exécuter le compilateur TypeScript, ce qui le rendait introuvable dans l'environnement de build de Railway.
+- **Correction Appliquée :** Modification du script `build` pour devenir `npx rimraf dist && npx tsc --project tsconfig.prod.json`.
+- **Impact :** Cette correction est ciblée sur le processus de build du backend et ne devrait avoir aucun impact sur le frontend ou la logique applicative. Le déploiement devrait maintenant réussir.
