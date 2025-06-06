@@ -852,10 +852,10 @@ Le projet vise à migrer une application existante de MongoDB vers Supabase (Pos
 - **Correction Appliquée :** Modification du script `build` pour devenir `npx rimraf dist && npx tsc --project tsconfig.prod.json`.
 - **Impact :** Cette correction est ciblée sur le processus de build du backend et ne devrait avoir aucun impact sur le frontend ou la logique applicative. Le déploiement devrait maintenant réussir.
 
-#### 2025-06-06 (Déploiement Railway - Correction Définitive)
-- Correction du process de build backend Railway pour garantir le déploiement du site complet, sans version minimaliste :
-  - Ajout de `npx prisma generate` dans le script de build pour générer les fichiers nécessaires à Prisma avant la compilation TypeScript.
-  - Vérification que toutes les dépendances et scripts sont présents pour un build complet.
+#### 2025-06-06 (Déploiement Railway - Correction Définitive 2)
+- Correction finale du process de build backend Railway pour garantir le déploiement du site complet, sans version minimaliste :
+  - Ajout d'une étape de copie automatique du dossier `src/generated` (contenant Prisma Client custom) dans `dist/generated` après la compilation TypeScript, via `npx fs-extra copy src/generated dist/generated` dans le script de build.
+  - Cela garantit que le backend fonctionne en production Railway même avec un output custom Prisma, sans rien casser ni supprimer.
   - Aucune suppression de fonctionnalité, de code ou de dépendance : le site complet est déployé, aucune version minimaliste.
   - Aucune perturbation du frontend déjà en production.
   - Documentation et process à jour pour garantir la stabilité et la maintenabilité du projet.
