@@ -11,7 +11,9 @@ services:
     rootDir: server
     plan: free
     # Installation et build en une seule commande
-    buildCommand: "npm ci && npm run build"
+    buildCommand: |
+      npm install --production=false
+      npm run build
     startCommand: "npm start"
     healthCheckPath: /api/health
     envVars:
