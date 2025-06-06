@@ -1,23 +1,14 @@
-[providers]
-node = true
-
+# Spécifie les paquets système nécessaires pour la compilation de certaines dépendances
 [phases.setup]
-nixPkgs = ['nodejs-18_x', 'python3', 'gcc', 'make']
+nixPkgs = ["nodejs-18_x", "python3", "gcc", "make"]
 
-[phases.install]
-cmds = [
-    'cd server',
-    'npm ci --only=production'
-]
-
+# Définit la commande de build, Nixpacks se chargera de l'installation des dépendances
 [phases.build]
-cmds = [
-    'cd server',
-    'npm run build'
-]
+cmds = ["npm run build --prefix server"]
 
+# Définit la commande de démarrage
 [start]
-cmd = 'cd server && node --max-old-space-size=2048 dist/index.js'
+cmd = "npm start --prefix server"
 
 [env]
 NODE_ENV = 'production'
