@@ -13,6 +13,9 @@ RUN npm ci
 # Copie le reste du code source du backend
 COPY server/ ./
 
+# DEBUG: Lister le contenu des exécutables pour confirmer leur présence
+RUN ls -la node_modules/.bin
+
 # Génère le client Prisma (crucial avant la compilation)
 RUN npx prisma generate
 
