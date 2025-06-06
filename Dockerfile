@@ -13,11 +13,11 @@ RUN npm ci
 # Copie le reste du code source du backend
 COPY server/ ./
 
-# DEBUG: Lister le contenu des exécutables pour confirmer leur présence
-RUN ls -la node_modules/.bin
+# Tente de reconstruire les binaires au cas où le cache de Railway interfère
+RUN npm rebuild
 
 # Génère le client Prisma (crucial avant la compilation)
-RUN npx prisma generate
+RUN ./node_modules/.bin/prisma generate
 
 # Construit l'application TypeScript en JavaScript
 RUN npm run build
