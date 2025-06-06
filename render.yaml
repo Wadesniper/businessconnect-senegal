@@ -9,6 +9,8 @@ services:
     startCommand: "npm start"
     healthCheckPath: /api/health
     envVars:
+      - key: RENDER_PACKAGE_MANAGER
+        value: npm
       - key: NODE_ENV
         value: production
       - key: DATABASE_URL
