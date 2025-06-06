@@ -13,6 +13,7 @@ services:
     # Installation et build en une seule commande
     buildCommand: |
       npm install --production=false
+      npm install -g typescript
       npm run build
     startCommand: "npm start"
     healthCheckPath: /api/health
