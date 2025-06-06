@@ -1,47 +1,53 @@
-# Étape de build
-FROM node:18-bullseye AS builder
+# Etape 1: Builder
+# Utilise une image Node.js 18 stable
+FROM node:18-bullseye-slim AS builder
 
-# Configuration du répertoire de travail
-WORKDIR /app/server
-
-# Copie des fichiers du serveur
-COPY . .
-
-# Installation des dépendances et build
+# Définit l'environnement de production pour le build
 ENV NODE_ENV=production
-ENV NODE_OPTIONS="--max-old-space-size=2048"
 
-# Build de production sans les tests
-RUN npm ci && \
-    npm run build
+# Définit le répertoire de travail
+WORKDIR /app
 
-# Étape de production
-FROM node:18-bullseye
+# Copie d'abord les fichiers de dépendances pour profiter du cache Docker
+COPY server/package.json server/package-lock.json ./
 
-# Installation des dépendances système nécessaires
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+# Installe les dépendances (y compris les devDependencies nécessaires pour le build)
+# `npm ci` est plus rapide et plus fiable pour les builds
+RUN npm ci
 
-# Configuration du répertoire de travail
-WORKDIR /app/server
+# Copie le reste du code source du serveur
+COPY server/ ./
 
-# Copie des fichiers de l'étape de build
-COPY --from=builder /app/server/package*.json ./
-COPY --from=builder /app/server/dist ./dist
-COPY --from=builder /app/server/scripts ./scripts
+# Génère le client Prisma (bonne pratique avant le build)
+RUN npx prisma generate
 
-# Installation des dépendances de production uniquement
+# Construit l'application TypeScript en JavaScript
+RUN npm run build
+
+# Etape 2: Production
+# Utilise une image Node.js 18 slim pour une taille réduite
+FROM node:18-bullseye-slim AS production
+
+# Définit l'environnement de production
 ENV NODE_ENV=production
-ENV NODE_OPTIONS="--max-old-space-size=2048"
-RUN npm ci --only=production
 
-# Variables d'environnement
-ENV PORT=8080
+# Définit le répertoire de travail
+WORKDIR /app
 
-# Exposition du port
+# Copie les fichiers de dépendances depuis l'étape de build
+COPY --from=builder /app/package.json /app/package-lock.json ./
+
+# Installe UNIQUEMENT les dépendances de production
+RUN npm ci --omit=dev
+
+# Copie les artefacts de build (le code JavaScript compilé) depuis l'étape de build
+COPY --from=builder /app/dist ./dist
+
+# Copie le schéma Prisma nécessaire pour l'exécution
+COPY --from=builder /app/prisma ./prisma
+
+# Expose le port sur lequel l'application va tourner
 EXPOSE 8080
 
-# Démarrage de l'application
-CMD ["node", "--max-old-space-size=2048", "dist/server.js"] 
+# Commande pour démarrer l'application
+CMD ["node", "dist/server.js"] 
