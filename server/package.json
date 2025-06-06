@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node dist/server.js",
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "build": "node ./node_modules/rimraf/bin.js dist && node ./node_modules/typescript/bin/tsc --project tsconfig.prod.json",
+    "build": "rimraf dist && tsc --project tsconfig.prod.json",
     "heroku-postbuild": "npm run build"
   },
   "dependencies": {
