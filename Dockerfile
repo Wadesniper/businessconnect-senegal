@@ -2,8 +2,8 @@
 # Utilise une image Node.js 18 stable
 FROM node:18-bullseye-slim AS builder
 
-# Définit l'environnement de production pour le build
-ENV NODE_ENV=production
+# Pas de NODE_ENV ici pour installer TOUTES les dépendances pour le build
+# ENV NODE_ENV=production
 
 # Définit le répertoire de travail
 WORKDIR /app
