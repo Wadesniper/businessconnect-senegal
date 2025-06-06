@@ -4,9 +4,9 @@ builder = "NIXPACKS"
 
 [deploy]
 # La commande pour construire votre projet, trouvée dans package.json
-buildCommand = "cd server && npm install && npm run build"
+buildCommand = "npm install && npm run build"
 # La commande pour démarrer le serveur une fois construit
-startCommand = "cd server && node dist/server.js"
+startCommand = "node dist/server.js"
 healthcheckPath = "/health"
 healthcheckTimeout = 100
 restartPolicyType = "on_failure"
