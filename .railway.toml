@@ -1,22 +1,22 @@
 [build]
 builder = "NIXPACKS"
 
+[build.phases]
+# Commande explicite pour installer TOUTES les dépendances, y compris devDependencies
+install = { cmds = ["npm install"] }
+# Commande explicite pour lancer le build après l'installation
+build = { cmds = ["npm run build"] }
+
 [deploy]
-startCommand = "npm start --prefix server"
+# La commande de démarrage est définie dans package.json ("start")
+startCommand = "npm start"
 healthcheckPath = "/api/health"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 5
 
-[env]
-# Force npm à installer les devDependencies même si NODE_ENV=production
-NPM_CONFIG_PRODUCTION = "false"
-NODE_OPTIONS = "--max-old-space-size=2048"
-NPM_CONFIG_LOGLEVEL = "error"
-NPM_CONFIG_FETCH_RETRIES = "5"
-NPM_CONFIG_REGISTRY = "https://registry.npmjs.org/"
-
 [service]
+# Indique à Nixpacks de travailler exclusivement dans le dossier /server
 rootDirectory = "server"
 numReplicas = 1
 containerSize = "2x"
