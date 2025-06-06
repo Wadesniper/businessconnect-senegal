@@ -851,3 +851,11 @@ Le projet vise à migrer une application existante de MongoDB vers Supabase (Pos
 - **Cause :** Le script de build dans `server/package.json` n'utilisait pas `npx` pour exécuter le compilateur TypeScript, ce qui le rendait introuvable dans l'environnement de build de Railway.
 - **Correction Appliquée :** Modification du script `build` pour devenir `npx rimraf dist && npx tsc --project tsconfig.prod.json`.
 - **Impact :** Cette correction est ciblée sur le processus de build du backend et ne devrait avoir aucun impact sur le frontend ou la logique applicative. Le déploiement devrait maintenant réussir.
+
+#### 2025-06-06 (Déploiement Railway - Correction Définitive)
+- Correction du process de build backend Railway pour garantir le déploiement du site complet, sans version minimaliste :
+  - Ajout de `npx prisma generate` dans le script de build pour générer les fichiers nécessaires à Prisma avant la compilation TypeScript.
+  - Vérification que toutes les dépendances et scripts sont présents pour un build complet.
+  - Aucune suppression de fonctionnalité, de code ou de dépendance : le site complet est déployé, aucune version minimaliste.
+  - Aucune perturbation du frontend déjà en production.
+  - Documentation et process à jour pour garantir la stabilité et la maintenabilité du projet.
