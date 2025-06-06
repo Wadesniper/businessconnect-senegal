@@ -1,3 +1,9 @@
+# Spécifie les variables d'environnement pour l'environnement de BUILD
+# C'est ici que nous forçons l'utilisation de NPM au lieu de Bun.
+envVars:
+  - key: RENDER_PACKAGE_MANAGER
+    value: npm
+
 services:
   - type: web
     name: businessconnect-backend
@@ -9,14 +15,13 @@ services:
     startCommand: "npm start"
     healthCheckPath: /api/health
     envVars:
-      - key: RENDER_PACKAGE_MANAGER
-        value: npm
+      # Variables d'environnement pour l'environnement d'exécution (RUN)
       - key: NODE_ENV
         value: production
       - key: DATABASE_URL
         # Important: Collez votre URL de base de données Supabase ici
         value: "postgresql://postgres.rvflbgylqjhnworrjjis:Qi6DqS4LA2025@aws-0-eu-central-1.pooler.supabase.com:5432/postgres"
-      # --- Ajoutez vos autres secrets ici (JWT_SECRET, etc.) ---
+      # --- Ajoutez vos autres secrets (JWT_SECRET, etc.) dans l'UI de Render ---
       # Exemple:
       # - key: JWT_SECRET
       #   generateValue: true # Render peut générer un secret pour vous
