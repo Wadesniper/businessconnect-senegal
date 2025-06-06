@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import healthRoutes from './health';
 import userRoutes from './users';
 import jobRoutes from './job';
 import marketplaceRoutes from './marketplace';
@@ -9,6 +10,7 @@ import subscriptionRoutes from './subscriptions';
 
 const router = Router();
 
+router.use('/health', healthRoutes);
 router.use('/users', userRoutes);
 router.use('/jobs', jobRoutes);
 router.use('/marketplace', marketplaceRoutes);

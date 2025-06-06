@@ -1,19 +1,14 @@
 import { Router } from 'express';
 import { RouteHandler } from '../types/custom.express';
-import mongoose from 'mongoose';
+import prisma from '../config/prisma'; // Importer l'instance partagée de Prisma
 
 const router = Router();
 
 const healthCheck: RouteHandler = async (_req, res) => {
   try {
-    // Vérifier la connexion à MongoDB
-    const dbState = mongoose.connection.readyState;
-    const dbStatus = {
-      0: 'disconnected',
-      1: 'connected',
-      2: 'connecting',
-      3: 'disconnecting'
-    };
+    // Vérifier la connexion à la base de données via Prisma
+    await prisma.$queryRaw`SELECT 1`;
+    const dbStatus = { status: 'connected', connected: true };
 
     // Vérifier l'utilisation de la mémoire
     const memoryUsage = process.memoryUsage();
@@ -22,10 +17,7 @@ const healthCheck: RouteHandler = async (_req, res) => {
       status: 'success',
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
-      database: {
-        status: dbStatus[dbState as keyof typeof dbStatus],
-        connected: dbState === 1
-      },
+      database: dbStatus,
       memory: {
         heapUsed: Math.round(memoryUsage.heapUsed / 1024 / 1024) + 'MB',
         heapTotal: Math.round(memoryUsage.heapTotal / 1024 / 1024) + 'MB',
@@ -33,9 +25,11 @@ const healthCheck: RouteHandler = async (_req, res) => {
       }
     });
   } catch (error) {
+    const dbStatus = { status: 'disconnected', connected: false, error: error instanceof Error ? error.message : 'Unknown error' };
     res.status(500).json({
       status: 'error',
       message: 'Erreur lors de la vérification de santé',
+      database: dbStatus,
       error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
