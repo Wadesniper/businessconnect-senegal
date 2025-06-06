@@ -7,14 +7,14 @@ WORKDIR /app/server
 # Copie d'abord les fichiers de manifeste de dépendances pour optimiser le cache Docker
 COPY server/package.json server/package-lock.json ./
 
+# FORCER la suppression du cache de node_modules potentiellement corrompu par Railway
+RUN rm -rf node_modules
+
 # Installe TOUTES les dépendances (y compris devDependencies) pour le build
 RUN npm ci
 
 # Copie le reste du code source du backend
 COPY server/ ./
-
-# Tente de reconstruire les binaires au cas où le cache de Railway interfère
-RUN npm rebuild
 
 # Génère le client Prisma (crucial avant la compilation)
 RUN ./node_modules/.bin/prisma generate
