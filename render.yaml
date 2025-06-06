@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: businessconnect-backend
+    env: node
+    rootDir: server
+    plan: free # ou "starter" si vous avez besoin de plus de ressources
+    buildCommand: "npm install && npm run build"
+    startCommand: "npm start"
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        # Important: Collez votre URL de base de données Supabase ici
+        value: "postgresql://postgres.rvflbgylqjhnworrjjis:Qi6DqS4LA2025@aws-0-eu-central-1.pooler.supabase.com:5432/postgres"
+      # --- Ajoutez vos autres secrets ici (JWT_SECRET, etc.) ---
+      # Exemple:
+      # - key: JWT_SECRET
+      #   generateValue: true # Render peut générer un secret pour vous
+      # - key: GOOGLE_CLOUD_PROJECT_ID
+      #   value: "votre-id-gcp" 
