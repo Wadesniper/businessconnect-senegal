@@ -4,9 +4,8 @@ services:
     env: node
     rootDir: server
     plan: free
-    # Render exécute `npm install` automatiquement.
-    # On spécifie uniquement la commande de build.
-    buildCommand: "npm run build"
+    # On force l'installation puis le build dans la même commande pour garantir l'ordre
+    buildCommand: "npm install && npm run build"
     startCommand: "npm start"
     healthCheckPath: /api/health
     envVars:
