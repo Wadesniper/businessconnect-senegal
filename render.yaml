@@ -3,8 +3,10 @@ services:
     name: businessconnect-backend
     env: node
     rootDir: server
-    plan: free # ou "starter" si vous avez besoin de plus de ressources
-    buildCommand: "npm install && npm run build"
+    plan: free
+    # Render exécute `npm install` automatiquement.
+    # On spécifie uniquement la commande de build.
+    buildCommand: "npm run build"
     startCommand: "npm start"
     healthCheckPath: /api/health
     envVars:
