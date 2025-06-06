@@ -10,11 +10,8 @@ services:
     env: node
     rootDir: server
     plan: free
-    # On sépare clairement l'installation et le build
-    buildCommand: |
-      npm install
-      npm install -g rimraf typescript
-      npm run build
+    # Installation et build en une seule commande
+    buildCommand: "npm ci && npm run build"
     startCommand: "npm start"
     healthCheckPath: /api/health
     envVars:
