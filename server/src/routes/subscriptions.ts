@@ -252,4 +252,14 @@ router.post('/notify', async (req: Request, res: Response, next: NextFunction) =
   }
 });
 
+// Endpoint de debug pour vérifier l'accès au stockage des abonnements (à retirer après debug)
+router.get('/debug', async (req, res) => {
+  try {
+    const all = await subscriptionService.getAllSubscriptions();
+    res.json({ count: all.length, subscriptions: all });
+  } catch (e: any) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 export default router; 
