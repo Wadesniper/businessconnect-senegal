@@ -1,6 +1,14 @@
 import type { Subscription } from '../types/user';
 import { api } from './api';
 
+// Générateur d'UUID compatible navigateur/Node
+function uuidv4() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
 class SubscriptionService {
   async getSubscription(userId: string): Promise<Subscription | null> {
     // Pour l'instant, on retourne null car les abonnements sont gérés côté serveur
@@ -27,7 +35,7 @@ class SubscriptionService {
     };
 
     const newSubscription: Subscription = {
-      id: crypto.randomUUID(),
+      id: uuidv4(),
       userId,
       type: plan,
       status: 'active',
