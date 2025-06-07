@@ -155,7 +155,18 @@ export class AuthController {
       }
 
       // Rechercher l'utilisateur (Prisma)
-      const user = await prisma.user.findUnique({ where: { phoneNumber: normalizedPhone } });
+      const user = await prisma.user.findUnique({
+        where: { phoneNumber: normalizedPhone },
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          phoneNumber: true,
+          role: true,
+          password: true // pour la vérification, mais à ne pas renvoyer
+        }
+      });
       console.log('[AUTH][LOGIN] Utilisateur trouvé:', user ? user.id : null);
       if (!user) {
         console.log('[AUTH][LOGIN] Utilisateur non trouvé');
