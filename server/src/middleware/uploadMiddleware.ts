@@ -1,7 +1,10 @@
-import multer from 'multer';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const multer = require('multer');
 import path from 'path';
 import { Request, Response, NextFunction } from 'express';
 import { logger } from '../utils/logger.js';
+import type { FileFilterCallback } from 'multer';
 
 // Configuration du stockage
 const storage = multer.diskStorage({
@@ -15,7 +18,7 @@ const storage = multer.diskStorage({
 });
 
 // Filtre des fichiers
-const fileFilter = (_req: any, _file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+const fileFilter = (_req: any, _file: Express.Multer.File, cb: FileFilterCallback) => {
   const allowedMimes = [
     'image/jpeg',
     'image/png',
