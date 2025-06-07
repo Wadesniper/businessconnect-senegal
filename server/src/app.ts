@@ -1,24 +1,49 @@
 import express from 'express';
 import cors from 'cors';
-import mainApiRouter from './routes/index.js'; // Importe le routeur principal de server/src/routes/index.ts
-import authRoutes from './routes/auth.js'; // Importe les routes d'authentification
+import morgan from 'morgan';
+import helmet from 'helmet';
+import { errorHandler } from './middleware/errorHandler.js';
+import { rateLimiter } from './middleware/rateLimiter.js';
+import userRoutes from './routes/user.js';
+import formationRoutes from './routes/formations.js';
+import healthRoutes from './routes/health.js';
+import usersRoutes from './routes/users.js';
+import jobsRouter from './routes/jobs.js';
+import subscriptionsRoutes from './routes/subscriptions.js';
+import authRoutes from './routes/auth.js';
+import routes from './routes/index.js';
 
 const app = express();
 
-// Middlewares de base
-app.use(cors());
+// Middleware de sécurité
+app.use(helmet());
+// Middleware de logging
+app.use(morgan('dev'));
+// Middleware pour parser le JSON et les formulaires
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok' });
-});
-
-// Montage des routes
-app.use('/auth', authRoutes); // Les routes /auth/login, /auth/register seront gérées ici
-app.use('/api', mainApiRouter); // Les routes /api/users, /api/jobs, etc. seront gérées ici
-
-// TODO: Ajouter un middleware de gestion des erreurs global ici
+// Configuration CORS
+app.use(cors({
+  origin: [
+    'https://businessconnectsenegal2025gooo.vercel.app',
+    'http://localhost:5173',
+    'http://localhost:3000'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin']
+}));
+// Middleware de limitation de requêtes
+app.use(rateLimiter);
+// Routes
+app.use('/api', routes);
+app.use('/api/auth', authRoutes);
+app.use('/api/users', usersRoutes);
+app.use('/api/jobs', jobsRouter);
+app.use('/api/formations', formationRoutes);
+app.use('/api/subscriptions', subscriptionsRoutes);
+app.use('/api/health', healthRoutes);
+// Middleware de gestion d'erreurs
+app.use(errorHandler);
 
 export default app; 
