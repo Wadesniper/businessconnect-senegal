@@ -83,7 +83,7 @@ export class AuthController {
           phoneNumber: normalizedPhone,
           password: hashedPassword,
           isVerified: false,
-          role: 'user',
+          role: 'etudiant',
           name: `${firstName.trim()} ${lastName.trim()}`,
           ...(email && { email: email.toLowerCase() })
         }
