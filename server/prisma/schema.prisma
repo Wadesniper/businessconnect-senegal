@@ -15,6 +15,7 @@ datasource db {
 }
 
 enum UserRole {
+  pending
   admin
   etudiant
   annonceur
