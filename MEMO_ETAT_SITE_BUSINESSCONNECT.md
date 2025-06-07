@@ -933,3 +933,13 @@ Le projet vise à migrer une application existante de MongoDB vers Supabase (Pos
   - Corriger la configuration si besoin selon le résultat.
 
 **Aucune fonctionnalité supprimée, site complet préservé.**
+
+# [2025-06-07] Correction accessibilité publique du endpoint /api/subscriptions/debug
+
+- Le endpoint `/api/subscriptions/debug` a été déplacé tout en haut du fichier `server/src/routes/subscriptions.ts` pour garantir qu'il reste public et non protégé par un éventuel middleware d'authentification.
+- Cela permet de diagnostiquer l'accès au stockage cloud Railway sans authentification, même si un middleware est ajouté plus bas dans le fichier.
+- Aucune suppression de code, aucune perturbation du frontend ou du backend existant.
+- **Prochaine étape** :
+  - Tester à nouveau l'URL `/api/subscriptions/debug` sur Railway pour vérifier l'accès au stockage et la présence des abonnements.
+
+**Aucune fonctionnalité supprimée, site complet préservé.**

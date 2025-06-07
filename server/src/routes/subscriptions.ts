@@ -15,6 +15,16 @@ const subscriptionService = new SubscriptionService();
 const subscriptionController = new SubscriptionController();
 const webhookController = new WebhookController();
 
+// Endpoint de debug pour vérifier l'accès au stockage des abonnements (à retirer après debug)
+router.get('/debug', async (req, res) => {
+  try {
+    const all = await subscriptionService.getAllSubscriptions();
+    res.json({ count: all.length, subscriptions: all });
+  } catch (e: any) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // Routes publiques
 router.post('/initiate', subscriptionController.initiateSubscription);
 router.post('/activate', subscriptionController.activateSubscription);
@@ -249,16 +259,6 @@ router.post('/notify', async (req: Request, res: Response, next: NextFunction) =
   } catch (error) {
     logger.error('Erreur lors du traitement de la notification CinetPay:', error);
     next(error);
-  }
-});
-
-// Endpoint de debug pour vérifier l'accès au stockage des abonnements (à retirer après debug)
-router.get('/debug', async (req, res) => {
-  try {
-    const all = await subscriptionService.getAllSubscriptions();
-    res.json({ count: all.length, subscriptions: all });
-  } catch (e: any) {
-    res.status(500).json({ error: e.message });
   }
 });
 
