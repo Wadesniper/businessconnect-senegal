@@ -130,7 +130,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       authService.removeUser();
       setUser(null);
       setIsAuthenticated(false);
-      throw error;
     } finally {
       setLoading(false);
     }

@@ -17,7 +17,7 @@ export class AuthService {
   private readonly TOKEN_KEY = 'token';
   private readonly USER_KEY = 'user';
 
-  async login(credentials: LoginCredentials): Promise<User> {
+  async login(credentials: LoginCredentials): Promise<{ token: string; user: User }> {
     const response = await fetch(`${API_URL}/api/auth/login`, {
       method: 'POST',
       headers: {
@@ -47,7 +47,7 @@ export class AuthService {
       this.setToken(data.data.token);
       this.setUser(data.data.user);
       console.log('Connexion réussie, user:', data.data.user);
-      return data.data.user;
+      return { token: data.data.token, user: data.data.user };
     } else {
       throw new Error(data.message || 'Réponse de connexion invalide');
     }
