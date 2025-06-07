@@ -190,6 +190,16 @@ export class AuthController {
       // Générer le token JWT
       const token = this.generateToken(user);
 
+      // Log de l'objet user juste avant la réponse
+      console.log('[AUTH][LOGIN] Objet user renvoyé:', {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        role: user.role
+      });
+
       // Renvoyer la réponse
       res.json({
         success: true,
