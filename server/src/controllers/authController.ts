@@ -131,8 +131,12 @@ export class AuthController {
     try {
       const { phoneNumber, password } = req.body;
 
+      // Log temporaire pour diagnostic complet
+      console.log('[AUTH][LOGIN] Body reçu:', req.body);
+
       // Validation des champs requis
       if (!phoneNumber || !password) {
+        console.log('[AUTH][LOGIN] Champs manquants');
         return res.status(400).json({
           success: false,
           message: 'Le numéro de téléphone et le mot de passe sont requis'
@@ -141,7 +145,9 @@ export class AuthController {
 
       // Validation et normalisation du numéro de téléphone
       const normalizedPhone = validatePhoneNumber(phoneNumber);
+      console.log('[AUTH][LOGIN] Numéro normalisé:', normalizedPhone);
       if (!normalizedPhone) {
+        console.log('[AUTH][LOGIN] Numéro non valide');
         return res.status(400).json({
           success: false,
           message: "Le numéro doit être au format international. Exemples : +221 7X XXX XX XX (Sénégal), +33 X XX XX XX XX (France), etc."
@@ -150,7 +156,9 @@ export class AuthController {
 
       // Rechercher l'utilisateur (Prisma)
       const user = await prisma.user.findUnique({ where: { phoneNumber: normalizedPhone } });
+      console.log('[AUTH][LOGIN] Utilisateur trouvé:', user ? user.id : null);
       if (!user) {
+        console.log('[AUTH][LOGIN] Utilisateur non trouvé');
         return res.status(401).json({
           success: false,
           message: 'Identifiants invalides'
@@ -159,7 +167,9 @@ export class AuthController {
 
       // Vérifier le mot de passe
       const isPasswordValid = await bcrypt.compare(password, user.password);
+      console.log('[AUTH][LOGIN] Password valid:', isPasswordValid);
       if (!isPasswordValid) {
+        console.log('[AUTH][LOGIN] Mot de passe invalide');
         return res.status(401).json({
           success: false,
           message: 'Identifiants invalides'
