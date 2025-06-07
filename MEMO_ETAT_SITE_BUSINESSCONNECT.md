@@ -859,3 +859,5 @@ Le projet vise à migrer une application existante de MongoDB vers Supabase (Pos
   - Aucune suppression de fonctionnalité, de code ou de dépendance : le site complet est déployé, aucune version minimaliste.
   - Aucune perturbation du frontend déjà en production.
   - Documentation et process à jour pour garantir la stabilité et la maintenabilité du projet.
+
+- Correction finale : remplacement de la commande npx fs-extra copy par un script Node.js (copy-generated.js) pour garantir la copie de Prisma Client custom dans dist/generated sur tous les environnements (Railway, Docker, CI, etc.).
