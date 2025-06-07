@@ -8,7 +8,7 @@ import styles from './styles/Auth.module.css';
 const { Title, Text } = Typography;
 
 interface LoginFormValues {
-  identifier: string; // Peut être le nom ou l'email
+  phoneNumber: string;
   password: string;
 }
 
@@ -20,7 +20,7 @@ const LoginPage: React.FC = () => {
   const onFinish = async (values: LoginFormValues) => {
     try {
       setLoading(true);
-      await authService.login({ email: values.identifier, password: values.password });
+      await authService.login({ phoneNumber: values.phoneNumber, password: values.password });
       message.success('Connexion réussie !');
       navigate('/dashboard');
     } catch (error: any) {
@@ -49,14 +49,15 @@ const LoginPage: React.FC = () => {
           className={styles.form}
         >
           <Form.Item
-            name="identifier"
+            name="phoneNumber"
             rules={[
-              { required: true, message: 'Veuillez saisir votre nom ou email' }
+              { required: true, message: 'Veuillez saisir votre numéro de téléphone' },
+              { pattern: /^\+\d{1,4}\d{10,}$/, message: 'Format international requis (+XXX XXXXXXXXX)' }
             ]}
           >
             <Input 
               prefix={<UserOutlined className={styles.inputIcon} />}
-              placeholder="Nom ou email"
+              placeholder="Numéro de téléphone (format international)"
               size="large"
               autoComplete="username"
             />

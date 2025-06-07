@@ -7,7 +7,7 @@ interface AuthContextType {
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (phoneNumber: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   register: (data: UserRegistrationData) => Promise<{ token: string; user: User; } | void>;
   updateProfile: (data: Partial<User>) => Promise<void>;
@@ -109,22 +109,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (phoneNumber: string, password: string) => {
     try {
       setError(null);
       setLoading(true);
-      
-      const response = await authService.login({ phoneNumber: email, password });
-      
+      const response = await authService.login({ phoneNumber, password });
       if (response && response.token && response.user) {
-        // Sauvegarder de manière atomique
         authService.setToken(response.token);
         authService.setUser(response.user);
-        
-        // Mettre à jour l'état
         setUser(response.user);
         setIsAuthenticated(true);
-        
         console.log('AuthProvider - Connexion réussie:', response.user.id);
       } else {
         throw new Error('Réponse de connexion invalide');
@@ -132,13 +126,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (error: any) {
       console.error('AuthProvider - Erreur connexion:', error);
       setError(error.message || 'Erreur lors de la connexion');
-      
-      // Nettoyer en cas d'erreur
       authService.removeToken();
       authService.removeUser();
       setUser(null);
       setIsAuthenticated(false);
-      
       throw error;
     } finally {
       setLoading(false);
