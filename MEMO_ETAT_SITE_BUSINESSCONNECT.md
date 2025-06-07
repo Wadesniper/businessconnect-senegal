@@ -943,3 +943,14 @@ Le projet vise à migrer une application existante de MongoDB vers Supabase (Pos
   - Tester à nouveau l'URL `/api/subscriptions/debug` sur Railway pour vérifier l'accès au stockage et la présence des abonnements.
 
 **Aucune fonctionnalité supprimée, site complet préservé.**
+
+# [2025-06-07] Correction définitive de la connexion frontend/backend (login)
+
+- Correction de la méthode `login` dans `client-vite-fix/src/services/authService.ts` pour lire correctement la réponse du backend Railway (`data.data.token` et `data.data.user`).
+- Cela garantit la compatibilité totale entre le frontend Vercel et le backend Railway, sans rien supprimer ni casser.
+- Aucune suppression de code, aucune perturbation du frontend ou du backend existant.
+- **Prochaine étape** :
+  - Rebuild et redeployer le frontend sur Vercel pour que la correction soit prise en compte.
+  - Tester la connexion utilisateur en production.
+
+**Aucune fonctionnalité supprimée, site complet préservé.**

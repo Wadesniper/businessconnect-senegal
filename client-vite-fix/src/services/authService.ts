@@ -32,9 +32,13 @@ export class AuthService {
     }
 
     const data = await response.json();
-    this.setToken(data.token);
-    this.setUser(data.user);
-    return data.user;
+    if (data.success && data.data && data.data.token && data.data.user) {
+      this.setToken(data.data.token);
+      this.setUser(data.data.user);
+      return data.data.user;
+    } else {
+      throw new Error(data.message || 'Réponse de connexion invalide');
+    }
   }
 
   async register(userData: UserRegistrationData): Promise<UserRegistrationResponse> {
