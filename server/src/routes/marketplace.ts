@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { Request, Response, NextFunction, AuthRequest } from '../types/custom.express.js';
 import { MarketplaceController } from '../controllers/marketplaceController.js';
-import { upload } from '../middleware/uploadMiddleware.js';
+import { getUploadMiddleware } from '../middleware/uploadMiddleware.js';
 import { authenticate } from '../middleware/auth.js';
 
 const router = Router();
@@ -21,8 +21,16 @@ router.get('/search', asyncHandler((req: Request, res: Response, next: NextFunct
 router.get('/:id', asyncHandler((req: Request, res: Response, next: NextFunction) => marketplaceController.getItemById(req, res)));
 
 // Routes protégées
-router.post('/', authenticate, upload.array('images', 5), asyncHandler((req: AuthRequest, res: Response, next: NextFunction) => marketplaceController.createItem(req, res)));
-router.put('/:id', authenticate, upload.array('images', 5), asyncHandler((req: AuthRequest, res: Response, next: NextFunction) => marketplaceController.updateItem(req, res)));
+router.post('/', authenticate, async (req, res, next) => {
+  const upload = await getUploadMiddleware();
+  upload.array('images', 5)(req, res, next);
+}, asyncHandler((req: AuthRequest, res: Response, next: NextFunction) => marketplaceController.createItem(req, res)));
+
+router.put('/:id', authenticate, async (req, res, next) => {
+  const upload = await getUploadMiddleware();
+  upload.array('images', 5)(req, res, next);
+}, asyncHandler((req: AuthRequest, res: Response, next: NextFunction) => marketplaceController.updateItem(req, res)));
+
 router.delete('/:id', authenticate, asyncHandler((req: AuthRequest, res: Response, next: NextFunction) => marketplaceController.deleteItem(req, res)));
 
 // Routes admin
