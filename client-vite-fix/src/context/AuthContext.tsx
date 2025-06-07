@@ -124,7 +124,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw new Error('Réponse de connexion invalide');
       }
     } catch (error: any) {
-      console.error('AuthProvider - Erreur connexion:', error);
+      console.error('AuthProvider - Erreur connexion (catch):', error);
       setError(error.message || 'Erreur lors de la connexion');
       authService.removeToken();
       authService.removeUser();

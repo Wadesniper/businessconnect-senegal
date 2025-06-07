@@ -46,6 +46,7 @@ export class AuthService {
     ) {
       this.setToken(data.data.token);
       this.setUser(data.data.user);
+      console.log('Connexion réussie, user:', data.data.user);
       return data.data.user;
     } else {
       throw new Error(data.message || 'Réponse de connexion invalide');

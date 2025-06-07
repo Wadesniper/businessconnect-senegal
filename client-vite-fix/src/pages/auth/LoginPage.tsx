@@ -25,6 +25,7 @@ const LoginPage: React.FC = () => {
       navigate('/dashboard');
     } catch (error: any) {
       message.error(error.message || 'Erreur lors de la connexion');
+      console.error('Erreur dans onFinish:', error);
     } finally {
       setLoading(false);
     }
