@@ -1,8 +1,11 @@
-import { Response } from 'express';
-import { CVService } from '../services/cvService';
-import { logger } from '../utils/logger';
+import { Request, Response, AuthRequest } from '../types/custom.express.js';
+import { logger } from '../utils/logger.js';
+import { config } from '../config.js';
+import { CV } from '../models/cv.js';
+import { StorageService } from '../services/storageService.js';
+import { pdfService } from '../services/pdfService.js';
+import { CVService } from '../services/cvService.js';
 import { body, validationResult } from 'express-validator';
-import { AuthRequest } from '../types/custom.express';
 
 export class CVController {
   private cvService: CVService;

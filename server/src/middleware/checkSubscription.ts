@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { SubscriptionService } from '../services/subscriptionService';
+import { SubscriptionService } from '../services/subscriptionService.js';
 
 const subscriptionService = new SubscriptionService();
 

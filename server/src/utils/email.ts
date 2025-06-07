@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
-import { logger } from './logger';
-import { config } from '../config';
+import { logger } from './logger.js';
+import { config } from '../config.js';
 
 const transporter = nodemailer.createTransport({
   host: config.SMTP_HOST,

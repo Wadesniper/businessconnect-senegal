@@ -1,4 +1,4 @@
-import { PrismaClient as SupabasePrismaClient } from '../../src/generated/prisma';
+import { PrismaClient as SupabasePrismaClient } from '../../src/generated/prisma/index.js';
 import { MongoClient, ObjectId } from 'mongodb';
 import dotenv from 'dotenv';
 import path from 'path';

@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { RouteHandler } from '../types/custom.express';
-import prisma from '../config/prisma'; // Importer l'instance partagée de Prisma
+import { RouteHandler } from '../types/custom.express.js';
+import prisma from '../config/prisma.js'; // Importer l'instance partagée de Prisma
 
 const router = Router();
 

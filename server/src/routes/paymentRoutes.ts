@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { Request, Response, NextFunction, AuthRequest } from '../types/custom.express';
+import { Request, Response, NextFunction, AuthRequest } from '../types/custom.express.js';
 // import { paymentController } from '../controllers/paymentController';
-import { authenticate } from '../middleware/auth';
+import { authenticate } from '../middleware/auth.js';
 // import { checkInvoiceAccess } from '../middleware/invoiceAccess';
-import { paymentController } from '../controllers/paymentController';
+import { paymentController } from '../controllers/paymentController.js';
 
 const router = Router();
 

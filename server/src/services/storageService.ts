@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
-import { logger } from '../utils/logger';
+import { logger } from '../utils/logger.js';
 import { createGzip } from 'zlib';
 import { promisify } from 'util';
 import { pipeline } from 'stream';
@@ -9,7 +9,7 @@ import { createReadStream, createWriteStream } from 'fs';
 import os from 'os';
 import { createGunzip } from 'zlib';
 import { Storage } from '@google-cloud/storage';
-import { config } from '../config';
+import { config } from '../config.js';
 
 const pipelineAsync = promisify(pipeline);
 

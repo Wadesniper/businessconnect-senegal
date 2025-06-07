@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import { config } from './index';
-import { logger } from '../utils/logger'; // Supposant l'existence d'un logger
+import { config } from './index.js';
+import { logger } from '../utils/logger.js'; // Supposant l'existence d'un logger
 
 const connectDB = async () => {
   try {

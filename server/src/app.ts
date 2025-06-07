@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
-import mainApiRouter from './routes'; // Importe le routeur principal de server/src/routes/index.ts
-import authRoutes from './routes/auth'; // Importe les routes d'authentification
+import mainApiRouter from './routes/index.js'; // Importe le routeur principal de server/src/routes/index.ts
+import authRoutes from './routes/auth.js'; // Importe les routes d'authentification
 
 const app = express();
 

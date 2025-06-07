@@ -1,5 +1,5 @@
-import { logger } from '../utils/logger';
-import { NotificationType } from './notificationService';
+import { logger } from '../utils/logger.js';
+import { NotificationType } from './notificationService.js';
 
 export interface Notification {
   id: string;

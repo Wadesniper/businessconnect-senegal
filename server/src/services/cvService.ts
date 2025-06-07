@@ -1,5 +1,5 @@
-import { CV } from '../models/cv';
-import { logger } from '../utils/logger';
+import { CV } from '../models/cv.js';
+import { logger } from '../utils/logger.js';
 import PDFDocument from 'pdfkit';
 import fs from 'fs';
 import path from 'path';

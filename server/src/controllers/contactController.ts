@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
-import { emailService } from '../services/emailService';
-import { logger } from '../utils/logger';
+import { Request, Response } from '../types/custom.express.js';
+import { emailService } from '../services/emailService.js';
+import { logger } from '../utils/logger.js';
 
 class ContactController {
   async sendMessage(req: Request, res: Response) {

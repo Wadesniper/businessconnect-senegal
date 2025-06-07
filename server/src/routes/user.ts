@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { Request, Response, NextFunction, AuthRequest } from '../types/custom.express';
-import { UserController } from '../controllers/userController';
-import { authenticate } from '../middleware/auth';
-import { validateUser } from '../middleware/validation';
+import { Request, Response, NextFunction, AuthRequest } from '../types/custom.express.js';
+import { UserController } from '../controllers/userController.js';
+import { authenticate } from '../middleware/auth.js';
+import { validateUser } from '../middleware/validation.js';
 
 const router = Router();
 const userController = new UserController();

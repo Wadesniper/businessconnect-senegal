@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { User } from '../models/User';
+import { User } from '../models/User.js';
 import bcrypt from 'bcryptjs';
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://businessconnect:tlIQzehUEZnFPwoa@cluster0.gtehtk.mongodb.net/businessconnect?retryWrites=true&w=majority';

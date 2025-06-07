@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { AuthController } from '../controllers/authController';
-import { authMiddleware } from '../middleware/authMiddleware';
-import { Request, Response, NextFunction, AuthRequest } from '../types/custom.express';
+import { AuthController } from '../controllers/authController.js';
+import { authMiddleware } from '../middleware/authMiddleware.js';
+import { Request, Response, NextFunction, AuthRequest } from '../types/custom.express.js';
 
 const router = Router();
 const authController = new AuthController();
@@ -15,16 +15,12 @@ router.post('/reset-password/:token', authController.resetPassword);
 router.get('/verify-token/:token', authController.verifyToken);
 
 // Routes protégées (nécessitent une authentification)
+router.get('/me', authMiddleware, (req: AuthRequest, res: Response, next: NextFunction) => {
+  authController.getCurrentUser(req, res, next).catch(next);
+});
 
-const getCurrentUserHandler = (req: Request, res: Response, next: NextFunction) => {
-  authController.getCurrentUser(req as AuthRequest, res, next).catch(next);
-};
-
-const updateProfileHandler = (req: Request, res: Response, next: NextFunction) => {
-  authController.updateProfile(req as AuthRequest, res, next).catch(next);
-};
-
-router.get('/me', authMiddleware, getCurrentUserHandler);
-router.patch('/profile', authMiddleware, updateProfileHandler);
+router.patch('/profile', authMiddleware, (req: AuthRequest, res: Response, next: NextFunction) => {
+  authController.updateProfile(req, res, next).catch(next);
+});
 
 export default router; 

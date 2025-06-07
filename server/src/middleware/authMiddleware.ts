@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { AuthRequest } from '../types/custom.express';
-import { UserPayload } from '../types/user';
-import { config } from '../config';
-import { logger } from '../utils/logger';
-import { User } from '../models/User';
+import { AuthRequest } from '../types/custom.express.js';
+import { UserPayload } from '../types/user.js';
+import { config } from '../config.js';
+import { logger } from '../utils/logger.js';
+import { User } from '../models/User.js';
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {

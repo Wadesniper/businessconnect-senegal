@@ -1,4 +1,4 @@
-import { logger } from '../utils/logger';
+import { logger } from '../utils/logger.js';
 import os from 'os';
 import fs from 'fs/promises';
 

@@ -1,9 +1,9 @@
 import { Router } from 'express';
 // Utiliser nos types personnalisés qui s'appuient sur les types Express
-import { Request, Response, NextFunction, AuthRequest } from '../types/custom.express';
-import { authenticate, isAdmin } from '../middleware/auth';
-import { WebhookController } from '../controllers/webhookController';
-import { paymentController } from '../controllers/paymentController';
+import { Request, Response, NextFunction, AuthRequest } from '../types/custom.express.js';
+import { authenticate, isAdmin } from '../middleware/auth.js';
+import { WebhookController } from '../controllers/webhookController.js';
+import { paymentController } from '../controllers/paymentController.js';
 
 const router = Router();
 const webhookController = new WebhookController();

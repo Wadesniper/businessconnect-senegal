@@ -1,4 +1,7 @@
-import { Request, Response } from 'express';
+import { Request, Response, AuthRequest } from '../types/custom.express.js';
+import { logger } from '../utils/logger.js';
+import { config } from '../config.js';
+import { StorageService } from '../services/storageService.js';
 
 interface CursaFormation {
   url: string;

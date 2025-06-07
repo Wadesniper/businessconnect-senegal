@@ -1,8 +1,8 @@
-import { logger } from '../utils/logger';
-import { InAppNotificationService } from './inAppNotificationService';
+import { logger } from '../utils/logger.js';
+import { InAppNotificationService } from './inAppNotificationService.js';
 import nodemailer from 'nodemailer';
-import { User } from '../models/User';
-import { config } from '../config';
+import { User } from '../models/User.js';
+import { config } from '../config.js';
 
 export type NotificationType = 'subscription_expiration' | 'new_offer' | 'system' | 'payment_success' | 'payment_failure';
 

@@ -1,12 +1,12 @@
-import { Router, Request as ExpressRequestBase, Response as ExpressResponse, NextFunction } from 'express';
-import { Request, AuthRequest } from '../types/custom.express';
-import { SubscriptionService } from '../services/subscriptionService';
-import { logger } from '../utils/logger';
-import { authenticate } from '../middleware/auth';
-import { cinetpayService, CreatePaymentResult, PaymentResponse } from '../services/cinetpayService';
-import { config } from '../config';
-import { SubscriptionController } from '../controllers/subscriptionController';
-import { WebhookController } from '../controllers/webhookController';
+import { Router } from 'express';
+import { Request, Response, NextFunction, AuthRequest } from '../types/custom.express.js';
+import { SubscriptionService } from '../services/subscriptionService.js';
+import { logger } from '../utils/logger.js';
+import { authenticate } from '../middleware/auth.js';
+import { cinetpayService, CreatePaymentResult, PaymentResponse } from '../services/cinetpayService.js';
+import { config } from '../config.js';
+import { SubscriptionController } from '../controllers/subscriptionController.js';
+import { WebhookController } from '../controllers/webhookController.js';
 
 const router = Router();
 
@@ -15,15 +15,20 @@ const subscriptionService = new SubscriptionService();
 const subscriptionController = new SubscriptionController();
 const webhookController = new WebhookController();
 
-// Middleware d'authentification pour toutes les routes sauf le webhook
-router.post('/webhook/cinetpay', webhookController.handleCinetPayWebhook as any);
-router.use(authenticate);
+// Routes publiques
+router.post('/initiate', subscriptionController.initiateSubscription);
+router.post('/activate', subscriptionController.activateSubscription);
+router.get('/status/:userId', subscriptionController.checkSubscriptionStatus);
 
 // Routes protégées
-router.get('/:userId', subscriptionController.getSubscription as any);
+router.get('/:userId', authenticate, subscriptionController.getSubscription);
+router.delete('/:userId', authenticate, subscriptionController.cancelSubscription);
+
+// Webhook pour les notifications de paiement
+router.post('/webhook', webhookController.handleCinetPayWebhook);
 
 // Vérifier le statut d'un abonnement
-router.get('/:userId/status', async (req: Request, res: ExpressResponse, next: NextFunction) => {
+router.get('/:userId/status', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const authReq = req as AuthRequest;
     if (!authReq.user) { return res.status(401).json({ error: 'Authentification requise' }); }
@@ -41,7 +46,7 @@ router.get('/:userId/status', async (req: Request, res: ExpressResponse, next: N
 });
 
 // Vérifier le statut d'un abonnement
-router.get('/:userId/access', async (req: Request, res: ExpressResponse, next: NextFunction) => {
+router.get('/:userId/access', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const authReq = req as AuthRequest;
     if (!authReq.user) { return res.status(401).json({ error: 'Authentification requise' }); }
@@ -56,7 +61,7 @@ router.get('/:userId/access', async (req: Request, res: ExpressResponse, next: N
 });
 
 // Route de test PUBLIQUE pour CinetPay (sans authentification)
-router.get('/test-public', async (req: ExpressRequestBase, res: ExpressResponse) => {
+router.get('/test-public', async (req: Request, res: Response) => {
   try {
     console.log('=== TEST PUBLIC CINETPAY ===');
     
@@ -113,7 +118,7 @@ router.get('/test-public', async (req: ExpressRequestBase, res: ExpressResponse)
 });
 
 // Route de test pour diagnostiquer CinetPay - req est Request, casté en AuthRequest à l'intérieur
-router.get('/test-cinetpay-diag', async (req: Request, res: ExpressResponse, next: NextFunction) => {
+router.get('/test-cinetpay-diag', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const authReq = req as AuthRequest;
     if (!authReq.user) { return res.status(401).json({ error: 'Authentification requise' }); }
@@ -142,7 +147,7 @@ router.get('/test-cinetpay-diag', async (req: Request, res: ExpressResponse, nex
 });
 
 // Route de debug CinetPay - affiche la configuration et teste l'API
-router.get('/debug-cinetpay', async (req: Request, res: ExpressResponse, next: NextFunction) => {
+router.get('/debug-cinetpay', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const authReq = req as AuthRequest;
     if (!authReq.user) { return res.status(401).json({ error: 'Authentification requise' }); }
@@ -197,17 +202,8 @@ router.get('/debug-cinetpay', async (req: Request, res: ExpressResponse, next: N
   }
 });
 
-// Initier un nouvel abonnement
-router.post('/initiate', subscriptionController.initiateSubscription as any);
-
-// Activer un abonnement après paiement
-router.post('/activate', subscriptionController.activateSubscription as any);
-
-// Vérifier le statut d'un abonnement
-router.get('/status/:userId', subscriptionController.checkSubscriptionStatus as any);
-
 // Callback de paiement (simulation)
-router.post('/payment-callback', async (req: ExpressRequestBase, res: ExpressResponse, next: NextFunction) => {
+router.post('/payment-callback', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { userId, status } = req.body;
     if (!userId || !status) {
@@ -235,7 +231,7 @@ router.post('/payment-callback', async (req: ExpressRequestBase, res: ExpressRes
 });
 
 // Route de notification CinetPay
-router.post('/notify', async (req: ExpressRequestBase, res: ExpressResponse, next: NextFunction) => {
+router.post('/notify', async (req: Request, res: Response, next: NextFunction) => {
   try {
     logger.info('Notification CinetPay reçue:', req.body);
     

@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { Request, Response, NextFunction, AuthRequest } from '../types/custom.express';
-import { jobController, getCategories as getJobCategories } from '../controllers/jobController';
-import { authenticate } from '../middleware/auth';
+import { Request, Response, NextFunction, AuthRequest } from '../types/custom.express.js';
+import { jobController, getCategories as getJobCategories } from '../controllers/jobController.js';
+import { authenticate } from '../middleware/auth.js';
 // import { JobApplication, JobCategory, JobStatus, JobType } from '../models/Job'; // Supprimé car incorrect
 
 const router = Router();

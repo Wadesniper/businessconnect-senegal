@@ -1,7 +1,7 @@
 import PDFDocument from 'pdfkit';
 import fs from 'fs';
 import path from 'path';
-import { logger } from '../utils/logger';
+import { logger } from '../utils/logger.js';
 
 interface InvoiceData {
   invoice_id: string;

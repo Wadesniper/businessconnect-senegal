@@ -1,5 +1,5 @@
 import { Secret, SignOptions } from 'jsonwebtoken';
-import { logger } from '../utils/logger';
+import { logger } from '../utils/logger.js';
 
 // Vérification de la présence de JWT_SECRET
 if (!process.env.JWT_SECRET) {

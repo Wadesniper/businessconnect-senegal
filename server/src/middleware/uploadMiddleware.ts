@@ -1,7 +1,7 @@
 import multer from 'multer';
 import path from 'path';
 import { Request, Response, NextFunction } from 'express';
-import { logger } from '../utils/logger';
+import { logger } from '../utils/logger.js';
 
 // Configuration du stockage
 const storage = multer.diskStorage({

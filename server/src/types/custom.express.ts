@@ -5,7 +5,7 @@ import {
 } from 'express';
 import { ParamsDictionary } from 'express-serve-static-core';
 import * as qs from 'qs';
-import { UserPayload } from './user';
+import { UserPayload } from './user.js';
 
 /**
  * Notre type Request personnalisé.
@@ -48,7 +48,7 @@ export interface AuthRequest<
   ReqQuery = qs.ParsedQs,
   Locals extends Record<string, any> = Record<string, any>
 > extends Request<P, ResBody, ReqBody, ReqQuery, Locals> {
-  user: UserPayload; // user est défini et non optionnel ici
+  user?: UserPayload; // user est optionnel ici pour compatibilité Express
 }
 
 // Types pour les gestionnaires de route utilisant nos types personnalisés

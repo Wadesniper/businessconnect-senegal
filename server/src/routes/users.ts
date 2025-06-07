@@ -1,11 +1,11 @@
 import { Router } from 'express';
 // import { userController } from '../controllers/userController';
-import { authMiddleware } from '../middleware/authMiddleware';
-import { AuthController } from '../controllers/authController';
+import { authMiddleware } from '../middleware/authMiddleware.js';
+import { AuthController } from '../controllers/authController.js';
 // import { UserController } from '../controllers/userController';
-import { authenticate, isAdmin } from '../middleware/auth';
-import { Request, Response, NextFunction, AuthRequest } from '../types/custom.express';
-import { User } from '../models/User';
+import { authenticate, isAdmin } from '../middleware/auth.js';
+import { Request, Response, NextFunction, AuthRequest } from '../types/custom.express.js';
+import { User } from '../models/User.js';
 
 const router = Router();
 const authController = new AuthController();

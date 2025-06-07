@@ -2,7 +2,8 @@ import fs from 'fs/promises';
 import path from 'path';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
-import logger from '../utils/logger';
+import { logger } from '../utils/logger.js';
+import { config } from '../config.js';
 
 export interface User {
   id: string;

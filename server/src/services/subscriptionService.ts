@@ -1,7 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
-import { logger } from '../utils/logger';
-import { cinetpayService, CreatePaymentResult } from './cinetpayService';
-import { StorageService } from './storageService';
+import { logger } from '../utils/logger.js';
+import { config } from '../config.js';
+import { cinetpayService, CreatePaymentResult } from './cinetpayService.js';
+import { StorageService } from './storageService.js';
 
 interface SubscriptionPlan {
   type: 'etudiant' | 'annonceur' | 'recruteur';
@@ -63,7 +64,7 @@ export class SubscriptionService {
   private storageService: StorageService;
 
   constructor() {
-    this.storageService = new StorageService();
+    this.storageService = StorageService.getInstance();
   }
 
   public getSubscriptionPrice(type: string): number {
@@ -198,22 +199,21 @@ export class SubscriptionService {
   async getActiveSubscription(userId: string): Promise<SubscriptionData | null> {
     try {
       const allSubscriptions = await this.storageService.list<SubscriptionData>('subscriptions');
-      const userActiveSubscriptions = allSubscriptions.filter(s => 
+      const userActiveSubscriptions = allSubscriptions.filter((s: SubscriptionData) => 
         s.userId === userId && 
         s.status === 'active' &&
         s.expiresAt && new Date(s.expiresAt) > new Date()
       );
 
       if (userActiveSubscriptions.length === 0) {
-        const userPendingOrExpired = allSubscriptions.filter(s => s.userId === userId && s.status === 'active' && s.expiresAt && new Date(s.expiresAt) <= new Date());
+        const userPendingOrExpired = allSubscriptions.filter((s: SubscriptionData) => s.userId === userId && s.status === 'active' && s.expiresAt && new Date(s.expiresAt) <= new Date());
         for (const sub of userPendingOrExpired) {
           logger.info(`Abonnement ${sub.id} pour l'utilisateur ${userId} est marqué comme expiré.`);
           await this.updateSubscription(sub.id, { status: 'expired' });
         }
         return null;
       }
-      
-      userActiveSubscriptions.sort((a, b) => (b.expiresAt?.getTime() || 0) - (a.expiresAt?.getTime() || 0));
+      userActiveSubscriptions.sort((a: SubscriptionData, b: SubscriptionData) => (b.expiresAt?.getTime() || 0) - (a.expiresAt?.getTime() || 0));
       return userActiveSubscriptions[0];
     } catch (error) {
       logger.error(`Erreur lors de la récupération de l'abonnement actif pour l'utilisateur ${userId}:`, error);
@@ -297,7 +297,7 @@ export class SubscriptionService {
     subscriptionId: string, 
     status: 'pending' | 'active' | 'expired' | 'cancelled'
   ): Promise<SubscriptionData> {
-    return StorageService.get<SubscriptionData>('subscriptions', subscriptionId).then(subscription => {
+    return StorageService.get<SubscriptionData>('subscriptions', subscriptionId).then((subscription: SubscriptionData | null) => {
       if (!subscription) {
         throw new Error('Abonnement non trouvé pour mise à jour de statut');
       }
@@ -329,7 +329,7 @@ export class SubscriptionService {
   public async getPaymentHistory(userId: string): Promise<any[]> {
     try {
       const allSubscriptions = await this.storageService.list<SubscriptionData>('subscriptions');
-      return allSubscriptions.filter(s => s.userId === userId);
+      return allSubscriptions.filter((s: SubscriptionData) => s.userId === userId);
     } catch (error) {
       logger.error('Erreur lors de la récupération de l\'historique des paiements (abonnements) pour l\'utilisateur:', error);
       return [];

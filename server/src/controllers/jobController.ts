@@ -1,6 +1,6 @@
-import { Request, Response } from '../types/custom.express';
-import { Job } from '../models/Job';
-import { logger } from '../utils/logger';
+import { Request, Response } from '../types/custom.express.js';
+import { Job } from '../models/Job.js';
+import { logger } from '../utils/logger.js';
 import { Types } from 'mongoose';
 
 class JobController {

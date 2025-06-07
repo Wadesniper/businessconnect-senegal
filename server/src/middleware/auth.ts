@@ -1,8 +1,10 @@
-import { Request, Response, NextFunction } from '../types/custom.express';
+import { Request, Response, NextFunction } from 'express';
+import { AuthRequest } from '../types/custom.express.js';
+import { UserPayload } from '../types/user.js';
+import { config } from '../config.js';
+import { logger } from '../utils/logger.js';
+import { User } from '../models/User.js';
 import jwt from 'jsonwebtoken';
-import { config } from '../config';
-import { UserPayload } from '../types/user';
-import { logger } from '../utils/logger';
 import { RequestHandler } from 'express';
 
 export const authenticate: RequestHandler = (req, res, next) => {

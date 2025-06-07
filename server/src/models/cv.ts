@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { validatePhoneNumber } from '../utils/validation';
+import { validatePhoneNumber } from '../utils/validation.js';
 
 const educationSchema = new mongoose.Schema({
   school: {

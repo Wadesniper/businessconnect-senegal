@@ -1,6 +1,6 @@
 import jwt, { SignOptions, Secret } from 'jsonwebtoken';
-import { config } from '../config';
-import { UserPayload } from '../types/user';
+import { config } from '../config.js';
+import { UserPayload } from '../types/user.js';
 
 export const generateToken = (payload: UserPayload, expiresInInput?: string): string => {
   const jwtSecret: Secret = config.JWT_SECRET as Secret;

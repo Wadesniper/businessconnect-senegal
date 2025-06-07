@@ -1,4 +1,4 @@
-import { UserPayload } from './user'; // Doit pointer vers le bon fichier UserPayload
+import { UserPayload } from './user.js'; // Doit pointer vers le bon fichier UserPayload
 
 declare global {
   namespace Express {

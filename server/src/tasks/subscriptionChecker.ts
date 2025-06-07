@@ -1,5 +1,5 @@
-import { SubscriptionService } from '../services/subscriptionService';
-import { logger } from '../utils/logger';
+import { SubscriptionService } from '../services/subscriptionService.js';
+import { logger } from '../utils/logger.js';
 
 export class SubscriptionChecker {
   private subscriptionService: SubscriptionService;

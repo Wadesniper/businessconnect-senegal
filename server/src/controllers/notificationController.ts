@@ -1,5 +1,8 @@
-import { Notification } from '../models/Notification';
-import { logger } from '../utils/logger';
+import { Request, Response, AuthRequest } from '../types/custom.express.js';
+import { logger } from '../utils/logger.js';
+import { NotificationService } from '../services/notificationService.js';
+import { InAppNotificationService } from '../services/inAppNotificationService.js';
+import { Notification } from '../models/Notification.js';
 
 export class NotificationController {
   async getUserNotifications(userId: string) {

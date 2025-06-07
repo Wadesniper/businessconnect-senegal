@@ -1,8 +1,8 @@
-import { Request, Response } from '../types/custom.express';
-import { logger } from '../utils/logger';
-import { cinetpayService } from '../services/cinetpayService';
-import { emailService } from '../services/emailService';
-import { AuthRequest } from '../types/custom.express';
+import { Request, Response, AuthRequest } from '../types/custom.express.js';
+import { logger } from '../utils/logger.js';
+import { config } from '../config.js';
+import { cinetpayService } from '../services/cinetpayService.js';
+import { emailService } from '../services/emailService.js';
 
 class PaymentController {
   async createPayment(req: AuthRequest, res: Response) {

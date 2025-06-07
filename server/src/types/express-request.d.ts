@@ -1,4 +1,4 @@
-import { UserPayload } from './user'; // UserPayload est dans le même dossier types/
+import { UserPayload } from './user.js'; // UserPayload est dans le même dossier types/
 
 declare global {
   namespace Express {

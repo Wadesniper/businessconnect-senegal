@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from '../types/custom.express';
+import { Request, Response, NextFunction } from '../types/custom.express.js';
 import { body, validationResult } from 'express-validator';
 
 export const validateUser = [

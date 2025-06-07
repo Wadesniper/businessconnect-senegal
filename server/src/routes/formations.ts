@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { FormationController } from '../controllers/formationController';
+import { FormationController } from '../controllers/formationController.js';
 
 const router = Router();
 const formationController = new FormationController();

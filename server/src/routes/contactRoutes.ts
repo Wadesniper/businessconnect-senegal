@@ -1,12 +1,17 @@
-import { Router, RequestHandler } from 'express';
-import { contactController } from '../controllers/contactController';
+import { Router } from 'express';
+import { Request, Response, NextFunction } from '../types/custom.express.js';
+import { contactController } from '../controllers/contactController.js';
 
 const router = Router();
 
-const sendMessage: RequestHandler = (req, res, next) => {
-  contactController.sendMessage(req, res).catch(next);
+// Wrapper pour gérer les erreurs asynchrones
+const asyncHandler = (fn: (req: Request, res: Response, next: NextFunction) => Promise<any> | any) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
 };
 
-router.post('/send', sendMessage);
+// Route pour envoyer un message de contact
+router.post('/', asyncHandler(contactController.sendMessage));
 
 export default router; 

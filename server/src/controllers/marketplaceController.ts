@@ -1,6 +1,8 @@
-import { Request, Response } from 'express';
-import { AuthRequest } from '../types/custom.express';
-import { MarketplaceItem } from '../models/marketplace';
+import { Request, Response, AuthRequest } from '../types/custom.express.js';
+import { logger } from '../utils/logger.js';
+import { config } from '../config.js';
+import { StorageService } from '../services/storageService.js';
+import { MarketplaceItem } from '../models/marketplace.js';
 
 export class MarketplaceController {
   async getAllItems(req: Request, res: Response) {

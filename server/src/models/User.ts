@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import bcrypt from 'bcryptjs';
-import { validatePhoneNumber } from '../utils/validation';
-import { UserRole } from '../types/user';
+import { validatePhoneNumber } from '../utils/validation.js';
+import { UserRole } from '../types/user.js';
 
 // Interface TypeScript
 export interface IUser extends Document {

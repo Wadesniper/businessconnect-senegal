@@ -1,6 +1,6 @@
-import { Request, Response, Controller, ApiResponse } from '../types/custom.express';
+import { Request, Response, Controller, ApiResponse } from '../types/custom.express.js';
 import { validationResult } from 'express-validator';
-import { logger } from '../utils/logger';
+import { logger } from '../utils/logger.js';
 
 export abstract class BaseController implements Controller {
   protected constructor() {}

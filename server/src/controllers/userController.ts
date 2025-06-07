@@ -1,12 +1,15 @@
-import { Request, Response, AuthRequest } from '../types/custom.express';
-import { User } from '../models/User';
-import { logger } from '../utils/logger';
-import { generateToken } from '../utils/jwt';
-import { hashPassword, comparePassword } from '../utils/password';
-import { emailService } from '../services/emailService';
+import { Request, Response, AuthRequest } from '../types/custom.express.js';
+import { User } from '../models/User.js';
+import { logger } from '../utils/logger.js';
+import { generateToken } from '../utils/jwt.js';
+import { hashPassword, comparePassword } from '../utils/password.js';
+import { emailService } from '../services/emailService.js';
 import bcrypt from 'bcryptjs';
 import { Types } from 'mongoose';
-import { UserPayload } from '../types/user';
+import { UserPayload } from '../types/user.js';
+import { config } from '../config.js';
+import { StorageService } from '../services/storageService.js';
+import { NotificationService } from '../services/notificationService.js';
 
 export class UserController {
   async getPublicProfile(req: Request, res: Response) {

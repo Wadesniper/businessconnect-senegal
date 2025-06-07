@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import { AuthRequest, NextFunction } from '../types/custom.express';
+import { AuthRequest, NextFunction } from '../types/custom.express.js';
 import bcrypt from 'bcryptjs';
 import jwt, { Secret, SignOptions } from 'jsonwebtoken';
-import { User } from '../models/User';
-import { config } from '../config';
-import { NotificationService } from '../services/notificationService';
-import { logger } from '../utils/logger';
-import { validatePhoneNumber } from '../utils/validation';
+import { User } from '../models/User.js';
+import { config } from '../config.js';
+import { NotificationService } from '../services/notificationService.js';
+import { logger } from '../utils/logger.js';
+import { validatePhoneNumber } from '../utils/validation.js';
 
 export class AuthController {
   private notificationService: NotificationService;
