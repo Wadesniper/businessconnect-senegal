@@ -11,12 +11,12 @@ const router = Router();
 const authController = new AuthController();
 
 // Routes publiques
-router.post('/register', (req: Request, res: Response, next: NextFunction) => {
-  authController.register(req, res).catch(next);
-});
-router.post('/login', (req: Request, res: Response, next: NextFunction) => {
-  authController.login(req, res).catch(next);
-});
+// router.post('/register', (req: Request, res: Response, next: NextFunction) => {
+//   authController.register(req, res).catch(next);
+// });
+// router.post('/login', (req: Request, res: Response, next: NextFunction) => {
+//   authController.login(req, res).catch(next);
+// });
 // router.post('/forgot-password', userController.forgotPassword);
 // router.post('/reset-password', userController.resetPassword);
 
