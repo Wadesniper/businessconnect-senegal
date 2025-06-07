@@ -1,10 +1,10 @@
-import multer from 'multer';
+import multer, { diskStorage } from 'multer';
 import path from 'path';
 import { Request, Response, NextFunction } from 'express';
 import { logger } from '../utils/logger.js';
 
 // Configuration du stockage
-const storage = multer.diskStorage({
+const storage = diskStorage({
   destination: (_req: any, _file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) => {
     cb(null, path.join(__dirname, '../../uploads'));
   },
