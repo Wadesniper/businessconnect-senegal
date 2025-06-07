@@ -1,5 +1,5 @@
 // Configuration API pour production
-const API_URL = 'https://businessconnect-senegal-api-production.up.railway.app';
+const API_URL = import.meta.env.VITE_REACT_APP_API_URL || 'https://web-production-d9921.up.railway.app';
 
 export const endpoints = {
   // Auth (avec préfixe /api comme sur le serveur)

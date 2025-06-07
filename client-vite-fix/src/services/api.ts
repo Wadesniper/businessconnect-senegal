@@ -3,7 +3,7 @@ import { message } from 'antd';
 import { authService } from './authService';
 
 // URL de base de l'API
-const BASE_URL = import.meta.env.VITE_API_URL || 'https://businessconnect-senegal-api-production.up.railway.app';
+const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL || 'https://web-production-d9921.up.railway.app';
 
 export const api = axios.create({
   baseURL: BASE_URL,

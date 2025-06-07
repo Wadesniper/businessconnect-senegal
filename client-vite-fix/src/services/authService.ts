@@ -18,7 +18,7 @@ export class AuthService {
   private readonly USER_KEY = 'user';
 
   async login(credentials: LoginCredentials): Promise<User> {
-    const response = await fetch(`${API_URL}/auth/login`, {
+    const response = await fetch(`${API_URL}/api/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -38,7 +38,7 @@ export class AuthService {
   }
 
   async register(userData: UserRegistrationData): Promise<UserRegistrationResponse> {
-    const response = await fetch(`${API_URL}/auth/register`, {
+    const response = await fetch(`${API_URL}/api/auth/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
