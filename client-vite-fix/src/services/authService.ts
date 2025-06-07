@@ -33,7 +33,17 @@ export class AuthService {
 
     const data = await response.json();
     console.log('Réponse brute backend (login):', data);
-    if (data.success && data.data && data.data.token && data.data.user) {
+    console.log('data.data:', data.data);
+    console.log('data.data.user:', data.data ? data.data.user : undefined);
+    if (
+      data.success &&
+      data.data &&
+      typeof data.data.token === 'string' &&
+      data.data.user &&
+      typeof data.data.user === 'object' &&
+      data.data.user !== null &&
+      typeof data.data.user.id === 'string'
+    ) {
       this.setToken(data.data.token);
       this.setUser(data.data.user);
       return data.data.user;
