@@ -46,4 +46,9 @@ app.use('/api/health', healthRoutes);
 // Middleware de gestion d'erreurs
 app.use(errorHandler);
 
+// Endpoint healthcheck Railway
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
 export default app; 
