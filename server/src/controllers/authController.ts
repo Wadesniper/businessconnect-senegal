@@ -7,6 +7,7 @@ import { config } from '../config.js';
 import { NotificationService } from '../services/notificationService.js';
 import { logger } from '../utils/logger.js';
 import { validatePhoneNumber } from '../utils/validation.js';
+import prisma from '../config/prisma.js';
 
 export class AuthController {
   private notificationService: NotificationService;
@@ -52,12 +53,14 @@ export class AuthController {
         });
       }
 
-      // Vérifier si l'utilisateur existe déjà
-      const existingUser = await User.findOne({
-        $or: [
-          { phoneNumber: normalizedPhone },
-          ...(email ? [{ email: email.toLowerCase() }] : [])
-        ]
+      // Vérifier si l'utilisateur existe déjà (Prisma)
+      const existingUser = await prisma.user.findFirst({
+        where: {
+          OR: [
+            { phoneNumber: normalizedPhone },
+            ...(email ? [{ email: email.toLowerCase() }] : [])
+          ]
+        }
       });
 
       if (existingUser) {
@@ -72,43 +75,20 @@ export class AuthController {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
 
-      // Créer le nouvel utilisateur
-      const userData = {
-        firstName: firstName.trim(),
-        lastName: lastName.trim(),
-        phoneNumber: normalizedPhone,
-        password: hashedPassword,
-        isVerified: false,
-        role: 'user',
-        ...(email && { email: email.toLowerCase() })
-      };
-
-      const user = new User(userData);
-
-      try {
-        await user.save();
-      } catch (dbError: any) {
-        logger.error('Erreur lors de la sauvegarde de l\'utilisateur:', dbError);
-        
-        if (dbError.name === 'ValidationError') {
-          return res.status(400).json({
-            success: false,
-            message: 'Erreur de validation',
-            errors: Object.values(dbError.errors).map((err: any) => err.message)
-          });
+      // Créer le nouvel utilisateur (Prisma)
+      const user = await prisma.user.create({
+        data: {
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          phoneNumber: normalizedPhone,
+          password: hashedPassword,
+          isVerified: false,
+          role: 'user',
+          name: `${firstName.trim()} ${lastName.trim()}`,
+          ...(email && { email: email.toLowerCase() })
         }
-        
-        if (dbError.code === 11000) {
-          const field = Object.keys(dbError.keyPattern)[0];
-          return res.status(400).json({
-            success: false,
-            message: `Un utilisateur avec ce ${field === 'phoneNumber' ? 'numéro de téléphone' : 'email'} existe déjà`
-          });
-        }
-        
-        throw dbError;
-      }
-      
+      });
+
       // Générer le token JWT
       const token = this.generateToken(user);
 
@@ -129,7 +109,7 @@ export class AuthController {
         data: {
           token,
           user: {
-            id: user._id,
+            id: user.id,
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
@@ -168,8 +148,8 @@ export class AuthController {
         });
       }
 
-      // Rechercher l'utilisateur
-      const user = await User.findOne({ phoneNumber: normalizedPhone });
+      // Rechercher l'utilisateur (Prisma)
+      const user = await prisma.user.findUnique({ where: { phoneNumber: normalizedPhone } });
       if (!user) {
         return res.status(401).json({
           success: false,
@@ -196,7 +176,7 @@ export class AuthController {
         data: {
           token,
           user: {
-            id: user._id,
+            id: user.id,
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,

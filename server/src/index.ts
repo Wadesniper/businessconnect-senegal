@@ -67,9 +67,15 @@ process.on('unhandledRejection', (error: Error) => {
 
 // Connexion à MongoDB
 mongoose.connect(config.MONGODB_URI)
-  .then(() => {
+  .then(async () => {
     logger.info('Connecté à MongoDB');
-    
+    try {
+      const test = await import('./config/prisma.js');
+      await test.default.$connect();
+      logger.info('Connecté à Supabase (Prisma)');
+    } catch (e) {
+      logger.error('Erreur de connexion à Supabase (Prisma):', e);
+    }
     // Démarrer le serveur une fois connecté à MongoDB
     const PORT = config.PORT || 3000;
     app.listen(PORT, () => {
