@@ -26,13 +26,13 @@ router.get('/debug', async (req, res) => {
 });
 
 // Routes publiques
-router.post('/initiate', subscriptionController.initiateSubscription);
-router.post('/activate', subscriptionController.activateSubscription);
-router.get('/status/:userId', subscriptionController.checkSubscriptionStatus);
+router.post('/initiate', subscriptionController.initiateSubscription.bind(subscriptionController));
+router.post('/activate', subscriptionController.activateSubscription.bind(subscriptionController));
+router.get('/status/:userId', subscriptionController.checkSubscriptionStatus.bind(subscriptionController));
 
 // Routes protégées
-router.get('/:userId', authenticate, subscriptionController.getSubscription);
-router.delete('/:userId', authenticate, subscriptionController.cancelSubscription);
+router.get('/:userId', authenticate, subscriptionController.getSubscription.bind(subscriptionController));
+router.delete('/:userId', authenticate, subscriptionController.cancelSubscription.bind(subscriptionController));
 
 // Webhook pour les notifications de paiement
 router.post('/webhook', webhookController.handleCinetPayWebhook);
