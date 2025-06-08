@@ -1,12 +1,14 @@
 import { Request, Response } from '../types/custom.express.js';
-import { Job } from '../models/Job.js';
 import { logger } from '../utils/logger.js';
-import { Types } from 'mongoose';
+import prisma from '../config/prisma.js';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 class JobController {
   async getAllJobs(req: Request, res: Response) {
     try {
-      const jobs = await Job.find().sort({ createdAt: -1 });
+      const jobs = await prisma.job.findMany({
+        orderBy: { createdAt: 'desc' }
+      });
       res.json(jobs);
     } catch (error) {
       logger.error('Erreur lors de la récupération des offres:', error);
@@ -16,7 +18,9 @@ class JobController {
 
   async getJobById(req: Request, res: Response) {
     try {
-      const job = await Job.findById(req.params.id);
+      const job = await prisma.job.findUnique({
+        where: { id: req.params.id }
+      });
       if (!job) {
         return res.status(404).json({ error: 'Offre non trouvée' });
       }
@@ -30,11 +34,13 @@ class JobController {
   async searchJobs(req: Request, res: Response) {
     try {
       const { query } = req.query;
-      const jobs = await Job.find({
-        $or: [
-          { title: { $regex: query, $options: 'i' } },
-          { description: { $regex: query, $options: 'i' } }
-        ]
+      const jobs = await prisma.job.findMany({
+        where: {
+          OR: [
+            { title: { contains: query as string, mode: 'insensitive' } },
+            { description: { contains: query as string, mode: 'insensitive' } }
+          ]
+        }
       });
       res.json(jobs);
     } catch (error) {
@@ -45,9 +51,11 @@ class JobController {
 
   async createJob(req: Request, res: Response) {
     try {
-      const job = await Job.create({
-        ...req.body,
-        postedBy: new Types.ObjectId(req.user?.id)
+      const job = await prisma.job.create({
+        data: {
+          ...req.body,
+          postedById: req.user?.id
+        }
       });
       res.status(201).json(job);
     } catch (error) {
@@ -58,19 +66,18 @@ class JobController {
 
   async updateJob(req: Request, res: Response) {
     try {
-      const job = await Job.findOneAndUpdate(
-        { 
-          _id: req.params.id, 
-          postedBy: new Types.ObjectId(req.user?.id)
+      const job = await prisma.job.update({
+        where: {
+          id: req.params.id,
+          postedById: req.user?.id
         },
-        req.body,
-        { new: true }
-      );
-      if (!job) {
-        return res.status(404).json({ error: 'Offre non trouvée' });
-      }
+        data: req.body
+      });
       res.json(job);
     } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+        return res.status(404).json({ error: 'Offre non trouvée' });
+      }
       logger.error('Erreur lors de la mise à jour de l\'offre:', error);
       res.status(500).json({ error: 'Erreur lors de la mise à jour de l\'offre' });
     }
@@ -78,15 +85,17 @@ class JobController {
 
   async deleteJob(req: Request, res: Response) {
     try {
-      const job = await Job.findOneAndDelete({
-        _id: req.params.id,
-        postedBy: new Types.ObjectId(req.user?.id)
+      await prisma.job.delete({
+        where: {
+          id: req.params.id,
+          postedById: req.user?.id
+        }
       });
-      if (!job) {
-        return res.status(404).json({ error: 'Offre non trouvée' });
-      }
       res.json({ message: 'Offre supprimée avec succès' });
     } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+        return res.status(404).json({ error: 'Offre non trouvée' });
+      }
       logger.error('Erreur lors de la suppression de l\'offre:', error);
       res.status(500).json({ error: 'Erreur lors de la suppression de l\'offre' });
     }
@@ -94,24 +103,36 @@ class JobController {
 
   async applyForJob(req: Request, res: Response) {
     try {
-      const job = await Job.findById(req.params.id);
+      const job = await prisma.job.findUnique({
+        where: { id: req.params.id },
+        include: { applications: true }
+      });
+
       if (!job) {
         return res.status(404).json({ error: 'Offre non trouvée' });
       }
 
       const alreadyApplied = job.applications.some(
-        app => app.applicant.toString() === req.user?.id
+        app => app.applicantId === req.user?.id
       );
+
       if (alreadyApplied) {
         return res.status(400).json({ error: 'Vous avez déjà postulé à cette offre' });
       }
 
-      job.applications.push({
-        applicant: new Types.ObjectId(req.user?.id),
-        status: 'pending',
-        appliedAt: new Date()
+      const updatedJob = await prisma.job.update({
+        where: { id: req.params.id },
+        data: {
+          applications: {
+            create: {
+              applicantId: req.user?.id as string,
+              status: 'pending',
+              appliedAt: new Date()
+            }
+          }
+        },
+        include: { applications: true }
       });
-      await job.save();
 
       res.json({ message: 'Candidature envoyée avec succès' });
     } catch (error) {
@@ -122,8 +143,15 @@ class JobController {
 
   async getMyApplications(req: Request, res: Response) {
     try {
-      const jobs = await Job.find({
-        'applications.applicant': new Types.ObjectId(req.user?.id)
+      const jobs = await prisma.job.findMany({
+        where: {
+          applications: {
+            some: {
+              applicantId: req.user?.id
+            }
+          }
+        },
+        include: { applications: true }
       });
       res.json(jobs);
     } catch (error) {
@@ -134,10 +162,25 @@ class JobController {
 
   async getJobApplications(req: Request, res: Response) {
     try {
-      const job = await Job.findOne({
-        _id: req.params.id,
-        postedBy: new Types.ObjectId(req.user?.id)
-      }).populate('applications.applicant', 'firstName lastName email');
+      const job = await prisma.job.findFirst({
+        where: {
+          id: req.params.id,
+          postedById: req.user?.id
+        },
+        include: {
+          applications: {
+            include: {
+              applicant: {
+                select: {
+                  firstName: true,
+                  lastName: true,
+                  email: true
+                }
+              }
+            }
+          }
+        }
+      });
       
       if (!job) {
         return res.status(404).json({ error: 'Offre non trouvée' });
@@ -153,19 +196,20 @@ class JobController {
   async updateApplicationStatus(req: Request, res: Response) {
     try {
       const { status } = req.body;
-      const job = await Job.findOneAndUpdate(
-        {
-          _id: req.params.id,
-          postedBy: new Types.ObjectId(req.user?.id),
-          'applications._id': req.params.applicationId
+      const job = await prisma.job.update({
+        where: {
+          id: req.params.id,
+          postedById: req.user?.id
         },
-        {
-          $set: {
-            'applications.$.status': status
+        data: {
+          applications: {
+            update: {
+              where: { id: req.params.applicationId },
+              data: { status }
+            }
           }
-        },
-        { new: true }
-      );
+        }
+      });
 
       if (!job) {
         return res.status(404).json({ error: 'Candidature non trouvée' });
@@ -183,8 +227,11 @@ export const jobController = new JobController();
 
 export const getCategories = async (req: Request, res: Response) => {
   try {
-    const categories = await Job.distinct('category');
-    res.json(categories);
+    const categories = await prisma.job.findMany({
+      select: { type: true },
+      distinct: ['type']
+    });
+    res.json(categories.map(c => c.type).filter(Boolean));
   } catch (err) {
     res.status(500).json({ error: 'Erreur lors de la récupération des catégories' });
   }

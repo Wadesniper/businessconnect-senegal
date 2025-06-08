@@ -976,3 +976,31 @@ Le projet vise à migrer une application existante de MongoDB vers Supabase (Pos
 - Tous les abonnements sont mensuels (30 jours).
 - Aucun code supprimé, aucune perturbation du site, site complet préservé.
 - Correction documentée pour garantir la traçabilité et la stabilité en production.
+
+# [2025-06-08] Correction critique récupération offres d'emploi (Emploi)
+
+- Passage de la récupération des offres d'emploi du backend de MongoDB/Mongoose à Prisma/Supabase.
+- Le contrôleur backend utilise maintenant prisma.job.findMany pour retourner toutes les offres depuis Supabase.
+- Aucune suppression, aucune perturbation du site, site complet préservé.
+- Correction documentée pour garantir la traçabilité et la stabilité en production.
+
+# [2025-06-08] Migration complète du contrôleur des jobs vers Prisma/Supabase
+
+- Migration totale du contrôleur des jobs de MongoDB/Mongoose vers Prisma/Supabase :
+  - Toutes les méthodes CRUD (create, read, update, delete) migrées vers Prisma
+  - Recherche d'offres avec recherche insensible à la casse
+  - Gestion complète des candidatures (postuler, lister, mettre à jour)
+  - Récupération des catégories d'offres
+  - Toutes les relations préservées (postedBy, applications, etc.)
+  - Gestion des erreurs améliorée avec codes Prisma
+  - Typage strict TypeScript maintenu
+- Aucune suppression de fonctionnalité :
+  - Toutes les routes API restent identiques
+  - Toutes les validations sont préservées
+  - Toutes les relations sont maintenues
+  - Toutes les permissions sont conservées
+- Site complet préservé :
+  - Frontend non impacté
+  - Backend plus robuste
+  - Déploiement Railway stable
+  - Base de données Supabase optimisée
