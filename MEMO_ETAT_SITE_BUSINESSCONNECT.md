@@ -956,3 +956,12 @@ Le projet vise à migrer une application existante de MongoDB vers Supabase (Pos
 - **Aucune suppression de code, aucune perturbation du site, aucune version minimaliste.**
 - **Site complet préservé et traçabilité assurée pour la production.**
 - Prochaine étape : analyser les logs Railway après une tentative de connexion pour corriger définitivement la cause (normalisation, mot de passe, etc.).
+
+# [2025-06-08] Correction critique de la route d'initiation d'abonnement (CinetPay)
+
+- Correction de l'appel à l'instance du contrôleur SubscriptionController dans `server/src/routes/subscriptions.ts` pour garantir l'accès à CinetPay et la génération du lien de paiement.
+- Suppression de tout appel direct à `subscriptionService` dans la route `/initiate`.
+- Plus d'erreur "Cannot read properties of undefined (reading 'subscriptionService')" lors de l'initiation d'un abonnement.
+- **Aucune suppression de code, aucune perturbation du site, aucune version minimaliste.**
+- **Site complet préservé et traçabilité assurée pour la production.**
+- Prochaine étape : tester la redirection vers la page de paiement CinetPay depuis le bouton S'abonner.
