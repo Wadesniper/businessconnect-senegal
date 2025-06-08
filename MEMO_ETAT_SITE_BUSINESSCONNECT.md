@@ -968,3 +968,11 @@ Le projet vise à migrer une application existante de MongoDB vers Supabase (Pos
   - La création de l'entrée abonnement
 - Aucune suppression, aucune perturbation du site, site complet préservé.
 - Correction documentée pour garantir la traçabilité et la stabilité en production.
+
+# [2025-06-08] Correction critique mapping types d'abonnement frontend/backend
+
+- Correction du type SubscriptionType côté frontend pour qu'il corresponde exactement aux valeurs attendues par le backend ('etudiant', 'annonceur', 'recruteur').
+- Mapping explicite des clés d'offre dans la page d'abonnement pour garantir la compatibilité totale frontend/backend.
+- Tous les abonnements sont mensuels (30 jours).
+- Aucun code supprimé, aucune perturbation du site, site complet préservé.
+- Correction documentée pour garantir la traçabilité et la stabilité en production.

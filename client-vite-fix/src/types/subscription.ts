@@ -1,4 +1,5 @@
-export type SubscriptionType = 'monthly' | 'yearly';
+// Les abonnements sont tous mensuels (30 jours)
+export type SubscriptionType = 'etudiant' | 'annonceur' | 'recruteur';
 
 export interface Subscription {
   id: string;

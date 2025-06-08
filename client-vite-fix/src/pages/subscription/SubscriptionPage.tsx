@@ -137,11 +137,14 @@ const SubscriptionPage: React.FC = () => {
 
   const handleSubscribe = async (offerKey: string) => {
     try {
-      let type = offerKey;
-      if (type === 'student') type = 'etudiant';
-      
-      const res = await initiateSubscription(type as SubscriptionType);
-      
+      // Mapping explicite des clés d'offre vers les types backend
+      let type: SubscriptionType;
+      if (offerKey === 'student') type = 'etudiant';
+      else if (offerKey === 'annonceur') type = 'annonceur';
+      else if (offerKey === 'employeur') type = 'recruteur';
+      else throw new Error('Type d\'abonnement inconnu');
+      // Tous les abonnements sont mensuels (30 jours)
+      const res = await initiateSubscription(type);
       if (res?.paymentUrl) {
         window.location.href = res.paymentUrl;
       } else {
