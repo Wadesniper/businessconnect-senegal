@@ -73,16 +73,18 @@ export class SubscriptionService {
 
   async initiateSubscription(params: InitiateSubscriptionParams): Promise<{ paymentUrl?: string; transactionId?: string }> {
     try {
+      logger.info('[ABO] Début initiateSubscription, params:', params);
       const existingSubscription = await this.getActiveSubscription(params.userId);
       if (existingSubscription) {
+        logger.warn('[ABO] Abonnement déjà actif pour userId:', params.userId);
         throw new Error('Vous avez déjà un abonnement actif.');
       }
-
       const plan = this.plans[params.type];
+      logger.info('[ABO] Plan trouvé:', plan);
       if (!plan) {
+        logger.error('[ABO] Type d\'abonnement invalide:', params.type);
         throw new Error('Type d\'abonnement invalide.');
       }
-
       const paymentDataForCinetPay = {
         amount: plan.price,
         description: `Abonnement ${plan.type} pour ${params.customer_email} - BusinessConnect`,
@@ -92,22 +94,22 @@ export class SubscriptionService {
         customer_email: params.customer_email,
         customer_phone_number: params.customer_phone_number
       };
-
+      logger.info('[ABO] Payload envoyé à CinetPay:', paymentDataForCinetPay);
       const paymentResult: CreatePaymentResult = await cinetpayService.createPayment(paymentDataForCinetPay);
-
+      logger.info('[ABO] Résultat CinetPay:', paymentResult);
       if (!paymentResult.success || !paymentResult.transactionId || !paymentResult.paymentUrl) {
-        logger.error('Échec de l\'initialisation du paiement CinetPay:', paymentResult);
+        logger.error('[ABO] Échec initialisation paiement CinetPay:', paymentResult);
         throw new Error(paymentResult.message || 'Erreur lors de l\'initialisation du paiement avec CinetPay.');
       }
-
+      logger.info('[ABO] Création entrée abonnement en base...');
       await this.createSubscriptionEntry(params.userId, params.type, paymentResult.transactionId);
-
+      logger.info('[ABO] Entrée abonnement créée avec succès');
       return {
         paymentUrl: paymentResult.paymentUrl,
         transactionId: paymentResult.transactionId
       };
     } catch (error) {
-      logger.error('Erreur détaillée lors de l\'initiation de l\'abonnement:', error);
+      logger.error('[ABO] Erreur détaillée lors de l\'initiation de l\'abonnement:', error);
       throw error;
     }
   }
