@@ -26,6 +26,7 @@ const Navbar: React.FC = () => {
     { to: '/formations', label: 'Formations', icon: <BookOutlined /> },
     { to: '/cv-generator', label: 'CV', icon: <UserOutlined /> },
     { to: '/marketplace', label: 'Marketplace', icon: <ShopOutlined /> },
+    { to: '/subscription', label: 'Abonnement', icon: <TeamOutlined /> },
     { to: '/help/FAQ', label: 'FAQ', icon: <QuestionCircleOutlined /> },
     { to: '/contact', label: 'Contact', icon: <MailOutlined /> },
   ];
@@ -48,6 +49,9 @@ const Navbar: React.FC = () => {
         {isAuthenticated && user ? (
           <div className="user-menu">
             <Link to="/dashboard" className="navbar-link"><AppstoreOutlined /> Tableau de bord</Link>
+            <Button className="logout-button" icon={<LogoutOutlined />} onClick={handleLogout}>
+              Se déconnecter
+            </Button>
           </div>
         ) : (
           <div className="auth-buttons" style={{gap: '10px', alignItems: 'center', display: 'flex'}}>
@@ -72,6 +76,9 @@ const Navbar: React.FC = () => {
             {isAuthenticated && user ? (
               <>
                 <Link to="/dashboard" className="navbar-link" onClick={() => setDrawerOpen(false)}><AppstoreOutlined /> Tableau de bord</Link>
+                <Button className="logout-button" icon={<LogoutOutlined />} style={{ width: '100%', marginTop: 8 }} onClick={() => { setDrawerOpen(false); handleLogout(); }}>
+                  Se déconnecter
+                </Button>
               </>
             ) : (
               <>
