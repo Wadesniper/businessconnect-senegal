@@ -115,7 +115,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
       ) : (
         <Row gutter={[16, 16]}>
           {filteredTemplates.map((template, idx) => (
-            <Col xs={24} sm={12} md={8} lg={6} key={template.id}>
+            <Col xs={24} sm={12} md={8} lg={6} key={template.id} style={{ display: 'flex', alignItems: 'stretch' }}>
               <Card
                 hoverable
                 cover={
@@ -123,8 +123,10 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                     style={{
                       position: 'relative',
                       background: '#fff',
-                      width: 380,
-                      height: 396,
+                      width: '100%',
+                      height: 400,
+                      minHeight: 400,
+                      maxHeight: 400,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -205,15 +207,19 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                 }}
                 style={{
                   border: selected?.id === template.id ? '3px solid #1890ff' : '1px solid #eee',
-                  boxShadow: selected?.id === template.id ? '0 0 0 2px #1890ff33' : '0 4px 18px #1890ff11',
+                  boxShadow: selected?.id === template.id ? '0 0 0 2px #1890ff33, 0 8px 32px #1890ff11' : '0 4px 18px #1890ff11',
                   cursor: isPremium ? 'pointer' : 'not-allowed',
-                  borderRadius: 10,
-                  transition: 'box-shadow 0.2s, border 0.2s',
+                  borderRadius: 16,
+                  transition: 'box-shadow 0.22s cubic-bezier(.4,2,.3,1), border 0.22s',
                   overflow: 'hidden',
                   background: '#fff',
-                  minHeight: 320
+                  minHeight: 540,
+                  maxHeight: 540,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
                 }}
-                bodyStyle={{ padding: 18 }}
+                bodyStyle={{ padding: 18, display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'space-between' }}
               >
                 <Card.Meta
                   title={

@@ -1004,3 +1004,12 @@ Le projet vise à migrer une application existante de MongoDB vers Supabase (Pos
   - Backend plus robuste
   - Déploiement Railway stable
   - Base de données Supabase optimisée
+
+# [2025-06-09] Correction UI cartes CV (hauteur + effet moderne)
+
+- Harmonisation de la hauteur de toutes les cartes de CV dans la galerie (page CV) pour un rendu aligné et professionnel, quel que soit le contenu.
+- Ajout d'un effet moderne (ombre portée, survol animé, border-radius accentué, transition fluide) sur les cartes de CV.
+- Correction responsive : les cartes restent élégantes sur toutes tailles d'écran.
+- **Aucune suppression de code, aucune perturbation du backend ou du frontend, aucune fonctionnalité retirée.**
+- Correction traçable dans le composant `TemplateSelection.tsx` et la feuille de style associée.
+- Le site complet reste déployable et fonctionnel en production, sans version minimaliste.

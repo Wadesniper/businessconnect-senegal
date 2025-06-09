@@ -35,6 +35,9 @@ export class AuthService {
     console.log('Réponse brute backend (login):', data);
     console.log('data.data:', data.data);
     console.log('data.data.user:', data.data ? data.data.user : undefined);
+    if (!data.success) {
+      throw new Error(data.message || 'Identifiants invalides');
+    }
     if (
       data.success &&
       data.data &&
