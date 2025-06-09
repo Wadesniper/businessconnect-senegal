@@ -53,9 +53,14 @@ const MarketplacePage: React.FC = () => {
     search: '',
     location: ''
   });
-  const [subscription, setSubscription] = useState(authService.getCurrentUserSubscription());
   const { user } = useAuth();
   const { hasActiveSubscription, loading: loadingSub } = useSubscription();
+  const isAdmin = user?.role === 'admin';
+  const [subscription, setSubscription] = useState(
+    isAdmin
+      ? { status: 'active', endDate: '2999-12-31', type: 'admin' }
+      : null
+  );
   const userSubscription = subscription;
 
   useEffect(() => {
@@ -102,7 +107,7 @@ const MarketplacePage: React.FC = () => {
   };
 
   const refreshSubscription = () => {
-    setSubscription(authService.getCurrentUserSubscription());
+    setSubscription(isAdmin ? { status: 'active', endDate: '2999-12-31', type: 'admin' } : null);
     fetchItems();
   };
 
