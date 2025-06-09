@@ -76,27 +76,6 @@ const SubscriptionPage: React.FC = () => {
     });
   }, [user, isAuthenticated, loading]);
 
-  // Rafraîchir l'abonnement après retour de paiement
-  React.useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('payment') === 'success') {
-      // Rafraîchir l'abonnement immédiatement
-      refreshSubscription().then(() => {
-        // L'abonnement doit être actif immédiatement après un paiement validé
-        if (hasActiveSubscription) {
-          message.success('Votre abonnement a été activé avec succès !');
-          navigate('/dashboard');
-        } else {
-          // Si par hasard l'état n'est pas à jour, on force un nouveau rafraîchissement
-          refreshSubscription().then(() => {
-            message.success('Votre abonnement a été activé avec succès !');
-            navigate('/dashboard');
-          });
-        }
-      });
-    }
-  }, [refreshSubscription, hasActiveSubscription, navigate]);
-
   // Si en cours de chargement, afficher le loader
   if (loading) {
     return (
