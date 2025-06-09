@@ -26,7 +26,7 @@ app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 // Configuration CORS avec origines spécifiques
 const allowedOrigins = [
-    'https://businessconnectsenegal2025gooo.vercel.app',
+    'https://businessconnectsenegal.com',
     'http://localhost:3000',
     'http://localhost:5173'
 ];

@@ -34,7 +34,7 @@ app.use(express.urlencoded({ extended: true }));
 // Configuration CORS
 app.use(cors({
   origin: [
-    'https://businessconnectsenegal2025gooo.vercel.app',
+    'https://businessconnectsenegal.com',
     'http://localhost:5173',
     'http://localhost:3000'
   ],
