@@ -141,26 +141,29 @@ export class SubscriptionService {
 
   async activateSubscription(userId: string, transactionId: string): Promise<{ success: boolean; subscription?: SubscriptionData }> {
     try {
+      logger.info(`[ABO] Début activation abonnement pour userId: ${userId}, transactionId: ${transactionId}`);
+      
       const subscription = await StorageService.get<SubscriptionData>('subscriptions', transactionId);
       
       if (!subscription) {
-        logger.warn(`Tentative d'activation d'un abonnement non trouvé par paymentId/id: ${transactionId} pour userId: ${userId}`);
-        throw new Error('Abonnement non trouvé ou paiement non encore enregistré.');
+        logger.error(`[ABO] Abonnement non trouvé pour transactionId: ${transactionId}`);
+        throw new Error('Abonnement non trouvé.');
       }
 
       if (subscription.status === 'active') {
-        logger.info(`L'abonnement ${subscription.id} est déjà actif.`);
+        logger.info(`[ABO] Abonnement ${subscription.id} déjà actif.`);
         return { success: true, subscription };
       }
       
       if (subscription.userId !== userId) {
-          logger.error(`Tentative d'activation non autorisée de l'abonnement ${transactionId} par l'utilisateur ${userId}. L'abonnement appartient à ${subscription.userId}.`);
-          throw new Error('Activation non autorisée.');
+        logger.error(`[ABO] Tentative d'activation non autorisée. Abonnement: ${transactionId}, User: ${userId}`);
+        throw new Error('Activation non autorisée.');
       }
 
       const plan = this.plans[subscription.type];
       if (!plan) {
-        throw new Error('Type d\'abonnement invalide trouvé dans les données existantes.');
+        logger.error(`[ABO] Type d'abonnement invalide: ${subscription.type}`);
+        throw new Error('Type d\'abonnement invalide.');
       }
 
       const expiresAt = new Date();
@@ -174,14 +177,16 @@ export class SubscriptionService {
         updatedAt: new Date(),
       };
 
+      // Sauvegarde immédiate de l'abonnement activé
       await this.storageService.save<SubscriptionData>('subscriptions', updatedSubscriptionData);
+      logger.info(`[ABO] Abonnement ${subscription.id} activé avec succès pour userId: ${userId}`);
 
       return {
         success: true,
         subscription: updatedSubscriptionData
       };
     } catch (error) {
-      logger.error('Erreur lors de l\'activation de l\'abonnement:', error);
+      logger.error('[ABO] Erreur activation abonnement:', error);
       throw error;
     }
   }

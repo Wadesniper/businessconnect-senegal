@@ -60,36 +60,60 @@ router.post('/ipn', async (req, res) => {
   try {
     const body = req.body;
     const { type_event, api_key_sha256, api_secret_sha256, ref_command, token } = body;
+    
     // Vérification de la signature
     const myApiKey = config.PAYTECH_API_KEY;
     const myApiSecret = config.PAYTECH_API_SECRET;
     const hashKey = crypto.createHash('sha256').update(myApiKey).digest('hex');
     const hashSecret = crypto.createHash('sha256').update(myApiSecret).digest('hex');
+    
     if (hashKey !== api_key_sha256 || hashSecret !== api_secret_sha256) {
       logger.error('[PAYTECH] IPN signature invalide');
       return res.status(403).json({ success: false, message: 'Signature IPN invalide' });
     }
+    
     logger.info('[PAYTECH] IPN reçu:', body);
+    
     // Activation de l'abonnement si paiement confirmé
     if (type_event === 'sale_complete' && token) {
-      // On retrouve l'abonnement par paymentId/token
-      const subscription = await subscriptionService.getSubscriptionByPaymentId(token);
-      if (subscription && subscription.status !== 'active') {
-        await subscriptionService.updateSubscriptionStatus(subscription.id, 'active');
-        logger.info('[PAYTECH] Abonnement activé pour', subscription.userId);
+      try {
+        // On retrouve l'abonnement par paymentId/token
+        const subscription = await subscriptionService.getSubscriptionByPaymentId(token);
+        if (subscription) {
+          if (subscription.status !== 'active') {
+            // Activation immédiate de l'abonnement
+            await subscriptionService.activateSubscription(subscription.userId, subscription.id);
+            logger.info('[PAYTECH] Abonnement activé avec succès pour', subscription.userId);
+          } else {
+            logger.info('[PAYTECH] Abonnement déjà actif pour', subscription.userId);
+          }
+        } else {
+          logger.error('[PAYTECH] Abonnement non trouvé pour token:', token);
+        }
+      } catch (error) {
+        logger.error('[PAYTECH] Erreur lors de l\'activation de l\'abonnement:', error);
+        // On continue pour renvoyer 200 à PayTech
       }
     }
+    
     if (type_event === 'sale_canceled' && token) {
-      const subscription = await subscriptionService.getSubscriptionByPaymentId(token);
-      if (subscription && subscription.status !== 'cancelled') {
-        await subscriptionService.updateSubscriptionStatus(subscription.id, 'cancelled');
-        logger.info('[PAYTECH] Abonnement annulé pour', subscription.userId);
+      try {
+        const subscription = await subscriptionService.getSubscriptionByPaymentId(token);
+        if (subscription && subscription.status !== 'cancelled') {
+          await subscriptionService.updateSubscriptionStatus(subscription.id, 'cancelled');
+          logger.info('[PAYTECH] Abonnement annulé pour', subscription.userId);
+        }
+      } catch (error) {
+        logger.error('[PAYTECH] Erreur lors de l\'annulation de l\'abonnement:', error);
       }
     }
+    
+    // Toujours renvoyer 200 à PayTech pour éviter les retries
     res.status(200).json({ success: true });
   } catch (error) {
     logger.error('[PAYTECH] Erreur IPN:', error);
-    res.status(500).json({ success: false, message: 'Erreur IPN' });
+    // On renvoie quand même 200 pour éviter les retries
+    res.status(200).json({ success: true });
   }
 });
 
