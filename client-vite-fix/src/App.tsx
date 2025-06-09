@@ -35,8 +35,6 @@ const FAQ = lazy(() => import('./pages/help/FAQ'));
 const CareersPage = lazy(() => import('./pages/careers'));
 import AuthPage from './pages/auth/AuthPage';
 const CVPreviewGallery = lazy(() => import('./pages/cv-generator/CVPreviewGallery'));
-const TestCinetPay = lazy(() => import('./pages/TestCinetPay'));
-const TestCinetPayPublic = lazy(() => import('./pages/TestCinetPayPublic'));
 
 // ErrorBoundary global
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, error: any}> {
@@ -102,12 +100,6 @@ const App: React.FC = () => {
 
               {/* Routes protégées */}
               <Route
-                path="/test-cinetpay"
-                element={
-                  <ProtectedRoute element={<TestCinetPay />} requiresSubscription={false} />
-                }
-              />
-              <Route
                 path="/profile"
                 element={
                   <ProtectedRoute element={<ProfilePage />} requiresSubscription />
@@ -162,9 +154,6 @@ const App: React.FC = () => {
 
               {/* New route */}
               <Route path="/cv-preview/:templateId" element={<CVPreviewGallery />} />
-
-              {/* Route de test publique */}
-              <Route path="/test-cinetpay-public" element={<TestCinetPayPublic />} />
             </Routes>
           </Suspense>
         </ProLayout>

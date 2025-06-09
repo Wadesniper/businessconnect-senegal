@@ -49,8 +49,8 @@ export const SubscriptionButton: React.FC<SubscriptionButtonProps> = ({
       });
 
       if (response.data?.paymentUrl) {
-        // Rediriger vers l'interface de paiement CinetPay
-        console.log('Redirection vers CinetPay:', response.data.paymentUrl);
+        // Rediriger vers l'interface de paiement PayTech
+        console.log('Redirection vers PayTech:', response.data.paymentUrl);
         window.location.href = response.data.paymentUrl;
       } else {
         throw new Error(response.data?.error || 'Erreur lors de l\'initiation du paiement');

@@ -21,12 +21,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
     try {
       setLoading(true);
       await login(values.phoneNumber, values.password);
-      if (isAuthenticated) {
-        message.success('Connexion réussie');
-        navigate('/dashboard');
-      } else {
-        message.error('Erreur de connexion. Vérifiez vos identifiants.');
-      }
+      // Attendre que l'état isAuthenticated soit bien mis à jour
+      setTimeout(() => {
+        if (isAuthenticated) {
+          message.success('Connexion réussie');
+          navigate('/dashboard');
+        } else {
+          message.error('Erreur de connexion. Vérifiez vos identifiants.');
+        }
+      }, 100);
     } catch (error) {
       message.error('Erreur de connexion. Vérifiez vos identifiants.');
     } finally {

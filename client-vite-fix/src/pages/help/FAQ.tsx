@@ -47,12 +47,12 @@ const FAQ: React.FC = () => {
         >
           <Panel header={<span><QuestionCircleOutlined style={{ color: '#1890ff', marginRight: 8 }} />Comment m'abonner à BusinessConnect Sénégal ?</span>} key="1">
             <Text>
-              Rendez-vous sur la page Abonnement, choisissez l'offre adaptée à votre profil, puis suivez les instructions pour le paiement sécurisé via CinetPay.
+              Rendez-vous sur la page Abonnement, choisissez l'offre adaptée à votre profil, puis suivez les instructions pour le paiement sécurisé via PayTech.
             </Text>
           </Panel>
           <Panel header={<span><QuestionCircleOutlined style={{ color: '#1ec773', marginRight: 8 }} />Quels moyens de paiement sont acceptés ?</span>} key="2">
             <Text>
-              Les paiements se font via CinetPay : Mobile Money (Orange, Free, Wave), carte bancaire, ou virement bancaire.
+              Les paiements se font via PayTech : Mobile Money (Orange, Free, Wave), carte bancaire, ou virement bancaire.
             </Text>
           </Panel>
           <Panel header={<span><QuestionCircleOutlined style={{ color: '#1890ff', marginRight: 8 }} />Comment créer et exporter mon CV ?</span>} key="3">

@@ -142,7 +142,7 @@ const Pricing: React.FC = () => {
     {
       icon: <LockOutlined />,
       title: 'Paiement Sécurisé',
-      description: 'Toutes les transactions sont cryptées et sécurisées par CinetPay'
+      description: 'Toutes les transactions sont cryptées et sécurisées par PayTech'
     },
     {
       icon: <SafetyCertificateOutlined />,
@@ -252,7 +252,7 @@ const Pricing: React.FC = () => {
                       <LockOutlined /> Paiement 100% Sécurisé
                     </Title>
                     <Paragraph>
-                      Vos paiements sont traités de manière sécurisée par CinetPay, 
+                      Vos paiements sont traités de manière sécurisée par PayTech, 
                       leader des solutions de paiement en Afrique de l'Ouest.
                     </Paragraph>
                   </Col>

@@ -188,7 +188,7 @@ const SubscriptionPage: React.FC = () => {
           Choisissez votre abonnement
         </Title>
         <Paragraph style={{ textAlign: 'center', color: '#e6f7ff', fontSize: 18, marginBottom: 40 }}>
-          Accédez à toutes les fonctionnalités de BusinessConnect Sénégal selon votre profil. Paiement sécurisé via CinetPay.
+          Accédez à toutes les fonctionnalités de BusinessConnect Sénégal selon votre profil. Paiement sécurisé via PayTech.
         </Paragraph>
         <Row gutter={[32, 32]} justify="center">
           {offers.map((offer) => (
