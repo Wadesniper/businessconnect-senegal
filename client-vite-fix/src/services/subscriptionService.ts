@@ -11,8 +11,13 @@ function uuidv4() {
 
 class SubscriptionService {
   async getSubscription(userId: string): Promise<Subscription | null> {
-    // Pour l'instant, on retourne null car les abonnements sont gérés côté serveur
-    return null;
+    try {
+      const res = await api.get<Subscription>(`/subscriptions/${userId}/status`);
+      return res.data;
+    } catch (error: any) {
+      if (error.response?.status === 404) return null;
+      throw error;
+    }
   }
 
   async subscribe(userId: string, plan: 'etudiant' | 'annonceur' | 'employeur'): Promise<Subscription> {

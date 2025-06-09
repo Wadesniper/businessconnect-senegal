@@ -111,10 +111,31 @@ export const useSubscription = () => {
     return () => clearTimeout(timer);
   }, [isAuthenticated, user?.id, user?.role]);
 
+  // Ajout d'une méthode pour rafraîchir le statut d'abonnement à la demande
+  const refreshSubscription = async () => {
+    if (!isAuthenticated || !user?.id) {
+      setHasActiveSubscription(false);
+      setLoading(false);
+      return;
+    }
+    try {
+      setLoading(true);
+      setError(null);
+      const isActive = await subscriptionService.fetchSubscriptionStatus(user.id);
+      setHasActiveSubscription(isActive);
+    } catch (err: any) {
+      setHasActiveSubscription(false);
+      setError('Erreur lors de la vérification de l\'abonnement');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     loading,
     error,
     initiateSubscription,
-    hasActiveSubscription
+    hasActiveSubscription,
+    refreshSubscription
   };
 }; 

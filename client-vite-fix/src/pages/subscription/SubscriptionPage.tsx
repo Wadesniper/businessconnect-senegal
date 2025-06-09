@@ -63,7 +63,7 @@ const offers = [
 const SubscriptionPage: React.FC = () => {
   const { user, isAuthenticated, loading } = useAuth();
   const navigate = useNavigate();
-  const { initiateSubscription } = useSubscription();
+  const { initiateSubscription, refreshSubscription, hasActiveSubscription } = useSubscription();
 
   // Debug logs
   React.useEffect(() => {
@@ -75,6 +75,18 @@ const SubscriptionPage: React.FC = () => {
       hasToken: !!localStorage.getItem('token')
     });
   }, [user, isAuthenticated, loading]);
+
+  // Rafraîchir l'abonnement après retour de paiement
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('payment') === 'success') {
+      refreshSubscription().then(() => {
+        if (hasActiveSubscription) {
+          navigate('/'); // Redirige vers l'accueil ou la page premium
+        }
+      });
+    }
+  }, [refreshSubscription, hasActiveSubscription, navigate]);
 
   // Si en cours de chargement, afficher le loader
   if (loading) {
