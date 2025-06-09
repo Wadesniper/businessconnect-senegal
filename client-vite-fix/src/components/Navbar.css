@@ -135,6 +135,15 @@ html, body {
   color: #a8071a;
 }
 
+.hide-on-mobile {
+  display: inline;
+}
+@media (max-width: 800px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
+}
+
 @media (max-width: 1100px) {
   .navbar-menu {
     gap: 6px;

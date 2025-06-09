@@ -28,7 +28,6 @@ const Navbar: React.FC = () => {
     { to: '/marketplace', label: 'Marketplace', icon: <ShopOutlined /> },
     { to: '/subscription', label: 'Abonnement', icon: <TeamOutlined /> },
     { to: '/help/FAQ', label: 'FAQ', icon: <QuestionCircleOutlined /> },
-    { to: '/contact', label: 'Contact', icon: <MailOutlined /> },
   ];
 
   return (
@@ -49,8 +48,8 @@ const Navbar: React.FC = () => {
         {isAuthenticated && user ? (
           <div className="user-menu">
             <Link to="/dashboard" className="navbar-link"><AppstoreOutlined /> Tableau de bord</Link>
-            <Button className="logout-button" icon={<LogoutOutlined />} onClick={handleLogout}>
-              Se déconnecter
+            <Button className="logout-button" icon={<LogoutOutlined />} size="small" onClick={handleLogout} style={{padding: '0 10px', minWidth: 0, fontSize: 15, height: 38}}>
+              <span className="hide-on-mobile">Déconnexion</span>
             </Button>
           </div>
         ) : (
@@ -72,6 +71,7 @@ const Navbar: React.FC = () => {
           {navLinks.map(link => (
             <Link to={link.to} className="navbar-link" key={link.to} onClick={() => setDrawerOpen(false)}>{link.icon} {link.label}</Link>
           ))}
+          <Link to="/contact" className="navbar-link" onClick={() => setDrawerOpen(false)}><MailOutlined /> Contact</Link>
           <div style={{ marginTop: 24 }}>
             {isAuthenticated && user ? (
               <>
