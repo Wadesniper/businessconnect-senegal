@@ -5,7 +5,6 @@ import { logger } from '../utils/logger.js';
 import { authenticate } from '../middleware/auth.js';
 import { config } from '../config.js';
 import { SubscriptionController } from '../controllers/subscriptionController.js';
-import { WebhookController } from '../controllers/webhookController.js';
 import crypto from 'crypto';
 
 const router = Router();
@@ -13,7 +12,6 @@ const router = Router();
 // Initialisation des services
 const subscriptionService = new SubscriptionService();
 const subscriptionController = new SubscriptionController();
-const webhookController = new WebhookController();
 
 // Routes publiques
 router.post('/initiate', subscriptionController.initiateSubscription.bind(subscriptionController));
