@@ -23,6 +23,12 @@ interface Config {
   SMTP_PASSWORD: string;
   SMTP_FROM: string;
   CLIENT_URL: string;
+  PAYTECH_API_KEY: string;
+  PAYTECH_API_SECRET: string;
+  PAYTECH_BASE_URL: string;
+  PAYTECH_IPN_URL: string;
+  PAYTECH_SUCCESS_URL: string;
+  PAYTECH_CANCEL_URL: string;
 }
 
 export const config: Config = {
@@ -45,5 +51,11 @@ export const config: Config = {
   SMTP_USER: process.env.SMTP_USER || '',
   SMTP_PASSWORD: process.env.SMTP_PASSWORD || '',
   SMTP_FROM: process.env.SMTP_FROM || 'noreply@businessconnect.sn',
-  CLIENT_URL: process.env.CLIENT_URL || 'https://businessconnect.sn'
+  CLIENT_URL: process.env.CLIENT_URL || 'https://businessconnect.sn',
+  PAYTECH_API_KEY: process.env.PAYTECH_API_KEY || '',
+  PAYTECH_API_SECRET: process.env.PAYTECH_API_SECRET || '',
+  PAYTECH_BASE_URL: process.env.PAYTECH_BASE_URL || 'https://paytech.sn/api',
+  PAYTECH_IPN_URL: process.env.PAYTECH_IPN_URL || 'https://businessconnectsenegal.com/api/subscriptions/ipn',
+  PAYTECH_SUCCESS_URL: process.env.PAYTECH_SUCCESS_URL || 'https://businessconnectsenegal.com/payment/success',
+  PAYTECH_CANCEL_URL: process.env.PAYTECH_CANCEL_URL || 'https://businessconnectsenegal.com/payment/cancel'
 }; 

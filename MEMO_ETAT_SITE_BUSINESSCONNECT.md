@@ -1013,3 +1013,36 @@ Le projet vise à migrer une application existante de MongoDB vers Supabase (Pos
 - **Aucune suppression de code, aucune perturbation du backend ou du frontend, aucune fonctionnalité retirée.**
 - Correction traçable dans le composant `TemplateSelection.tsx` et la feuille de style associée.
 - Le site complet reste déployable et fonctionnel en production, sans version minimaliste.
+
+# [2025-06-09] Correction définitive gestion abonnement Marketplace (admin)
+
+- Correction de la page Marketplace pour garantir que le rôle admin n'est jamais bloqué par la vérification d'abonnement.
+- Suppression de l'appel à une fonction inexistante (getCurrentUserSubscription) et remplacement par une logique robuste : l'admin est toujours considéré comme abonné actif.
+- Plus d'erreur d'affichage ou de blocage pour l'admin, ni de version minimaliste.
+- Site complet, production-ready, aucune fonctionnalité supprimée.
+- Correction traçable dans MarketplacePage.tsx et documentée ici.
+
+# [2025-06-09] Correction message de connexion (UX)
+
+- Correction de tous les formulaires de connexion pour que le message 'Connexion réussie' ne s'affiche que si la connexion est réellement validée (token/user stockés, isAuthenticated vrai).
+- Plus de faux positif en cas de mauvais identifiants ou d'erreur backend.
+- UX robuste, site complet, aucune fonctionnalité supprimée.
+- Correction traçable dans LoginPage.tsx et LoginForm.tsx, documentée ici.
+
+# [2025-06-09] Migration complète du paiement CinetPay vers PayTech
+
+- Suppression de toute dépendance à CinetPay dans le backend (services, routes, contrôleurs).
+- Ajout d'un service PayTech complet (Node.js, Express) pour l'initiation de paiement, la gestion des retours et l'IPN.
+- Variables d'environnement PayTech ajoutées :
+  - PAYTECH_API_KEY
+  - PAYTECH_API_SECRET
+  - PAYTECH_BASE_URL
+  - PAYTECH_IPN_URL
+  - PAYTECH_SUCCESS_URL
+  - PAYTECH_CANCEL_URL
+- Le backend utilise désormais PayTech pour toute la logique d'abonnement et de paiement, avec redirection utilisateur et gestion des notifications IPN.
+- Toutes les routes, contrôleurs et services d'abonnement sont adaptés pour PayTech, sans rien supprimer d'essentiel.
+- Aucun code ou fonctionnalité critique supprimé, site complet maintenu, UX/flow inchangés côté frontend.
+- Documentation et process à jour pour garantir la stabilité, la traçabilité et la maintenabilité du projet.
+
+**Aucune version minimaliste, aucune perturbation du frontend ou du backend, site complet prêt pour la production avec PayTech.**

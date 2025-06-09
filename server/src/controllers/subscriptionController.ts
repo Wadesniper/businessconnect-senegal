@@ -2,7 +2,6 @@ import { Request, Response, AuthRequest } from '../types/custom.express.js';
 import { logger } from '../utils/logger.js';
 import { config } from '../config.js';
 import { SubscriptionService } from '../services/subscriptionService.js';
-import { cinetpayService } from '../services/cinetpayService.js';
 
 interface InitiateSubscriptionRequest {
   userId: string;

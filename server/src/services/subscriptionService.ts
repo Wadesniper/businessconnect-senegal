@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 import { logger } from '../utils/logger.js';
 import { config } from '../config.js';
-import { cinetpayService, CreatePaymentResult } from './cinetpayService.js';
 import { StorageService } from './storageService.js';
+import { PaytechService, PaytechPaymentResult } from './paytechService.js';
 
 interface SubscriptionPlan {
   type: 'etudiant' | 'annonceur' | 'recruteur';
@@ -62,9 +62,11 @@ export class SubscriptionService {
   };
 
   private storageService: StorageService;
+  private paytechService: PaytechService;
 
   constructor() {
     this.storageService = StorageService.getInstance();
+    this.paytechService = new PaytechService();
   }
 
   public getSubscriptionPrice(type: string): number {
@@ -85,28 +87,31 @@ export class SubscriptionService {
         logger.error('[ABO] Type d\'abonnement invalide:', params.type);
         throw new Error('Type d\'abonnement invalide.');
       }
-      const paymentDataForCinetPay = {
-        amount: plan.price,
-        description: `Abonnement ${plan.type} pour ${params.customer_email} - BusinessConnect`,
-        userId: params.userId,
-        customer_name: params.customer_name,
-        customer_surname: params.customer_surname,
-        customer_email: params.customer_email,
-        customer_phone_number: params.customer_phone_number
+      const refCommand = `BCS-${params.userId}-${Date.now()}`;
+      const paytechParams = {
+        item_name: `Abonnement ${plan.type}`,
+        item_price: plan.price,
+        ref_command: refCommand,
+        command_name: `Abonnement ${plan.type} pour ${params.customer_email}`,
+        custom_field: {
+          userId: params.userId,
+          type: params.type,
+          email: params.customer_email
+        }
       };
-      logger.info('[ABO] Payload envoyé à CinetPay:', paymentDataForCinetPay);
-      const paymentResult: CreatePaymentResult = await cinetpayService.createPayment(paymentDataForCinetPay);
-      logger.info('[ABO] Résultat CinetPay:', paymentResult);
-      if (!paymentResult.success || !paymentResult.transactionId || !paymentResult.paymentUrl) {
-        logger.error('[ABO] Échec initialisation paiement CinetPay:', paymentResult);
-        throw new Error(paymentResult.message || 'Erreur lors de l\'initialisation du paiement avec CinetPay.');
+      logger.info('[ABO] Payload envoyé à PayTech:', paytechParams);
+      const paymentResult: PaytechPaymentResult = await this.paytechService.createPayment(paytechParams);
+      logger.info('[ABO] Résultat PayTech:', paymentResult);
+      if (!paymentResult.success || !paymentResult.token || !paymentResult.redirect_url) {
+        logger.error('[ABO] Échec initialisation paiement PayTech:', paymentResult);
+        throw new Error(paymentResult.message || 'Erreur lors de l\'initialisation du paiement avec PayTech.');
       }
       logger.info('[ABO] Création entrée abonnement en base...');
-      await this.createSubscriptionEntry(params.userId, params.type, paymentResult.transactionId);
+      await this.createSubscriptionEntry(params.userId, params.type, paymentResult.token);
       logger.info('[ABO] Entrée abonnement créée avec succès');
       return {
-        paymentUrl: paymentResult.paymentUrl,
-        transactionId: paymentResult.transactionId
+        paymentUrl: paymentResult.redirect_url,
+        transactionId: paymentResult.token
       };
     } catch (error) {
       logger.error('[ABO] Erreur détaillée lors de l\'initiation de l\'abonnement:', error);
