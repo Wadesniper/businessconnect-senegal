@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
-import { Form, Input, Button, message } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Form, Input, Button, Card, Typography, message } from 'antd';
+import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import './LoginForm.css';
+
+const { Title } = Typography;
 
 // Ajout des props
 interface LoginFormProps {
@@ -11,29 +15,30 @@ interface LoginFormProps {
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink }) => {
-  const [loading, setLoading] = useState(false);
-  const { login, isAuthenticated } = useAuth();
-  const navigate = useNavigate();
-  const [phoneError, setPhoneError] = useState('');
   const [form] = Form.useForm();
+  const { login, isAuthenticated, loading } = useAuth();
+  const navigate = useNavigate();
+  const [triedLogin, setTriedLogin] = useState(false);
+  const [phoneError, setPhoneError] = useState('');
+
+  useEffect(() => {
+    if (!loading && triedLogin) {
+      if (isAuthenticated) {
+        message.success('Connexion réussie');
+        navigate('/dashboard');
+      } else {
+        message.error('Erreur de connexion. Vérifiez vos identifiants.');
+      }
+      setTriedLogin(false);
+    }
+  }, [isAuthenticated, loading, triedLogin, navigate]);
 
   const onFinish = async (values: { phoneNumber: string; password: string }) => {
+    setTriedLogin(true);
     try {
-      setLoading(true);
       await login(values.phoneNumber, values.password);
-      // Attendre que l'état isAuthenticated soit bien mis à jour
-      setTimeout(() => {
-        if (isAuthenticated) {
-          message.success('Connexion réussie');
-          navigate('/dashboard');
-        } else {
-          message.error('Erreur de connexion. Vérifiez vos identifiants.');
-        }
-      }, 100);
     } catch (error) {
-      message.error('Erreur de connexion. Vérifiez vos identifiants.');
-    } finally {
-      setLoading(false);
+      // L'erreur sera gérée dans le useEffect
     }
   };
 
@@ -83,182 +88,74 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
   // Styles responsives pour mobile
   const isMobile = typeof window !== 'undefined' && window.innerWidth <= 600;
 
-  // Si noCard ou noBg, on affiche juste le formulaire sans fond ni card
-  if (noCard || noBg) {
-    return (
-      <Form
-        name="login"
-        onFinish={onFinish}
-        layout="vertical"
-        requiredMark={false}
-        style={{ boxSizing: 'border-box', overflowX: 'hidden' }}
+  const formContent = (
+    <Form
+      form={form}
+      name="login"
+      onFinish={onFinish}
+      layout="vertical"
+      requiredMark={false}
+      className="login-form"
+    >
+      <Form.Item
+        name="phoneNumber"
+        rules={[
+          { required: true, message: 'Veuillez entrer votre numéro de téléphone' },
+          { validator: validatePhone }
+        ]}
       >
-        <Form.Item
-          name="phoneNumber"
-          label={<span style={{ fontWeight: 500 }}>Numéro de téléphone</span>}
-          rules={[
-            { required: true, message: 'Veuillez saisir votre numéro de téléphone' },
-            { 
-              validator: async (_, value) => {
-                if (!value) {
-                  throw new Error('Veuillez saisir votre numéro de téléphone');
-                }
-                
-                const cleaned = value.replace(/[^0-9+]/g, '');
-                
-                // Format international : +XXXXXXXXXXXXX
-                if (!/^\+\d{1,4}\d{10,}$/.test(cleaned)) {
-                  throw new Error('Le numéro doit être au format international (+XXX XXXXXXXXX)');
-                }
-              }
-            }
-          ]}
-          validateTrigger={['onBlur', 'onChange']}
-        >
-          <Input
-            size="large"
-            placeholder="+XXX XXXXXXXXX"
-            className="auth-full-width"
-            style={{ borderRadius: 8 }}
-            onChange={(e) => {
-              const formatted = formatPhoneNumber(e.target.value);
+        <Input
+          prefix={<UserOutlined />}
+          placeholder="Numéro de téléphone"
+          onChange={(e) => {
+            const formatted = formatPhoneNumber(e.target.value);
+            if (formatted !== e.target.value) {
               form.setFieldsValue({ phoneNumber: formatted });
-              validatePhone(formatted);
-            }}
-            onBlur={(e) => validatePhone(e.target.value)}
-          />
-        </Form.Item>
-        {phoneError && <div style={{ color: 'red', marginBottom: 12 }}>{phoneError}</div>}
-        <Form.Item
-          name="password"
-          label={<span style={{ fontWeight: 500 }}>Mot de passe</span>}
-          rules={[{ required: true, message: 'Veuillez saisir votre mot de passe' }]}
+            }
+          }}
+        />
+      </Form.Item>
+
+      <Form.Item
+        name="password"
+        rules={[{ required: true, message: 'Veuillez entrer votre mot de passe' }]}
+      >
+        <Input.Password
+          prefix={<LockOutlined />}
+          placeholder="Mot de passe"
+        />
+      </Form.Item>
+
+      <Form.Item>
+        <Button
+          type="primary"
+          htmlType="submit"
+          className="login-form-button"
+          loading={loading}
+          block
         >
-          <Input.Password size="large" placeholder="Votre mot de passe" className="auth-full-width" style={{ borderRadius: 8, width: '100% !important' }} />
-        </Form.Item>
-        <Form.Item style={{ marginBottom: 8 }}>
-          <Button
-            type="primary"
-            htmlType="submit"
-            size="large"
-            className="auth-full-width"
-            style={{ width: '100% !important', borderRadius: 8, fontWeight: 600, fontSize: 16, height: 48 }}
-            loading={loading}
-          >
-            Se connecter
-          </Button>
-        </Form.Item>
-        {!hideRegisterLink && (
-          <div style={{ textAlign: 'center', marginTop: 8 }}>
-            <a href="/register">Pas encore inscrit ? Créer un compte</a>
-          </div>
-        )}
-      </Form>
-    );
+          Se connecter
+        </Button>
+      </Form.Item>
+
+      {!hideRegisterLink && (
+        <div className="register-link">
+          Pas encore de compte ? <a href="/auth?tab=register">Créer un compte</a>
+        </div>
+      )}
+    </Form>
+  );
+
+  if (noCard) {
+    return formContent;
   }
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      width: '100%',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      background: 'linear-gradient(135deg, #1890ff 0%, #43e97b 100%)',
-      padding: isMobile ? '0 0 0 0' : 0,
-      boxSizing: 'border-box',
-      overflowX: 'hidden',
-    }}>
-      <div className="auth-card" style={{
-        width: '100%',
-        maxWidth: isMobile ? '95vw' : 420,
-        padding: isMobile ? '12px 6px' : '40px 32px 32px 32px',
-        borderRadius: isMobile ? 10 : 18,
-        boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.12)',
-        background: '#fff',
-        boxSizing: 'border-box',
-        margin: isMobile ? '0 auto' : undefined,
-      }}>
-        <div style={{ textAlign: 'center', marginBottom: 18 }}>
-          <div style={{ fontWeight: 600, fontSize: 20, color: '#1890ff', marginBottom: 2 }}>
-            Bienvenue sur BusinessConnect Sénégal
-          </div>
-          <div style={{ color: '#888', fontSize: 15, marginBottom: 10 }}>
-            Connectez-vous pour accéder à votre espace personnel
-          </div>
-        </div>
-        <h2 style={{ textAlign: 'center', marginBottom: isMobile ? 12 : 24, fontWeight: 700, letterSpacing: 1, fontSize: isMobile ? 20 : 28 }}>
-          Connexion
-        </h2>
-        <Form
-          name="login"
-          onFinish={onFinish}
-          layout="vertical"
-          requiredMark={false}
-          style={{ boxSizing: 'border-box', overflowX: 'hidden' }}
-        >
-          <Form.Item
-            name="phoneNumber"
-            label={<span style={{ fontWeight: 500 }}>Numéro de téléphone</span>}
-            rules={[
-              { required: true, message: 'Veuillez saisir votre numéro de téléphone' },
-              { 
-                validator: async (_, value) => {
-                  if (!value) {
-                    throw new Error('Veuillez saisir votre numéro de téléphone');
-                  }
-                  
-                  const cleaned = value.replace(/[^0-9+]/g, '');
-                  
-                  // Format international : +XXXXXXXXXXXXX
-                  if (!/^\+\d{1,4}\d{10,}$/.test(cleaned)) {
-                    throw new Error('Le numéro doit être au format international (+XXX XXXXXXXXX)');
-                  }
-                }
-              }
-            ]}
-            validateTrigger={['onBlur', 'onChange']}
-          >
-            <Input
-              size="large"
-              placeholder="+XXX XXXXXXXXX"
-              className="auth-full-width"
-              style={{ borderRadius: 8 }}
-              onChange={(e) => {
-                const formatted = formatPhoneNumber(e.target.value);
-                form.setFieldsValue({ phoneNumber: formatted });
-                validatePhone(formatted);
-              }}
-              onBlur={(e) => validatePhone(e.target.value)}
-            />
-          </Form.Item>
-          {phoneError && <div style={{ color: 'red', marginBottom: 12 }}>{phoneError}</div>}
-          <Form.Item
-            name="password"
-            label={<span style={{ fontWeight: 500 }}>Mot de passe</span>}
-            rules={[{ required: true, message: 'Veuillez saisir votre mot de passe' }]}
-          >
-            <Input.Password size="large" placeholder="Votre mot de passe" className="auth-full-width" style={{ borderRadius: 8 }} />
-          </Form.Item>
-          <Form.Item style={{ marginBottom: 8 }}>
-            <Button
-              type="primary"
-              htmlType="submit"
-              size="large"
-              className="auth-full-width"
-              style={{ borderRadius: 8, fontWeight: 600, fontSize: isMobile ? 15 : 16, height: isMobile ? 40 : 48 }}
-              loading={loading}
-            >
-              Se connecter
-            </Button>
-          </Form.Item>
-          {!hideRegisterLink && (
-            <div style={{ textAlign: 'center', marginTop: 8 }}>
-              <a href="/register">Pas encore inscrit ? Créer un compte</a>
-            </div>
-          )}
-        </Form>
-      </div>
+    <div className={`login-container ${noBg ? '' : 'with-bg'}`}>
+      <Card className="login-card">
+        <Title level={2} className="login-title">Connexion</Title>
+        {formContent}
+      </Card>
     </div>
   );
 };

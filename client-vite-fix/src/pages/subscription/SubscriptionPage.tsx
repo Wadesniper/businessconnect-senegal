@@ -80,9 +80,18 @@ const SubscriptionPage: React.FC = () => {
   React.useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('payment') === 'success') {
+      // Rafraîchir l'abonnement immédiatement
       refreshSubscription().then(() => {
+        // L'abonnement doit être actif immédiatement après un paiement validé
         if (hasActiveSubscription) {
-          navigate('/'); // Redirige vers l'accueil ou la page premium
+          message.success('Votre abonnement a été activé avec succès !');
+          navigate('/dashboard');
+        } else {
+          // Si par hasard l'état n'est pas à jour, on force un nouveau rafraîchissement
+          refreshSubscription().then(() => {
+            message.success('Votre abonnement a été activé avec succès !');
+            navigate('/dashboard');
+          });
         }
       });
     }
