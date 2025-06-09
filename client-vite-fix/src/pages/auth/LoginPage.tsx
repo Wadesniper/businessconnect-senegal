@@ -20,9 +20,13 @@ const LoginPage: React.FC = () => {
   const onFinish = async (values: LoginFormValues) => {
     try {
       setLoading(true);
-      await authService.login({ phoneNumber: values.phoneNumber, password: values.password });
-      message.success('Connexion réussie !');
-      navigate('/dashboard');
+      const result = await authService.login({ phoneNumber: values.phoneNumber, password: values.password });
+      if (result && result.token && result.user) {
+        message.success('Connexion réussie !');
+        navigate('/dashboard');
+      } else {
+        message.error('Erreur de connexion. Vérifiez vos identifiants.');
+      }
     } catch (error: any) {
       message.error(error.message || 'Erreur lors de la connexion');
       console.error('Erreur dans onFinish:', error);

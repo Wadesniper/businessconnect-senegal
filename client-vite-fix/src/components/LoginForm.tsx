@@ -12,7 +12,7 @@ interface LoginFormProps {
 
 const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink }) => {
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [phoneError, setPhoneError] = useState('');
   const [form] = Form.useForm();
@@ -21,8 +21,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
     try {
       setLoading(true);
       await login(values.phoneNumber, values.password);
-      message.success('Connexion réussie');
-      navigate('/dashboard');
+      if (isAuthenticated) {
+        message.success('Connexion réussie');
+        navigate('/dashboard');
+      } else {
+        message.error('Erreur de connexion. Vérifiez vos identifiants.');
+      }
     } catch (error) {
       message.error('Erreur de connexion. Vérifiez vos identifiants.');
     } finally {
