@@ -69,6 +69,12 @@ router.post('/ipn', async (req, res) => {
     const hashKey = crypto.createHash('sha256').update(myApiKey).digest('hex');
     const hashSecret = crypto.createHash('sha256').update(myApiSecret).digest('hex');
 
+    // DEBUG : log des longueurs et valeurs brutes
+    logger.error('[PAYTECH][IPN][DEBUG] hashKey attendu:', hashKey, 'len:', hashKey.length, 'bytes:', Buffer.from(hashKey).toString('hex'));
+    logger.error('[PAYTECH][IPN][DEBUG] hashKey reçu:', api_key_sha256, 'len:', (api_key_sha256||'').length, 'bytes:', Buffer.from(api_key_sha256||'').toString('hex'));
+    logger.error('[PAYTECH][IPN][DEBUG] hashSecret attendu:', hashSecret, 'len:', hashSecret.length, 'bytes:', Buffer.from(hashSecret).toString('hex'));
+    logger.error('[PAYTECH][IPN][DEBUG] hashSecret reçu:', api_secret_sha256, 'len:', (api_secret_sha256||'').length, 'bytes:', Buffer.from(api_secret_sha256||'').toString('hex'));
+
     if (hashKey !== api_key_sha256 || hashSecret !== api_secret_sha256) {
       logger.error('[PAYTECH][IPN] Signature invalide. Attendu:', hashKey, hashSecret, 'Reçu:', api_key_sha256, api_secret_sha256);
       return res.status(403).json({ success: false, message: 'Signature IPN invalide' });
