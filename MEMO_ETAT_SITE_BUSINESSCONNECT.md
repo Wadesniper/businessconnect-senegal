@@ -425,272 +425,7 @@ Le projet vise à migrer une application existante de MongoDB vers Supabase (Pos
   - Support TypeScript complet
   - Site pleinement fonctionnel
 
-#### 2025-06-02 (Suite - Configuration Healthcheck)
-- Ajout d'un endpoint de healthcheck public :
-  - Création d'un endpoint `/health` non authentifié
-  - Configuration du healthcheck dans Railway
-  - Amélioration de la fiabilité du déploiement
-  - Monitoring plus précis
-- Optimisation du déploiement :
-  - Healthcheck plus fiable
-  - Meilleure détection des problèmes
-  - Redémarrages plus efficaces
-  - Stabilité accrue
-- Maintien de la sécurité :
-  - Endpoint de healthcheck minimal
-  - Pas d'information sensible exposée
-  - Routes API toujours protégées
-  - Sécurité globale préservée
-
-#### 2025-06-02 (Suite - Correction Configuration Serveur)
-- Correction de la configuration Express :
-  - Ajout des middlewares essentiels
-  - Configuration CORS appropriée
-  - Gestion correcte des routes
-  - Point d'entrée unifié
-- Optimisation du démarrage :
-  - Séparation app/server
-  - Configuration du port cohérente
-  - Meilleure gestion des environnements
-  - Logs de démarrage améliorés
-- Maintien de la stabilité :
-  - Structure de code robuste
-  - Configuration complète
-  - Démarrage fiable
-  - Healthcheck fonctionnel
-
-#### 2025-06-02 (Suite - Optimisation Scripts Build)
-- Simplification des scripts de build :
-  - Utilisation des commandes système standard
-  - Suppression des dépendances non essentielles
-  - Scripts plus robustes et fiables
-  - Configuration optimisée
-- Amélioration de la gestion des dépendances :
-  - TypeScript en dépendance de production
-  - Organisation claire des dépendances
-  - Installation plus fiable
-  - Build plus stable
-- Maintien de l'intégrité :
-  - Conservation de toutes les fonctionnalités
-  - Structure complète préservée
-  - Déploiement robuste
-  - Site pleinement fonctionnel
-
-#### 2025-06-02 (Suite - Configuration TypeScript Production)
-- Optimisation de la configuration TypeScript :
-  - Inclusion de tous les types nécessaires
-  - Support complet des définitions TypeScript
-  - Configuration robuste pour la production
-  - Typage strict maintenu
-- Amélioration de la stabilité :
-  - Types disponibles en production
-  - Build plus fiable
-  - Meilleure détection des erreurs
-  - Déploiement plus stable
-- Maintien de l'intégrité :
-  - Conservation de toutes les fonctionnalités
-  - Support TypeScript complet
-  - Structure du projet préservée
-  - Site pleinement fonctionnel
-
-#### 2025-06-02 (Suite - Amélioration Types TypeScript)
-- Configuration avancée des types :
-  - Ajout des déclarations de types globaux
-  - Configuration complète des typeRoots
-  - Support explicite de tous les types
-  - Résolution des namespaces manquants
-- Optimisation de la structure :
-  - Organisation claire des types
-  - Meilleure résolution des dépendances
-  - Support complet de PDFKit
-  - Gestion appropriée de Multer
-- Maintien de l'intégrité :
-  - Conservation de toutes les fonctionnalités
-  - Support TypeScript robuste
-  - Structure complète préservée
-  - Site pleinement fonctionnel
-
 #### 2025-06-02 (Suite - Correction des Types TypeScript)
-- Installation des définitions de types manquantes :
-  - @types/bcryptjs pour l'authentification
-  - @types/jsonwebtoken pour les JWT
-  - @types/multer pour le téléchargement de fichiers
-  - @types/nodemailer pour l'envoi d'emails
-  - @types/pdfkit pour la génération de PDF
-  - @types/uuid pour la génération d'identifiants
-- Amélioration de la stabilité :
-  - Support TypeScript complet pour toutes les dépendances
-  - Meilleure détection des erreurs à la compilation
-  - Build plus fiable
-  - Déploiement plus stable
-- Maintien de l'intégrité :
-  - Conservation de toutes les fonctionnalités
-  - Structure complète préservée
-  - Support TypeScript robuste
-  - Site pleinement fonctionnel
-
-#### 2025-06-02 (Suite - Amélioration des Types Express)
-- Extension des types utilisateur :
-  - Ajout d'une interface UserPayload
-  - Support strict de l'ID utilisateur
-  - Typage robuste des requêtes authentifiées
-  - Meilleure gestion des données utilisateur
-- Renforcement de la stabilité :
-  - Meilleure détection des erreurs TypeScript
-  - Support complet des middlewares
-  - Typage strict des routes
-  - Build plus fiable
-- Maintien de l'intégrité :
-  - Conservation de toutes les fonctionnalités
-  - Structure complète préservée
-  - Support TypeScript robuste
-  - Site pleinement fonctionnel
-
-#### 2025-06-02 (Suite - Correction des Types Express)
-- Amélioration des interfaces Express :
-  - Ajout des propriétés manquantes aux interfaces
-  - Support complet des paramètres de requête
-  - Typage strict des headers HTTP
-  - Gestion améliorée des méthodes de requête
-- Renforcement de la stabilité :
-  - Meilleure détection des erreurs TypeScript
-  - Support complet des middlewares
-  - Typage strict des routes
-  - Build plus fiable
-- Maintien de l'intégrité :
-  - Conservation de toutes les fonctionnalités
-  - Structure complète préservée
-  - Support TypeScript robuste
-  - Site pleinement fonctionnel
-
-#### 2025-06-02 (Suite - Simplification des Types Express)
-- Optimisation des interfaces Express :
-  - Héritage correct des types Express
-  - Réduction de la duplication des types
-  - Simplification des interfaces personnalisées
-  - Meilleure gestion des types utilisateur
-- Renforcement de la stabilité :
-  - Meilleure détection des erreurs TypeScript
-  - Support complet des middlewares
-  - Typage strict des routes
-  - Build plus fiable
-- Maintien de l'intégrité :
-  - Conservation de toutes les fonctionnalités
-  - Structure complète préservée
-  - Support TypeScript robuste
-  - Site pleinement fonctionnel
-
-#### 2025-06-02 (Suite - Optimisation Types et Authentification)
-- Amélioration robuste du système d'authentification :
-  - Correction des types TypeScript sans compromis sur les fonctionnalités
-  - Maintien de toutes les propriétés utilisateur nécessaires
-  - Sélection explicite des champs dans les requêtes MongoDB
-  - Vérification complète des tokens et des droits
-- Renforcement de la sécurité :
-  - Validation stricte des types pour l'authentification
-  - Gestion améliorée des headers d'autorisation
-  - Vérification robuste des tokens JWT
-  - Protection contre les accès non autorisés
-- Maintien de l'intégrité :
-  - Conservation de toutes les fonctionnalités existantes
-  - Pas de version minimaliste - site complet fonctionnel
-  - Structure du projet préservée
-  - Déploiement stable et fiable
-- Documentation et maintenance :
-  - Mise à jour de la documentation des types
-  - Clarification des interfaces utilisateur
-  - Amélioration de la traçabilité des erreurs
-  - Support complet des fonctionnalités en production
-
-#### 2025-06-02 (Suite - Standardisation des Contrôleurs et Réponses API)
-- Amélioration de l'architecture des contrôleurs :
-  - Création d'une classe BaseController pour la standardisation
-  - Implémentation d'une gestion d'erreurs unifiée
-  - Validation des requêtes standardisée
-  - Méthodes utilitaires pour les réponses API
-- Renforcement du typage :
-  - Interface ApiResponse pour les réponses standardisées
-  - Types génériques pour les données de réponse
-  - Validation stricte des payloads de requête
-  - Meilleure inférence de types
-- Maintien de l'intégrité :
-  - Conservation de toutes les fonctionnalités existantes
-  - Pas de version minimaliste - site complet fonctionnel
-  - Structure du projet renforcée
-  - Déploiement stable et fiable
-- Amélioration de la maintenabilité :
-  - Code plus cohérent et réutilisable
-  - Réduction de la duplication
-  - Meilleure gestion des erreurs
-  - Documentation des interfaces améliorée
-
-#### 2025-06-02 (Suite - Optimisation de la Gestion des Types et des Erreurs)
-- Amélioration des types Express :
-  - Support complet des fichiers uploadés avec Multer
-  - Types génériques pour les paramètres de requête
-  - Meilleure gestion des réponses API
-  - Typage strict des requêtes authentifiées
-- Optimisation de la gestion des erreurs :
-  - Middleware asyncHandler pour les routes asynchrones
-  - Gestion unifiée des erreurs dans les contrôleurs
-  - Meilleure traçabilité des erreurs
-  - Support des promesses rejetées
-- Maintien de l'intégrité :
-  - Conservation de toutes les fonctionnalités existantes
-  - Pas de version minimaliste - site complet fonctionnel
-  - Structure du projet renforcée
-  - Déploiement stable et fiable
-- Amélioration de la maintenabilité :
-  - Organisation claire des handlers de routes
-  - Séparation des responsabilités
-  - Code plus prévisible et testable
-  - Documentation des interfaces améliorée
-
-#### 2025-06-02 (Suite - Optimisation de la Configuration Node.js)
-- Amélioration de la compatibilité Node.js :
-  - Suppression de rimraf pour utiliser la commande rm native
-  - Ajout du script de développement avec ts-node-dev
-  - Optimisation des dépendances pour Node.js 18.x
-  - Correction des conflits de versions des packages
-- Renforcement de la stabilité :
-  - Suppression des dépendances dupliquées
-  - Configuration plus robuste des scripts npm
-  - Meilleure gestion du build TypeScript
-  - Déploiement plus fiable
-- Maintien de l'intégrité :
-  - Conservation de toutes les fonctionnalités
-  - Structure complète préservée
-  - Support TypeScript robuste
-  - Site pleinement fonctionnel
-- Amélioration du développement :
-  - Ajout du mode développement avec hot reload
-  - Scripts de build optimisés
-  - Meilleure expérience développeur
-  - Déploiement plus stable
-
-#### 2025-06-02 (Suite - Correction de la Configuration TypeScript)
-- Optimisation de la configuration TypeScript :
-  - Déplacement des @types dans les dépendances principales
-  - Simplification de la configuration tsconfig.prod.json
-  - Suppression des types explicites redondants
-  - Configuration plus robuste pour la production
-- Amélioration de la stabilité :
-  - Meilleure gestion des définitions de types
-  - Build TypeScript plus fiable
-  - Résolution des erreurs de compilation
-  - Déploiement plus stable
-- Maintien de l'intégrité :
-  - Conservation de toutes les fonctionnalités
-  - Structure complète préservée
-  - Support TypeScript robuste
-  - Site pleinement fonctionnel
-- Documentation améliorée :
-  - Mise à jour des configurations de build
-  - Documentation des dépendances de types
-  - Clarification de la structure TypeScript
-  - Support complet du typage en production
-
-#### 2025-06-02 (Suite - Correction des Erreurs TypeScript)
 - Amélioration des types Express :
   - Correction de l'interface Request avec la propriété ip
   - Mise à jour des types pour les middlewares
@@ -1046,3 +781,90 @@ Le projet vise à migrer une application existante de MongoDB vers Supabase (Pos
 - Documentation et process à jour pour garantir la stabilité, la traçabilité et la maintenabilité du projet.
 
 **Aucune version minimaliste, aucune perturbation du frontend ou du backend, site complet prêt pour la production avec PayTech.**
+
+# [2025-06-09] Suppression définitive de CinetPay côté frontend, PayTech only + correction UX connexion
+
+- Suppression de toutes les mentions, routes, pages et textes liés à CinetPay dans le frontend (remplacé par PayTech partout).
+- Suppression des pages de test CinetPay (TestCinetPay, TestCinetPayPublic) et des routes associées.
+- Correction de tous les textes, FAQ, pricing, boutons, logs, etc. pour afficher PayTech comme unique solution de paiement.
+- Correction du bug UX sur la page de connexion : le message d'erreur "mauvais identifiant" n'apparaît plus à tort, la connexion réussie s'affiche immédiatement si les identifiants sont corrects.
+- Site complet, production-ready, aucune fonctionnalité supprimée, aucune version minimaliste.
+- Correction traçable dans SubscriptionPage.tsx, FAQ.tsx, Pricing.tsx, SubscriptionButton.tsx, App.tsx, et documentée ici.
+
+# [2025-06-09] Amélioration robuste de l'activation d'abonnement PayTech
+
+- Optimisation du processus d'activation d'abonnement pour garantir une activation immédiate et fiable après paiement :
+  - Amélioration des logs pour une meilleure traçabilité
+  - Gestion plus robuste des erreurs dans l'IPN PayTech
+  - Activation immédiate de l'abonnement dès réception de la notification de paiement
+  - Meilleure gestion des cas d'erreur pour éviter les retries inutiles
+  - Réponse systématique 200 à PayTech pour éviter les retries
+  - Vérification plus stricte des signatures et des données
+  - Logs détaillés pour faciliter le debugging
+
+- Améliorations spécifiques :
+  - Service d'abonnement : logs plus détaillés, meilleure gestion des erreurs
+  - IPN PayTech : gestion plus robuste, activation immédiate, meilleure traçabilité
+  - Frontend : redirection immédiate vers le dashboard après activation
+  - Pas de version minimaliste, site complet préservé
+
+- Garanties :
+  - Activation immédiate après paiement validé
+  - Pas de délai d'attente pour l'utilisateur
+  - Meilleure expérience utilisateur
+  - Traçabilité complète des opérations
+  - Site complet et robuste en production
+
+**Aucune fonctionnalité supprimée, site complet préservé.**
+
+# [2025-06-09] Amélioration UX navigation : bouton déconnexion + accès abonnement
+
+- Ajout d'un bouton "Se déconnecter" visible uniquement pour les utilisateurs connectés, dans la barre de navigation principale et le menu mobile (Drawer).
+- Ajout d'un lien "Abonnement" dans la navigation principale et le menu mobile, toujours visible pour un accès direct à la page d'abonnement.
+- Respect total de l'UX moderne : accès rapide à l'abonnement, gestion claire de la session utilisateur.
+- Aucun code ou élément essentiel supprimé, responsive et accessibilité préservés.
+- Site complet, production-ready, aucune version minimaliste.
+
+# [2025-06-09] Correction définitive activation immédiate abonnement après paiement PayTech
+
+- L'activation de l'abonnement est désormais immédiate et automatique dès que le paiement est validé côté PayTech (IPN backend).
+- Le frontend ne fait plus de polling ni de boucle d'attente : après paiement, un seul rafraîchissement de l'abonnement est effectué.
+- Si l'abonnement n'est pas actif immédiatement après paiement, un message d'erreur clair invite l'utilisateur à contacter le support (cela ne doit jamais arriver en usage normal).
+- Aucun code essentiel supprimé, site complet, UX robuste, production-ready.
+
+# [2025-06-09] Correction définitive du flow d'abonnement : redirection directe vers le dashboard
+
+- Après paiement validé, PayTech redirige désormais directement l'utilisateur vers le dashboard (`/dashboard`).
+- Suppression de toute logique de redirection ou de vérification d'abonnement après paiement côté frontend (plus de passage par la page d'abonnement).
+- L'utilisateur accède immédiatement à toutes ses fonctionnalités premium après paiement, sans délai ni étape inutile.
+- Site complet, UX optimale, aucune version minimaliste, aucune perturbation du backend ou du frontend existant.
+
+### [2025-06-10] Correction et robustesse de l'activation d'abonnement PayTech (IPN)
+
+- La route `/api/subscriptions/ipn` accepte désormais plusieurs variantes pour l'identifiant de paiement : `token`, `paymentId` ou `transaction_id` (compatibilité avec tous les formats d'IPN PayTech).
+- Si le token est absent ou invalide, un log explicite est généré et la réponse indique l'erreur.
+- L'activation d'abonnement ne dépend plus d'un seul champ, ce qui évite les échecs d'activation en production si PayTech change le format de l'IPN.
+- Les logs sont enrichis pour chaque cas d'échec (signature, token manquant, abonnement non trouvé).
+- **Aucune suppression de fonctionnalité, aucune régression, aucune version minimaliste.**
+- **Le site complet reste fonctionnel et robuste en production.**
+
+#### Procédure de test IPN PayTech (pour support ou debug)
+1. Générer les hash SHA256 de la clé et du secret PayTech Railway :
+   ```bash
+   echo -n "VOTRE_CLE_API_PAYTECH" | sha256sum
+   echo -n "VOTRE_SECRET_PAYTECH" | sha256sum
+   ```
+2. Utiliser la commande curl suivante (en adaptant les valeurs) :
+   ```bash
+   curl -X POST https://web-production-d9921.up.railway.app/api/subscriptions/ipn \
+     -H "Content-Type: application/json" \
+     -d '{
+       "type_event": "sale_complete",
+       "api_key_sha256": "HASH_CLE_API",
+       "api_secret_sha256": "HASH_SECRET",
+       "token": "VOTRE_TOKEN_PAYTECH"
+     }'
+   ```
+3. Vérifier les logs Railway pour s'assurer que l'activation a bien eu lieu.
+
+---

@@ -60,23 +60,30 @@ router.post('/ipn', async (req, res) => {
   try {
     logger.info('[PAYTECH][IPN] Appel reçu. Body brut:', JSON.stringify(req.body));
     const body = req.body;
-    const { type_event, api_key_sha256, api_secret_sha256, ref_command, token } = body;
-    
+    const { type_event, api_key_sha256, api_secret_sha256, ref_command } = body;
+    // Compatibilité multi-variantes pour l'identifiant de paiement
+    const token = body.token || body.paymentId || body.transaction_id;
+
     // Vérification de la signature
     const myApiKey = config.PAYTECH_API_KEY;
     const myApiSecret = config.PAYTECH_API_SECRET;
     const hashKey = crypto.createHash('sha256').update(myApiKey).digest('hex');
     const hashSecret = crypto.createHash('sha256').update(myApiSecret).digest('hex');
-    
+
     if (hashKey !== api_key_sha256 || hashSecret !== api_secret_sha256) {
       logger.error('[PAYTECH][IPN] Signature invalide. Attendu:', hashKey, hashSecret, 'Reçu:', api_key_sha256, api_secret_sha256);
       return res.status(403).json({ success: false, message: 'Signature IPN invalide' });
     }
-    
+
     logger.info('[PAYTECH][IPN] Signature valide. Event:', type_event, 'Token:', token);
-    
+
+    if (!token) {
+      logger.error('[PAYTECH][IPN] Token de paiement manquant dans l\'IPN. Impossible d\'activer l\'abonnement. Body:', JSON.stringify(body));
+      return res.status(400).json({ success: false, message: 'Token de paiement manquant dans l\'IPN' });
+    }
+
     // Activation de l'abonnement si paiement confirmé
-    if (type_event === 'sale_complete' && token) {
+    if (type_event === 'sale_complete') {
       try {
         const subscription = await subscriptionService.getSubscriptionByPaymentId(token);
         if (subscription) {
@@ -93,19 +100,19 @@ router.post('/ipn', async (req, res) => {
         logger.error('[PAYTECH][IPN] Erreur lors de l\'activation de l\'abonnement:', error);
       }
     }
-    
+
     if (type_event === 'sale_canceled' && token) {
       try {
         const subscription = await subscriptionService.getSubscriptionByPaymentId(token);
         if (subscription && subscription.status !== 'cancelled') {
           await subscriptionService.updateSubscriptionStatus(subscription.id, 'cancelled');
           logger.info('[PAYTECH][IPN] Abonnement annulé pour', subscription.userId);
-    }
-  } catch (error) {
+        }
+      } catch (error) {
         logger.error('[PAYTECH][IPN] Erreur lors de l\'annulation de l\'abonnement:', error);
       }
     }
-    
+
     // Toujours renvoyer 200 à PayTech pour éviter les retries
     res.status(200).json({ success: true });
   } catch (error) {
