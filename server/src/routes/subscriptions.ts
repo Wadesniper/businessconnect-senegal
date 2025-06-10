@@ -61,7 +61,6 @@ router.post('/ipn', async (req, res) => {
     logger.info('[PAYTECH][IPN] Appel reçu. Body brut:', JSON.stringify(req.body));
     const body = req.body;
     const { type_event, api_key_sha256, api_secret_sha256, ref_command } = body;
-    // Compatibilité multi-variantes pour l'identifiant de paiement
     const token = body.token || body.paymentId || body.transaction_id;
 
     // Vérification de la signature
@@ -85,9 +84,12 @@ router.post('/ipn', async (req, res) => {
     // Activation de l'abonnement si paiement confirmé
     if (type_event === 'sale_complete') {
       try {
+        logger.info('[PAYTECH][IPN] Recherche abonnement pour token:', token);
         const subscription = await subscriptionService.getSubscriptionByPaymentId(token);
         if (subscription) {
+          logger.info('[PAYTECH][IPN] Abonnement trouvé, statut actuel:', subscription.status);
           if (subscription.status !== 'active') {
+            logger.info('[PAYTECH][IPN] Tentative d\'activation de l\'abonnement...');
             await subscriptionService.activateSubscription(subscription.userId, subscription.id);
             logger.info('[PAYTECH][IPN] Abonnement activé avec succès pour', subscription.userId);
           } else {

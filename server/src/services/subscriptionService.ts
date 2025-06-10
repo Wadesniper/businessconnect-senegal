@@ -146,6 +146,7 @@ export class SubscriptionService {
     try {
       logger.info(`[ABO] Début activation abonnement pour userId: ${userId}, transactionId: ${transactionId}`);
       const subscription = await StorageService.get<SubscriptionData>('subscriptions', transactionId);
+      logger.info(`[ABO] Résultat récupération abonnement:`, subscription);
       if (!subscription) {
         logger.error(`[ABO] Abonnement non trouvé pour transactionId: ${transactionId}`);
         throw new Error('Abonnement non trouvé.');
@@ -165,6 +166,7 @@ export class SubscriptionService {
       }
       // Mise à jour du rôle utilisateur (hors admin)
       const user = await this.userService.getUserById(userId);
+      logger.info(`[ABO] Utilisateur récupéré pour update rôle:`, user);
       const validRoles = ['etudiant', 'annonceur', 'recruteur'] as const;
       if (user && user.role !== 'admin' && validRoles.includes(subscription.type as any)) {
         await this.userService.updateUser(userId, { role: subscription.type as 'etudiant' | 'annonceur' | 'recruteur' });
@@ -179,6 +181,7 @@ export class SubscriptionService {
         expiresAt,
         updatedAt: new Date(),
       };
+      logger.info(`[ABO] Sauvegarde abonnement activé:`, updatedSubscriptionData);
       await this.storageService.save<SubscriptionData>('subscriptions', updatedSubscriptionData);
       logger.info(`[ABO] Abonnement ${subscription.id} activé avec succès pour userId: ${userId}`);
       return {
