@@ -63,20 +63,22 @@ router.post('/ipn', async (req, res) => {
     const { type_event, api_key_sha256, api_secret_sha256, ref_command } = body;
     const token = body.token || body.paymentId || body.transaction_id;
 
-    // Vérification de la signature
-    const myApiKey = config.PAYTECH_API_KEY;
-    const myApiSecret = config.PAYTECH_API_SECRET;
-    const hashKey = crypto.createHash('sha256').update(myApiKey).digest('hex');
-    const hashSecret = crypto.createHash('sha256').update(myApiSecret).digest('hex');
+    // Vérification de la signature (robuste)
+    const normalize = (str: string) => (str || '').trim().toLowerCase();
+    const hashKey = config.PAYTECH_API_KEY;
+    const hashSecret = config.PAYTECH_API_SECRET;
+    const hashKeyNorm = normalize(hashKey);
+    const hashSecretNorm = normalize(hashSecret);
+    const apiKeyNorm = normalize(api_key_sha256);
+    const apiSecretNorm = normalize(api_secret_sha256);
 
-    // DEBUG : log des longueurs et valeurs brutes
-    logger.error('[PAYTECH][IPN][DEBUG] hashKey attendu:', hashKey, 'len:', hashKey.length, 'bytes:', Buffer.from(hashKey).toString('hex'));
-    logger.error('[PAYTECH][IPN][DEBUG] hashKey reçu:', api_key_sha256, 'len:', (api_key_sha256||'').length, 'bytes:', Buffer.from(api_key_sha256||'').toString('hex'));
-    logger.error('[PAYTECH][IPN][DEBUG] hashSecret attendu:', hashSecret, 'len:', hashSecret.length, 'bytes:', Buffer.from(hashSecret).toString('hex'));
-    logger.error('[PAYTECH][IPN][DEBUG] hashSecret reçu:', api_secret_sha256, 'len:', (api_secret_sha256||'').length, 'bytes:', Buffer.from(api_secret_sha256||'').toString('hex'));
+    logger.error('[PAYTECH][IPN][DEBUG] hashKey attendu:', hashKeyNorm, 'len:', hashKeyNorm.length, 'bytes:', Buffer.from(hashKeyNorm).toString('hex'));
+    logger.error('[PAYTECH][IPN][DEBUG] hashKey reçu:', apiKeyNorm, 'len:', apiKeyNorm.length, 'bytes:', Buffer.from(apiKeyNorm).toString('hex'));
+    logger.error('[PAYTECH][IPN][DEBUG] hashSecret attendu:', hashSecretNorm, 'len:', hashSecretNorm.length, 'bytes:', Buffer.from(hashSecretNorm).toString('hex'));
+    logger.error('[PAYTECH][IPN][DEBUG] hashSecret reçu:', apiSecretNorm, 'len:', apiSecretNorm.length, 'bytes:', Buffer.from(apiSecretNorm).toString('hex'));
 
-    if (hashKey !== api_key_sha256 || hashSecret !== api_secret_sha256) {
-      logger.error('[PAYTECH][IPN] Signature invalide. Attendu:', hashKey, hashSecret, 'Reçu:', api_key_sha256, api_secret_sha256);
+    if (hashKeyNorm !== apiKeyNorm || hashSecretNorm !== apiSecretNorm) {
+      logger.error('[PAYTECH][IPN] Signature invalide. Attendu:', hashKeyNorm, hashSecretNorm, 'Reçu:', apiKeyNorm, apiSecretNorm);
       return res.status(403).json({ success: false, message: 'Signature IPN invalide' });
     }
 
