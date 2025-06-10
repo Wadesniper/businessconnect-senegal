@@ -3,6 +3,7 @@ import { logger } from '../utils/logger.js';
 import { config } from '../config.js';
 import { StorageService } from './storageService.js';
 import { PaytechService, PaytechPaymentResult } from './paytechService.js';
+import { UserService } from './userService.js';
 
 interface SubscriptionPlan {
   type: 'etudiant' | 'annonceur' | 'recruteur';
@@ -63,10 +64,12 @@ export class SubscriptionService {
 
   private storageService: StorageService;
   private paytechService: PaytechService;
+  private userService: UserService;
 
   constructor() {
     this.storageService = StorageService.getInstance();
     this.paytechService = new PaytechService();
+    this.userService = new UserService();
   }
 
   public getSubscriptionPrice(type: string): number {
@@ -142,33 +145,33 @@ export class SubscriptionService {
   async activateSubscription(userId: string, transactionId: string): Promise<{ success: boolean; subscription?: SubscriptionData }> {
     try {
       logger.info(`[ABO] Début activation abonnement pour userId: ${userId}, transactionId: ${transactionId}`);
-      
       const subscription = await StorageService.get<SubscriptionData>('subscriptions', transactionId);
-      
       if (!subscription) {
         logger.error(`[ABO] Abonnement non trouvé pour transactionId: ${transactionId}`);
         throw new Error('Abonnement non trouvé.');
       }
-
       if (subscription.status === 'active') {
         logger.info(`[ABO] Abonnement ${subscription.id} déjà actif.`);
         return { success: true, subscription };
       }
-      
       if (subscription.userId !== userId) {
         logger.error(`[ABO] Tentative d'activation non autorisée. Abonnement: ${transactionId}, User: ${userId}`);
         throw new Error('Activation non autorisée.');
       }
-
       const plan = this.plans[subscription.type];
       if (!plan) {
         logger.error(`[ABO] Type d'abonnement invalide: ${subscription.type}`);
         throw new Error('Type d\'abonnement invalide.');
       }
-
+      // Mise à jour du rôle utilisateur (hors admin)
+      const user = await this.userService.getUserById(userId);
+      const validRoles = ['etudiant', 'annonceur', 'recruteur'] as const;
+      if (user && user.role !== 'admin' && validRoles.includes(subscription.type as any)) {
+        await this.userService.updateUser(userId, { role: subscription.type as 'etudiant' | 'annonceur' | 'recruteur' });
+        logger.info(`[ABO] Rôle utilisateur mis à jour : ${user.role} -> ${subscription.type}`);
+      }
       const expiresAt = new Date();
       expiresAt.setDate(expiresAt.getDate() + plan.duration);
-
       const updatedSubscriptionData: SubscriptionData = {
         ...subscription,
         status: 'active',
@@ -176,11 +179,8 @@ export class SubscriptionService {
         expiresAt,
         updatedAt: new Date(),
       };
-
-      // Sauvegarde immédiate de l'abonnement activé
       await this.storageService.save<SubscriptionData>('subscriptions', updatedSubscriptionData);
       logger.info(`[ABO] Abonnement ${subscription.id} activé avec succès pour userId: ${userId}`);
-
       return {
         success: true,
         subscription: updatedSubscriptionData
