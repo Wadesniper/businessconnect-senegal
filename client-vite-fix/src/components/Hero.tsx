@@ -384,6 +384,9 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
                     backgroundPosition: `${bgPosX} ${bgPosY}`,
                     backgroundRepeat: 'no-repeat',
                     transition: 'background-image 0.5s',
+                    opacity: 0.85,
+                    backdropFilter: 'blur(6px)',
+                    WebkitBackdropFilter: 'blur(6px)',
                   }}
                 />
               </motion.div>
