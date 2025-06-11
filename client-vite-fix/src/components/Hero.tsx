@@ -217,15 +217,34 @@ const images = [
   { src: '13-business.jpg', desc: 'Entreprenez au Sénégal' },
 ];
 
+// --- AJOUT POUR MOSAÏQUE ---
+const TILE_ROWS = 3;
+const TILE_COLS = 5;
+const TILE_COUNT = TILE_ROWS * TILE_COLS;
+
+// Génère une grille de tuiles pour l'effet mosaïque
+const getTiles = () => {
+  const tiles = [];
+  for (let row = 0; row < TILE_ROWS; row++) {
+    for (let col = 0; col < TILE_COLS; col++) {
+      tiles.push({ row, col, key: `${row}-${col}` });
+    }
+  }
+  return tiles;
+};
+const tiles = getTiles();
+
 interface HeroProps {
   onDiscoverClick?: () => void;
 }
 
 const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [prevImageIndex, setPrevImageIndex] = useState<number | null>(null);
   const [imagesLoaded, setImagesLoaded] = useState<Set<number>>(new Set());
   const [isPaused, setIsPaused] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   // Préchargement intelligent des images
   useEffect(() => {
@@ -259,16 +278,20 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
     preloadImages();
   }, []);
 
-  // Gestion du carrousel automatique
+  // Gestion du carrousel automatique (2,5s)
   const startCarousel = useCallback(() => {
     if (intervalRef.current) clearInterval(intervalRef.current);
-    
     intervalRef.current = setInterval(() => {
-      if (!isPaused) {
-        setCurrentImageIndex((prev) => (prev + 1) % images.length);
+      if (!isPaused && !isTransitioning) {
+        setPrevImageIndex(currentImageIndex);
+        setIsTransitioning(true);
+        setTimeout(() => {
+          setCurrentImageIndex((prev) => (prev + 1) % images.length);
+          setIsTransitioning(false);
+        }, 900); // durée de la transition mosaïque
       }
-    }, 4000); // Ralenti à 4 secondes pour meilleure UX
-  }, [isPaused]);
+    }, 2500);
+  }, [isPaused, isTransitioning, currentImageIndex]);
 
   useEffect(() => {
     startCarousel();
@@ -314,23 +337,59 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
             </StyledButton>
           </motion.div>
         </TextContent>
-        
         <CarouselContainer
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          {images.map((image, index) => (
-            <OptimizedImage
-              key={index}
-              $imageUrl={getImageUrl(image.src)}
-              $isActive={index === currentImageIndex && imagesLoaded.has(index)}
-            >
-              <ImageOverlay $isActive={index === currentImageIndex}>
-                {image.desc}
-              </ImageOverlay>
-            </OptimizedImage>
-          ))}
-          
+          {/* MOSAÏQUE : chaque tuile animée */}
+          {tiles.map(({ row, col, key }) => {
+            // Décalage d'animation pour effet "vague"
+            const delay = (row + col) * 0.07;
+            return (
+              <motion.div
+                key={key}
+                style={{
+                  position: 'absolute',
+                  top: `${(row * 100) / TILE_ROWS}%`,
+                  left: `${(col * 100) / TILE_COLS}%`,
+                  width: `${100 / TILE_COLS}%`,
+                  height: `${100 / TILE_ROWS}%`,
+                  zIndex: 2,
+                  overflow: 'hidden',
+                  borderRadius: 0,
+                }}
+                initial={false}
+                animate={isTransitioning && prevImageIndex !== null ? {
+                  opacity: 0,
+                  y: -40 * ((row % 2 === 0) ? 1 : -1),
+                  rotate: (col % 2 === 0) ? 8 : -8,
+                  transition: { duration: 0.7, delay }
+                } : {
+                  opacity: 1,
+                  y: 0,
+                  rotate: 0,
+                  transition: { duration: 0.7, delay }
+                }}
+              >
+                {/* Ancienne image pendant la transition, sinon image courante */}
+                <div
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    backgroundImage: `url(${getImageUrl(isTransitioning && prevImageIndex !== null ? images[prevImageIndex].src : images[currentImageIndex].src)})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
+                    transition: 'background-image 0.5s',
+                  }}
+                />
+              </motion.div>
+            );
+          })}
+          {/* Overlay texte sur l'image courante */}
+          <ImageOverlay $isActive={true}>
+            {images[currentImageIndex].desc}
+          </ImageOverlay>
           <CarouselIndicators>
             {images.map((_, index) => (
               <Indicator
