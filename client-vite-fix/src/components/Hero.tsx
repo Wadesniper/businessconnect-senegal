@@ -103,127 +103,10 @@ const TextContent = styled.div`
   }
 `;
 
-// Nouveau conteneur de carrousel optimisé
-const CarouselContainer = styled.div`
-  flex: 1;
-  position: relative;
-  height: 400px;
-  max-width: 550px;
-  border-radius: 32px;
-  overflow: hidden;
-  background: #001529;
-  box-shadow: 0 8px 32px #00152933;
-  border: 2px solid #fff;
-  margin-right: 48px;
-  @media (max-width: 600px) {
-    width: 90% !important;
-    max-width: 90% !important;
-    height: 300px;
-    border-radius: 14px;
-    margin: 18px auto 0;
-  }
-`;
-
 // --- AJOUT POUR MOSAÏQUE ---
 const TILE_ROWS = 3;
 const TILE_COLS = 5;
 const TILE_COUNT = TILE_ROWS * TILE_COLS;
-
-// Nouveau composant pour la tuile avec double couche
-const TileContainer = styled(motion.div)`
-  position: absolute;
-  overflow: hidden;
-  background: #001529;
-`;
-
-const TileLayer = styled.div<{ $bgImage: string; $bgPosX: string; $bgPosY: string }>`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: ${props => `url(${props.$bgImage})`};
-  background-size: ${TILE_COLS * 100}% ${TILE_ROWS * 100}%;
-  background-position: ${props => `${props.$bgPosX} ${props.$bgPosY}`};
-  background-repeat: no-repeat;
-  will-change: transform, opacity;
-`;
-
-// Image optimisée avec lazy loading et transition CSS pure
-const OptimizedImage = styled.div<{ $imageUrl: string; $isActive: boolean }>`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: ${props => `url(${props.$imageUrl})`};
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  opacity: ${props => props.$isActive ? 1 : 0};
-  transform: ${props => props.$isActive ? 'scale(1)' : 'scale(1.05)'};
-  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), 
-              transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: opacity, transform;
-`;
-
-const ImageOverlay = styled.div<{ $isActive: boolean }>`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background: linear-gradient(transparent, rgba(0,0,0,0.7));
-  color: #fff;
-  padding: 24px;
-  font-size: 20px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
-  opacity: ${props => props.$isActive ? 1 : 0};
-  transform: ${props => props.$isActive ? 'translateY(0)' : 'translateY(20px)'};
-  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s, 
-              transform 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s;
-`;
-
-// Indicateurs de navigation
-const CarouselIndicators = styled.div`
-  position: absolute;
-  bottom: 16px;
-  right: 24px;
-  display: flex;
-  gap: 8px;
-  z-index: 3;
-`;
-
-const Indicator = styled.button<{ $isActive: boolean }>`
-  width: ${props => props.$isActive ? '24px' : '8px'};
-  height: 8px;
-  border-radius: 4px;
-  border: none;
-  background: ${props => props.$isActive ? '#fff' : 'rgba(255,255,255,0.4)'};
-  cursor: pointer;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    background: rgba(255,255,255,0.8);
-  }
-`;
-
-const StyledButton = styled(Button)`
-  margin-top: 20px;
-  height: 50px;
-  padding: 0 30px;
-  font-size: 18px;
-  border-radius: 25px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-`;
-
-const GreenSpan = styled.span`
-  color: #1ec773;
-  font-weight: bold;
-`;
 
 // Import des images en dur (zéro bug de chargement)
 import img1 from '../assets/1-ingenieur.jpg';
@@ -278,7 +161,6 @@ const getBlurValue = () => window.innerWidth < 700 ? '4px' : '8px';
 
 const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [prevImageIndex, setPrevImageIndex] = useState<number | null>(null);
   const [isPaused, setIsPaused] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -299,16 +181,15 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
     if (intervalRef.current) clearInterval(intervalRef.current);
     intervalRef.current = setInterval(() => {
       if (!isPaused && !isTransitioning) {
-        setPrevImageIndex(currentImageIndex);
         setRandomOrder(getRandomOrder());
         setIsTransitioning(true);
         setTimeout(() => {
           setCurrentImageIndex((prev) => (prev + 1) % images.length);
           setIsTransitioning(false);
-        }, 900); // durée de la transition mosaïque
+        }, 600); // durée de la transition mosaïque
       }
     }, 2500);
-  }, [isPaused, isTransitioning, currentImageIndex, getRandomOrder]);
+  }, [isPaused, isTransitioning, getRandomOrder]);
 
   useEffect(() => {
     startCarousel();
@@ -319,7 +200,7 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
 
   const handleIndicatorClick = (index: number) => {
     setCurrentImageIndex(index);
-    startCarousel(); // Redémarre le timer
+    startCarousel();
   };
 
   const handleMouseEnter = () => {
@@ -389,71 +270,55 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          {tiles.map(({ row, col, key }, idx) => {
-            const order = randomOrder[idx];
-            const baseDelay = 0.02;
-            const randomOffset = Math.random() * 0.1;
-            const delay = (Math.floor(order / TILE_COLS) + (order % TILE_COLS)) * baseDelay + randomOffset;
-            const bgPosX = `${(col * 100) / (TILE_COLS - 1)}%`;
-            const bgPosY = `${(row * 100) / (TILE_ROWS - 1)}%`;
+          <ImageContainer>
+            {tiles.map(({ row, col, key }, idx) => {
+              const order = randomOrder[idx];
+              const baseDelay = 0.02;
+              const randomOffset = Math.random() * 0.1;
+              const delay = (Math.floor(order / TILE_COLS) + (order % TILE_COLS)) * baseDelay + randomOffset;
 
-            return (
-              <TileContainer
-                key={key}
-                style={{
-                  top: `${(row * 100) / TILE_ROWS}%`,
-                  left: `${(col * 100) / TILE_COLS}%`,
-                  width: `${100 / TILE_COLS}%`,
-                  height: `${100 / TILE_ROWS}%`,
-                  zIndex: 2,
-                }}
-                initial={false}
-                animate={isTransitioning && prevImageIndex !== null ? {
-                  scale: [1, 0.95, 0],
-                  opacity: [1, 0.5, 0],
-                  transition: { 
-                    duration: 0.4,
-                    delay,
-                    times: [0, 0.5, 1],
-                    ease: [0.4, 0, 0.2, 1]
-                  }
-                } : {
-                  scale: [0, 1.05, 1],
-                  opacity: [0, 0.5, 1],
-                  transition: { 
-                    duration: 0.4,
-                    delay,
-                    times: [0, 0.5, 1],
-                    ease: [0.4, 0, 0.2, 1]
-                  }
-                }}
-              >
-                {/* Couche actuelle */}
-                <TileLayer
-                  $bgImage={images[currentImageIndex].src}
-                  $bgPosX={bgPosX}
-                  $bgPosY={bgPosY}
-                  style={{
-                    opacity: isTransitioning ? 0 : 1,
-                    transition: 'opacity 0.3s ease-in-out'
+              // Position aléatoire dans la grille
+              const randomRow = Math.floor(Math.random() * TILE_ROWS);
+              const randomCol = Math.floor(Math.random() * TILE_COLS);
+
+              return (
+                <Tile
+                  key={key}
+                  initial={false}
+                  animate={isTransitioning ? {
+                    scale: [1, 0.95, 0],
+                    opacity: [1, 0.5, 0],
+                    x: [`${col * (100/TILE_COLS)}%`, `${randomCol * (100/TILE_COLS)}%`],
+                    y: [`${row * (100/TILE_ROWS)}%`, `${randomRow * (100/TILE_ROWS)}%`],
+                    transition: { 
+                      duration: 0.6,
+                      delay,
+                      times: [0, 0.5, 1],
+                      ease: [0.4, 0, 0.2, 1]
+                    }
+                  } : {
+                    scale: [0, 1.05, 1],
+                    opacity: [0, 0.5, 1],
+                    x: [`${randomCol * (100/TILE_COLS)}%`, `${col * (100/TILE_COLS)}%`],
+                    y: [`${randomRow * (100/TILE_ROWS)}%`, `${row * (100/TILE_ROWS)}%`],
+                    transition: { 
+                      duration: 0.6,
+                      delay,
+                      times: [0, 0.5, 1],
+                      ease: [0.4, 0, 0.2, 1]
+                    }
                   }}
-                />
-                {/* Couche précédente (pendant la transition) */}
-                {isTransitioning && prevImageIndex !== null && (
-                  <TileLayer
-                    $bgImage={images[prevImageIndex].src}
-                    $bgPosX={bgPosX}
-                    $bgPosY={bgPosY}
-                    style={{
-                      opacity: 1,
-                      transition: 'opacity 0.3s ease-in-out'
-                    }}
-                  />
-                )}
-              </TileContainer>
-            );
-          })}
-          {/* Overlay texte sur l'image courante */}
+                  style={{
+                    position: 'absolute',
+                    width: `${100/TILE_COLS}%`,
+                    height: `${100/TILE_ROWS}%`,
+                  }}
+                >
+                  <TileImage $bgImage={images[currentImageIndex].src} />
+                </Tile>
+              );
+            })}
+          </ImageContainer>
           <ImageOverlay $isActive={true}>
             {images[currentImageIndex].desc}
           </ImageOverlay>
@@ -472,5 +337,111 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
     </HeroContainer>
   );
 };
+
+const CarouselContainer = styled.div`
+  flex: 1;
+  position: relative;
+  height: 400px;
+  max-width: 550px;
+  border-radius: 32px;
+  overflow: hidden;
+  background: #001529;
+  box-shadow: 0 8px 32px #00152933;
+  border: 2px solid #fff;
+  margin-right: 48px;
+  @media (max-width: 600px) {
+    width: 90% !important;
+    max-width: 90% !important;
+    height: 300px;
+    border-radius: 14px;
+    margin: 18px auto 0;
+  }
+`;
+
+const ImageContainer = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(${TILE_COLS}, 1fr);
+  grid-template-rows: repeat(${TILE_ROWS}, 1fr);
+`;
+
+const Tile = styled(motion.div)`
+  position: relative;
+  overflow: hidden;
+  background: #001529;
+`;
+
+const TileImage = styled.div<{ $bgImage: string }>`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: ${props => `url(${props.$bgImage})`};
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+`;
+
+const ImageOverlay = styled.div<{ $isActive: boolean }>`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(transparent, rgba(0,0,0,0.7));
+  color: #fff;
+  padding: 24px;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  opacity: ${props => props.$isActive ? 1 : 0};
+  transform: ${props => props.$isActive ? 'translateY(0)' : 'translateY(20px)'};
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s, 
+              transform 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s;
+`;
+
+const CarouselIndicators = styled.div`
+  position: absolute;
+  bottom: 16px;
+  right: 24px;
+  display: flex;
+  gap: 8px;
+  z-index: 3;
+`;
+
+const Indicator = styled.button<{ $isActive: boolean }>`
+  width: ${props => props.$isActive ? '24px' : '8px'};
+  height: 8px;
+  border-radius: 4px;
+  border: none;
+  background: ${props => props.$isActive ? '#fff' : 'rgba(255,255,255,0.4)'};
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: rgba(255,255,255,0.8);
+  }
+`;
+
+const StyledButton = styled(Button)`
+  margin-top: 20px;
+  height: 50px;
+  padding: 0 30px;
+  font-size: 18px;
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+
+const GreenSpan = styled.span`
+  color: #1ec773;
+  font-weight: bold;
+`;
 
 export default Hero; 
