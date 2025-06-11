@@ -165,6 +165,12 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [randomOrder, setRandomOrder] = useState<number[]>(tiles.map((_, i) => i));
+  const [tileImages, setTileImages] = useState<string[]>(() => {
+    // Mélange initial des images pour les tuiles
+    const arr = images.map(img => img.src);
+    while (arr.length < TILE_COUNT) arr.push(...arr);
+    return arr.slice(0, TILE_COUNT);
+  });
 
   // Pré-calcule un ordre random pour la transition
   const getRandomOrder = useCallback(() => {
@@ -197,6 +203,20 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [startCarousel]);
+
+  // À chaque transition, on mélange l'ordre des images pour la mosaïque
+  useEffect(() => {
+    if (isTransitioning) {
+      const arr = images.map(img => img.src);
+      while (arr.length < TILE_COUNT) arr.push(...arr);
+      // Mélange Fisher-Yates
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      setTileImages(arr.slice(0, TILE_COUNT));
+    }
+  }, [isTransitioning]);
 
   const handleIndicatorClick = (index: number) => {
     setCurrentImageIndex(index);
@@ -277,10 +297,6 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
               const randomOffset = Math.random() * 0.1;
               const delay = (Math.floor(order / TILE_COLS) + (order % TILE_COLS)) * baseDelay + randomOffset;
 
-              // Position aléatoire dans la grille
-              const randomRow = Math.floor(Math.random() * TILE_ROWS);
-              const randomCol = Math.floor(Math.random() * TILE_COLS);
-
               return (
                 <Tile
                   key={key}
@@ -288,8 +304,6 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
                   animate={isTransitioning ? {
                     scale: [1, 0.95, 0],
                     opacity: [1, 0.5, 0],
-                    x: [`${col * (100/TILE_COLS)}%`, `${randomCol * (100/TILE_COLS)}%`],
-                    y: [`${row * (100/TILE_ROWS)}%`, `${randomRow * (100/TILE_ROWS)}%`],
                     transition: { 
                       duration: 0.6,
                       delay,
@@ -299,8 +313,6 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
                   } : {
                     scale: [0, 1.05, 1],
                     opacity: [0, 0.5, 1],
-                    x: [`${randomCol * (100/TILE_COLS)}%`, `${col * (100/TILE_COLS)}%`],
-                    y: [`${randomRow * (100/TILE_ROWS)}%`, `${row * (100/TILE_ROWS)}%`],
                     transition: { 
                       duration: 0.6,
                       delay,
@@ -314,7 +326,7 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
                     height: `${100/TILE_ROWS}%`,
                   }}
                 >
-                  <TileImage $bgImage={images[currentImageIndex].src} />
+                  <TileImage $bgImage={tileImages[idx]} />
                 </Tile>
               );
             })}
