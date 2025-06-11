@@ -60,18 +60,17 @@ const GeometricBackground = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  opacity: 0.15; /* Motif très subtil */
+  opacity: 0.07;
   background-image: 
-    linear-gradient(30deg, #ffffff 12%, transparent 12.5%, transparent 87%, #ffffff 87.5%, #ffffff),
-    linear-gradient(150deg, #ffffff 12%, transparent 12.5%, transparent 87%, #ffffff 87.5%, #ffffff),
-    linear-gradient(30deg, #ffffff 12%, transparent 12.5%, transparent 87%, #ffffff 87.5%, #ffffff),
-    linear-gradient(150deg, #ffffff 12%, transparent 12.5%, transparent 87%, #ffffff 87.5%, #ffffff),
-    linear-gradient(60deg, #ffffff77 25%, transparent 25.5%, transparent 75%, #ffffff77 75%, #ffffff77);
+    linear-gradient(30deg, rgba(20,40,80,0.12) 12%, transparent 12.5%, transparent 87%, rgba(20,40,80,0.12) 87.5%, rgba(20,40,80,0.12)),
+    linear-gradient(150deg, rgba(20,40,80,0.12) 12%, transparent 12.5%, transparent 87%, rgba(20,40,80,0.12) 87.5%, rgba(20,40,80,0.12)),
+    linear-gradient(30deg, rgba(20,40,80,0.12) 12%, transparent 12.5%, transparent 87%, rgba(20,40,80,0.12) 87.5%, rgba(20,40,80,0.12)),
+    linear-gradient(150deg, rgba(20,40,80,0.12) 12%, transparent 12.5%, transparent 87%, rgba(20,40,80,0.12) 87.5%, rgba(20,40,80,0.12)),
+    linear-gradient(60deg, rgba(20,40,80,0.09) 25%, transparent 25.5%, transparent 75%, rgba(20,40,80,0.09) 75%, rgba(20,40,80,0.09));
   background-size: 80px 140px;
   background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0;
-  /* animation: moveBackground 60s linear infinite; */
   z-index: 1;
-  background-blend-mode: overlay;
+  background-blend-mode: soft-light;
 `;
 
 const ContentWrapper = styled.div`
@@ -318,7 +317,7 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
 
   return (
     <HeroContainer>
-      {/* Arrière-plan animé : image courante du carrousel, floue, opacité faible */}
+      {/* Arrière-plan animé : image courante du carrousel, floue, opacité plus forte, plus lumineuse */}
       <div
         style={{
           position: 'absolute',
@@ -331,8 +330,8 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
-          filter: 'blur(32px) brightness(0.7)',
-          opacity: 0.45,
+          filter: 'blur(32px) brightness(1.1)',
+          opacity: 0.6,
           transition: 'background-image 0.8s cubic-bezier(0.4,0,0.2,1)',
         }}
         aria-hidden="true"
