@@ -246,45 +246,44 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
   const [isPaused, setIsPaused] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [randomOrder, setRandomOrder] = useState<number[]>(tiles.map((_, i) => i));
+  // Pour bloquer la transition si l'image suivante n'est pas chargée
+  const [nextReady, setNextReady] = useState(true);
 
-  // Préchargement intelligent des images
+  // Précharge toutes les images du carrousel dès le montage
   useEffect(() => {
-    const preloadImages = async () => {
-      // Précharge d'abord les 3 premières images
-      const initialImages = images.slice(0, 3);
-      const loadPromises = initialImages.map((image, index) => {
+    let isMounted = true;
+    const preloadAll = async () => {
+      const loadPromises = images.map((image, index) => {
         return new Promise<void>((resolve) => {
-          const img = new Image();
+          const img = new window.Image();
           img.onload = () => {
-            setImagesLoaded(prev => new Set([...prev, index]));
+            if (isMounted) setImagesLoaded(prev => new Set([...prev, index]));
             resolve();
           };
-          img.onerror = () => resolve(); // Continue même en cas d'erreur
+          img.onerror = () => resolve();
           img.src = getImageUrl(image.src);
         });
       });
-
       await Promise.all(loadPromises);
-
-      // Précharge les images restantes en arrière-plan
-      images.slice(3).forEach((image, index) => {
-        const img = new Image();
-        img.onload = () => {
-          setImagesLoaded(prev => new Set([...prev, index + 3]));
-        };
-        img.src = getImageUrl(image.src);
-      });
     };
-
-    preloadImages();
+    preloadAll();
+    return () => { isMounted = false; };
   }, []);
+
+  // Vérifie si l'image suivante est prête avant de lancer la transition
+  useEffect(() => {
+    const nextIdx = (currentImageIndex + 1) % images.length;
+    setNextReady(imagesLoaded.has(nextIdx));
+  }, [currentImageIndex, imagesLoaded]);
 
   // Gestion du carrousel automatique (2,5s)
   const startCarousel = useCallback(() => {
     if (intervalRef.current) clearInterval(intervalRef.current);
     intervalRef.current = setInterval(() => {
-      if (!isPaused && !isTransitioning) {
+      if (!isPaused && !isTransitioning && nextReady) {
         setPrevImageIndex(currentImageIndex);
+        setRandomOrder(tiles.map((_, i) => i).sort(() => Math.random() - 0.5)); // shuffle
         setIsTransitioning(true);
         setTimeout(() => {
           setCurrentImageIndex((prev) => (prev + 1) % images.length);
@@ -292,7 +291,7 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
         }, 900); // durée de la transition mosaïque
       }
     }, 2500);
-  }, [isPaused, isTransitioning, currentImageIndex]);
+  }, [isPaused, isTransitioning, currentImageIndex, nextReady]);
 
   useEffect(() => {
     startCarousel();
@@ -329,9 +328,9 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
-          filter: 'blur(32px) brightness(1.25)',
+          filter: 'blur(18px) brightness(1.25)',
           opacity: 0.7,
-          transition: 'background-image 0.8s cubic-bezier(0.4,0,0.2,1)',
+          transition: 'background-image 1.5s cubic-bezier(0.4,0,0.2,1)',
         }}
         aria-hidden="true"
       />
@@ -373,10 +372,12 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          {/* MOSAÏQUE : chaque tuile animée */}
-          {tiles.map(({ row, col, key }) => {
-            // Décalage d'animation pour effet "vague"
-            const delay = (row + col) * 0.07;
+          {/* MOSAÏQUE RANDOM : chaque tuile animée dans un ordre aléatoire */}
+          {tiles.map(({ row, col, key }, idx) => {
+            // Mix wave + random : délai = (row + col) * baseDelay + randomOffset
+            const baseDelay = 0.045;
+            const randomOffset = Math.random() * 0.04;
+            const delay = (row + col) * baseDelay + randomOffset;
             // Calcul du background-position pour chaque tuile
             const bgPosX = `${(col * 100) / (TILE_COLS - 1)}%`;
             const bgPosY = `${(row * 100) / (TILE_ROWS - 1)}%`;
@@ -396,17 +397,16 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
                 initial={false}
                 animate={isTransitioning && prevImageIndex !== null ? {
                   opacity: 0,
-                  y: -40 * ((row % 2 === 0) ? 1 : -1),
-                  rotate: (col % 2 === 0) ? 8 : -8,
-                  transition: { duration: 0.7, delay }
+                  y: -30 + Math.random() * 60, // slide random haut/bas
+                  scale: 0.8 + Math.random() * 0.4, // scale random
+                  transition: { duration: 0.6, delay }
                 } : {
                   opacity: 1,
                   y: 0,
-                  rotate: 0,
-                  transition: { duration: 0.7, delay }
+                  scale: 1,
+                  transition: { duration: 0.6, delay }
                 }}
               >
-                {/* Ancienne image pendant la transition, sinon image courante */}
                 <div
                   style={{
                     width: '100%',
