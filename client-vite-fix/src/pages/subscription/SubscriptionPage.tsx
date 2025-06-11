@@ -91,50 +91,6 @@ const SubscriptionPage: React.FC = () => {
     );
   }
 
-  // Si non authentifié, afficher un message avec des options
-  if (!isAuthenticated) {
-    console.log('SubscriptionPage - Utilisateur non authentifié, affichage du message');
-    return (
-      <div style={{
-        minHeight: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        background: 'linear-gradient(135deg, #1890ff 0%, #43e97b 100%)',
-      }}>
-        <Result
-          status="warning"
-          title="Connexion requise"
-          subTitle="Vous devez être connecté pour choisir un abonnement."
-          extra={[
-            <Button 
-              type="primary" 
-              key="login"
-              icon={<LoginOutlined />}
-              size="large"
-              onClick={() => navigate('/auth')}
-            >
-              Se connecter
-            </Button>,
-            <Button 
-              key="register"
-              size="large"
-              onClick={() => navigate('/auth')}
-            >
-              Créer un compte
-            </Button>,
-          ]}
-          style={{
-            backgroundColor: 'white',
-            borderRadius: 20,
-            padding: '40px',
-            boxShadow: '0 4px 16px 0 rgba(31, 38, 135, 0.10)'
-          }}
-        />
-      </div>
-    );
-  }
-
   const handleSubscribe = async (offerKey: string) => {
     try {
       // Mapping explicite des clés d'offre vers les types backend
