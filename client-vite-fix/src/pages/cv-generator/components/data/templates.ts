@@ -18,6 +18,23 @@ import BankTemplate from '../templates/BankTemplate';
 import TechModernTemplate from '../templates/TechModernTemplate';
 import WindowTemplate from '../templates/WindowTemplate';
 import { DEMO_PROFILES } from '../../CVPreviewGallery';
+import financePreview from '../../../../assets/cv-templates/finance-preview.png';
+import marketingPreview from '../../../../assets/cv-templates/marketing-preview.png';
+import healthPreview from '../../../../assets/cv-templates/health-preview.png';
+import educationPreview from '../../../../assets/cv-templates/education-preview.png';
+import commercePreview from '../../../../assets/cv-templates/commerce-preview.png';
+import adminPreview from '../../../../assets/cv-templates/admin-preview.png';
+import techPreview from '../../../../assets/cv-templates/tech-preview.png';
+import logisticsPreview from '../../../../assets/cv-templates/logistics-preview.png';
+import btpPreview from '../../../../assets/cv-templates/btp-preview.png';
+import artPreview from '../../../../assets/cv-templates/art-preview.png';
+import hotelPreview from '../../../../assets/cv-templates/hotel-preview.png';
+import lawPreview from '../../../../assets/cv-templates/law-preview.png';
+import comPreview from '../../../../assets/cv-templates/com-preview.png';
+import agroPreview from '../../../../assets/cv-templates/agro-preview.png';
+import humanPreview from '../../../../assets/cv-templates/human-preview.png';
+import bankPreview from '../../../../assets/cv-templates/bank-preview.png';
+import techModernPreview from '../../../../assets/cv-templates/tech-modern-preview.png';
 
 export interface CVTemplateConfig {
   id: string;
@@ -41,8 +58,8 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     description: 'CV moderne pour métiers de la finance, banque, assurance',
     premium: true,
     category: 'Finance',
-    thumbnail: require('../../../assets/cv-templates/finance-preview.png'),
-    previewImage: require('../../../assets/cv-templates/finance-preview.png'),
+    thumbnail: financePreview,
+    previewImage: financePreview,
     features: ['Design moderne', 'Couleurs professionnelles', 'Sections personnalisables'],
     profileImage: '/images/avatars/man-1.png',
     sampleData: DEMO_PROFILES.finance,
@@ -54,8 +71,8 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     description: 'CV dynamique pour marketing, communication, digital',
     premium: true,
     category: 'Marketing',
-    thumbnail: require('../../../assets/cv-templates/marketing-preview.png'),
-    previewImage: require('../../../assets/cv-templates/marketing-preview.png'),
+    thumbnail: marketingPreview,
+    previewImage: marketingPreview,
     features: ['Couleurs vives', 'Mise en avant des compétences', 'Design attractif'],
     profileImage: '/images/avatars/woman-1.png',
     sampleData: DEMO_PROFILES.marketing,
@@ -67,8 +84,8 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     description: 'CV apaisant pour métiers de la santé',
     premium: true,
     category: 'Santé',
-    thumbnail: require('../../../assets/cv-templates/health-preview.png'),
-    previewImage: require('../../../assets/cv-templates/health-preview.png'),
+    thumbnail: healthPreview,
+    previewImage: healthPreview,
     features: ['Palette bleu/vert', 'Sections certifications', 'Design épuré'],
     profileImage: '/images/avatars/woman-2.png',
     sampleData: DEMO_PROFILES.health,
@@ -80,8 +97,8 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     description: 'CV pour enseignants, pédagogie, formation',
     premium: true,
     category: 'Éducation',
-    thumbnail: require('../../../assets/cv-templates/education-preview.png'),
-    previewImage: require('../../../assets/cv-templates/education-preview.png'),
+    thumbnail: educationPreview,
+    previewImage: educationPreview,
     features: ['Sections pédagogie', 'Expérience détaillée', 'Design doux'],
     profileImage: '/images/avatars/man-2.png',
     sampleData: DEMO_PROFILES.education,
@@ -93,8 +110,8 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     description: 'CV pour vente, négociation, gestion commerciale',
     premium: true,
     category: 'Commerce',
-    thumbnail: require('../../../assets/cv-templates/commerce-preview.png'),
-    previewImage: require('../../../assets/cv-templates/commerce-preview.png'),
+    thumbnail: commercePreview,
+    previewImage: commercePreview,
     features: ['Accent sur les résultats', 'Design dynamique', 'Sections réalisations'],
     profileImage: '/images/avatars/man-3.png',
     sampleData: DEMO_PROFILES.commerce,
@@ -106,8 +123,8 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     description: 'CV moderne et professionnel pour les métiers RH et administratifs',
     premium: true,
     category: 'Administration',
-    thumbnail: require('../../../assets/cv-templates/admin-preview.png'),
-    previewImage: require('../../../assets/cv-templates/admin-preview.png'),
+    thumbnail: adminPreview,
+    previewImage: adminPreview,
     features: [
       'Design épuré et moderne',
       'Mise en page professionnelle',
@@ -131,8 +148,8 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     description: 'CV moderne et graphique pour développeur, ingénieur, IT',
     premium: true,
     category: 'Tech',
-    thumbnail: require('../../../assets/cv-templates/tech-preview.png'),
-    previewImage: require('../../../assets/cv-templates/tech-preview.png'),
+    thumbnail: techPreview,
+    previewImage: techPreview,
     features: [
       'Design hexagonal et graphique',
       'Sections dynamiques',
@@ -155,8 +172,8 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     description: 'CV moderne et épuré pour les métiers de la logistique, supply chain et transport',
     premium: true,
     category: 'Logistique',
-    thumbnail: require('../../../assets/cv-templates/logistics-preview.png'),
-    previewImage: require('../../../assets/cv-templates/logistics-preview.png'),
+    thumbnail: logisticsPreview,
+    previewImage: logisticsPreview,
     features: [
       'Design bleu/blanc moderne',
       'Barres latérales pour les titres',
@@ -180,8 +197,8 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     description: 'CV pour chantier, architecture, génie civil',
     premium: true,
     category: 'BTP',
-    thumbnail: require('../../../assets/cv-templates/btp-preview.png'),
-    previewImage: require('../../../assets/cv-templates/btp-preview.png'),
+    thumbnail: btpPreview,
+    previewImage: btpPreview,
     features: ['Expérience chantiers', 'Design robuste', 'Sections certifications'],
     profileImage: '/images/avatars/man-1.png',
     sampleData: DEMO_PROFILES.btp,
@@ -193,8 +210,8 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     description: 'CV créatif pour design, graphisme, illustration',
     premium: true,
     category: 'Art',
-    thumbnail: require('../../../assets/cv-templates/art-preview.png'),
-    previewImage: require('../../../assets/cv-templates/art-preview.png'),
+    thumbnail: artPreview,
+    previewImage: artPreview,
     features: ['Palette créative', 'Portfolio intégré', 'Design original'],
     profileImage: '/images/avatars/woman-4.png',
     sampleData: DEMO_PROFILES.art,
@@ -206,8 +223,8 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     description: 'CV pour accueil, animation, restauration',
     premium: true,
     category: 'Hôtellerie',
-    thumbnail: require('../../../assets/cv-templates/hotel-preview.png'),
-    previewImage: require('../../../assets/cv-templates/hotel-preview.png'),
+    thumbnail: hotelPreview,
+    previewImage: hotelPreview,
     features: ['Expérience accueil', 'Design chaleureux', 'Sections langues'],
     profileImage: '/images/avatars/woman-5.png',
     sampleData: DEMO_PROFILES.hotel,
@@ -219,8 +236,8 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     description: 'CV pour avocat, juriste, assistant juridique',
     premium: true,
     category: 'Juridique',
-    thumbnail: require('../../../assets/cv-templates/law-preview.png'),
-    previewImage: require('../../../assets/cv-templates/law-preview.png'),
+    thumbnail: lawPreview,
+    previewImage: lawPreview,
     features: ['Sections juridiques', 'Design sérieux', 'Mise en avant des diplômes'],
     profileImage: '/images/avatars/man-1.png',
     sampleData: DEMO_PROFILES.law,
@@ -232,8 +249,8 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     description: 'CV pour journaliste, communicant, community manager',
     premium: true,
     category: 'Communication',
-    thumbnail: require('../../../assets/cv-templates/com-preview.png'),
-    previewImage: require('../../../assets/cv-templates/com-preview.png'),
+    thumbnail: comPreview,
+    previewImage: comPreview,
     features: ['Sections médias', 'Design dynamique', 'Portfolio'],
     profileImage: '/images/avatars/woman-1.png',
     sampleData: DEMO_PROFILES.com,
@@ -245,8 +262,8 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     description: 'CV pour technicien agricole, ingénieur agro',
     premium: true,
     category: 'Agroalimentaire',
-    thumbnail: require('../../../assets/cv-templates/agro-preview.png'),
-    previewImage: require('../../../assets/cv-templates/agro-preview.png'),
+    thumbnail: agroPreview,
+    previewImage: agroPreview,
     features: ['Expérience terrain', 'Design nature', 'Sections certifications'],
     profileImage: '/images/avatars/man-2.png',
     sampleData: DEMO_PROFILES.agro,
@@ -258,8 +275,8 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     description: 'CV pour ONG, éducateur, travailleur social',
     premium: true,
     category: 'Humanitaire',
-    thumbnail: require('../../../assets/cv-templates/human-preview.png'),
-    previewImage: require('../../../assets/cv-templates/human-preview.png'),
+    thumbnail: humanPreview,
+    previewImage: humanPreview,
     features: ['Sections engagement', 'Design doux', 'Mise en avant des langues'],
     profileImage: '/images/avatars/woman-2.png',
     sampleData: DEMO_PROFILES.human,
@@ -271,8 +288,8 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     description: 'CV pour conseiller bancaire, gestionnaire assurance',
     premium: true,
     category: 'Banque',
-    thumbnail: require('../../../assets/cv-templates/bank-preview.png'),
-    previewImage: require('../../../assets/cv-templates/bank-preview.png'),
+    thumbnail: bankPreview,
+    previewImage: bankPreview,
     features: ['Sections finance', 'Design premium', 'Mise en avant des certifications'],
     profileImage: '/images/avatars/man-3.png',
     sampleData: DEMO_PROFILES.bank,
@@ -284,8 +301,8 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     description: 'CV tech moderne, design épuré, pour profils IT',
     premium: true,
     category: 'Tech',
-    thumbnail: require('../../../assets/cv-templates/tech-modern-preview.png'),
-    previewImage: require('../../../assets/cv-templates/tech-modern-preview.png'),
+    thumbnail: techModernPreview,
+    previewImage: techModernPreview,
     features: ['Design épuré', 'Sections projets', 'Palette tech'],
     profileImage: '/images/avatars/man-4.png',
     sampleData: DEMO_PROFILES['tech-modern'] || DEMO_PROFILES.tech,

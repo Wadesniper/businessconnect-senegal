@@ -252,6 +252,10 @@ interface HeroProps {
   onDiscoverClick?: () => void;
 }
 
+// --- OPTIM HERO ---
+// Blur adaptatif (mobile)
+const getBlurValue = () => window.innerWidth < 700 ? '4px' : '8px';
+
 const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [prevImageIndex, setPrevImageIndex] = useState<number | null>(null);
@@ -260,13 +264,23 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [randomOrder, setRandomOrder] = useState<number[]>(tiles.map((_, i) => i));
 
+  // Pré-calcule un ordre random pour la transition
+  const getRandomOrder = useCallback(() => {
+    const arr = tiles.map((_, i) => i);
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }, []);
+
   // Gestion du carrousel automatique (2,5s)
   const startCarousel = useCallback(() => {
     if (intervalRef.current) clearInterval(intervalRef.current);
     intervalRef.current = setInterval(() => {
       if (!isPaused && !isTransitioning) {
         setPrevImageIndex(currentImageIndex);
-        setRandomOrder(tiles.map((_, i) => i).sort(() => Math.random() - 0.5)); // shuffle
+        setRandomOrder(getRandomOrder());
         setIsTransitioning(true);
         setTimeout(() => {
           setCurrentImageIndex((prev) => (prev + 1) % images.length);
@@ -274,7 +288,7 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
         }, 900); // durée de la transition mosaïque
       }
     }, 2500);
-  }, [isPaused, isTransitioning]);
+  }, [isPaused, isTransitioning, currentImageIndex, getRandomOrder]);
 
   useEffect(() => {
     startCarousel();
@@ -311,7 +325,7 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
-          filter: 'blur(18px) brightness(1.25)',
+          filter: `blur(${getBlurValue()}) brightness(1.18)`,
           opacity: 0.7,
           transition: 'background-image 1.5s cubic-bezier(0.4,0,0.2,1)',
         }}
@@ -357,11 +371,10 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
         >
           {/* MOSAÏQUE RANDOM : chaque tuile animée dans un ordre aléatoire */}
           {tiles.map(({ row, col, key }, idx) => {
-            // Mix wave + random : délai = (row + col) * baseDelay + randomOffset
+            // Ordre d'animation pré-calculé
+            const order = randomOrder[idx];
             const baseDelay = 0.045;
-            const randomOffset = Math.random() * 0.04;
-            const delay = (row + col) * baseDelay + randomOffset;
-            // Calcul du background-position pour chaque tuile
+            const delay = (Math.floor(order / TILE_COLS) + (order % TILE_COLS)) * baseDelay;
             const bgPosX = `${(col * 100) / (TILE_COLS - 1)}%`;
             const bgPosY = `${(row * 100) / (TILE_ROWS - 1)}%`;
             return (
@@ -380,8 +393,8 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
                 initial={false}
                 animate={isTransitioning && prevImageIndex !== null ? {
                   opacity: 0,
-                  y: -30 + Math.random() * 60, // slide random haut/bas
-                  scale: 0.8 + Math.random() * 0.4, // scale random
+                  y: -20 + Math.random() * 40, // slide random haut/bas
+                  scale: 0.9 + Math.random() * 0.2, // scale random
                   transition: { duration: 0.6, delay }
                 } : {
                   opacity: 1,
