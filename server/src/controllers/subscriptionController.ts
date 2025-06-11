@@ -32,7 +32,11 @@ export class SubscriptionController {
 
       const missingParams: string[] = [];
 
-      if (!authReq.user?.id) missingParams.push('userId');
+      let userId = authReq.user?.id;
+      if (!userId && (authReq.body as InitiateSubscriptionRequest).userId) {
+        userId = (authReq.body as InitiateSubscriptionRequest).userId;
+        logger.warn('[ABO] Fallback userId depuis le body (sécurité à vérifier)');
+      }
       if (!subscriptionType) missingParams.push('subscriptionType');
       if (!customer_name) missingParams.push('customer_name');
       if (!customer_surname) missingParams.push('customer_surname');
@@ -51,7 +55,7 @@ export class SubscriptionController {
         customer_surname,
         customer_email,
         customer_phone_number,
-        userId: authReq.user!.id
+        userId: userId!
       });
 
       res.json({
