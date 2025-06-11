@@ -198,15 +198,6 @@ export class AuthController {
         });
       }
 
-      // Vérifier si l'utilisateur est vérifié
-      if (!user.isVerified) {
-        logger.warn('[AUTH][LOGIN] Utilisateur non vérifié', { userId: user.id });
-        return res.status(403).json({
-          success: false,
-          message: 'Veuillez vérifier votre numéro de téléphone avant de vous connecter'
-        });
-      }
-
       // Générer le token JWT
       const token = this.generateToken(user);
       logger.info('[AUTH][LOGIN] Token généré', { userId: user.id });
