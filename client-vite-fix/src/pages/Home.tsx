@@ -89,6 +89,60 @@ const TESTIMONIALS = [
   }
 ];
 
+// Ajout des composants stylés premium pour les cartes secteurs
+const SectorCard = styled.div<{ color: string }>`
+  width: 320px;
+  min-height: 220px;
+  border-radius: 40px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.82) 60%, ${props => props.color}22 100%);
+  box-shadow: 0 8px 32px 0 ${props => props.color}18, 0 2px 8px #0001;
+  border: 2px solid rgba(255,255,255,0.3);
+  backdrop-filter: blur(18px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 36px;
+  margin: 0 12px;
+  transition: transform 0.28s cubic-bezier(.4,2,.6,1), box-shadow 0.28s, border 0.28s;
+  cursor: pointer;
+  opacity: 1;
+  position: relative;
+  &:hover {
+    transform: scale(1.07) translateY(-6px);
+    box-shadow: 0 24px 64px 0 ${props => props.color}44, 0 2px 16px #0002;
+    border: 2.5px solid ${props => props.color};
+    z-index: 2;
+  }
+`;
+
+const IconCircle = styled.div<{ color: string }>`
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, ${props => props.color} 60%, #fff 120%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  box-shadow: 0 0 0 8px ${props => props.color}22, 0 8px 32px ${props => props.color}33;
+  position: relative;
+  transition: box-shadow 0.3s, filter 0.3s;
+  ${SectorCard}:hover & {
+    box-shadow: 0 0 0 16px ${props => props.color}33, 0 12px 48px ${props => props.color}55;
+    filter: brightness(1.15) drop-shadow(0 2px 12px ${props => props.color}99);
+  }
+  & > span {
+    font-size: 40px;
+    color: #fff;
+    filter: drop-shadow(0 2px 8px ${props => props.color}88);
+    transition: transform 0.3s;
+    ${SectorCard}:hover & {
+      transform: scale(1.13) rotate(-6deg);
+    }
+  }
+`;
+
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const servicesRef = React.useRef<HTMLDivElement>(null);
@@ -166,55 +220,17 @@ const Home: React.FC = () => {
           <Carousel autoplay autoplaySpeed={2500} dots slidesToShow={3} speed={900} easing="ease-in-out" responsive={[{ breakpoint: 900, settings: { slidesToShow: 2 } }, { breakpoint: 600, settings: { slidesToShow: 1 } }]} style={{ width: '100%', padding: '0 0 32px 0' }} data-testid="sector-carousel">
             {SECTEURS.map((secteur, idx) => (
               <div key={secteur.id} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 260 }}>
-                <div
-                  style={{
-                    width: 320,
-                    minHeight: 220,
-                    borderRadius: 36,
-                    background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 60%, ' + secteur.couleur + '22 100%)',
-                    boxShadow: '0 12px 40px 0 rgba(24,144,255,0.13)',
-                    border: '2px solid #fff',
-                    backdropFilter: 'blur(12px)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    padding: 36,
-                    transition: 'transform 0.28s cubic-bezier(.4,2,.6,1), box-shadow 0.28s, border 0.28s',
-                    cursor: 'pointer',
-                    opacity: 1,
-                    transform: 'none',
-                  }}
-                  onMouseOver={e => {
-                    (e.currentTarget as HTMLDivElement).style.transform = 'scale(1.06)';
-                    (e.currentTarget as HTMLDivElement).style.boxShadow = '0 24px 64px 0 ' + secteur.couleur + '33';
-                    (e.currentTarget as HTMLDivElement).style.border = '2.5px solid ' + secteur.couleur;
-                  }}
-                  onMouseOut={e => {
-                    (e.currentTarget as HTMLDivElement).style.transform = 'scale(1)';
-                    (e.currentTarget as HTMLDivElement).style.boxShadow = '0 12px 40px 0 rgba(24,144,255,0.13)';
-                    (e.currentTarget as HTMLDivElement).style.border = '2px solid #fff';
-                  }}
+                <SectorCard color={secteur.couleur}
+                  onClick={() => navigate('/careers')}
                 >
-                  <div style={{
-                    width: 78,
-                    height: 78,
-                    borderRadius: '50%',
-                    background: 'linear-gradient(135deg, ' + secteur.couleur + ' 60%, #fff 120%)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginBottom: 20,
-                    boxShadow: '0 0 0 6px ' + secteur.couleur + '22, 0 8px 32px ' + secteur.couleur + '33',
-                    position: 'relative',
-                  }}>
-                    <span style={{ fontSize: 38, color: '#fff', filter: 'drop-shadow(0 2px 8px ' + secteur.couleur + '88)' }}>{secteur.icone}</span>
-                  </div>
+                  <IconCircle color={secteur.couleur}>
+                    <span>{secteur.icone}</span>
+                  </IconCircle>
                   <Title level={4} style={{ color: '#1d3557', margin: 0, fontWeight: 700, fontSize: 25, letterSpacing: 0.5, textShadow: '0 2px 8px #fff8' }}>{secteur.nom}</Title>
-                  <Button type="link" style={{ color: secteur.couleur, fontWeight: 600, fontSize: 16, marginTop: 18, display: 'flex', alignItems: 'center' }} onClick={() => navigate('/careers')}>
+                  <Button type="link" style={{ color: secteur.couleur, fontWeight: 600, fontSize: 16, marginTop: 18, display: 'flex', alignItems: 'center' }}>
                     Explorer ce secteur <ArrowRightOutlined style={{ marginLeft: 6 }} />
                   </Button>
-                </div>
+                </SectorCard>
               </div>
             ))}
           </Carousel>
@@ -261,7 +277,7 @@ const Home: React.FC = () => {
           </Paragraph>
           <Row gutter={[32, 32]} justify="center">
             <Col xs={24} sm={12} md={8} lg={8}>
-              <Card bordered hoverable>
+              <Card bordered hoverable className="service-card-bc">
                 <Space direction="vertical" size="middle">
                   <TeamOutlined style={{ fontSize: 32, color: '#1890ff' }} />
                   <Title level={3} style={{ margin: 0 }}>Offres d'emploi</Title>
@@ -271,7 +287,7 @@ const Home: React.FC = () => {
               </Card>
             </Col>
             <Col xs={24} sm={12} md={8} lg={8}>
-              <Card bordered hoverable>
+              <Card bordered hoverable className="service-card-bc">
                 <Space direction="vertical" size="middle">
                   <BookOutlined style={{ fontSize: 32, color: '#52c41a' }} />
                   <Title level={3} style={{ margin: 0 }}>Créateur de CV</Title>
@@ -281,7 +297,7 @@ const Home: React.FC = () => {
               </Card>
             </Col>
             <Col xs={24} sm={12} md={8} lg={8}>
-              <Card bordered hoverable>
+              <Card bordered hoverable className="service-card-bc">
                 <Space direction="vertical" size="middle">
                   <BulbOutlined style={{ fontSize: 32, color: '#faad14' }} />
                   <Title level={3} style={{ margin: 0 }}>Fiches métiers</Title>
@@ -291,7 +307,7 @@ const Home: React.FC = () => {
               </Card>
             </Col>
             <Col xs={24} sm={12} md={8} lg={8}>
-              <Card bordered hoverable>
+              <Card bordered hoverable className="service-card-bc">
                 <Space direction="vertical" size="middle">
                   <CrownOutlined style={{ fontSize: 32, color: '#ff4d4f' }} />
                   <Title level={3} style={{ margin: 0 }}>Formations</Title>
@@ -301,7 +317,7 @@ const Home: React.FC = () => {
               </Card>
             </Col>
             <Col xs={24} sm={12} md={8} lg={8}>
-              <Card bordered hoverable>
+              <Card bordered hoverable className="service-card-bc">
                 <Space direction="vertical" size="middle">
                   <ShoppingOutlined style={{ fontSize: 32, color: '#b37feb' }} />
                   <Title level={3} style={{ margin: 0 }}>Marketplace</Title>

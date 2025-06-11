@@ -33,7 +33,8 @@ export interface JobData {
 }
 
 export interface Job {
-  _id: string;
+  id: string;
+  _id?: string;
   title: string;
   company: string;
   location: string;

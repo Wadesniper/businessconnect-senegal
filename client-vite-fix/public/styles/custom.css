@@ -1,1 +1,20 @@
- 
+.service-card-bc {
+  border: 2px solid #e3e8f7 !important;
+  border-radius: 18px !important;
+  box-shadow: 0 4px 24px #e3e8f7;
+  background: #fff;
+  transition: box-shadow 0.3s, border 0.3s, transform 0.3s;
+  min-height: 260px;
+  margin-bottom: 16px;
+}
+.service-card-bc:hover {
+  border: 2.5px solid #1890ff !important;
+  box-shadow: 0 8px 32px #b7e4c7;
+  transform: translateY(-6px) scale(1.03);
+  z-index: 2;
+}
+@media (max-width: 900px) {
+  .service-card-bc {
+    min-height: 220px;
+  }
+} 
