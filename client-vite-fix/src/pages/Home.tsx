@@ -94,9 +94,9 @@ const SectorCard = styled.div<{ color: string }>`
   width: 320px;
   min-height: 220px;
   border-radius: 40px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.82) 60%, ${props => props.color}22 100%);
+  background: linear-gradient(135deg, rgba(255,255,255,0.96) 60%, ${props => props.color}11 100%);
   box-shadow: 0 8px 32px 0 ${props => props.color}18, 0 2px 8px #0001;
-  border: 2px solid rgba(255,255,255,0.3);
+  border: 2.5px solid #d1d5db;
   backdrop-filter: blur(18px);
   display: flex;
   flex-direction: column;
@@ -454,7 +454,9 @@ const Home: React.FC = () => {
                 animation: 'fadeInUp 0.7s 0.1s both',
               }}>
                 <div style={{ fontSize: 22, color: '#1890ff', marginBottom: 8, fontWeight: 500 }}>Entreprises</div>
-                <div style={{ fontSize: 40, fontWeight: 800, color: '#1890ff', textShadow: '0 2px 12px #1890ff33' }}>500+</div>
+                <div style={{ fontSize: 40, fontWeight: 800, color: '#1890ff', textShadow: '0 2px 12px #1890ff33' }}>
+                  <AnimatedStatistic value={500} />
+                </div>
               </div>
             </Col>
             <Col xs={24} sm={12} md={6}>
@@ -490,7 +492,9 @@ const Home: React.FC = () => {
                 animation: 'fadeInUp 0.7s 0.3s both',
               }}>
                 <div style={{ fontSize: 22, color: '#43a047', marginBottom: 8, fontWeight: 500 }}>Membres</div>
-                <div style={{ fontSize: 40, fontWeight: 800, color: '#43a047', textShadow: '0 2px 12px #43a04733' }}>10&nbsp;000+</div>
+                <div style={{ fontSize: 40, fontWeight: 800, color: '#43a047', textShadow: '0 2px 12px #43a04733' }}>
+                  <AnimatedStatistic value={10000} />
+                </div>
               </div>
             </Col>
             <Col xs={24} sm={12} md={6}>
@@ -508,7 +512,9 @@ const Home: React.FC = () => {
                 animation: 'fadeInUp 0.7s 0.4s both',
               }}>
                 <div style={{ fontSize: 22, color: '#ff9800', marginBottom: 8, fontWeight: 500 }}>Secteurs</div>
-                <div style={{ fontSize: 40, fontWeight: 800, color: '#ff9800', textShadow: '0 2px 12px #ff980033' }}>15+</div>
+                <div style={{ fontSize: 40, fontWeight: 800, color: '#ff9800', textShadow: '0 2px 12px #ff980033' }}>
+                  <AnimatedStatistic value={15} />
+                </div>
               </div>
             </Col>
           </Row>
