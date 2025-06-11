@@ -373,8 +373,10 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
           {tiles.map(({ row, col, key }, idx) => {
             // Ordre d'animation pré-calculé
             const order = randomOrder[idx];
-            const baseDelay = 0.045;
-            const delay = (Math.floor(order / TILE_COLS) + (order % TILE_COLS)) * baseDelay;
+            const baseDelay = 0.02;
+            // Ajout d'un délai aléatoire pour l'effet wave
+            const randomOffset = Math.random() * 0.1;
+            const delay = (Math.floor(order / TILE_COLS) + (order % TILE_COLS)) * baseDelay + randomOffset;
             const bgPosX = `${(col * 100) / (TILE_COLS - 1)}%`;
             const bgPosY = `${(row * 100) / (TILE_ROWS - 1)}%`;
             return (
@@ -392,11 +394,23 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
                 }}
                 initial={false}
                 animate={isTransitioning && prevImageIndex !== null ? {
-                  clipPath: 'circle(0% at 50% 50%)',
-                  transition: { duration: 0.5, delay }
+                  scale: [1, 0.95, 0],
+                  opacity: [1, 0.5, 0],
+                  transition: { 
+                    duration: 0.4,
+                    delay,
+                    times: [0, 0.5, 1],
+                    ease: [0.4, 0, 0.2, 1]
+                  }
                 } : {
-                  clipPath: 'circle(100% at 50% 50%)',
-                  transition: { duration: 0.5, delay }
+                  scale: [0, 1.05, 1],
+                  opacity: [0, 0.5, 1],
+                  transition: { 
+                    duration: 0.4,
+                    delay,
+                    times: [0, 0.5, 1],
+                    ease: [0.4, 0, 0.2, 1]
+                  }
                 }}
               >
                 <div
@@ -407,7 +421,7 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
                     backgroundSize: `${TILE_COLS * 100}% ${TILE_ROWS * 100}%`,
                     backgroundPosition: `${bgPosX} ${bgPosY}`,
                     backgroundRepeat: 'no-repeat',
-                    transition: 'background-image 0.5s',
+                    transition: 'background-image 0.3s',
                   }}
                 />
               </motion.div>
