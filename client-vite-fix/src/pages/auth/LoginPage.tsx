@@ -21,8 +21,8 @@ const LoginPage: React.FC = () => {
     try {
       setLoading(true);
       const phone = typeof values.phoneNumber === 'string' ? values.phoneNumber : '';
-      // Nettoyage des espaces avant validation/envoi
-      const cleanedPhone = phone.replace(/\s/g, '');
+      // Nettoyage universel avant validation/envoi
+      const cleanedPhone = phone.replace(/[^\d+]/g, '');
       // Validation du format du numéro de téléphone
       if (!/^\+\d{11,15}$/.test(cleanedPhone)) {
         message.error('Le numéro doit être au format international (+XXX XXXXXXXXX)');
@@ -82,8 +82,8 @@ const LoginPage: React.FC = () => {
               {
                 validator: (_, value) => {
                   if (!value) return Promise.reject('Veuillez saisir votre numéro de téléphone');
-                  // Autorise les espaces, mais exige 11 à 15 chiffres après le +
-                  const cleaned = value.replace(/\s/g, '');
+                  // Nettoie tout sauf + et chiffres
+                  const cleaned = value.replace(/[^\d+]/g, '');
                   if (!/^\+\d{11,15}$/.test(cleaned)) {
                     return Promise.reject('Format international requis (+XXX XXXXXXXXX)');
                   }
