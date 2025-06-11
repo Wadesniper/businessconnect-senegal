@@ -20,19 +20,19 @@ export class SubscriptionController {
   }
 
   async initiateSubscription(req: Request, res: Response) {
+    const authReq = req as AuthRequest;
     try {
       const {
-        userId,
         subscriptionType,
         customer_name,
         customer_surname,
         customer_email,
         customer_phone_number
-      } = req.body as InitiateSubscriptionRequest;
+      } = authReq.body as InitiateSubscriptionRequest;
 
       const missingParams: string[] = [];
 
-      if (!userId) missingParams.push('userId');
+      if (!authReq.user?.id) missingParams.push('userId');
       if (!subscriptionType) missingParams.push('subscriptionType');
       if (!customer_name) missingParams.push('customer_name');
       if (!customer_surname) missingParams.push('customer_surname');
@@ -51,7 +51,7 @@ export class SubscriptionController {
         customer_surname,
         customer_email,
         customer_phone_number,
-        userId
+        userId: authReq.user!.id
       });
 
       res.json({

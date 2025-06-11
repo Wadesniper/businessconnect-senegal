@@ -14,7 +14,7 @@ const subscriptionService = new SubscriptionService();
 const subscriptionController = new SubscriptionController();
 
 // Routes publiques
-router.post('/initiate', subscriptionController.initiateSubscription.bind(subscriptionController));
+router.post('/initiate', authenticate, subscriptionController.initiateSubscription.bind(subscriptionController));
 router.post('/activate', subscriptionController.activateSubscription.bind(subscriptionController));
 router.get('/status/:userId', subscriptionController.checkSubscriptionStatus.bind(subscriptionController));
 
@@ -117,8 +117,8 @@ router.post('/ipn', async (req, res) => {
         if (subscription && subscription.status !== 'cancelled') {
           await subscriptionService.updateSubscriptionStatus(subscription.id, 'cancelled');
           logger.info('[PAYTECH][IPN] Abonnement annulé pour', subscription.userId);
-        }
-      } catch (error) {
+    }
+  } catch (error) {
         logger.error('[PAYTECH][IPN] Erreur lors de l\'annulation de l\'abonnement:', error);
       }
     }
