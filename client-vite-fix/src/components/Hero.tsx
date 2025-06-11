@@ -200,22 +200,35 @@ const GreenSpan = styled.span`
   font-weight: bold;
 `;
 
-const getImageUrl = (src: string) => `/images/${src}`;
+// Import des images en dur (zéro bug de chargement)
+import img1 from '../assets/1-ingenieur.jpg';
+import img2 from '../assets/2-construction.jpg';
+import img3 from '../assets/3-techno-securite.jpg';
+import img4 from '../assets/4-agriculture.jpg';
+import img5 from '../assets/5-datacenter.jpg';
+import img6 from '../assets/6-mecanicienne.jpg';
+import img7 from '../assets/7-reunion-pro.jpg';
+import img8 from '../assets/8-developpeur.jpg';
+import img9 from '../assets/9-immeuble.jpg';
+import img10 from '../assets/10-pompier.jpg';
+import img11 from '../assets/11-science.jpg';
+import img12 from '../assets/12-medical.jpg';
+import img13 from '../assets/13-business.jpg';
 
 const images = [
-  { src: '1-ingenieur.jpg', desc: 'Concevez le monde de demain' },
-  { src: '2-construction.jpg', desc: "Construisez l'avenir" },
-  { src: '3-techno-securite.jpg', desc: 'Sécurisez le numérique' },
-  { src: '4-agriculture.jpg', desc: 'Cultivez la réussite' },
-  { src: '5-datacenter.jpg', desc: 'Gérez les données en toute sécurité' },
-  { src: '6-mecanicienne.jpg', desc: 'Réparez, innovez' },
-  { src: '7-reunion-pro.jpg', desc: 'Collaborez efficacement' },
-  { src: '8-developpeur.jpg', desc: "Développez des solutions d'avenir" },
-  { src: '9-immeuble.jpg', desc: "L'urbanisme au service du progrès" },
-  { src: '10-pompier.jpg', desc: 'Protégez les vies' },
-  { src: '11-science.jpg', desc: 'Expérimentez, découvrez' },
-  { src: '12-medical.jpg', desc: 'Soignez avec passion' },
-  { src: '13-business.jpg', desc: 'Entreprenez au Sénégal' },
+  { src: img1, desc: 'Concevez le monde de demain' },
+  { src: img2, desc: "Construisez l'avenir" },
+  { src: img3, desc: 'Sécurisez le numérique' },
+  { src: img4, desc: 'Cultivez la réussite' },
+  { src: img5, desc: 'Gérez les données en toute sécurité' },
+  { src: img6, desc: 'Réparez, innovez' },
+  { src: img7, desc: 'Collaborez efficacement' },
+  { src: img8, desc: "Développez des solutions d'avenir" },
+  { src: img9, desc: "L'urbanisme au service du progrès" },
+  { src: img10, desc: 'Protégez les vies' },
+  { src: img11, desc: 'Expérimentez, découvrez' },
+  { src: img12, desc: 'Soignez avec passion' },
+  { src: img13, desc: 'Entreprenez au Sénégal' },
 ];
 
 // --- AJOUT POUR MOSAÏQUE ---
@@ -242,46 +255,16 @@ interface HeroProps {
 const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [prevImageIndex, setPrevImageIndex] = useState<number | null>(null);
-  const [imagesLoaded, setImagesLoaded] = useState<Set<number>>(new Set());
   const [isPaused, setIsPaused] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [randomOrder, setRandomOrder] = useState<number[]>(tiles.map((_, i) => i));
-  // Pour bloquer la transition si l'image suivante n'est pas chargée
-  const [nextReady, setNextReady] = useState(true);
-
-  // Précharge toutes les images du carrousel dès le montage
-  useEffect(() => {
-    let isMounted = true;
-    const preloadAll = async () => {
-      const loadPromises = images.map((image, index) => {
-        return new Promise<void>((resolve) => {
-          const img = new window.Image();
-          img.onload = () => {
-            if (isMounted) setImagesLoaded(prev => new Set([...prev, index]));
-            resolve();
-          };
-          img.onerror = () => resolve();
-          img.src = getImageUrl(image.src);
-        });
-      });
-      await Promise.all(loadPromises);
-    };
-    preloadAll();
-    return () => { isMounted = false; };
-  }, []);
-
-  // Vérifie si l'image suivante est prête avant de lancer la transition
-  useEffect(() => {
-    const nextIdx = (currentImageIndex + 1) % images.length;
-    setNextReady(imagesLoaded.has(nextIdx));
-  }, [currentImageIndex, imagesLoaded]);
 
   // Gestion du carrousel automatique (2,5s)
   const startCarousel = useCallback(() => {
     if (intervalRef.current) clearInterval(intervalRef.current);
     intervalRef.current = setInterval(() => {
-      if (!isPaused && !isTransitioning && nextReady) {
+      if (!isPaused && !isTransitioning) {
         setPrevImageIndex(currentImageIndex);
         setRandomOrder(tiles.map((_, i) => i).sort(() => Math.random() - 0.5)); // shuffle
         setIsTransitioning(true);
@@ -291,7 +274,7 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
         }, 900); // durée de la transition mosaïque
       }
     }, 2500);
-  }, [isPaused, isTransitioning, currentImageIndex, nextReady]);
+  }, [isPaused, isTransitioning]);
 
   useEffect(() => {
     startCarousel();
@@ -324,7 +307,7 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
           width: '100%',
           height: '100%',
           zIndex: 0,
-          backgroundImage: `url(${getImageUrl(images[currentImageIndex].src)})`,
+          backgroundImage: `url(${images[currentImageIndex].src})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
@@ -411,7 +394,7 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
                   style={{
                     width: '100%',
                     height: '100%',
-                    backgroundImage: `url(${getImageUrl(isTransitioning && prevImageIndex !== null ? images[prevImageIndex].src : images[currentImageIndex].src)})`,
+                    backgroundImage: `url(${images[isTransitioning && prevImageIndex !== null ? prevImageIndex : currentImageIndex].src})`,
                     backgroundSize: `${TILE_COLS * 100}% ${TILE_ROWS * 100}%`,
                     backgroundPosition: `${bgPosX} ${bgPosY}`,
                     backgroundRepeat: 'no-repeat',

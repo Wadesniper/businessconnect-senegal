@@ -29,6 +29,10 @@ import JobCard from './jobs/components/JobCard';
 import { useAuth } from '../context/AuthContext';
 import { useSubscription } from '../hooks/useSubscription';
 import { hasPremiumAccess } from '../utils/premiumAccess';
+import manBeret from '../assets/testimonials/man-beret.png';
+import manHeadphones from '../assets/testimonials/man-headphones.png';
+import womanGlasses from '../assets/testimonials/woman-glasses.png';
+import womanHijab from '../assets/testimonials/woman-hijab.png';
 
 const { Content } = Layout;
 const { Title, Paragraph, Text } = Typography;
@@ -60,25 +64,25 @@ const AnimatedStatistic = ({ value, ...props }: { value: number; [key: string]: 
 // Section Témoignages
 const TESTIMONIALS = [
   {
-    img: '/images/testimonials/man-beret.png',
+    img: manBeret,
     name: 'Mamadou Diop',
     role: 'Recruteur',
     text: `Grâce à BusinessConnect, j'ai pu recruter rapidement des profils qualifiés pour mon entreprise. La plateforme facilite la mise en relation avec des candidats motivés et sérieux, ce qui a considérablement simplifié notre processus de recrutement.`
   },
   {
-    img: '/images/testimonials/man-headphones.png',
+    img: manHeadphones,
     name: 'Cheikh Ndiaye',
     role: 'Chercheur d\'emploi',
     text: `Après plusieurs mois de recherche, c'est sur BusinessConnect que j'ai enfin trouvé un emploi qui correspond à mes compétences. Les offres sont variées et la navigation sur le site est très intuitive. Je recommande vivement à tous les jeunes diplômés !`
   },
   {
-    img: '/images/testimonials/woman-glasses.png',
+    img: womanGlasses,
     name: 'Awa Sarr',
     role: 'Étudiante',
     text: `En tant qu'étudiante, j'ai pu trouver un stage enrichissant grâce à BusinessConnect. J'ai aussi pu élargir mon réseau professionnel et découvrir de nombreuses opportunités adaptées à mon profil. C'est un vrai tremplin pour débuter sa carrière.`
   },
   {
-    img: '/images/testimonials/woman-hijab.png',
+    img: womanHijab,
     name: 'Fatou Bâ',
     role: 'Annonceuse',
     text: `Publier mes offres sur BusinessConnect m'a permis de recevoir rapidement des candidatures pertinentes. J'apprécie la simplicité de la plateforme et la qualité des profils proposés. C'est devenu un outil indispensable pour mon activité.`
