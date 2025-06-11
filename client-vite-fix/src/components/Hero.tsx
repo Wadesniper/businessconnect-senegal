@@ -167,30 +167,23 @@ const getBlurValue = () => window.innerWidth < 700 ? '4px' : '8px';
 
 const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const [currentTiles, setCurrentTiles] = useState<string[]>(getShuffledTiles());
-  const [nextTiles, setNextTiles] = useState<string[]>(getShuffledTiles());
-  const [showNext, setShowNext] = useState(false);
+  const [tilesImages, setTilesImages] = useState<string[]>(getShuffledTiles());
+  const [isFading, setIsFading] = useState(false);
 
-  // Gestion de la mosaïque dynamique (2,5s)
+  // Animation mosaïque : fade out, puis shuffle, puis fade in
   useEffect(() => {
     if (intervalRef.current) clearInterval(intervalRef.current);
     intervalRef.current = setInterval(() => {
-      if (!isTransitioning) {
-        setNextTiles(getShuffledTiles());
-        setIsTransitioning(true);
-        setShowNext(true);
-        setTimeout(() => {
-          setCurrentTiles(nextTiles => nextTiles);
-          setShowNext(false);
-          setIsTransitioning(false);
-        }, 600);
-      }
+      setIsFading(true);
+      setTimeout(() => {
+        setTilesImages(getShuffledTiles());
+        setIsFading(false);
+      }, 400); // fade out
     }, 2500);
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [isTransitioning]);
+  }, []);
 
   return (
     <HeroContainer>
@@ -219,47 +212,13 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
         <CarouselContainer>
           <ImageContainer>
             {tiles.map(({ row, col, key }: { row: number; col: number; key: string }, idx: number) => (
-              <>
-                <Tile
-                  key={key + '-current'}
-                  initial={false}
-                  animate={showNext ? {
-                    scale: [1, 0.95, 0],
-                    opacity: [1, 0.5, 0],
-                    transition: { 
-                      duration: 0.6,
-                      delay: idx * 0.03,
-                      times: [0, 0.5, 1],
-                      ease: [0.4, 0, 0.2, 1]
-                    }
-                  } : {
-                    scale: 1,
-                    opacity: 1,
-                    transition: { duration: 0.3 }
-                  }}
-                >
-                  <TileImage $bgImage={currentTiles[idx]} />
-                </Tile>
-                {showNext && (
-                  <Tile
-                    key={key + '-next'}
-                    initial={{ scale: 0, opacity: 0 }}
-                    animate={{
-                      scale: [0, 1.05, 1],
-                      opacity: [0, 0.5, 1],
-                      transition: {
-                        duration: 0.6,
-                        delay: idx * 0.03 + 0.1,
-                        times: [0, 0.5, 1],
-                        ease: [0.4, 0, 0.2, 1]
-                      }
-                    }}
-                    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-                  >
-                    <TileImage $bgImage={nextTiles[idx]} />
-                  </Tile>
-                )}
-              </>
+              <Tile
+                key={key}
+                animate={isFading ? { opacity: 0, scale: 0.95 } : { opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4, delay: idx * 0.02 }}
+              >
+                <TileImage $bgImage={tilesImages[idx]} />
+              </Tile>
             ))}
           </ImageContainer>
         </CarouselContainer>
