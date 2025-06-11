@@ -53,13 +53,14 @@ const Overlay = styled.div`
   z-index: 1;
 `;
 
+// Variante 1 : Opacité réduite (par défaut)
 const GeometricBackground = styled.div`
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  opacity: 0.1;
+  opacity: 0.5; /* <--- Opacité réduite pour laisser passer l'image floutée */
   background-image: 
     linear-gradient(30deg, #ffffff 12%, transparent 12.5%, transparent 87%, #ffffff 87.5%, #ffffff),
     linear-gradient(150deg, #ffffff 12%, transparent 12.5%, transparent 87%, #ffffff 87.5%, #ffffff),
@@ -68,7 +69,10 @@ const GeometricBackground = styled.div`
     linear-gradient(60deg, #ffffff77 25%, transparent 25.5%, transparent 75%, #ffffff77 75%, #ffffff77);
   background-size: 80px 140px;
   background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0;
-  animation: moveBackground 60s linear infinite;
+  /* animation: moveBackground 60s linear infinite; */ /* Motif désormais fixe */
+  z-index: 1;
+  /* Variante 2 : Blend mode (décommente pour tester) */
+  /* background-blend-mode: overlay; */
 `;
 
 const ContentWrapper = styled.div`
