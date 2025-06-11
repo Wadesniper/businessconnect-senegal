@@ -222,50 +222,50 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                 bodyStyle={{ padding: 18, display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}
               >
                 <div style={{ flex: 1, minHeight: 0, overflow: 'auto', marginBottom: 12 }}>
-                  <Card.Meta
-                    title={
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, fontSize: 18 }}>
-                        {template.name}
-                        {template.premium && (
-                          <Tooltip title="Template Premium">
-                            <StarOutlined style={{ color: '#ffd700' }} />
-                          </Tooltip>
-                        )}
-                      </div>
-                    }
-                    description={
-                      <>
-                        <div><b>Secteur :</b> {template.category}</div>
-                        <div style={{ marginTop: 8 }}>{template.description}</div>
-                        {template.features && (
-                          <div style={{ marginTop: 8 }}>
-                            {template.features.map((feature, index) => (
-                              <Tag key={index} color="blue" style={{ margin: '4px' }}>
-                                {feature}
-                              </Tag>
-                            ))}
-                          </div>
-                        )}
-                      </>
-                    }
-                  />
+                <Card.Meta
+                  title={
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, fontSize: 18 }}>
+                      {template.name}
+                      {template.premium && (
+                        <Tooltip title="Template Premium">
+                          <StarOutlined style={{ color: '#ffd700' }} />
+                        </Tooltip>
+                      )}
+                    </div>
+                  }
+                  description={
+                    <>
+                      <div><b>Secteur :</b> {template.category}</div>
+                      <div style={{ marginTop: 8 }}>{template.description}</div>
+                      {template.features && (
+                        <div style={{ marginTop: 8 }}>
+                          {template.features.map((feature, index) => (
+                            <Tag key={index} color="blue" style={{ margin: '4px' }}>
+                              {feature}
+                            </Tag>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  }
+                />
                 </div>
                 <div style={{ width: '100%' }}>
-                  {selected?.id === template.id && isPremium && (
+                {selected?.id === template.id && isPremium && (
                     <div style={{ textAlign: 'center', marginTop: 0, marginBottom: 8 }}>
-                      <Button type="primary" size="large" onClick={onContinue} style={{ width: '100%' }}>
-                        Utiliser ce modèle
-                      </Button>
-                    </div>
-                  )}
-                  <Button
-                    type="default"
-                    size="small"
+                    <Button type="primary" size="large" onClick={onContinue} style={{ width: '100%' }}>
+                      Utiliser ce modèle
+                    </Button>
+                  </div>
+                )}
+                <Button
+                  type="default"
+                  size="small"
                     style={{ width: '100%' }}
-                    onClick={e => { e.stopPropagation(); setPreviewTemplate(template); }}
-                  >
-                    Aperçu
-                  </Button>
+                  onClick={e => { e.stopPropagation(); setPreviewTemplate(template); }}
+                >
+                  Aperçu
+                </Button>
                 </div>
               </Card>
             </Col>

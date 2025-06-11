@@ -89,62 +89,62 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
   const isMobile = typeof window !== 'undefined' && window.innerWidth <= 600;
 
   const formContent = (
-    <Form
+      <Form
       form={form}
-      name="login"
-      onFinish={onFinish}
-      layout="vertical"
-      requiredMark={false}
+        name="login"
+        onFinish={onFinish}
+        layout="vertical"
+        requiredMark={false}
       className="login-form"
-    >
-      <Form.Item
-        name="phoneNumber"
-        rules={[
+      >
+        <Form.Item
+          name="phoneNumber"
+          rules={[
           { required: true, message: 'Veuillez entrer votre numéro de téléphone' },
           { validator: validatePhone }
         ]}
-      >
-        <Input
+        >
+          <Input
           prefix={<UserOutlined />}
           placeholder="Numéro de téléphone"
-          onChange={(e) => {
-            const formatted = formatPhoneNumber(e.target.value);
+            onChange={(e) => {
+              const formatted = formatPhoneNumber(e.target.value);
             if (formatted !== e.target.value) {
               form.setFieldsValue({ phoneNumber: formatted });
             }
-          }}
-        />
-      </Form.Item>
+            }}
+          />
+        </Form.Item>
 
-      <Form.Item
-        name="password"
+        <Form.Item
+          name="password"
         rules={[{ required: true, message: 'Veuillez entrer votre mot de passe' }]}
-      >
+        >
         <Input.Password
           prefix={<LockOutlined />}
           placeholder="Mot de passe"
         />
-      </Form.Item>
+        </Form.Item>
 
       <Form.Item>
-        <Button
-          type="primary"
-          htmlType="submit"
+          <Button
+            type="primary"
+            htmlType="submit"
           className="login-form-button"
-          loading={loading}
+            loading={loading}
           block
-        >
-          Se connecter
-        </Button>
-      </Form.Item>
+          >
+            Se connecter
+          </Button>
+        </Form.Item>
 
-      {!hideRegisterLink && (
+        {!hideRegisterLink && (
         <div className="register-link">
           Pas encore de compte ? <a href="/auth?tab=register">Créer un compte</a>
-        </div>
-      )}
-    </Form>
-  );
+          </div>
+        )}
+      </Form>
+    );
 
   if (noCard) {
     return formContent;
