@@ -60,17 +60,17 @@ const GeometricBackground = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  opacity: 0.07;
+  opacity: 0.18;
   background-image: 
-    linear-gradient(30deg, rgba(20,40,80,0.12) 12%, transparent 12.5%, transparent 87%, rgba(20,40,80,0.12) 87.5%, rgba(20,40,80,0.12)),
-    linear-gradient(150deg, rgba(20,40,80,0.12) 12%, transparent 12.5%, transparent 87%, rgba(20,40,80,0.12) 87.5%, rgba(20,40,80,0.12)),
-    linear-gradient(30deg, rgba(20,40,80,0.12) 12%, transparent 12.5%, transparent 87%, rgba(20,40,80,0.12) 87.5%, rgba(20,40,80,0.12)),
-    linear-gradient(150deg, rgba(20,40,80,0.12) 12%, transparent 12.5%, transparent 87%, rgba(20,40,80,0.12) 87.5%, rgba(20,40,80,0.12)),
-    linear-gradient(60deg, rgba(20,40,80,0.09) 25%, transparent 25.5%, transparent 75%, rgba(20,40,80,0.09) 75%, rgba(20,40,80,0.09));
+    linear-gradient(30deg, rgba(255,255,255,0.18) 12%, transparent 12.5%, transparent 87%, rgba(255,255,255,0.18) 87.5%, rgba(255,255,255,0.18)),
+    linear-gradient(150deg, rgba(255,255,255,0.18) 12%, transparent 12.5%, transparent 87%, rgba(255,255,255,0.18) 87.5%, rgba(255,255,255,0.18)),
+    linear-gradient(30deg, rgba(255,255,255,0.18) 12%, transparent 12.5%, transparent 87%, rgba(255,255,255,0.18) 87.5%, rgba(255,255,255,0.18)),
+    linear-gradient(150deg, rgba(255,255,255,0.18) 12%, transparent 12.5%, transparent 87%, rgba(255,255,255,0.18) 87.5%, rgba(255,255,255,0.18)),
+    linear-gradient(60deg, rgba(255,255,255,0.12) 25%, transparent 25.5%, transparent 75%, rgba(255,255,255,0.12) 75%, rgba(255,255,255,0.12));
   background-size: 80px 140px;
   background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0;
-  z-index: 1;
-  background-blend-mode: soft-light;
+  z-index: 2;
+  background-blend-mode: overlay;
 `;
 
 const ContentWrapper = styled.div`
@@ -317,7 +317,7 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
 
   return (
     <HeroContainer>
-      {/* Arrière-plan animé : image courante du carrousel, floue, opacité plus forte, plus lumineuse */}
+      {/* Arrière-plan animé : image courante du carrousel, floue, opacité plus forte, plus lumineuse, vignettage */}
       <div
         style={{
           position: 'absolute',
@@ -330,15 +330,29 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
-          filter: 'blur(32px) brightness(1.1)',
-          opacity: 0.6,
+          filter: 'blur(32px) brightness(1.25)',
+          opacity: 0.7,
           transition: 'background-image 0.8s cubic-bezier(0.4,0,0.2,1)',
+        }}
+        aria-hidden="true"
+      />
+      {/* Vignettage doux */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 1,
+          pointerEvents: 'none',
+          background: 'radial-gradient(ellipse at center, rgba(0,0,0,0) 60%, rgba(0,0,0,0.18) 100%)',
         }}
         aria-hidden="true"
       />
       <StaticBackground />
       <Overlay />
-      <GeometricBackground style={{ zIndex: 1, position: 'absolute' }} />
+      <GeometricBackground style={{ zIndex: 2, position: 'absolute' }} />
       <ContentWrapper>
         <TextContent>
           <motion.div
