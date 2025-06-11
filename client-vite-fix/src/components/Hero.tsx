@@ -320,11 +320,6 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
                       ease: [0.4, 0, 0.2, 1]
                     }
                   }}
-                  style={{
-                    position: 'absolute',
-                    width: `${100/TILE_COLS}%`,
-                    height: `${100/TILE_ROWS}%`,
-                  }}
                 >
                   <TileImage $bgImage={tileImages[idx]} />
                 </Tile>
@@ -382,7 +377,6 @@ const ImageContainer = styled.div`
 `;
 
 const Tile = styled(motion.div)`
-  position: relative;
   overflow: hidden;
   background: #001529;
 `;
