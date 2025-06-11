@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styled from '@emotion/styled';
-import { Global, css } from '@emotion/react';
 import { Typography, Button } from 'antd';
 import { ArrowRightOutlined } from '@ant-design/icons';
 
@@ -188,51 +187,44 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
   }, []);
 
   return (
-    <>
-      <Global styles={css`
-        #hero-root, #hero-root * {
-          background-image: none !important;
-        }
-      `} />
-      <HeroContainer id="hero-root">
-        <StaticBackground />
-        <Overlay />
-        <GeometricBackground style={{ zIndex: 2, position: 'absolute' }} />
-        <ContentWrapper>
-          <TextContent>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <TitleStyled>
-                La <GreenSpan>plateforme n°1</GreenSpan> où les <GreenSpan>talents</GreenSpan> <span style={{color:'white', fontWeight:700}}>sénégalais</span> rencontrent les <GreenSpan>opportunités</GreenSpan>
-              </TitleStyled>
-              <Paragraph style={{ color: 'white', fontSize: '18px', marginBottom: '30px' }}>
-                Formez-vous, créez votre CV, trouvez un emploi ou recrutez dans un écosystème numérique innovant dédié au marché de l'emploi sénégalais.
-              </Paragraph>
-              <StyledButton type="primary" size="large" onClick={onDiscoverClick}>
-                Découvrir nos services
-                <ArrowRightOutlined />
-              </StyledButton>
-            </motion.div>
-          </TextContent>
-          <CarouselContainer>
-            <ImageContainer>
-              {tiles.map(({ row, col, key }: { row: number; col: number; key: string }, idx: number) => (
-                <Tile
-                  key={key}
-                  animate={isFading ? { opacity: 0, scale: 0.95 } : { opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.4, delay: idx * 0.02 }}
-                >
-                  <TileImage $bgImage={tilesImages[idx]} />
-                </Tile>
-              ))}
-            </ImageContainer>
-          </CarouselContainer>
-        </ContentWrapper>
-      </HeroContainer>
-    </>
+    <HeroContainer>
+      <StaticBackground />
+      <Overlay />
+      <GeometricBackground style={{ zIndex: 2, position: 'absolute' }} />
+      <ContentWrapper>
+        <TextContent>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <TitleStyled>
+              La <GreenSpan>plateforme n°1</GreenSpan> où les <GreenSpan>talents</GreenSpan> <span style={{color:'white', fontWeight:700}}>sénégalais</span> rencontrent les <GreenSpan>opportunités</GreenSpan>
+            </TitleStyled>
+            <Paragraph style={{ color: 'white', fontSize: '18px', marginBottom: '30px' }}>
+              Formez-vous, créez votre CV, trouvez un emploi ou recrutez dans un écosystème numérique innovant dédié au marché de l'emploi sénégalais.
+            </Paragraph>
+            <StyledButton type="primary" size="large" onClick={onDiscoverClick}>
+              Découvrir nos services
+              <ArrowRightOutlined />
+            </StyledButton>
+          </motion.div>
+        </TextContent>
+        <CarouselContainer>
+          <ImageContainer>
+            {tiles.map(({ row, col, key }: { row: number; col: number; key: string }, idx: number) => (
+              <Tile
+                key={key}
+                animate={isFading ? { opacity: 0, scale: 0.95 } : { opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4, delay: idx * 0.02 }}
+              >
+                <TileImage $bgImage={tilesImages[idx]} />
+              </Tile>
+            ))}
+          </ImageContainer>
+        </CarouselContainer>
+      </ContentWrapper>
+    </HeroContainer>
   );
 };
 
