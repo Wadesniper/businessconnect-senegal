@@ -315,9 +315,28 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
 
   return (
     <HeroContainer>
+      {/* Arrière-plan animé : image courante du carrousel, floue, opacité faible */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 0,
+          backgroundImage: `url(${getImageUrl(images[currentImageIndex].src)})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          filter: 'blur(32px) brightness(0.7)',
+          opacity: 0.45,
+          transition: 'background-image 0.8s cubic-bezier(0.4,0,0.2,1)',
+        }}
+        aria-hidden="true"
+      />
       <StaticBackground />
       <Overlay />
-      <GeometricBackground />
+      <GeometricBackground style={{ zIndex: 1, position: 'absolute' }} />
       <ContentWrapper>
         <TextContent>
           <motion.div
@@ -384,9 +403,6 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
                     backgroundPosition: `${bgPosX} ${bgPosY}`,
                     backgroundRepeat: 'no-repeat',
                     transition: 'background-image 0.5s',
-                    opacity: 0.85,
-                    backdropFilter: 'blur(6px)',
-                    WebkitBackdropFilter: 'blur(6px)',
                   }}
                 />
               </motion.div>
