@@ -99,7 +99,7 @@ export class SubscriptionService {
         ref_command: refCommand,
         command_name: `Abonnement ${plan.type} pour ${params.customer_email}`,
         custom_field: {
-          userId: params.userId,
+        userId: params.userId,
           type: params.type,
           email: params.customer_email
         }
@@ -136,11 +136,11 @@ export class SubscriptionService {
     endDate.setDate(endDate.getDate() + plan.duration);
     const created = await prisma.subscription.create({
       data: {
-        id: transactionId,
-        userId,
+      id: transactionId,
+      userId,
         plan: type,
-        status: 'pending',
-        paymentId: transactionId,
+      status: 'pending',
+      paymentId: transactionId,
         startDate: now,
         endDate: endDate,
         createdAt: now,
@@ -190,7 +190,7 @@ export class SubscriptionService {
       }
       if (subscription.userId !== userId) {
         logger.error(`[ABO] Tentative d'activation non autorisée. Abonnement: ${transactionId}, User: ${userId}`);
-        throw new Error('Activation non autorisée.');
+          throw new Error('Activation non autorisée.');
       }
       const plan = this.plans[subscription.plan];
       if (!plan) {
@@ -217,7 +217,7 @@ export class SubscriptionService {
       const updated = await prisma.subscription.update({
         where: { id: transactionId },
         data: {
-          status: 'active',
+        status: 'active',
           updatedAt: now,
           startDate: now,
           endDate: expiresAt,
