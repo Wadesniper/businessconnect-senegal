@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { AuthRequest, NextFunction } from '../types/custom.express.js';
 import bcrypt from 'bcryptjs';
 import jwt, { Secret, SignOptions } from 'jsonwebtoken';
-import { User } from '../models/User.js';
 import { config } from '../config.js';
 import { NotificationService } from '../services/notificationService.js';
 import { logger } from '../utils/logger.js';
@@ -131,12 +130,15 @@ export class AuthController {
     try {
       const { phoneNumber, password } = req.body;
 
-      // Log temporaire pour diagnostic complet
-      console.log('[AUTH][LOGIN] Body reçu:', req.body);
+      // Log pour diagnostic
+      logger.info('[AUTH][LOGIN] Tentative de connexion', {
+        phoneNumber: phoneNumber ? 'présent' : 'manquant',
+        password: password ? 'présent' : 'manquant'
+      });
 
       // Validation des champs requis
       if (!phoneNumber || !password) {
-        console.log('[AUTH][LOGIN] Champs manquants');
+        logger.warn('[AUTH][LOGIN] Champs manquants', { phoneNumber: !!phoneNumber, password: !!password });
         return res.status(400).json({
           success: false,
           message: 'Le numéro de téléphone et le mot de passe sont requis'
@@ -145,9 +147,10 @@ export class AuthController {
 
       // Validation et normalisation du numéro de téléphone
       const normalizedPhone = validatePhoneNumber(phoneNumber);
-      console.log('[AUTH][LOGIN] Numéro normalisé:', normalizedPhone);
+      logger.info('[AUTH][LOGIN] Numéro normalisé', { original: phoneNumber, normalized: normalizedPhone });
+      
       if (!normalizedPhone) {
-        console.log('[AUTH][LOGIN] Numéro non valide');
+        logger.warn('[AUTH][LOGIN] Numéro non valide', { phoneNumber });
         return res.status(400).json({
           success: false,
           message: "Le numéro doit être au format international. Exemples : +221 7X XXX XX XX (Sénégal), +33 X XX XX XX XX (France), etc."
@@ -164,60 +167,66 @@ export class AuthController {
           email: true,
           phoneNumber: true,
           role: true,
-          password: true // pour la vérification, mais à ne pas renvoyer
+          password: true,
+          isVerified: true
         }
       });
-      console.log('[AUTH][LOGIN] Utilisateur trouvé:', user ? user.id : null);
+
+      logger.info('[AUTH][LOGIN] Recherche utilisateur', { 
+        found: !!user,
+        userId: user?.id,
+        role: user?.role
+      });
+
       if (!user) {
-        console.log('[AUTH][LOGIN] Utilisateur non trouvé');
+        logger.warn('[AUTH][LOGIN] Utilisateur non trouvé', { phoneNumber: normalizedPhone });
         return res.status(401).json({
           success: false,
-          message: 'Identifiants invalides'
+          message: 'Numéro de téléphone ou mot de passe incorrect'
         });
       }
 
       // Vérifier le mot de passe
       const isPasswordValid = await bcrypt.compare(password, user.password);
-      console.log('[AUTH][LOGIN] Password valid:', isPasswordValid);
+      logger.info('[AUTH][LOGIN] Vérification mot de passe', { valid: isPasswordValid });
+
       if (!isPasswordValid) {
-        console.log('[AUTH][LOGIN] Mot de passe invalide');
+        logger.warn('[AUTH][LOGIN] Mot de passe invalide', { userId: user.id });
         return res.status(401).json({
           success: false,
-          message: 'Identifiants invalides'
+          message: 'Numéro de téléphone ou mot de passe incorrect'
+        });
+      }
+
+      // Vérifier si l'utilisateur est vérifié
+      if (!user.isVerified) {
+        logger.warn('[AUTH][LOGIN] Utilisateur non vérifié', { userId: user.id });
+        return res.status(403).json({
+          success: false,
+          message: 'Veuillez vérifier votre numéro de téléphone avant de vous connecter'
         });
       }
 
       // Générer le token JWT
       const token = this.generateToken(user);
+      logger.info('[AUTH][LOGIN] Token généré', { userId: user.id });
 
-      // Log de l'objet user juste avant la réponse
-      console.log('[AUTH][LOGIN] Objet user renvoyé:', {
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        phoneNumber: user.phoneNumber,
-        role: user.role
-      });
-
-      // Renvoyer la réponse
-      res.json({
+      // Préparer la réponse
+      const { password: _, ...userWithoutPassword } = user;
+      const response = {
         success: true,
         message: 'Connexion réussie',
         data: {
           token,
-          user: {
-            id: user.id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            phoneNumber: user.phoneNumber,
-            role: user.role
-          }
+          user: userWithoutPassword
         }
-      });
+      };
+
+      logger.info('[AUTH][LOGIN] Connexion réussie', { userId: user.id });
+      res.json(response);
+
     } catch (error) {
-      logger.error('Erreur lors de la connexion:', error);
+      logger.error('[AUTH][LOGIN] Erreur serveur', { error });
       res.status(500).json({
         success: false,
         message: 'Une erreur est survenue lors de la connexion'
@@ -231,7 +240,9 @@ export class AuthController {
 
       // Vérifier le token
       const decodedEmail = jwt.verify(token, config.JWT_SECRET as Secret) as { id: string };
-      const user = await User.findById(decodedEmail.id);
+      const user = await prisma.user.findUnique({
+        where: { id: decodedEmail.id }
+      });
 
       if (!user) {
         return res.status(400).json({
@@ -241,8 +252,12 @@ export class AuthController {
       }
 
       // Mettre à jour le statut de vérification
-      user.isVerified = true;
-      await user.save();
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          isVerified: true
+        }
+      });
 
       res.status(200).json({
         success: true,
@@ -261,7 +276,10 @@ export class AuthController {
     try {
       const { email } = req.body;
 
-      const user = await User.findOne({ email });
+      const user = await prisma.user.findUnique({
+        where: { email: email.toLowerCase() }
+      });
+
       if (!user) {
         return res.status(404).json({
           success: false,
@@ -272,15 +290,19 @@ export class AuthController {
       // Générer le token de réinitialisation
       const signOptions: SignOptions = { expiresIn: '7d' };
       const resetToken = jwt.sign(
-        { id: user._id },
+        { id: user.id },
         config.JWT_SECRET as Secret,
         signOptions
       );
 
       // Sauvegarder le token
-      user.resetPasswordToken = resetToken;
-      user.resetPasswordExpire = new Date(Date.now() + 24 * 3600000); // 24 heures
-      await user.save();
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          resetPasswordToken: resetToken,
+          resetPasswordExpire: new Date(Date.now() + 24 * 3600000) // 24 heures
+        }
+      });
 
       // Envoyer l'email de réinitialisation
       await this.notificationService.sendPasswordResetEmail(email, resetToken);
@@ -305,7 +327,9 @@ export class AuthController {
 
       // Vérifier le token
       const decodedReset = jwt.verify(token, config.JWT_SECRET as Secret) as { id: string };
-      const user = await User.findById(decodedReset.id);
+      const user = await prisma.user.findUnique({
+        where: { id: decodedReset.id }
+      });
 
       if (!user) {
         return res.status(400).json({
@@ -327,10 +351,14 @@ export class AuthController {
       const hashedPassword = await bcrypt.hash(password, salt);
 
       // Mettre à jour le mot de passe
-      user.password = hashedPassword;
-      user.resetPasswordToken = undefined;
-      user.resetPasswordExpire = undefined;
-      await user.save();
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          password: hashedPassword,
+          resetPasswordToken: null,
+          resetPasswordExpire: null
+        }
+      });
 
       res.status(200).json({
         success: true,
@@ -351,7 +379,16 @@ export class AuthController {
 
       // Vérifier le token
       const decodedVerify = jwt.verify(token, config.JWT_SECRET as Secret) as { id: string };
-      const user = await User.findById(decodedVerify.id);
+      const user = await prisma.user.findUnique({
+        where: { id: decodedVerify.id },
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          role: true
+        }
+      });
 
       if (!user) {
         return res.status(400).json({
@@ -364,13 +401,7 @@ export class AuthController {
         success: true,
         message: 'Token valide',
         data: {
-          user: {
-            id: user._id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            role: user.role
-          }
+          user
         }
       });
     } catch (error) {
@@ -385,7 +416,7 @@ export class AuthController {
   // Générer le token JWT
   private generateToken(user: any): string {
     const payload = {
-      id: user._id,
+      id: user.id,
       phoneNumber: user.phoneNumber,
       role: user.role
     };
@@ -405,13 +436,27 @@ export class AuthController {
           message: 'Non authentifié ou utilisateur non trouvé dans le token'
         });
       }
-      const user = await User.findById(req.user.id).select('-password');
+
+      const user = await prisma.user.findUnique({
+        where: { id: req.user.id },
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          phoneNumber: true,
+          role: true,
+          isVerified: true
+        }
+      });
+
       if (!user) {
         return res.status(404).json({
           success: false,
           message: 'Utilisateur non trouvé en base de données'
         });
       }
+
       res.status(200).json({
         success: true,
         data: user
@@ -431,20 +476,30 @@ export class AuthController {
           message: 'Non authentifié ou utilisateur non trouvé dans le token'
         });
       }
+
       const userId = req.user.id;
       const updates = req.body;
       
+      // Supprimer les champs protégés
       delete updates.password;
       delete updates.role;
       delete updates.isVerified;
       delete updates.email;
       delete updates.phoneNumber;
 
-      const user = await User.findByIdAndUpdate(userId, { $set: updates }, { new: true, runValidators: true }).select('-password');
-
-      if (!user) {
-        return res.status(404).json({ success: false, message: 'Utilisateur non trouvé' });
-      }
+      const user = await prisma.user.update({
+        where: { id: userId },
+        data: updates,
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          phoneNumber: true,
+          role: true,
+          isVerified: true
+        }
+      });
 
       res.status(200).json({
         success: true,

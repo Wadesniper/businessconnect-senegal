@@ -12,10 +12,6 @@ router.post('/register', validateUser, (req: Request, res: Response, next: NextF
   userController.register(req, res).catch(next);
 });
 
-router.post('/login', (req: Request, res: Response, next: NextFunction) => {
-  userController.login(req, res).catch(next);
-});
-
 router.post('/forgot-password', (req: Request, res: Response, next: NextFunction) => {
   userController.forgotPassword(req, res).catch(next);
 });
