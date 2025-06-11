@@ -20,7 +20,20 @@ const LoginPage: React.FC = () => {
   const onFinish = async (values: LoginFormValues) => {
     try {
       setLoading(true);
-      const result = await authService.login({ phoneNumber: values.phoneNumber, password: values.password });
+      const phone = typeof values.phoneNumber === 'string' ? values.phoneNumber : '';
+      // Nettoyage des espaces avant validation/envoi
+      const cleanedPhone = phone.replace(/\s/g, '');
+      // Validation du format du numéro de téléphone
+      if (!/^\+\d{11,15}$/.test(cleanedPhone)) {
+        message.error('Le numéro doit être au format international (+XXX XXXXXXXXX)');
+        setLoading(false);
+        return;
+      }
+      const result = await authService.login({ 
+        phoneNumber: cleanedPhone, 
+        password: values.password 
+      });
+
       if (result && result.token && result.user) {
         message.success('Connexion réussie !');
         navigate('/dashboard');
@@ -28,7 +41,16 @@ const LoginPage: React.FC = () => {
         message.error('Erreur de connexion. Vérifiez vos identifiants.');
       }
     } catch (error: any) {
-      message.error(error.message || 'Erreur lors de la connexion');
+      // Messages d'erreur plus spécifiques
+      if (error.message.includes('format international')) {
+        message.error('Le numéro doit être au format international (+XXX XXXXXXXXX)');
+      } else if (error.message.includes('Identifiants invalides')) {
+        message.error('Numéro de téléphone ou mot de passe incorrect');
+      } else if (error.message.includes('incomplètes')) {
+        message.error('Erreur de données utilisateur. Veuillez réessayer.');
+      } else {
+        message.error(error.message || 'Erreur lors de la connexion');
+      }
       console.error('Erreur dans onFinish:', error);
     } finally {
       setLoading(false);
@@ -57,7 +79,17 @@ const LoginPage: React.FC = () => {
             name="phoneNumber"
             rules={[
               { required: true, message: 'Veuillez saisir votre numéro de téléphone' },
-              { pattern: /^\+\d{1,4}\d{10,}$/, message: 'Format international requis (+XXX XXXXXXXXX)' }
+              {
+                validator: (_, value) => {
+                  if (!value) return Promise.reject('Veuillez saisir votre numéro de téléphone');
+                  // Autorise les espaces, mais exige 11 à 15 chiffres après le +
+                  const cleaned = value.replace(/\s/g, '');
+                  if (!/^\+\d{11,15}$/.test(cleaned)) {
+                    return Promise.reject('Format international requis (+XXX XXXXXXXXX)');
+                  }
+                  return Promise.resolve();
+                }
+              }
             ]}
           >
             <Input 
