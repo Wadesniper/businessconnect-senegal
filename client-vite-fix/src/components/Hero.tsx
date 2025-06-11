@@ -345,6 +345,9 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
           {tiles.map(({ row, col, key }) => {
             // Décalage d'animation pour effet "vague"
             const delay = (row + col) * 0.07;
+            // Calcul du background-position pour chaque tuile
+            const bgPosX = `${(col * 100) / (TILE_COLS - 1)}%`;
+            const bgPosY = `${(row * 100) / (TILE_ROWS - 1)}%`;
             return (
               <motion.div
                 key={key}
@@ -377,8 +380,8 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
                     width: '100%',
                     height: '100%',
                     backgroundImage: `url(${getImageUrl(isTransitioning && prevImageIndex !== null ? images[prevImageIndex].src : images[currentImageIndex].src)})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
+                    backgroundSize: `${TILE_COLS * 100}% ${TILE_ROWS * 100}%`,
+                    backgroundPosition: `${bgPosX} ${bgPosY}`,
                     backgroundRepeat: 'no-repeat',
                     transition: 'background-image 0.5s',
                   }}

@@ -868,3 +868,46 @@ Le projet vise à migrer une application existante de MongoDB vers Supabase (Pos
 3. Vérifier les logs Railway pour s'assurer que l'activation a bien eu lieu.
 
 ---
+
+# Migration complète des abonnements vers Supabase/Postgres
+
+## Ce qui a été fait
+- Toute la logique d'abonnement (création, activation, update, récupération) utilise désormais Prisma/Postgres (Supabase) au lieu du bucket Google Cloud Storage.
+- Lors de l'activation d'un abonnement, le rôle utilisateur est automatiquement mis à jour dans la BDD (hors admin).
+- Une entrée est créée dans la table `Transaction` à chaque paiement réussi (audit/historique).
+- Les routes et contrôleurs restent compatibles avec le frontend existant.
+- Des logs détaillés ont été ajoutés pour le suivi et le debug.
+- Plus aucune dépendance à Google Cloud Storage pour les abonnements.
+
+## Workflow
+1. L'utilisateur initie un abonnement : une entrée est créée dans la table `Subscription` (statut `pending`).
+2. Après paiement (IPN PayTech), l'abonnement passe à `active`, les dates sont mises à jour.
+3. Le rôle utilisateur est mis à jour automatiquement dans la table `User`.
+4. Une transaction de paiement est enregistrée dans la table `Transaction`.
+5. Le frontend récupère les infos d'abonnement et de rôle via l'API comme avant.
+
+## Impacts
+- Plus de stockage d'abonnements dans le bucket Google Cloud Storage.
+- Plus de synchronisation manuelle : tout est centralisé en base.
+- Sécurité et robustesse accrues.
+- Aucun impact négatif sur le frontend ou les autres fonctionnalités.
+
+## À tester
+- Souscription, paiement, activation, accès premium, affichage frontend, historique des transactions.
+
+---
+Dernière mise à jour : migration complète réalisée, site prêt pour la prod avec la nouvelle architecture.
+
+## [2024-xx-xx] Refonte du carrousel Hero (accueil)
+
+- **Modernisation du carrousel d'images de la section Hero** :
+  - Ajout d'un effet mosaïque (carreaux/nexus) lors de la transition d'image, chaque tuile animée individuellement (framer-motion).
+  - Intervalle réduit à 2,5 secondes entre chaque image pour plus de dynamisme.
+  - Respect total de l'arrière-plan, de l'overlay, du responsive et de l'accessibilité.
+  - Aucune suppression de fonctionnalité ou de code essentiel : le site reste complet, production-ready, aucune version minimaliste.
+  - Correction de la visibilité des images (aucune superposition ou opacité involontaire).
+  - Code testé et compatible avec le build/deploiement Vercel/Railway.
+
+**Choix technique** : effet mosaïque moderne pour renforcer l'impact visuel, tout en gardant la robustesse et la compatibilité du site. Utilisation de framer-motion pour des transitions fluides et performantes.
+
+**Vérification** : le site complet fonctionne, aucune régression sur l'affichage ou le fonctionnement du Hero ou du reste du site.
