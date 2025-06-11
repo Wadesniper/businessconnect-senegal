@@ -124,6 +124,31 @@ const CarouselContainer = styled.div`
   }
 `;
 
+// --- AJOUT POUR MOSAÏQUE ---
+const TILE_ROWS = 3;
+const TILE_COLS = 5;
+const TILE_COUNT = TILE_ROWS * TILE_COLS;
+
+// Nouveau composant pour la tuile avec double couche
+const TileContainer = styled(motion.div)`
+  position: absolute;
+  overflow: hidden;
+  background: #001529;
+`;
+
+const TileLayer = styled.div<{ $bgImage: string; $bgPosX: string; $bgPosY: string }>`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: ${props => `url(${props.$bgImage})`};
+  background-size: ${TILE_COLS * 100}% ${TILE_ROWS * 100}%;
+  background-position: ${props => `${props.$bgPosX} ${props.$bgPosY}`};
+  background-repeat: no-repeat;
+  will-change: transform, opacity;
+`;
+
 // Image optimisée avec lazy loading et transition CSS pure
 const OptimizedImage = styled.div<{ $imageUrl: string; $isActive: boolean }>`
   position: absolute;
@@ -230,11 +255,6 @@ const images = [
   { src: img12, desc: 'Soignez avec passion' },
   { src: img13, desc: 'Entreprenez au Sénégal' },
 ];
-
-// --- AJOUT POUR MOSAÏQUE ---
-const TILE_ROWS = 3;
-const TILE_COLS = 5;
-const TILE_COUNT = TILE_ROWS * TILE_COLS;
 
 // Génère une grille de tuiles pour l'effet mosaïque
 const getTiles = () => {
@@ -369,28 +389,23 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          {/* MOSAÏQUE RANDOM : chaque tuile animée dans un ordre aléatoire */}
           {tiles.map(({ row, col, key }, idx) => {
-            // Ordre d'animation pré-calculé
             const order = randomOrder[idx];
             const baseDelay = 0.02;
-            // Ajout d'un délai aléatoire pour l'effet wave
             const randomOffset = Math.random() * 0.1;
             const delay = (Math.floor(order / TILE_COLS) + (order % TILE_COLS)) * baseDelay + randomOffset;
             const bgPosX = `${(col * 100) / (TILE_COLS - 1)}%`;
             const bgPosY = `${(row * 100) / (TILE_ROWS - 1)}%`;
+
             return (
-              <motion.div
+              <TileContainer
                 key={key}
                 style={{
-                  position: 'absolute',
                   top: `${(row * 100) / TILE_ROWS}%`,
                   left: `${(col * 100) / TILE_COLS}%`,
                   width: `${100 / TILE_COLS}%`,
                   height: `${100 / TILE_ROWS}%`,
                   zIndex: 2,
-                  overflow: 'hidden',
-                  borderRadius: 0,
                 }}
                 initial={false}
                 animate={isTransitioning && prevImageIndex !== null ? {
@@ -413,18 +428,29 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
                   }
                 }}
               >
-                <div
+                {/* Couche actuelle */}
+                <TileLayer
+                  $bgImage={images[currentImageIndex].src}
+                  $bgPosX={bgPosX}
+                  $bgPosY={bgPosY}
                   style={{
-                    width: '100%',
-                    height: '100%',
-                    backgroundImage: `url(${images[isTransitioning && prevImageIndex !== null ? prevImageIndex : currentImageIndex].src})`,
-                    backgroundSize: `${TILE_COLS * 100}% ${TILE_ROWS * 100}%`,
-                    backgroundPosition: `${bgPosX} ${bgPosY}`,
-                    backgroundRepeat: 'no-repeat',
-                    transition: 'background-image 0.3s',
+                    opacity: isTransitioning ? 0 : 1,
+                    transition: 'opacity 0.3s ease-in-out'
                   }}
                 />
-              </motion.div>
+                {/* Couche précédente (pendant la transition) */}
+                {isTransitioning && prevImageIndex !== null && (
+                  <TileLayer
+                    $bgImage={images[prevImageIndex].src}
+                    $bgPosX={bgPosX}
+                    $bgPosY={bgPosY}
+                    style={{
+                      opacity: 1,
+                      transition: 'opacity 0.3s ease-in-out'
+                    }}
+                  />
+                )}
+              </TileContainer>
             );
           })}
           {/* Overlay texte sur l'image courante */}
