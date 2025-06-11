@@ -3,6 +3,10 @@ import { MongoClient, ObjectId } from 'mongodb';
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Chemin résolu vers le fichier .env dans le dossier server
 const envPath = path.resolve(__dirname, '..', '..', '.env');
