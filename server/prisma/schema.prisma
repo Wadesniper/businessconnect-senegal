@@ -19,7 +19,7 @@ enum UserRole {
   admin
   etudiant
   annonceur
-  employeur
+  recruteur
 }
 
 enum UserStatus {
@@ -390,6 +390,7 @@ enum TransactionStatus {
 
 enum PaymentGateway {
   cinetpay
+  paytech
   // Ajoutez d'autres passerelles ici si nécessaire à l'avenir
 }
 

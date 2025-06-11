@@ -4,6 +4,8 @@ import { config } from '../config.js';
 import { StorageService } from './storageService.js';
 import { PaytechService, PaytechPaymentResult } from './paytechService.js';
 import { UserService } from './userService.js';
+import prisma from '../config/prisma.js';
+import { $Enums } from '../../src/generated/prisma/index.js';
 
 interface SubscriptionPlan {
   type: 'etudiant' | 'annonceur' | 'recruteur';
@@ -128,65 +130,133 @@ export class SubscriptionService {
       throw new Error('Type d\'abonnement invalide pour la création.');
     }
 
-    const subscription: SubscriptionData = {
-      id: transactionId,
-      userId,
-      type,
-      status: 'pending',
-      paymentId: transactionId,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+    // Création de l'abonnement dans la table Subscription via Prisma
+    const now = new Date();
+    const endDate = new Date(now);
+    endDate.setDate(endDate.getDate() + plan.duration);
+    const created = await prisma.subscription.create({
+      data: {
+        id: transactionId,
+        userId,
+        plan: type,
+        status: 'pending',
+        paymentId: transactionId,
+        startDate: now,
+        endDate: endDate,
+        createdAt: now,
+        updatedAt: now,
+      }
+    });
+    logger.info(`[ABO] Abonnement créé en base Prisma :`, created);
+    return {
+      id: created.id,
+      userId: created.userId,
+      type: created.plan,
+      status: created.status,
+      paymentId: created.paymentId!,
+      createdAt: created.createdAt,
+      updatedAt: created.updatedAt,
+      activatedAt: undefined,
+      expiresAt: created.endDate,
     };
-
-    await this.storageService.save<SubscriptionData>('subscriptions', subscription);
-    return subscription;
   }
 
   async activateSubscription(userId: string, transactionId: string): Promise<{ success: boolean; subscription?: SubscriptionData }> {
     try {
       logger.info(`[ABO] Début activation abonnement pour userId: ${userId}, transactionId: ${transactionId}`);
-      const subscription = await StorageService.get<SubscriptionData>('subscriptions', transactionId);
-      logger.info(`[ABO] Résultat récupération abonnement:`, subscription);
+      // Récupérer l'abonnement via Prisma
+      const subscription = await prisma.subscription.findUnique({ where: { id: transactionId } });
+      logger.info(`[ABO] Résultat récupération abonnement (Prisma):`, subscription);
       if (!subscription) {
         logger.error(`[ABO] Abonnement non trouvé pour transactionId: ${transactionId}`);
         throw new Error('Abonnement non trouvé.');
       }
       if (subscription.status === 'active') {
         logger.info(`[ABO] Abonnement ${subscription.id} déjà actif.`);
-        return { success: true, subscription };
+        return {
+          success: true,
+          subscription: {
+            id: subscription.id,
+            userId: subscription.userId,
+            type: subscription.plan,
+            status: subscription.status,
+            paymentId: subscription.paymentId || '',
+            createdAt: subscription.createdAt,
+            updatedAt: subscription.updatedAt,
+            activatedAt: subscription.startDate,
+            expiresAt: subscription.endDate,
+          }
+        };
       }
       if (subscription.userId !== userId) {
         logger.error(`[ABO] Tentative d'activation non autorisée. Abonnement: ${transactionId}, User: ${userId}`);
         throw new Error('Activation non autorisée.');
       }
-      const plan = this.plans[subscription.type];
+      const plan = this.plans[subscription.plan];
       if (!plan) {
-        logger.error(`[ABO] Type d'abonnement invalide: ${subscription.type}`);
+        logger.error(`[ABO] Type d'abonnement invalide: ${subscription.plan}`);
         throw new Error('Type d\'abonnement invalide.');
       }
-      // Mise à jour du rôle utilisateur (hors admin)
-      const user = await this.userService.getUserById(userId);
-      logger.info(`[ABO] Utilisateur récupéré pour update rôle:`, user);
+      // Mise à jour du rôle utilisateur (hors admin) dans la vraie base
       const validRoles = ['etudiant', 'annonceur', 'recruteur'] as const;
-      if (user && user.role !== 'admin' && validRoles.includes(subscription.type as any)) {
-        await this.userService.updateUser(userId, { role: subscription.type as 'etudiant' | 'annonceur' | 'recruteur' });
-        logger.info(`[ABO] Rôle utilisateur mis à jour : ${user.role} -> ${subscription.type}`);
+      let userDb = null;
+      try {
+        userDb = await prisma.user.update({
+          where: { id: userId },
+          data: { role: validRoles.includes(subscription.plan as any) ? ($Enums.UserRole as any)[subscription.plan] : $Enums.UserRole.pending }
+        });
+        logger.info(`[ABO] Rôle utilisateur mis à jour dans la BDD : ${userDb.role}`);
+      } catch (err) {
+        logger.error(`[ABO] Erreur update rôle utilisateur dans la BDD:`, err);
       }
-      const expiresAt = new Date();
+      // Calcul de la nouvelle date d'expiration
+      const now = new Date();
+      const expiresAt = new Date(now);
       expiresAt.setDate(expiresAt.getDate() + plan.duration);
-      const updatedSubscriptionData: SubscriptionData = {
-        ...subscription,
-        status: 'active',
-        activatedAt: new Date(),
-        expiresAt,
-        updatedAt: new Date(),
-      };
-      logger.info(`[ABO] Sauvegarde abonnement activé:`, updatedSubscriptionData);
-      await this.storageService.save<SubscriptionData>('subscriptions', updatedSubscriptionData);
-      logger.info(`[ABO] Abonnement ${subscription.id} activé avec succès pour userId: ${userId}`);
+      // Mise à jour de l'abonnement
+      const updated = await prisma.subscription.update({
+        where: { id: transactionId },
+        data: {
+          status: 'active',
+          updatedAt: now,
+          startDate: now,
+          endDate: expiresAt,
+        }
+      });
+      logger.info(`[ABO] Abonnement activé en base Prisma :`, updated);
+      // Création d'une transaction de paiement
+      try {
+        await prisma.transaction.create({
+          data: {
+            amount: plan.price,
+            currency: 'XOF',
+            status: 'completed',
+            paymentGateway: 'paytech',
+            gatewayTransactionId: transactionId,
+            description: `Abonnement ${plan.type}`,
+            userId: userId,
+            subscriptionId: transactionId,
+            createdAt: now,
+            updatedAt: now,
+          }
+        });
+        logger.info(`[ABO] Transaction de paiement enregistrée.`);
+      } catch (err) {
+        logger.error(`[ABO] Erreur lors de la création de la transaction de paiement:`, err);
+      }
       return {
         success: true,
-        subscription: updatedSubscriptionData
+        subscription: {
+          id: updated.id,
+          userId: updated.userId,
+          type: updated.plan,
+          status: updated.status,
+          paymentId: updated.paymentId || '',
+          createdAt: updated.createdAt,
+          updatedAt: updated.updatedAt,
+          activatedAt: updated.startDate,
+          expiresAt: updated.endDate,
+        }
       };
     } catch (error) {
       logger.error('[ABO] Erreur activation abonnement:', error);
