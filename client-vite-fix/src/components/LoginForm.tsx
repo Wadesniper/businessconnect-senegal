@@ -36,28 +36,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
   const onFinish = async (values: { phoneNumber: string; password: string }) => {
     setTriedLogin(true);
     try {
-      await login(values.phoneNumber, values.password);
+      // Nettoyage universel avant login
+      const cleanedPhone = values.phoneNumber.replace(/[^\d+]/g, '');
+      await login(cleanedPhone, values.password);
     } catch (error) {
       // L'erreur sera gérée dans le useEffect
     }
-  };
-
-  const validatePhone = (value: string) => {
-    if (!value) {
-      setPhoneError('Le numéro de téléphone est requis');
-      return;
-    }
-    
-    // Nettoie le numéro en gardant uniquement les chiffres et le +
-    const cleaned = value.replace(/[^0-9+]/g, '');
-    
-    // Format international : +XXXXXXXXXXXXX (minimum 10 chiffres après l'indicatif)
-    if (/^\+\d{1,4}\d{10,}$/.test(cleaned)) {
-      setPhoneError('');
-      return;
-    }
-    
-    setPhoneError("Le numéro doit être au format international (+XXX XXXXXXXXX)");
   };
 
   const formatPhoneNumber = (value: string) => {
@@ -100,19 +84,22 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
         <Form.Item
           name="phoneNumber"
           rules={[
-          { required: true, message: 'Veuillez entrer votre numéro de téléphone' },
-          { validator: validatePhone }
-        ]}
+            { required: true, message: 'Veuillez entrer votre numéro de téléphone' },
+            {
+              validator: (_: any, value: string) => {
+                if (!value) return Promise.reject('Le numéro de téléphone est requis');
+                const cleaned = value.replace(/[^\d+]/g, '');
+                if (!/^\+\d{11,15}$/.test(cleaned)) {
+                  return Promise.reject('Le numéro doit être au format international (+XXX XXXXXXXXX)');
+                }
+                return Promise.resolve();
+              }
+            }
+          ]}
         >
           <Input
-          prefix={<UserOutlined />}
-          placeholder="Numéro de téléphone"
-            onChange={(e) => {
-              const formatted = formatPhoneNumber(e.target.value);
-            if (formatted !== e.target.value) {
-              form.setFieldsValue({ phoneNumber: formatted });
-            }
-            }}
+            prefix={<UserOutlined />}
+            placeholder="Numéro de téléphone"
           />
         </Form.Item>
 
