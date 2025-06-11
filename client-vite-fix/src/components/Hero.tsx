@@ -392,15 +392,11 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
                 }}
                 initial={false}
                 animate={isTransitioning && prevImageIndex !== null ? {
-                  opacity: 0,
-                  y: -20 + Math.random() * 40, // slide random haut/bas
-                  scale: 0.9 + Math.random() * 0.2, // scale random
-                  transition: { duration: 0.6, delay }
+                  clipPath: 'circle(0% at 50% 50%)',
+                  transition: { duration: 0.5, delay }
                 } : {
-                  opacity: 1,
-                  y: 0,
-                  scale: 1,
-                  transition: { duration: 0.6, delay }
+                  clipPath: 'circle(100% at 50% 50%)',
+                  transition: { duration: 0.5, delay }
                 }}
               >
                 <div
