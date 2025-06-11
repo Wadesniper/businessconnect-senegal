@@ -60,7 +60,7 @@ const GeometricBackground = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  opacity: 0.18;
+  opacity: 0.15;
   background-image: 
     linear-gradient(30deg, rgba(255,255,255,0.18) 12%, transparent 12.5%, transparent 87%, rgba(255,255,255,0.18) 87.5%, rgba(255,255,255,0.18)),
     linear-gradient(150deg, rgba(255,255,255,0.18) 12%, transparent 12.5%, transparent 87%, rgba(255,255,255,0.18) 87.5%, rgba(255,255,255,0.18)),
@@ -70,7 +70,6 @@ const GeometricBackground = styled.div`
   background-size: 80px 140px;
   background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0;
   z-index: 2;
-  background-blend-mode: overlay;
 `;
 
 const ContentWrapper = styled.div`
@@ -350,8 +349,6 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
         }}
         aria-hidden="true"
       />
-      <StaticBackground />
-      <Overlay />
       <GeometricBackground style={{ zIndex: 2, position: 'absolute' }} />
       <ContentWrapper>
         <TextContent>
