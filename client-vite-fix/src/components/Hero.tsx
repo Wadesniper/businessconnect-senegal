@@ -139,17 +139,23 @@ const images = [
   { src: img13, desc: 'Entreprenez au Sénégal' },
 ];
 
-// Génère une grille de tuiles pour l'effet mosaïque
-const getTiles = () => {
-  const tiles = [];
-  for (let row = 0; row < TILE_ROWS; row++) {
-    for (let col = 0; col < TILE_COLS; col++) {
-      tiles.push({ row, col, key: `${row}-${col}` });
-    }
+const getShuffledTiles = () => {
+  const arr = images.map(img => img.src);
+  while (arr.length < TILE_COUNT) arr.push(...arr);
+  // Mélange Fisher-Yates
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
   }
-  return tiles;
+  return arr.slice(0, TILE_COUNT);
 };
-const tiles = getTiles();
+
+// Génère une grille de tuiles pour l'effet mosaïque
+const tiles = Array.from({ length: TILE_ROWS * TILE_COLS }, (_, i) => ({
+  row: Math.floor(i / TILE_COLS),
+  col: i % TILE_COLS,
+  key: `${Math.floor(i / TILE_COLS)}-${i % TILE_COLS}`
+}));
 
 interface HeroProps {
   onDiscoverClick?: () => void;
@@ -160,112 +166,36 @@ interface HeroProps {
 const getBlurValue = () => window.innerWidth < 700 ? '4px' : '8px';
 
 const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [randomOrder, setRandomOrder] = useState<number[]>(tiles.map((_, i) => i));
-  const [tileImages, setTileImages] = useState<string[]>(() => {
-    // Mélange initial des images pour les tuiles
-    const arr = images.map(img => img.src);
-    while (arr.length < TILE_COUNT) arr.push(...arr);
-    return arr.slice(0, TILE_COUNT);
-  });
+  const [currentTiles, setCurrentTiles] = useState<string[]>(getShuffledTiles());
+  const [nextTiles, setNextTiles] = useState<string[]>(getShuffledTiles());
+  const [showNext, setShowNext] = useState(false);
 
-  // Pré-calcule un ordre random pour la transition
-  const getRandomOrder = useCallback(() => {
-    const arr = tiles.map((_, i) => i);
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-  }, []);
-
-  // Gestion du carrousel automatique (2,5s)
-  const startCarousel = useCallback(() => {
+  // Gestion de la mosaïque dynamique (2,5s)
+  useEffect(() => {
     if (intervalRef.current) clearInterval(intervalRef.current);
     intervalRef.current = setInterval(() => {
-      if (!isPaused && !isTransitioning) {
-        setRandomOrder(getRandomOrder());
+      if (!isTransitioning) {
+        setNextTiles(getShuffledTiles());
         setIsTransitioning(true);
+        setShowNext(true);
         setTimeout(() => {
-          setCurrentImageIndex((prev) => (prev + 1) % images.length);
+          setCurrentTiles(nextTiles => nextTiles);
+          setShowNext(false);
           setIsTransitioning(false);
-        }, 600); // durée de la transition mosaïque
+        }, 600);
       }
     }, 2500);
-  }, [isPaused, isTransitioning, getRandomOrder]);
-
-  useEffect(() => {
-    startCarousel();
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [startCarousel]);
-
-  // À chaque transition, on mélange l'ordre des images pour la mosaïque
-  useEffect(() => {
-    if (isTransitioning) {
-      const arr = images.map(img => img.src);
-      while (arr.length < TILE_COUNT) arr.push(...arr);
-      // Mélange Fisher-Yates
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      setTileImages(arr.slice(0, TILE_COUNT));
-    }
   }, [isTransitioning]);
-
-  const handleIndicatorClick = (index: number) => {
-    setCurrentImageIndex(index);
-    startCarousel();
-  };
-
-  const handleMouseEnter = () => {
-    setIsPaused(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsPaused(false);
-  };
 
   return (
     <HeroContainer>
-      {/* Arrière-plan animé : image courante du carrousel, floue, opacité plus forte, plus lumineuse, vignettage */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          zIndex: 0,
-          backgroundImage: `url(${images[currentImageIndex].src})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          filter: `blur(${getBlurValue()}) brightness(1.18)`,
-          opacity: 0.7,
-          transition: 'background-image 1.5s cubic-bezier(0.4,0,0.2,1)',
-        }}
-        aria-hidden="true"
-      />
-      {/* Vignettage doux */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          zIndex: 1,
-          pointerEvents: 'none',
-          background: 'radial-gradient(ellipse at center, rgba(0,0,0,0) 60%, rgba(0,0,0,0.18) 100%)',
-        }}
-        aria-hidden="true"
-      />
+      <StaticBackground />
+      <Overlay />
       <GeometricBackground style={{ zIndex: 2, position: 'absolute' }} />
       <ContentWrapper>
         <TextContent>
@@ -286,59 +216,52 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
             </StyledButton>
           </motion.div>
         </TextContent>
-        <CarouselContainer
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
+        <CarouselContainer>
           <ImageContainer>
-            {tiles.map(({ row, col, key }, idx) => {
-              const order = randomOrder[idx];
-              const baseDelay = 0.02;
-              const randomOffset = Math.random() * 0.1;
-              const delay = (Math.floor(order / TILE_COLS) + (order % TILE_COLS)) * baseDelay + randomOffset;
-
-              return (
+            {tiles.map(({ row, col, key }: { row: number; col: number; key: string }, idx: number) => (
+              <>
                 <Tile
-                  key={key}
+                  key={key + '-current'}
                   initial={false}
-                  animate={isTransitioning ? {
+                  animate={showNext ? {
                     scale: [1, 0.95, 0],
                     opacity: [1, 0.5, 0],
                     transition: { 
                       duration: 0.6,
-                      delay,
+                      delay: idx * 0.03,
                       times: [0, 0.5, 1],
                       ease: [0.4, 0, 0.2, 1]
                     }
                   } : {
-                    scale: [0, 1.05, 1],
-                    opacity: [0, 0.5, 1],
-                    transition: { 
-                      duration: 0.6,
-                      delay,
-                      times: [0, 0.5, 1],
-                      ease: [0.4, 0, 0.2, 1]
-                    }
+                    scale: 1,
+                    opacity: 1,
+                    transition: { duration: 0.3 }
                   }}
                 >
-                  <TileImage $bgImage={tileImages[idx]} />
+                  <TileImage $bgImage={currentTiles[idx]} />
                 </Tile>
-              );
-            })}
-          </ImageContainer>
-          <ImageOverlay $isActive={true}>
-            {images[currentImageIndex].desc}
-          </ImageOverlay>
-          <CarouselIndicators>
-            {images.map((_, index) => (
-              <Indicator
-                key={index}
-                $isActive={index === currentImageIndex}
-                onClick={() => handleIndicatorClick(index)}
-                aria-label={`Aller à l'image ${index + 1}`}
-              />
+                {showNext && (
+                  <Tile
+                    key={key + '-next'}
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{
+                      scale: [0, 1.05, 1],
+                      opacity: [0, 0.5, 1],
+                      transition: {
+                        duration: 0.6,
+                        delay: idx * 0.03 + 0.1,
+                        times: [0, 0.5, 1],
+                        ease: [0.4, 0, 0.2, 1]
+                      }
+                    }}
+                    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+                  >
+                    <TileImage $bgImage={nextTiles[idx]} />
+                  </Tile>
+                )}
+              </>
             ))}
-          </CarouselIndicators>
+          </ImageContainer>
         </CarouselContainer>
       </ContentWrapper>
     </HeroContainer>
@@ -391,47 +314,6 @@ const TileImage = styled.div<{ $bgImage: string }>`
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-`;
-
-const ImageOverlay = styled.div<{ $isActive: boolean }>`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background: linear-gradient(transparent, rgba(0,0,0,0.7));
-  color: #fff;
-  padding: 24px;
-  font-size: 20px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
-  opacity: ${props => props.$isActive ? 1 : 0};
-  transform: ${props => props.$isActive ? 'translateY(0)' : 'translateY(20px)'};
-  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s, 
-              transform 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s;
-`;
-
-const CarouselIndicators = styled.div`
-  position: absolute;
-  bottom: 16px;
-  right: 24px;
-  display: flex;
-  gap: 8px;
-  z-index: 3;
-`;
-
-const Indicator = styled.button<{ $isActive: boolean }>`
-  width: ${props => props.$isActive ? '24px' : '8px'};
-  height: 8px;
-  border-radius: 4px;
-  border: none;
-  background: ${props => props.$isActive ? '#fff' : 'rgba(255,255,255,0.4)'};
-  cursor: pointer;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    background: rgba(255,255,255,0.8);
-  }
 `;
 
 const StyledButton = styled(Button)`
