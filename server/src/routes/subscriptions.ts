@@ -72,13 +72,25 @@ router.post('/ipn', async (req, res) => {
     const apiKeyNorm = normalize(api_key_sha256);
     const apiSecretNorm = normalize(api_secret_sha256);
 
-    logger.error('[PAYTECH][IPN][DEBUG] hashKey attendu:', hashKeyNorm, 'len:', hashKeyNorm.length, 'bytes:', Buffer.from(hashKeyNorm).toString('hex'));
-    logger.error('[PAYTECH][IPN][DEBUG] hashKey reçu:', apiKeyNorm, 'len:', apiKeyNorm.length, 'bytes:', Buffer.from(apiKeyNorm).toString('hex'));
-    logger.error('[PAYTECH][IPN][DEBUG] hashSecret attendu:', hashSecretNorm, 'len:', hashSecretNorm.length, 'bytes:', Buffer.from(hashSecretNorm).toString('hex'));
-    logger.error('[PAYTECH][IPN][DEBUG] hashSecret reçu:', apiSecretNorm, 'len:', apiSecretNorm.length, 'bytes:', Buffer.from(apiSecretNorm).toString('hex'));
+    logger.info('[PAYTECH][IPN][DEBUG] Clés originales attendues:', {
+      key: hashKeyNorm,
+      secret: hashSecretNorm
+    });
+    logger.info('[PAYTECH][IPN][DEBUG] Clés reçues:', {
+      key: apiKeyNorm,
+      secret: apiSecretNorm
+    });
 
-    if (hashKeyNorm !== apiKeyNorm || hashSecretNorm !== apiSecretNorm) {
-      logger.error('[PAYTECH][IPN] Signature invalide. Attendu:', hashKeyNorm, hashSecretNorm, 'Reçu:', apiKeyNorm, apiSecretNorm);
+    // Vérification du HMAC
+    const hmac = crypto.createHmac('sha256', hashSecretNorm);
+    const computedHmac = hmac.update(JSON.stringify(body)).digest('hex');
+    const receivedHmac = body.hmac_compute;
+
+    logger.info('[PAYTECH][IPN][DEBUG] HMAC calculé:', computedHmac);
+    logger.info('[PAYTECH][IPN][DEBUG] HMAC reçu:', receivedHmac);
+
+    if (computedHmac !== receivedHmac) {
+      logger.error('[PAYTECH][IPN] Signature HMAC invalide');
       return res.status(403).json({ success: false, message: 'Signature IPN invalide' });
     }
 
@@ -94,15 +106,13 @@ router.post('/ipn', async (req, res) => {
       try {
         logger.info('[PAYTECH][IPN] Recherche abonnement pour token:', token);
         const subscription = await subscriptionService.getSubscriptionByPaymentId(token);
+        logger.info('[PAYTECH][IPN] Résultat recherche abonnement:', subscription);
         if (subscription) {
           logger.info('[PAYTECH][IPN] Abonnement trouvé, statut actuel:', subscription.status);
-          if (subscription.status !== 'active') {
-            logger.info('[PAYTECH][IPN] Tentative d\'activation de l\'abonnement...');
-            await subscriptionService.activateSubscription(subscription.userId, subscription.id);
-            logger.info('[PAYTECH][IPN] Abonnement activé avec succès pour', subscription.userId);
-          } else {
-            logger.info('[PAYTECH][IPN] Abonnement déjà actif pour', subscription.userId);
-          }
+          // Forcer l'activation même si le statut est déjà pending ou autre
+          logger.info('[PAYTECH][IPN] Tentative d\'activation forcée de l\'abonnement...');
+          await subscriptionService.activateSubscription(subscription.userId, subscription.id);
+          logger.info('[PAYTECH][IPN] Abonnement activé (forcé) avec succès pour', subscription.userId);
         } else {
           logger.error('[PAYTECH][IPN] Abonnement non trouvé pour token:', token);
         }
@@ -117,8 +127,8 @@ router.post('/ipn', async (req, res) => {
         if (subscription && subscription.status !== 'cancelled') {
           await subscriptionService.updateSubscriptionStatus(subscription.id, 'cancelled');
           logger.info('[PAYTECH][IPN] Abonnement annulé pour', subscription.userId);
-    }
-  } catch (error) {
+        }
+      } catch (error) {
         logger.error('[PAYTECH][IPN] Erreur lors de l\'annulation de l\'abonnement:', error);
       }
     }
