@@ -308,7 +308,19 @@ export class SubscriptionService {
 
   async getSubscriptionByPaymentId(paymentId: string): Promise<SubscriptionData | null> {
     try {
-      return await StorageService.get<SubscriptionData>('subscriptions', paymentId);
+      const sub = await prisma.subscription.findFirst({ where: { paymentId } });
+      if (!sub) return null;
+      return {
+        id: sub.id,
+        userId: sub.userId,
+        type: sub.plan,
+        status: sub.status,
+        paymentId: sub.paymentId!,
+        createdAt: sub.createdAt,
+        updatedAt: sub.updatedAt,
+        activatedAt: sub.startDate,
+        expiresAt: sub.endDate,
+      };
     } catch (error) {
       logger.error(`Erreur lors de la récupération de l'abonnement par paymentId ${paymentId}:`, error);
       return null;
