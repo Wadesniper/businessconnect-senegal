@@ -6,7 +6,7 @@ import './Footer.css';
 const Footer: React.FC = () => {
   return (
     <footer className="footer-modern">
-      <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 0 }}>
+      <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: -18 }}>
         <img src="/logo192.png" alt="Logo B" style={{ width: 72, height: 72, borderRadius: 16, boxShadow: '0 2px 8px #e3e8f7', background: '#fff', display: 'block' }} />
       </div>
       <div className="footer-content">
