@@ -283,23 +283,26 @@ export class SubscriptionService {
 
   async getActiveSubscription(userId: string): Promise<SubscriptionData | null> {
     try {
-      const allSubscriptions = await this.storageService.list<SubscriptionData>('subscriptions');
-      const userActiveSubscriptions = allSubscriptions.filter((s: SubscriptionData) => 
-        s.userId === userId && 
-        s.status === 'active' &&
-        s.expiresAt && new Date(s.expiresAt) > new Date()
-      );
-
-      if (userActiveSubscriptions.length === 0) {
-        const userPendingOrExpired = allSubscriptions.filter((s: SubscriptionData) => s.userId === userId && s.status === 'active' && s.expiresAt && new Date(s.expiresAt) <= new Date());
-        for (const sub of userPendingOrExpired) {
-          logger.info(`Abonnement ${sub.id} pour l'utilisateur ${userId} est marqué comme expiré.`);
-          await this.updateSubscription(sub.id, { status: 'expired' });
-        }
-        return null;
-      }
-      userActiveSubscriptions.sort((a: SubscriptionData, b: SubscriptionData) => (b.expiresAt?.getTime() || 0) - (a.expiresAt?.getTime() || 0));
-      return userActiveSubscriptions[0];
+      const sub = await prisma.subscription.findFirst({
+        where: {
+          userId,
+          status: 'active',
+          endDate: { gt: new Date() }
+        },
+        orderBy: { endDate: 'desc' }
+      });
+      if (!sub) return null;
+      return {
+        id: sub.id,
+        userId: sub.userId,
+        type: sub.plan,
+        status: sub.status,
+        paymentId: sub.paymentId!,
+        createdAt: sub.createdAt,
+        updatedAt: sub.updatedAt,
+        activatedAt: sub.startDate,
+        expiresAt: sub.endDate,
+      };
     } catch (error) {
       logger.error(`Erreur lors de la récupération de l'abonnement actif pour l'utilisateur ${userId}:`, error);
       throw error;
@@ -409,11 +412,22 @@ export class SubscriptionService {
 
   public async getSubscription(subscriptionId: string): Promise<SubscriptionData | null> {
     try {
-        const subscription = await StorageService.get<SubscriptionData>('subscriptions', subscriptionId);
-        return subscription;
+      const sub = await prisma.subscription.findUnique({ where: { id: subscriptionId } });
+      if (!sub) return null;
+      return {
+        id: sub.id,
+        userId: sub.userId,
+        type: sub.plan,
+        status: sub.status,
+        paymentId: sub.paymentId!,
+        createdAt: sub.createdAt,
+        updatedAt: sub.updatedAt,
+        activatedAt: sub.startDate,
+        expiresAt: sub.endDate,
+      };
     } catch (error) {
-        logger.error(`Erreur dans getSubscription pour id ${subscriptionId}:`, error);
-        throw error;
+      logger.error(`Erreur dans getSubscription pour id ${subscriptionId}:`, error);
+      throw error;
     }
   }
 
@@ -425,8 +439,18 @@ export class SubscriptionService {
 
   public async getPaymentHistory(userId: string): Promise<any[]> {
     try {
-      const allSubscriptions = await this.storageService.list<SubscriptionData>('subscriptions');
-      return allSubscriptions.filter((s: SubscriptionData) => s.userId === userId);
+      const subs = await prisma.subscription.findMany({ where: { userId } });
+      return subs.map(sub => ({
+        id: sub.id,
+        userId: sub.userId,
+        type: sub.plan,
+        status: sub.status,
+        paymentId: sub.paymentId!,
+        createdAt: sub.createdAt,
+        updatedAt: sub.updatedAt,
+        activatedAt: sub.startDate,
+        expiresAt: sub.endDate,
+      }));
     } catch (error) {
       logger.error('Erreur lors de la récupération de l\'historique des paiements (abonnements) pour l\'utilisateur:', error);
       return [];
@@ -435,7 +459,18 @@ export class SubscriptionService {
 
   public async getAllSubscriptions(): Promise<SubscriptionData[]> {
     try {
-      return await this.storageService.list<SubscriptionData>('subscriptions');
+      const subs = await prisma.subscription.findMany();
+      return subs.map(sub => ({
+        id: sub.id,
+        userId: sub.userId,
+        type: sub.plan,
+        status: sub.status,
+        paymentId: sub.paymentId!,
+        createdAt: sub.createdAt,
+        updatedAt: sub.updatedAt,
+        activatedAt: sub.startDate,
+        expiresAt: sub.endDate,
+      }));
     } catch (error) {
       logger.error('Erreur lors de la récupération de tous les abonnements:', error);
       return [];
@@ -443,29 +478,43 @@ export class SubscriptionService {
   }
 
   async updateSubscription(subscriptionId: string, data: SubscriptionUpdateData): Promise<SubscriptionData> {
-    const subscription = await StorageService.get<SubscriptionData>('subscriptions', subscriptionId);
-    if (!subscription) {
-      throw new Error('Abonnement non trouvé pour la mise à jour.');
+    try {
+      const updated = await prisma.subscription.update({
+        where: { id: subscriptionId },
+        data: {
+          ...data,
+          updatedAt: new Date()
+        }
+      });
+      return {
+        id: updated.id,
+        userId: updated.userId,
+        type: updated.plan,
+        status: updated.status,
+        paymentId: updated.paymentId!,
+        createdAt: updated.createdAt,
+        updatedAt: updated.updatedAt,
+        activatedAt: updated.startDate,
+        expiresAt: updated.endDate,
+      };
+    } catch (error) {
+      logger.error('Erreur lors de la mise à jour de l\'abonnement:', error);
+      throw error;
     }
-    const updatedSubscription: SubscriptionData = {
-       ...subscription,
-       ...data,
-       updatedAt: new Date() 
-    };
-    await this.storageService.save<SubscriptionData>('subscriptions', updatedSubscription);
-    return updatedSubscription;
   }
 
   public async cancelSubscription(subscriptionId: string, userIdRequestingCancellation: string): Promise<void> {
-    const subscription = await StorageService.get<SubscriptionData>('subscriptions', subscriptionId);
-    if (!subscription) {
+    const sub = await prisma.subscription.findUnique({ where: { id: subscriptionId } });
+    if (!sub) {
       throw new Error('Abonnement non trouvé pour annulation.');
     }
-    if (subscription.userId !== userIdRequestingCancellation) {
-        throw new Error('Action non autorisée pour annuler cet abonnement.');
+    if (sub.userId !== userIdRequestingCancellation) {
+      throw new Error('Action non autorisée pour annuler cet abonnement.');
     }
-
-    await this.updateSubscription(subscriptionId, { status: 'cancelled', updatedAt: new Date() });
+    await prisma.subscription.update({
+      where: { id: subscriptionId },
+      data: { status: 'cancelled', updatedAt: new Date() }
+    });
     logger.info(`Abonnement ${subscriptionId} annulé par l'utilisateur ${userIdRequestingCancellation}.`);
   }
 }
