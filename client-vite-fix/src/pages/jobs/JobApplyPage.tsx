@@ -40,9 +40,11 @@ const JobApplyPage: React.FC = () => {
   const mail = job.email || job.contactEmail;
   const phone = job.phone || job.contactPhone;
   const mailSubject = `Candidature au poste de ${job.title}`;
-  const mailBody = `Bonjour,\n\nJe souhaite postuler à l'offre \"${job.title}\" publiée sur votre plateforme.\n\nVeuillez trouver ci-joint mon CV.\n\nCordialement,\n[Votre nom]`;
+  const mailBody = `Bonjour,\n\nJe me permets de vous adresser ma candidature pour le poste de ${job.title}. Vous trouverez ci-joint mon CV pour plus de détails sur mon parcours et mes compétences.\n\nJe reste à votre disposition pour toute information complémentaire ou un entretien à votre convenance.\n\nCordialement,\n[Votre nom]`;
+  const mailtoLink = mail ? `mailto:${mail}?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}` : '';
 
   const handleCopy = (text: string, type: string) => {
+    if (!text) return;
     navigator.clipboard.writeText(text);
     setCopied(type);
     setTimeout(() => setCopied(null), 1500);
@@ -66,20 +68,45 @@ const JobApplyPage: React.FC = () => {
           <Divider sx={{ my: 2 }} />
           <Typography variant="h6" gutterBottom color="primary">Coordonnées de contact</Typography>
           <Stack spacing={2}>
+            {/* Email */}
             <Box>
               <Typography sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <EmailIcon color="action" /> <b>Email :</b> {mail || <span style={{color:'#aaa'}}>Aucun email</span>}
-                <Tooltip title="Copier">
-                  <IconButton onClick={() => handleCopy(mail, 'mail')} size="small"><ContentCopyIcon fontSize="small" /></IconButton>
-                </Tooltip>
+                {mail && (
+                  <>
+                    <Tooltip title="Copier l'email"><IconButton onClick={() => handleCopy(mail, 'mail')} size="small"><ContentCopyIcon fontSize="small" /></IconButton></Tooltip>
+                    <Tooltip title="Ouvrir le client mail"><IconButton component="a" href={mailtoLink} size="small" target="_blank" rel="noopener"><EmailIcon color="primary" /></IconButton></Tooltip>
+                  </>
+                )}
               </Typography>
+              {mail && (
+                <Stack direction="row" spacing={2} mt={1} alignItems="center">
+                  <Box>
+                    <Typography variant="body2" color="text.secondary">Objet du mail :</Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Typography variant="body2" sx={{ fontWeight: 500 }}>{mailSubject}</Typography>
+                      <Tooltip title="Copier l'objet"><IconButton onClick={() => handleCopy(mailSubject, 'subject')} size="small"><ContentCopyIcon fontSize="small" /></IconButton></Tooltip>
+                    </Box>
+                  </Box>
+                  <Box>
+                    <Typography variant="body2" color="text.secondary">Corps du mail :</Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Typography variant="body2" sx={{ fontWeight: 500, whiteSpace: 'pre-line' }}>{mailBody}</Typography>
+                      <Tooltip title="Copier le corps"><IconButton onClick={() => handleCopy(mailBody, 'body')} size="small"><ContentCopyIcon fontSize="small" /></IconButton></Tooltip>
+                    </Box>
+                  </Box>
+                </Stack>
+              )}
             </Box>
+            {/* Téléphone */}
             <Box>
               <Typography sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <PhoneIcon color="action" /> <b>Téléphone :</b> {phone || <span style={{color:'#aaa'}}>Aucun téléphone</span>}
-                <Tooltip title="Copier">
-                  <IconButton onClick={() => handleCopy(phone, 'phone')} size="small"><ContentCopyIcon fontSize="small" /></IconButton>
-                </Tooltip>
+                <PhoneIcon color="action" /> <b>Téléphone :</b> {phone ? (
+                  <a href={`tel:${phone}`} style={{ textDecoration: 'none', color: theme.palette.text.primary }}>{phone}</a>
+                ) : <span style={{color:'#aaa'}}>Aucun téléphone</span>}
+                {phone && (
+                  <Tooltip title="Copier le numéro"><IconButton onClick={() => handleCopy(phone, 'phone')} size="small"><ContentCopyIcon fontSize="small" /></IconButton></Tooltip>
+                )}
               </Typography>
             </Box>
           </Stack>
