@@ -58,4 +58,7 @@ export const config: Config = {
   PAYTECH_IPN_URL: process.env.PAYTECH_IPN_URL || 'https://businessconnectsenegal.com/api/subscriptions/ipn',
   PAYTECH_SUCCESS_URL: process.env.PAYTECH_SUCCESS_URL || 'https://businessconnectsenegal.com/payment/success',
   PAYTECH_CANCEL_URL: process.env.PAYTECH_CANCEL_URL || 'https://businessconnectsenegal.com/payment/cancel'
-}; 
+};
+
+console.log('[DEBUG PAYTECH] Clé API chargée:', config.PAYTECH_API_KEY);
+console.log('[DEBUG PAYTECH] Clé SECRÈTE chargée:', config.PAYTECH_API_SECRET); 
