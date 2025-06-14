@@ -6,6 +6,8 @@ import { authenticate } from '../middleware/auth.js';
 import { config } from '../config.js';
 import { SubscriptionController } from '../controllers/subscriptionController.js';
 import crypto from 'crypto';
+import prisma from '../config/prisma.js';
+import { UserRole } from '../generated/prisma/index.js';
 
 const router = Router();
 
@@ -109,10 +111,29 @@ router.post('/ipn', async (req, res) => {
         logger.info('[PAYTECH][IPN] Résultat recherche abonnement:', subscription);
         if (subscription) {
           logger.info('[PAYTECH][IPN] Abonnement trouvé, statut actuel:', subscription.status);
+          
           // Forcer l'activation même si le statut est déjà pending ou autre
           logger.info('[PAYTECH][IPN] Tentative d\'activation forcée de l\'abonnement...');
           await subscriptionService.activateSubscription(subscription.userId, subscription.id);
           logger.info('[PAYTECH][IPN] Abonnement activé (forcé) avec succès pour', subscription.userId);
+
+          // Mise à jour du rôle utilisateur dans la base de données
+          try {
+            const user = await prisma.user.findUnique({
+              where: { id: subscription.userId }
+            });
+
+            if (user && user.role !== 'admin') {
+              logger.info('[PAYTECH][IPN] Mise à jour du rôle utilisateur:', subscription.userId);
+              await prisma.user.update({
+                where: { id: subscription.userId },
+                data: { role: subscription.type as UserRole }
+              });
+              logger.info('[PAYTECH][IPN] Rôle utilisateur mis à jour avec succès');
+            }
+          } catch (error) {
+            logger.error('[PAYTECH][IPN] Erreur lors de la mise à jour du rôle utilisateur:', error);
+          }
         } else {
           logger.error('[PAYTECH][IPN] Abonnement non trouvé pour token:', token);
         }
