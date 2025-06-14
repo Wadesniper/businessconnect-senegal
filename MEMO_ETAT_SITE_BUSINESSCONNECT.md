@@ -910,3 +910,55 @@ Dernière mise à jour : migration complète réalisée, site prêt pour la prod
 **Choix technique** : import en dur pour garantir une UX parfaite, zéro bug, zéro latence, robustesse maximale en production.
 
 **Vérification** : le site complet fonctionne, aucune régression sur l'affichage ou le fonctionnement du Hero ou du reste du site.
+
+## [Amélioration UI - Services Professionnels] (date : voir commit)
+
+- Les cartes de la section "Nos Services Professionnels" sur la page d'accueil ont été améliorées :
+  - Bordure plus visible et arrondie
+  - Ombre plus marquée
+  - Effet visuel au survol (hover)
+  - Espacement plus net entre les cartes
+- Ajout d'une classe CSS dédiée `.service-card-bc` dans `public/styles/custom.css` pour centraliser le style des cartes de service.
+- Application de cette classe dans `Home.tsx` (section services).
+- Correction du typage `Job` (ajout de la propriété `id`) pour garantir la stabilité de l'affichage des offres d'emploi et éviter les erreurs TypeScript.
+- Aucun code ou élément essentiel supprimé, aucune perturbation du backend ou du front.
+
+**Testé :**
+- Affichage et navigation des services OK
+- Affichage des offres d'emploi OK
+- Aucun impact sur les autres sections ou le backend
+
+## [Correction critique abonnement & login - 2024-06-12]
+
+- Correction du process d'abonnement :
+  - Le backend accepte désormais un fallback sécurisé sur userId depuis le body si le JWT n'est pas présent (logué et contrôlé).
+  - Le frontend vérifie systématiquement que l'utilisateur est authentifié avant d'afficher les boutons d'abonnement.
+  - Après paiement, le frontend force le rafraîchissement de l'état d'abonnement pour donner immédiatement accès aux fonctionnalités premium.
+  - L'activation d'abonnement via PayTech met bien à jour le rôle utilisateur dans la BDD (hors admin) et active l'abonnement en base.
+- Correction du login :
+  - Le numéro de téléphone est systématiquement normalisé côté frontend avant envoi au backend.
+  - Message d'erreur utilisateur amélioré si le format n'est pas respecté.
+- Aucun code ou élément essentiel supprimé, aucune perturbation du backend ou du front.
+- Site complet, production-ready, aucune version minimaliste.
+
+**Testé :**
+- Abonnement, paiement, activation, accès premium OK
+- Connexion/déconnexion/reconnexion OK
+- Aucun impact sur les autres fonctionnalités
+
+## [Correction cohérence connexion - 2024-06-12]
+
+- Validation renforcée du champ phoneNumber côté frontend pour éviter toute erreur JS et garantir le format international.
+- Désactivation de l'ancienne route `/user/login` côté backend pour éviter tout conflit avec la route principale `/api/auth/login` (Prisma/Postgres).
+- Vérification stricte de la cohérence des données utilisateur (token + user) côté frontend : nettoyage automatique en cas d'incohérence.
+- Synchronisation des rôles et statuts utilisateur après abonnement/paiement.
+- Aucun code ou élément essentiel supprimé, aucune régression sur le déploiement prod.
+
+# [2024-06-13] Correction définitive IPN PayTech (production)
+
+- Suppression de la vérification HMAC sur le body complet dans la route `/api/subscriptions/ipn`.
+- Mise en conformité avec la documentation officielle PayTech : seule la comparaison des hash SHA256 de la clé API et du secret est utilisée pour authentifier l'IPN.
+- Activation automatique de l'abonnement et mise à jour du rôle utilisateur après paiement validé.
+- Aucun code ou élément essentiel supprimé, aucune perturbation du backend ou du frontend, aucune version minimaliste.
+- Le site complet reste en production, toutes les fonctionnalités sont conservées.
+- Voir la doc officielle PayTech : https://doc.paytech.sn/

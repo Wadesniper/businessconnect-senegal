@@ -65,34 +65,14 @@ router.post('/ipn', async (req, res) => {
     const { type_event, api_key_sha256, api_secret_sha256, ref_command } = body;
     const token = body.token || body.paymentId || body.transaction_id;
 
-    // Vérification de la signature (robuste)
-    const normalize = (str: string) => (str || '').trim().toLowerCase();
-    const hashKey = config.PAYTECH_API_KEY;
-    const hashSecret = config.PAYTECH_API_SECRET;
-    const hashKeyNorm = normalize(hashKey);
-    const hashSecretNorm = normalize(hashSecret);
-    const apiKeyNorm = normalize(api_key_sha256);
-    const apiSecretNorm = normalize(api_secret_sha256);
+    // Vérification officielle PayTech : hash SHA256 clé et secret
+    const apiKeyHash = crypto.createHash('sha256').update(config.PAYTECH_API_KEY).digest('hex');
+    const apiSecretHash = crypto.createHash('sha256').update(config.PAYTECH_API_SECRET).digest('hex');
+    logger.info('[PAYTECH][IPN][DEBUG] Clés attendues:', { key: apiKeyHash, secret: apiSecretHash });
+    logger.info('[PAYTECH][IPN][DEBUG] Clés reçues:', { key: api_key_sha256, secret: api_secret_sha256 });
 
-    logger.info('[PAYTECH][IPN][DEBUG] Clés originales attendues:', {
-      key: hashKeyNorm,
-      secret: hashSecretNorm
-    });
-    logger.info('[PAYTECH][IPN][DEBUG] Clés reçues:', {
-      key: apiKeyNorm,
-      secret: apiSecretNorm
-    });
-
-    // Vérification du HMAC
-    const hmac = crypto.createHmac('sha256', hashSecretNorm);
-    const computedHmac = hmac.update(JSON.stringify(body)).digest('hex');
-    const receivedHmac = body.hmac_compute;
-
-    logger.info('[PAYTECH][IPN][DEBUG] HMAC calculé:', computedHmac);
-    logger.info('[PAYTECH][IPN][DEBUG] HMAC reçu:', receivedHmac);
-
-    if (computedHmac !== receivedHmac) {
-      logger.error('[PAYTECH][IPN] Signature HMAC invalide');
+    if (apiKeyHash !== api_key_sha256 || apiSecretHash !== api_secret_sha256) {
+      logger.error('[PAYTECH][IPN] Signature IPN invalide (hash clé ou secret)');
       return res.status(403).json({ success: false, message: 'Signature IPN invalide' });
     }
 
@@ -111,7 +91,6 @@ router.post('/ipn', async (req, res) => {
         logger.info('[PAYTECH][IPN] Résultat recherche abonnement:', subscription);
         if (subscription) {
           logger.info('[PAYTECH][IPN] Abonnement trouvé, statut actuel:', subscription.status);
-          
           // Forcer l'activation même si le statut est déjà pending ou autre
           logger.info('[PAYTECH][IPN] Tentative d\'activation forcée de l\'abonnement...');
           await subscriptionService.activateSubscription(subscription.userId, subscription.id);
@@ -122,7 +101,6 @@ router.post('/ipn', async (req, res) => {
             const user = await prisma.user.findUnique({
               where: { id: subscription.userId }
             });
-
             if (user && user.role !== 'admin') {
               logger.info('[PAYTECH][IPN] Mise à jour du rôle utilisateur:', subscription.userId);
               await prisma.user.update({
