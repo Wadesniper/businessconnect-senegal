@@ -284,6 +284,7 @@ export class SubscriptionService {
 
   async getActiveSubscription(userId: string): Promise<SubscriptionData | null> {
     try {
+      logger.info(`[DEBUG] Recherche abonnement actif pour userId=${userId} à la date ${new Date().toISOString()}`);
       const sub = await prisma.subscription.findFirst({
         where: {
           userId,
@@ -292,6 +293,7 @@ export class SubscriptionService {
         },
         orderBy: { endDate: 'desc' }
       });
+      logger.info(`[DEBUG] Résultat abonnement actif:`, sub);
       if (!sub) return null;
       return {
         id: sub.id,
