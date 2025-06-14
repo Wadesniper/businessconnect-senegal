@@ -107,14 +107,13 @@ class SubscriptionService {
 
   async fetchSubscriptionStatus(userId: string): Promise<boolean> {
     try {
-      const res = await api.get<{ isActive: boolean }>(`/subscriptions/${userId}/status`);
+      const res = await api.get<{ isActive: boolean }>(`/api/subscriptions/${userId}/status`);
       return res.data.isActive;
     } catch (error: any) {
       // Si c'est une erreur 404, c'est normal (pas d'abonnement), donc on ne signale pas d'erreur
       if (error.response?.status === 404) {
         return false;
       }
-      
       // Pour les autres erreurs, on log mais on retourne false silencieusement
       console.warn('Erreur lors de la vérification du statut d\'abonnement:', error.message);
       return false;
