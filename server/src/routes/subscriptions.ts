@@ -66,12 +66,20 @@ router.post('/ipn', async (req, res) => {
     const token = body.token || body.paymentId || body.transaction_id;
 
     // Vérification officielle PayTech : hash SHA256 clé et secret
+    function asciiCodes(str: string): string {
+      return str.split('').map((c: string) => c.charCodeAt(0)).join(' ');
+    }
     const apiKeyHash = crypto.createHash('sha256').update(config.PAYTECH_API_KEY).digest('hex');
     const apiSecretHash = crypto.createHash('sha256').update(config.PAYTECH_API_SECRET).digest('hex');
-    logger.info('[PAYTECH][IPN][DEBUG] Clés attendues:', { key: apiKeyHash, secret: apiSecretHash });
-    logger.info('[PAYTECH][IPN][DEBUG] Clés reçues:', { key: api_key_sha256, secret: api_secret_sha256 });
+    logger.info('[DEBUG PAYTECH] API_KEY_HASH ASCII:', asciiCodes(apiKeyHash));
+    logger.info('[DEBUG PAYTECH] api_key_sha256 ASCII:', asciiCodes(body.api_key_sha256));
+    logger.info('[DEBUG PAYTECH] API_SECRET_HASH ASCII:', asciiCodes(apiSecretHash));
+    logger.info('[DEBUG PAYTECH] api_secret_sha256 ASCII:', asciiCodes(body.api_secret_sha256));
 
-    if (apiKeyHash !== api_key_sha256 || apiSecretHash !== api_secret_sha256) {
+    if (
+      apiKeyHash.trim().toLowerCase() !== body.api_key_sha256.trim().toLowerCase() ||
+      apiSecretHash.trim().toLowerCase() !== body.api_secret_sha256.trim().toLowerCase()
+    ) {
       logger.error('[PAYTECH][IPN] Signature IPN invalide (hash clé ou secret)');
       return res.status(403).json({ success: false, message: 'Signature IPN invalide' });
     }
