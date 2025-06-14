@@ -65,9 +65,17 @@ router.post('/ipn', async (req, res) => {
     const { type_event, api_key_sha256, api_secret_sha256, ref_command } = body;
     const token = body.token || body.paymentId || body.transaction_id;
 
-    // Vérification officielle PayTech : hash SHA256 clé et secret
+    // DEBUG avancé : afficher la valeur brute et le code ASCII des clés et des hash
+    logger.info('[DEBUG PAYTECH] PAYTECH_API_KEY brut:', JSON.stringify(config.PAYTECH_API_KEY));
+    logger.info('[DEBUG PAYTECH] PAYTECH_API_SECRET brut:', JSON.stringify(config.PAYTECH_API_SECRET));
+    logger.info('[DEBUG PAYTECH] PAYTECH_API_KEY (char codes):', config.PAYTECH_API_KEY.split('').map(c => c.charCodeAt(0)));
+    logger.info('[DEBUG PAYTECH] PAYTECH_API_SECRET (char codes):', config.PAYTECH_API_SECRET.split('').map(c => c.charCodeAt(0)));
     const apiKeyHash = crypto.createHash('sha256').update(config.PAYTECH_API_KEY).digest('hex');
     const apiSecretHash = crypto.createHash('sha256').update(config.PAYTECH_API_SECRET).digest('hex');
+    logger.info('[DEBUG PAYTECH] Hash API_KEY calculé backend:', apiKeyHash);
+    logger.info('[DEBUG PAYTECH] Hash API_SECRET calculé backend:', apiSecretHash);
+
+    // Vérification officielle PayTech : hash SHA256 clé et secret
     if (
       apiKeyHash.trim().toLowerCase() !== body.api_key_sha256.trim().toLowerCase() ||
       apiSecretHash.trim().toLowerCase() !== body.api_secret_sha256.trim().toLowerCase()
