@@ -72,15 +72,36 @@ router.post('/ipn', async (req, res) => {
     logger.info('[DEBUG PAYTECH] PAYTECH_API_SECRET (char codes):', config.PAYTECH_API_SECRET.split('').map(c => c.charCodeAt(0)));
     const apiKeyHash = crypto.createHash('sha256').update(config.PAYTECH_API_KEY).digest('hex');
     const apiSecretHash = crypto.createHash('sha256').update(config.PAYTECH_API_SECRET).digest('hex');
-    logger.info('[DEBUG PAYTECH] Hash API_KEY calculé backend:', apiKeyHash);
-    logger.info('[DEBUG PAYTECH] Hash API_SECRET calculé backend:', apiSecretHash);
+    
+    // Logs détaillés pour la clé API
+    logger.info('[DEBUG PAYTECH] Longueur API_KEY_HASH:', apiKeyHash.length);
+    logger.info('[DEBUG PAYTECH] Longueur api_key_sha256:', body.api_key_sha256.length);
+    logger.info('[DEBUG PAYTECH] Comparaison caractère par caractère API_KEY:');
+    for (let i = 0; i < Math.max(apiKeyHash.length, body.api_key_sha256.length); i++) {
+      logger.info(`[DEBUG PAYTECH] Index ${i}: backend=${apiKeyHash[i] || 'undefined'} (${apiKeyHash.charCodeAt(i)}) | paytech=${body.api_key_sha256[i] || 'undefined'} (${body.api_key_sha256.charCodeAt(i)})`);
+    }
+
+    // Logs détaillés pour le secret
+    logger.info('[DEBUG PAYTECH] Longueur API_SECRET_HASH:', apiSecretHash.length);
+    logger.info('[DEBUG PAYTECH] Longueur api_secret_sha256:', body.api_secret_sha256.length);
+    logger.info('[DEBUG PAYTECH] Comparaison caractère par caractère API_SECRET:');
+    for (let i = 0; i < Math.max(apiSecretHash.length, body.api_secret_sha256.length); i++) {
+      logger.info(`[DEBUG PAYTECH] Index ${i}: backend=${apiSecretHash[i] || 'undefined'} (${apiSecretHash.charCodeAt(i)}) | paytech=${body.api_secret_sha256[i] || 'undefined'} (${body.api_secret_sha256.charCodeAt(i)})`);
+    }
 
     // Vérification officielle PayTech : hash SHA256 clé et secret
-    if (
-      apiKeyHash.trim().toLowerCase() !== body.api_key_sha256.trim().toLowerCase() ||
-      apiSecretHash.trim().toLowerCase() !== body.api_secret_sha256.trim().toLowerCase()
-    ) {
+    const apiKeyMatch = apiKeyHash.trim().toLowerCase() === body.api_key_sha256.trim().toLowerCase();
+    const apiSecretMatch = apiSecretHash.trim().toLowerCase() === body.api_secret_sha256.trim().toLowerCase();
+    
+    logger.info('[DEBUG PAYTECH] Résultat comparaison API_KEY:', apiKeyMatch);
+    logger.info('[DEBUG PAYTECH] Résultat comparaison API_SECRET:', apiSecretMatch);
+    
+    if (!apiKeyMatch || !apiSecretMatch) {
       logger.error('[PAYTECH][IPN] Signature IPN invalide (hash clé ou secret)');
+      logger.error('[DEBUG PAYTECH] API_KEY_HASH (backend):', apiKeyHash);
+      logger.error('[DEBUG PAYTECH] api_key_sha256 (paytech):', body.api_key_sha256);
+      logger.error('[DEBUG PAYTECH] API_SECRET_HASH (backend):', apiSecretHash);
+      logger.error('[DEBUG PAYTECH] api_secret_sha256 (paytech):', body.api_secret_sha256);
       return res.status(403).json({ success: false, message: 'Signature IPN invalide' });
     }
 

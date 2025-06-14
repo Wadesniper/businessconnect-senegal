@@ -60,5 +60,12 @@ export const config: Config = {
   PAYTECH_CANCEL_URL: process.env.PAYTECH_CANCEL_URL || 'https://businessconnectsenegal.com/payment/cancel'
 };
 
-console.log('[DEBUG PAYTECH] Clé API chargée:', config.PAYTECH_API_KEY);
-console.log('[DEBUG PAYTECH] Clé SECRÈTE chargée:', config.PAYTECH_API_SECRET); 
+// Log des variables PayTech au démarrage
+console.log('[CONFIG] PAYTECH_API_KEY:', config.PAYTECH_API_KEY);
+console.log('[CONFIG] PAYTECH_API_SECRET:', config.PAYTECH_API_SECRET);
+console.log('[CONFIG] PAYTECH_API_KEY length:', config.PAYTECH_API_KEY.length);
+console.log('[CONFIG] PAYTECH_API_SECRET length:', config.PAYTECH_API_SECRET.length);
+console.log('[CONFIG] PAYTECH_API_KEY char codes:', config.PAYTECH_API_KEY.split('').map(c => c.charCodeAt(0)));
+console.log('[CONFIG] PAYTECH_API_SECRET char codes:', config.PAYTECH_API_SECRET.split('').map(c => c.charCodeAt(0)));
+
+export default config; 
