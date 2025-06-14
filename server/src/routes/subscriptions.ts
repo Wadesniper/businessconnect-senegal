@@ -30,6 +30,7 @@ router.get('/:userId/status', async (req: Request, res: Response, next: NextFunc
     const authReq = req as AuthRequest;
     if (!authReq.user) { return res.status(401).json({ error: 'Authentification requise' }); }
     const { userId } = authReq.params;
+    console.log('ROUTE STATUS HIT', userId);
     const subscription = await subscriptionService.getActiveSubscription(userId);
     if (!subscription) {
       return res.status(404).json({ error: 'Aucun abonnement actif trouvé' });
