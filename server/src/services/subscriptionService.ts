@@ -211,8 +211,9 @@ export class SubscriptionService {
       }
       // Calcul de la nouvelle date d'expiration
       const now = new Date();
+      const duration = plan?.duration || 30;
       const expiresAt = new Date(now);
-      expiresAt.setDate(expiresAt.getDate() + plan.duration);
+      expiresAt.setDate(expiresAt.getDate() + duration);
       // Mise à jour de l'abonnement
       const updated = await prisma.subscription.update({
         where: { id: transactionId },
