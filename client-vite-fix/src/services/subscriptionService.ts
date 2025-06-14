@@ -12,7 +12,7 @@ function uuidv4() {
 class SubscriptionService {
   async getSubscription(userId: string): Promise<Subscription | null> {
     try {
-      const res = await api.get<Subscription>(`/subscriptions/${userId}/status`);
+      const res = await api.get<Subscription>(`/api/subscriptions/${userId}/status`);
       return res.data;
     } catch (error: any) {
       if (error.response?.status === 404) return null;
