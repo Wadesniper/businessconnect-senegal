@@ -27,15 +27,13 @@ router.delete('/:userId', authenticate, subscriptionController.cancelSubscriptio
 // Vérifier le statut d'un abonnement
 router.get('/:userId/status', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    // const authReq = req as AuthRequest;
-    // if (!authReq.user) { return res.status(401).json({ error: 'Authentification requise' }); }
     const { userId } = req.params;
     console.log('ROUTE STATUS HIT', userId);
     const subscription = await subscriptionService.getActiveSubscription(userId);
     if (!subscription) {
-      return res.status(404).json({ error: 'Aucun abonnement actif trouvé' });
+      return res.status(404).json({ isActive: false });
     }
-    return res.json(subscription);
+    return res.json({ isActive: true, ...subscription });
   } catch (error) {
     logger.error('Erreur lors de la récupération de l\'abonnement:', error);
     next(error);
