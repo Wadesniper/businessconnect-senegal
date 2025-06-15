@@ -80,21 +80,27 @@ const JobApplyPage: React.FC = () => {
                 )}
               </Typography>
               {mail && (
-                <Stack direction="row" spacing={2} mt={1} alignItems="center">
-                  <Box>
-                    <Typography variant="body2" color="text.secondary">Objet du mail :</Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Typography variant="body2" sx={{ fontWeight: 500 }}>{mailSubject}</Typography>
-                      <Tooltip title="Copier l'objet"><IconButton onClick={() => handleCopy(mailSubject, 'subject')} size="small"><ContentCopyIcon fontSize="small" /></IconButton></Tooltip>
+                <Stack direction="column" spacing={2} mt={2}>
+                  <Paper elevation={2} sx={{ p: 2, borderRadius: 3, bgcolor: '#fff', display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+                    <EmailIcon color="primary" sx={{ mt: 0.5 }} />
+                    <Box>
+                      <Typography variant="subtitle2" color="primary" fontWeight={700} gutterBottom>Objet du mail</Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 500 }}>{mailSubject}</Typography>
+                        <Tooltip title="Copier l'objet"><IconButton onClick={() => handleCopy(mailSubject, 'subject')} size="small"><ContentCopyIcon fontSize="small" /></IconButton></Tooltip>
+                      </Box>
                     </Box>
-                  </Box>
-                  <Box>
-                    <Typography variant="body2" color="text.secondary">Corps du mail :</Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Typography variant="body2" sx={{ fontWeight: 500, whiteSpace: 'pre-line' }}>{mailBody}</Typography>
-                      <Tooltip title="Copier le corps"><IconButton onClick={() => handleCopy(mailBody, 'body')} size="small"><ContentCopyIcon fontSize="small" /></IconButton></Tooltip>
+                  </Paper>
+                  <Paper elevation={2} sx={{ p: 2, borderRadius: 3, bgcolor: '#fff', display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+                    <WorkIcon color="secondary" sx={{ mt: 0.5 }} />
+                    <Box>
+                      <Typography variant="subtitle2" color="secondary" fontWeight={700} gutterBottom>Corps du mail</Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 500, whiteSpace: 'pre-line' }}>{mailBody}</Typography>
+                        <Tooltip title="Copier le corps"><IconButton onClick={() => handleCopy(mailBody, 'body')} size="small"><ContentCopyIcon fontSize="small" /></IconButton></Tooltip>
+                      </Box>
                     </Box>
-                  </Box>
+                  </Paper>
                 </Stack>
               )}
             </Box>

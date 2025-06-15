@@ -50,14 +50,17 @@ const SECTEURS = [
   { id: 10, nom: 'Communication', icone: <ShoppingOutlined />, couleur: '#b37feb', description: 'Secteur lié à la communication et à la média' },
 ];
 
-const AnimatedStatistic = ({ value, ...props }: { value: number; [key: string]: any }) => {
+const AnimatedStatistic = ({ value, suffix = '+', duration = 1200, color }: { value: number; suffix?: string; duration?: number; color?: string }) => {
   const { number } = useSpring({
     from: { number: 0 },
     number: value,
-    config: { duration: 1200, easing: t => t * (2 - t) },
+    config: { duration, easing: t => t * (2 - t) },
+    reset: true,
   });
   return (
-    <animated.span children={number.to((n: number) => `${Math.floor(n)}+`)} />
+    <animated.span style={{ color, fontWeight: 800 }}>
+      {number.to((n: number) => `${Math.floor(n)}${suffix}`)}
+    </animated.span>
   );
 };
 
@@ -455,7 +458,7 @@ const Home: React.FC = () => {
               }}>
                 <div style={{ fontSize: 22, color: '#1890ff', marginBottom: 8, fontWeight: 500 }}>Entreprises</div>
                 <div style={{ fontSize: 40, fontWeight: 800, color: '#1890ff', textShadow: '0 2px 12px #1890ff33' }}>
-                  <AnimatedStatistic value={500} />
+                  <AnimatedStatistic value={500} color="#1890ff" />
                 </div>
               </div>
             </Col>
@@ -493,7 +496,7 @@ const Home: React.FC = () => {
               }}>
                 <div style={{ fontSize: 22, color: '#43a047', marginBottom: 8, fontWeight: 500 }}>Membres</div>
                 <div style={{ fontSize: 40, fontWeight: 800, color: '#43a047', textShadow: '0 2px 12px #43a04733' }}>
-                  <AnimatedStatistic value={10000} />
+                  <AnimatedStatistic value={10000} color="#43a047" />
                 </div>
               </div>
             </Col>
@@ -513,7 +516,7 @@ const Home: React.FC = () => {
               }}>
                 <div style={{ fontSize: 22, color: '#ff9800', marginBottom: 8, fontWeight: 500 }}>Secteurs</div>
                 <div style={{ fontSize: 40, fontWeight: 800, color: '#ff9800', textShadow: '0 2px 12px #ff980033' }}>
-                  <AnimatedStatistic value={15} />
+                  <AnimatedStatistic value={15} color="#ff9800" />
                 </div>
               </div>
             </Col>

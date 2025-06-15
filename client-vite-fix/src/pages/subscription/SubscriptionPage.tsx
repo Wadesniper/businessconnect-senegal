@@ -91,6 +91,19 @@ const SubscriptionPage: React.FC = () => {
     );
   }
 
+  // Si l'utilisateur n'est pas authentifié, masquer les boutons d'abonnement
+  if (!isAuthenticated || !user) {
+    return (
+      <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Result
+          status="warning"
+          title="Vous devez être connecté pour souscrire à un abonnement."
+          extra={<Button type="primary" onClick={() => navigate('/auth')}>Se connecter</Button>}
+        />
+      </div>
+    );
+  }
+
   const handleSubscribe = async (offerKey: string) => {
     try {
       // Mapping explicite des clés d'offre vers les types backend
@@ -115,6 +128,14 @@ const SubscriptionPage: React.FC = () => {
       }
     }
   };
+
+  // Après retour de paiement, forcer le rafraîchissement de l'abonnement
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('payment') === 'success') {
+      refreshSubscription();
+    }
+  }, []);
 
   return (
     <div style={{

@@ -18,41 +18,48 @@ export class AuthService {
   private readonly USER_KEY = 'user';
 
   async login(credentials: LoginCredentials): Promise<{ token: string; user: User }> {
-    const response = await fetch(`${API_URL}/api/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(credentials),
-    });
+    try {
+      // Validation du numéro de téléphone avant l'envoi
+      const phone = credentials.phoneNumber.replace(/[^0-9+]/g, '');
+      if (!/^\+\d{1,4}\d{10,}$/.test(phone)) {
+        throw new Error('Le numéro doit être au format international (+XXX XXXXXXXXX)');
+      }
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Erreur lors de la connexion');
-    }
+      const response = await fetch(`${API_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...credentials,
+          phoneNumber: phone // Envoyer le numéro normalisé
+        }),
+      });
 
-    const data = await response.json();
-    console.log('Réponse brute backend (login):', data);
-    console.log('data.data:', data.data);
-    console.log('data.data.user:', data.data ? data.data.user : undefined);
-    if (!data.success) {
-      throw new Error(data.message || 'Identifiants invalides');
-    }
-    if (
-      data.success &&
-      data.data &&
-      typeof data.data.token === 'string' &&
-      data.data.user &&
-      typeof data.data.user === 'object' &&
-      data.data.user !== null &&
-      typeof data.data.user.id === 'string'
-    ) {
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Erreur lors de la connexion');
+      }
+
+      if (!data.success || !data.data || !data.data.token || !data.data.user) {
+        throw new Error(data.message || 'Réponse de connexion invalide');
+      }
+
+      // Vérification de la cohérence des données
+      if (!data.data.user.id || !data.data.user.role) {
+        throw new Error('Données utilisateur incomplètes');
+      }
+
+      // Stockage des données d'authentification
       this.setToken(data.data.token);
       this.setUser(data.data.user);
-      console.log('Connexion réussie, user:', data.data.user);
+
       return { token: data.data.token, user: data.data.user };
-    } else {
-      throw new Error(data.message || 'Réponse de connexion invalide');
+    } catch (error: any) {
+      // Nettoyage en cas d'erreur
+      this.clearAuthState();
+      throw error;
     }
   }
 
