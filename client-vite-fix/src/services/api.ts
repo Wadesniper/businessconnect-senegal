@@ -18,10 +18,11 @@ export const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = authService.getToken();
-  if (token && config.headers) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
+    console.log('[DEBUG API] Token utilisé pour Authorization:', token);
+    if (token && config.headers) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
   },
   (error) => {
     return Promise.reject(error);
