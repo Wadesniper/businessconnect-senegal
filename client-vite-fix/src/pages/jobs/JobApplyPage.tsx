@@ -65,6 +65,26 @@ const JobApplyPage: React.FC = () => {
               </Typography>
             </Box>
           </Box>
+          {/* Message pédagogique dynamique */}
+          {(mail && phone) && (
+            <Alert severity="info" icon={false} sx={{ mb: 3, borderRadius: 2, bgcolor: '#e6f7ff', color: '#096dd9', fontSize: 16, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 1 }}>
+              <span role="img" aria-label="Conseil">💡</span>
+              Copiez l'objet et le corps du mail ci-dessous, ouvrez votre boîte mail, joignez votre CV, puis envoyez votre candidature directement au recruteur à l'adresse indiquée.<br />
+              <span role="img" aria-label="Téléphone">📞</span> Vous pouvez aussi contacter le recruteur par téléphone.
+            </Alert>
+          )}
+          {(!mail && phone) && (
+            <Alert severity="info" icon={false} sx={{ mb: 3, borderRadius: 2, bgcolor: '#fffbe6', color: '#ad8b00', fontSize: 16, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 1 }}>
+              <span role="img" aria-label="Téléphone">📞</span>
+              Contactez directement le recruteur par téléphone pour postuler à cette offre.
+            </Alert>
+          )}
+          {(mail && !phone) && (
+            <Alert severity="info" icon={false} sx={{ mb: 3, borderRadius: 2, bgcolor: '#e6f7ff', color: '#096dd9', fontSize: 16, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 1 }}>
+              <span role="img" aria-label="Conseil">💡</span>
+              Copiez l'objet et le corps du mail ci-dessous, ouvrez votre boîte mail, joignez votre CV, puis envoyez votre candidature directement au recruteur à l'adresse indiquée.
+            </Alert>
+          )}
           <Divider sx={{ my: 2 }} />
           <Typography variant="h6" gutterBottom color="primary">Coordonnées de contact</Typography>
           <Stack spacing={2}>
@@ -102,12 +122,6 @@ const JobApplyPage: React.FC = () => {
                     </Box>
                   </Paper>
                 </Stack>
-              )}
-              {mail && (
-                <Alert severity="info" icon={false} sx={{ mb: 2, borderRadius: 2, bgcolor: '#e6f7ff', color: '#096dd9', fontSize: 16, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <span role="img" aria-label="Conseil">💡</span>
-                  Copiez l'objet et le corps du mail ci-dessous, ouvrez votre boîte mail, joignez votre CV, puis envoyez votre candidature directement au recruteur à l'adresse indiquée.
-                </Alert>
               )}
             </Box>
             {/* Téléphone */}
