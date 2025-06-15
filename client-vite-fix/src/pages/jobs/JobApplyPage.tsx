@@ -76,7 +76,7 @@ const JobApplyPage: React.FC = () => {
           {(!mail && phone) && (
             <Alert severity="info" icon={false} sx={{ mb: 3, borderRadius: 2, bgcolor: '#fffbe6', color: '#ad8b00', fontSize: 16, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 1 }}>
               <span role="img" aria-label="Téléphone">📞</span>
-              Contactez directement le recruteur par téléphone pour postuler à cette offre.
+              <b>Cliquez sur le numéro de téléphone ci-dessous</b> pour appeler et contactez directement le recruteur pour postuler à cette offre.
             </Alert>
           )}
           {(mail && !phone) && (
@@ -127,13 +127,31 @@ const JobApplyPage: React.FC = () => {
             {/* Téléphone */}
             <Box>
               <Typography sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <PhoneIcon color="action" /> <b>Téléphone :</b> {phone ? (
-                  <a href={`tel:${phone}`} style={{ textDecoration: 'none', color: theme.palette.text.primary }}>{phone}</a>
-                ) : <span style={{color:'#aaa'}}>Aucun téléphone</span>}
-                {phone && (
-                  <Tooltip title="Copier le numéro"><IconButton onClick={() => handleCopy(phone, 'phone')} size="small"><ContentCopyIcon fontSize="small" /></IconButton></Tooltip>
-                )}
+                <PhoneIcon color="action" /> <b>Téléphone :</b>
               </Typography>
+              {phone ? (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<PhoneIcon />}
+                  href={`tel:${phone}`}
+                  sx={{
+                    fontWeight: 700,
+                    fontSize: 18,
+                    borderRadius: 3,
+                    my: 2,
+                    px: 3,
+                    py: 1.5,
+                    boxShadow: 2,
+                    textTransform: 'none',
+                    letterSpacing: 1
+                  }}
+                >
+                  {phone}
+                </Button>
+              ) : (
+                <span style={{color:'#aaa'}}>Aucun téléphone</span>
+              )}
             </Box>
           </Stack>
           {copied && (
