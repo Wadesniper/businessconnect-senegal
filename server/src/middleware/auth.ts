@@ -9,16 +9,21 @@ import { RequestHandler } from 'express';
 
 export const authenticate: RequestHandler = (req, res, next) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1];
-    
+    const authHeader = req.headers.authorization;
+    console.log('[DEBUG AUTH] Authorization header:', authHeader);
+    const token = authHeader?.split(' ')[1];
+    console.log('[DEBUG AUTH] Token extrait:', token);
     if (!token) {
       return (res as Response).status(401).json({ error: 'Token manquant' });
     }
-
-    const decoded = jwt.verify(token, config.JWT_SECRET) as UserPayload;
-    req.user = decoded;
-    
-    next();
+    try {
+      const decoded = jwt.verify(token, config.JWT_SECRET) as UserPayload;
+      req.user = decoded;
+      next();
+    } catch (err) {
+      console.log('[DEBUG AUTH] Erreur jwt.verify:', err);
+      return (res as Response).status(401).json({ error: 'Token invalide' });
+    }
   } catch (error) {
     logger.error('Authentication error:', error);
     return (res as Response).status(401).json({ error: 'Token invalide' });
