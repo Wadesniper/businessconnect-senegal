@@ -12,21 +12,33 @@ import { hasPremiumAccess } from '../../utils/premiumAccess';
 import type { Template } from '../../types/cv';
 import CustomizationForm from './components/CustomizationForm';
 import { CV_TEMPLATES } from './components/data/templates';
+import {
+  UserOutlined,
+  SolutionOutlined,
+  BookOutlined,
+  StarOutlined,
+  GlobalOutlined,
+  SafetyCertificateOutlined,
+  ProjectOutlined,
+  HeartOutlined,
+  EyeOutlined,
+  FileDoneOutlined
+} from '@ant-design/icons';
 
 const { Content } = Layout;
 const { Title: AntTitle } = Typography;
 
 const steps = [
-  { title: 'Modèle', key: 'template' },
-  { title: 'Informations personnelles', key: 'personalInfo' },
-  { title: 'Expérience', key: 'experience' },
-  { title: 'Formation', key: 'education' },
-  { title: 'Compétences', key: 'skills' },
-  { title: 'Langues', key: 'languages' },
-  { title: 'Certifications', key: 'certifications' },
-  { title: 'Projets', key: 'projects' },
-  { title: "Centres d'intérêt", key: 'interests' },
-  { title: 'Aperçu', key: 'preview' },
+  { title: 'Modèle', key: 'template', icon: <FileDoneOutlined /> },
+  { title: 'Informations personnelles', key: 'personalInfo', icon: <UserOutlined /> },
+  { title: 'Expérience', key: 'experience', icon: <SolutionOutlined /> },
+  { title: 'Formation', key: 'education', icon: <BookOutlined /> },
+  { title: 'Compétences', key: 'skills', icon: <StarOutlined /> },
+  { title: 'Langues', key: 'languages', icon: <GlobalOutlined /> },
+  { title: 'Certifications', key: 'certifications', icon: <SafetyCertificateOutlined /> },
+  { title: 'Projets', key: 'projects', icon: <ProjectOutlined /> },
+  { title: "Centres d'intérêt", key: 'interests', icon: <HeartOutlined /> },
+  { title: 'Aperçu', key: 'preview', icon: <EyeOutlined /> },
 ];
 
 type CVGeneratorProps = { isSubscribed?: boolean };
@@ -188,9 +200,30 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
 
   return (
     <div style={{ maxWidth: 1200, minWidth: 820, margin: '0 auto', padding: 24 }}>
-      <Steps current={currentStep} items={steps} style={{ marginBottom: 32 }} />
       <Row gutter={32}>
-        <Col xs={24}>
+        {/* Stepper vertical à gauche */}
+        <Col xs={0} md={6} style={{ minWidth: 180 }}>
+          <Steps
+            direction="vertical"
+            current={currentStep}
+            items={steps.map(s => ({ ...s, status: undefined }))}
+            style={{ minHeight: 600, background: 'none', padding: 0 }}
+          />
+        </Col>
+        {/* Wizard à droite */}
+        <Col xs={24} md={18}>
+          {/* Stepper horizontal sur mobile */}
+          <div style={{ marginBottom: 32, display: 'block' }}>
+            <div className="cv-stepper-mobile" style={{ display: 'block' }}>
+              <Steps
+                direction="horizontal"
+                current={currentStep}
+                items={steps.map(s => ({ ...s, status: undefined }))}
+                style={{ marginBottom: 16, display: 'none' }}
+                responsive
+              />
+            </div>
+          </div>
           {renderStepContent()}
           {(currentStep === steps.length - 1) && (
             <div style={{ marginTop: 32, display: 'flex', gap: 16 }}>
