@@ -16,6 +16,10 @@ const SkillsForm: React.FC<SkillsFormProps> = ({ data, onChange, onNext, onPrev 
   const [skills, setSkills] = React.useState(data || []);
   const [input, setInput] = React.useState('');
 
+  React.useEffect(() => {
+    setSkills(data || []);
+  }, [data]);
+
   const addSkill = () => {
     if (input.trim() && !skills.some(s => s.name === input.trim())) {
       const newSkills = [...skills, { name: input.trim() }];

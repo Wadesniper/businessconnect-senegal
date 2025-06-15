@@ -190,7 +190,7 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
       <Row gutter={32}>
         <Col xs={24}>
           {renderStepContent()}
-          {(currentStep === 0 || currentStep === steps.length - 1) && (
+          {(currentStep === steps.length - 1) && (
             <div style={{ marginTop: 32, display: 'flex', gap: 16 }}>
               {currentStep > 0 && <Button onClick={handlePrev}>Précédent</Button>}
               {currentStep < steps.length - 1 && <Button type="primary" onClick={handleNext}>Suivant</Button>}

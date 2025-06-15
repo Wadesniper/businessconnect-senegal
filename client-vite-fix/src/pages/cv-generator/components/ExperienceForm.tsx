@@ -16,6 +16,10 @@ const ExperienceForm: React.FC<ExperienceFormProps> = ({ data, onChange, onNext,
   const [form] = Form.useForm();
   const [experiences, setExperiences] = React.useState(data || []);
 
+  React.useEffect(() => {
+    setExperiences(data || []);
+  }, [data]);
+
   const addExperience = () => {
     setExperiences([
       ...experiences,

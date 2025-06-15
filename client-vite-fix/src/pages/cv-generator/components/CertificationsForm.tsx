@@ -14,9 +14,11 @@ interface CertificationsFormProps {
 
 const CertificationsForm: React.FC<CertificationsFormProps> = ({ data, onChange, onNext, onPrev }) => {
   const [form] = Form.useForm();
-  const [certs, setCerts] = React.useState(
-    Array.isArray(data) ? data.filter(c => typeof c === 'object' && c !== null && 'name' in c) : []
-  );
+  const [certs, setCerts] = React.useState(data || []);
+
+  React.useEffect(() => {
+    setCerts(data || []);
+  }, [data]);
 
   const addCert = () => {
     setCerts([

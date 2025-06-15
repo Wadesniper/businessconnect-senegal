@@ -16,6 +16,10 @@ const InterestsForm: React.FC<InterestsFormProps> = ({ data, onChange, onNext, o
   const [interests, setInterests] = React.useState(data || []);
   const [input, setInput] = React.useState('');
 
+  React.useEffect(() => {
+    setInterests(data || []);
+  }, [data]);
+
   const addInterest = () => {
     if (input.trim() && !interests.includes(input.trim())) {
       const newInterests = [...interests, input.trim()];

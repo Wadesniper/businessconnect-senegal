@@ -16,6 +16,10 @@ const EducationForm: React.FC<EducationFormProps> = ({ data, onChange, onNext, o
   const [form] = Form.useForm();
   const [educations, setEducations] = React.useState(data || []);
 
+  React.useEffect(() => {
+    setEducations(data || []);
+  }, [data]);
+
   const addEducation = () => {
     setEducations([
       ...educations,

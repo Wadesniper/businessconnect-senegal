@@ -19,6 +19,10 @@ const LanguagesForm: React.FC<LanguagesFormProps> = ({ data, onChange, onNext, o
   const [input, setInput] = React.useState('');
   const [level, setLevel] = React.useState(LEVELS[0]);
 
+  React.useEffect(() => {
+    setLanguages(data || []);
+  }, [data]);
+
   const addLanguage = () => {
     if (input.trim() && !languages.some(l => l.name === input.trim())) {
       const newLangs = [...languages, { name: input.trim(), level }];
