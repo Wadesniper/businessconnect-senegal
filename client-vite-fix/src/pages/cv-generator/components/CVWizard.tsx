@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import type { CVData } from '../../../types/cv';
-import PersonalInfoForm from './PersonalInfoForm';
 import ExperienceForm from './ExperienceForm';
 import EducationForm from './EducationForm';
 import SkillsForm from './SkillsForm';
@@ -8,6 +7,7 @@ import LanguagesForm from './LanguagesForm';
 import CertificationsForm from './CertificationsForm';
 import ProjectsForm from './ProjectsForm';
 import InterestsForm from './InterestsForm';
+import PersonalInfoForm from './PersonalInfoForm';
 
 interface CVWizardProps {
   initialData: CVData;

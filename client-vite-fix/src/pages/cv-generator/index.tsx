@@ -200,39 +200,48 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
 
   return (
     <div style={{ maxWidth: 1200, minWidth: 820, margin: '0 auto', padding: 24 }}>
-      <Row gutter={32}>
-        {/* Stepper vertical à gauche */}
-        <Col xs={0} md={6} style={{ minWidth: 180 }}>
-          <Steps
-            direction="vertical"
-            current={currentStep}
-            items={steps.map(s => ({ ...s, status: undefined }))}
-            style={{ minHeight: 600, background: 'none', padding: 0 }}
-          />
-        </Col>
-        {/* Wizard à droite */}
-        <Col xs={24} md={18}>
-          {/* Stepper horizontal sur mobile */}
-          <div style={{ marginBottom: 32, display: 'block' }}>
-            <div className="cv-stepper-mobile" style={{ display: 'block' }}>
+      {currentStep === 0 ? (
+        // Galerie de modèles : pas de stepper vertical, affichage horizontal
+        <div>{renderStepContent()}</div>
+      ) : (
+        <Row gutter={32}>
+          {/* Stepper vertical à gauche uniquement dans le wizard */}
+          {currentStep > 0 && currentStep < steps.length - 1 && (
+            <Col xs={0} md={6} style={{ minWidth: 180 }}>
               <Steps
-                direction="horizontal"
+                direction="vertical"
                 current={currentStep}
                 items={steps.map(s => ({ ...s, status: undefined }))}
-                style={{ marginBottom: 16, display: 'none' }}
-                responsive
+                style={{ minHeight: 600, background: 'none', padding: 0 }}
               />
-            </div>
-          </div>
-          {renderStepContent()}
-          {(currentStep === steps.length - 1) && (
-            <div style={{ marginTop: 32, display: 'flex', gap: 16 }}>
-              {currentStep > 0 && <Button onClick={handlePrev}>Précédent</Button>}
-              {currentStep < steps.length - 1 && <Button type="primary" onClick={handleNext}>Suivant</Button>}
-            </div>
+            </Col>
           )}
-        </Col>
-      </Row>
+          {/* Wizard à droite */}
+          <Col xs={24} md={18}>
+            {/* Stepper horizontal sur mobile */}
+            {currentStep > 0 && currentStep < steps.length - 1 && (
+              <div style={{ marginBottom: 32, display: 'block' }}>
+                <div className="cv-stepper-mobile" style={{ display: 'block' }}>
+                  <Steps
+                    direction="horizontal"
+                    current={currentStep}
+                    items={steps.map(s => ({ ...s, status: undefined }))}
+                    style={{ marginBottom: 16, display: 'none' }}
+                    responsive
+                  />
+                </div>
+              </div>
+            )}
+            {renderStepContent()}
+            {(currentStep === steps.length - 1) && (
+              <div style={{ marginTop: 32, display: 'flex', gap: 16 }}>
+                {currentStep > 0 && <Button onClick={handlePrev}>Précédent</Button>}
+                {currentStep < steps.length - 1 && <Button type="primary" onClick={handleNext}>Suivant</Button>}
+              </div>
+            )}
+          </Col>
+        </Row>
+      )}
     </div>
   );
 };
