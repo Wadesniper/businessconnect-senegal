@@ -103,6 +103,12 @@ const JobApplyPage: React.FC = () => {
                   </Paper>
                 </Stack>
               )}
+              {mail && (
+                <Alert severity="info" icon={false} sx={{ mb: 2, borderRadius: 2, bgcolor: '#e6f7ff', color: '#096dd9', fontSize: 16, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <span role="img" aria-label="Conseil">💡</span>
+                  Copiez l'objet et le corps du mail ci-dessous, ouvrez votre boîte mail, joignez votre CV, puis envoyez votre candidature directement au recruteur à l'adresse indiquée.
+                </Alert>
+              )}
             </Box>
             {/* Téléphone */}
             <Box>
