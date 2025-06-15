@@ -27,9 +27,9 @@ router.delete('/:userId', authenticate, subscriptionController.cancelSubscriptio
 // Vérifier le statut d'un abonnement
 router.get('/:userId/status', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const authReq = req as AuthRequest;
-    if (!authReq.user) { return res.status(401).json({ error: 'Authentification requise' }); }
-    const { userId } = authReq.params;
+    // const authReq = req as AuthRequest;
+    // if (!authReq.user) { return res.status(401).json({ error: 'Authentification requise' }); }
+    const { userId } = req.params;
     console.log('ROUTE STATUS HIT', userId);
     const subscription = await subscriptionService.getActiveSubscription(userId);
     if (!subscription) {
