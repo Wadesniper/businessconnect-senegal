@@ -60,7 +60,7 @@ const CVWizard: React.FC<CVWizardProps> = ({ initialData, onSubmit, current, set
       <StepComponent
         data={stepData}
         onChange={handleChange(stepKey)}
-        onNext={current === steps.length - 1 ? handleSubmit : goNext}
+        onNext={goNext}
         onPrev={handlePrev}
       />
     </div>

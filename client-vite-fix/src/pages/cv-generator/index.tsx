@@ -119,10 +119,11 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
         summary: '',
         ...template.sampleData // si le template fournit des données par défaut
       });
+      setCurrentStep(1); // Initialiser à l'étape 'Informations personnelles'
     }
   };
 
-  const handleNext = () => setCurrentStep(currentStep + 1);
+  const handleNext = () => setCurrentStep(Math.min(currentStep + 1, steps.length - 1));
   const handlePrev = () => setCurrentStep(currentStep - 1);
 
   const handleExport = async (format: 'pdf' | 'docx') => {
