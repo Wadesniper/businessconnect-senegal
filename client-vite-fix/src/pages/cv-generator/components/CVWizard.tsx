@@ -12,6 +12,8 @@ import InterestsForm from './InterestsForm';
 interface CVWizardProps {
   initialData: CVData;
   onSubmit: (data: CVData) => void;
+  current: number;
+  setCurrent: (step: number) => void;
 }
 
 const steps = [
@@ -25,12 +27,11 @@ const steps = [
   { key: 'interests', label: 'Centres d\'intérêt', component: InterestsForm },
 ];
 
-const CVWizard: React.FC<CVWizardProps> = ({ initialData, onSubmit }) => {
-  const [current, setCurrent] = useState(0);
+const CVWizard: React.FC<CVWizardProps> = ({ initialData, onSubmit, current, setCurrent }) => {
   const [data, setData] = useState<CVData>(initialData);
 
-  const goNext = () => setCurrent((c) => Math.min(c + 1, steps.length - 1));
-  const goPrev = () => setCurrent((c) => Math.max(c - 1, 0));
+  const goNext = () => setCurrent(Math.min(current + 1, steps.length - 1));
+  const goPrev = () => setCurrent(Math.max(current - 1, 0));
 
   const handleChange = (key: keyof CVData) => (value: any) => {
     setData((prev) => ({ ...prev, [key]: value }));
@@ -42,6 +43,14 @@ const CVWizard: React.FC<CVWizardProps> = ({ initialData, onSubmit }) => {
 
   const StepComponent = steps[current].component;
   const stepKey = steps[current].key as keyof CVData;
+  let stepData: any = data[stepKey];
+  if (stepData === undefined) {
+    if (Array.isArray(data[stepKey])) stepData = [];
+    else if (typeof data[stepKey] === 'object') stepData = {};
+    else if (stepKey === 'personalInfo') stepData = { firstName: '', lastName: '', title: '', email: '', phone: '' };
+    else stepData = '';
+  }
+  const handlePrev = () => { if (current > 0) goPrev(); };
 
   return (
     <div style={{ maxWidth: 800, margin: '0 auto', background: '#fff', borderRadius: 16, boxShadow: '0 2px 16px #eee', padding: 32 }}>
@@ -49,10 +58,10 @@ const CVWizard: React.FC<CVWizardProps> = ({ initialData, onSubmit }) => {
         <h2>Étape {current + 1} / {steps.length} : {steps[current].label}</h2>
       </div>
       <StepComponent
-        data={data[stepKey]}
+        data={stepData}
         onChange={handleChange(stepKey)}
         onNext={current === steps.length - 1 ? handleSubmit : goNext}
-        onPrev={current === 0 ? undefined : goPrev}
+        onPrev={handlePrev}
       />
     </div>
   );
