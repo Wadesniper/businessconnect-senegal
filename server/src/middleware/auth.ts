@@ -8,6 +8,7 @@ import jwt from 'jsonwebtoken';
 import { RequestHandler } from 'express';
 
 export const authenticate: RequestHandler = (req, res, next) => {
+  console.log('MIDDLEWARE AUTH HIT');
   try {
     const authHeader = req.headers.authorization;
     console.log('[DEBUG AUTH] Authorization header:', authHeader);
