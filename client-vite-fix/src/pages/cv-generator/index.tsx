@@ -119,7 +119,7 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
         summary: '',
         ...template.sampleData // si le template fournit des données par défaut
       });
-      setCurrentStep(1); // Initialiser à l'étape 'Informations personnelles'
+      setCurrentStep(0); // Initialiser à l'étape 'Informations personnelles'
     }
   };
 
