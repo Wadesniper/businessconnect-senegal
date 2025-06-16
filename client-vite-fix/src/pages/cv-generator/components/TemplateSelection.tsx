@@ -204,6 +204,9 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                     return;
                   }
                   onSelect(template);
+                  if (onContinue) {
+                    onContinue();
+                  }
                 }}
                 style={{
                   border: selected?.id === template.id ? '3px solid #1890ff' : '1px solid #eee',
@@ -251,7 +254,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                 />
                 </div>
                 <div style={{ width: '100%' }}>
-                {selected?.id === template.id && isPremium && (
+                {selected?.id === template.id && (
                     <div style={{ textAlign: 'center', marginTop: 0, marginBottom: 8 }}>
                     <Button type="primary" size="large" onClick={onContinue} style={{ width: '100%' }}>
                       Utiliser ce modèle
