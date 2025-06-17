@@ -71,7 +71,7 @@ const MarketplacePage: React.FC = () => {
   const fetchItems = async () => {
     setLoading(true);
     try {
-      const data = await marketplaceService.getItems(filters, user);
+      const data = await marketplaceService.getItems(filters);
       setItems(data);
     } catch (error) {
       message.error('Erreur lors de la récupération des annonces');
@@ -254,6 +254,11 @@ const MarketplacePage: React.FC = () => {
               </Card>
             </Col>
           ))}
+          {items.length === 0 && (
+            <Col span={24} style={{ textAlign: 'center', marginTop: 48, color: '#888', fontSize: 18 }}>
+              Aucune annonce pour le moment.
+            </Col>
+          )}
         </Row>
 
         <Modal
