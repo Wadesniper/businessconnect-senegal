@@ -6,7 +6,7 @@ import type { FileFilterCallback } from 'multer';
 export async function getUploadMiddleware() {
   const multerModule = await import('multer');
   const multer = multerModule.default;
-  const storage = multer.diskStorage({
+  const storage = multerModule.default.diskStorage({
     destination: (_req: any, _file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) => {
       cb(null, path.join(__dirname, '../../uploads'));
     },
