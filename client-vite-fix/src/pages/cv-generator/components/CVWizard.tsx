@@ -30,7 +30,7 @@ const steps = [
 const CVWizard: React.FC<CVWizardProps> = ({ initialData, onSubmit, current, setCurrent }) => {
   const [data, setData] = useState<CVData>(initialData);
 
-  const goNext = () => setCurrent(Math.min(current + 1, steps.length - 1));
+  const goNext = () => setCurrent(current + 1);
   const goPrev = () => setCurrent(Math.max(current - 1, 0));
 
   const handleChange = (key: keyof CVData) => (value: any) => {
