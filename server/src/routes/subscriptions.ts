@@ -18,15 +18,18 @@ const subscriptionController = new SubscriptionController();
 // Routes publiques
 router.post('/initiate', authenticate, subscriptionController.initiateSubscription.bind(subscriptionController));
 router.post('/activate', subscriptionController.activateSubscription.bind(subscriptionController));
-router.get('/status/:userId', subscriptionController.checkSubscriptionStatus.bind(subscriptionController));
 
 // Routes protégées
 router.get('/:userId', authenticate, subscriptionController.getSubscription.bind(subscriptionController));
 router.delete('/:userId', authenticate, subscriptionController.cancelSubscription.bind(subscriptionController));
 
-// Vérifier le statut d'un abonnement
-router.get('/:userId/status', async (req: Request, res: Response, next: NextFunction) => {
+// Vérifier le statut d'un abonnement (route protégée unique)
+router.get('/:userId/status', authenticate, async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const authReq = req as AuthRequest;
+    if (!authReq.user) {
+      return res.status(401).json({ error: 'Authentification requise' });
+    }
     const { userId } = req.params;
     console.log('ROUTE STATUS HIT', userId);
     const subscription = await subscriptionService.getActiveSubscription(userId);

@@ -343,6 +343,9 @@ model MarketplaceItem {
   images      String[]
   reports     Int      @default(0)
 
+  contactEmail String?
+  contactPhone String
+
   sellerId    String
   seller      User     @relation("ItemsSold", fields: [sellerId], references: [id])
 

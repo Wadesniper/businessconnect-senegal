@@ -12,6 +12,8 @@ import jobsRouter from './routes/jobs.js';
 import subscriptionsRoutes from './routes/subscriptions.js';
 import authRoutes from './routes/auth.js';
 import routes from './routes/index.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const app = express();
 app.set('trust proxy', 1);
@@ -40,6 +42,11 @@ app.use('/api/jobs', jobsRouter);
 app.use('/api/formations', formationRoutes);
 app.use('/api/subscriptions', subscriptionsRoutes);
 app.use('/api/health', healthRoutes);
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 // Middleware de gestion d'erreurs
 app.use(errorHandler);
 

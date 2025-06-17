@@ -6,6 +6,7 @@ import marketplaceRoutes from './marketplace.js';
 import notificationRoutes from './notifications.js';
 import contactRoutes from './contactRoutes.js';
 import subscriptionRoutes from './subscriptions.js';
+import { getUploadMiddleware } from '../middleware/uploadMiddleware.js';
 
 const router = Router();
 
@@ -16,5 +17,20 @@ router.use('/marketplace', marketplaceRoutes);
 router.use('/notifications', notificationRoutes);
 router.use('/contact', contactRoutes);
 router.use('/subscriptions', subscriptionRoutes);
+
+// Route d'upload d'image (pour la marketplace)
+router.post('/upload', async (req, res, next) => {
+  const upload = await getUploadMiddleware();
+  upload.single('file')(req, res, function (err) {
+    if (err) {
+      return res.status(400).json({ error: err.message });
+    }
+    if (!req.file) {
+      return res.status(400).json({ error: 'Aucun fichier reçu' });
+    }
+    // Retourne l'URL du fichier (chemin relatif)
+    res.json({ url: `/uploads/${req.file.filename}` });
+  });
+});
 
 export default router; 

@@ -7,10 +7,14 @@ import { MarketplaceItem } from '../models/marketplace.js';
 export class MarketplaceController {
   async getAllItems(req: Request, res: Response) {
     try {
+      logger.info('[MARKETPLACE] getAllItems called');
       const items = await MarketplaceItem.find({ status: 'approved' });
+      logger.info(`[MARKETPLACE] getAllItems found ${items.length} items`);
       res.json(items);
     } catch (error) {
-      res.status(500).json({ error: 'Erreur lors de la récupération des articles' });
+      logger.error('[MARKETPLACE] getAllItems error', error);
+      const errMsg = (error instanceof Error) ? error.message : String(error);
+      res.status(500).json({ error: 'Erreur lors de la récupération des articles', details: errMsg });
     }
   }
 

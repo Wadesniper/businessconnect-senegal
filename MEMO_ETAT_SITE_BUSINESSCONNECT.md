@@ -71,11 +71,40 @@ Le projet vise à migrer une application existante de MongoDB vers Supabase (Pos
 - ✅ Système de réservation
 - ✅ Gestion des transactions
 
-#### Abonnements
-- ✅ Plans d'abonnement (basic, premium)
-- ✅ Paiement en ligne via CinetPay
-- ✅ Renouvellement automatique
-- ✅ Gestion des factures
+#### Abonnements (PayTech, Sécurité JWT, Debug IPN)
+
+#### Workflow complet d'activation d'abonnement PayTech
+- L'utilisateur clique sur "S'abonner" sur le frontend (React)
+- Le frontend appelle `/api/subscriptions/initiate` (JWT obligatoire)
+- Le backend crée une entrée d'abonnement en statut `pending` et génère un lien PayTech
+- L'utilisateur est redirigé vers PayTech pour le paiement
+- Après paiement, PayTech envoie un IPN (notification serveur à serveur) à `/api/subscriptions/ipn` (Railway)
+- Le backend vérifie la signature SHA256 (clé et secret PayTech)
+- Si la signature est valide et le paiement confirmé, le backend :
+    - Passe l'abonnement en `active`
+    - Met à jour le rôle utilisateur si besoin
+- Le frontend vérifie le statut via `/api/subscriptions/:userId/status` (JWT obligatoire)
+- L'accès premium est immédiat
+
+#### Sécurité
+- Toutes les routes critiques d'abonnement sont protégées par JWT (middleware `authenticate`)
+- La vérification de la signature IPN PayTech est obligatoire en production
+- Les logs détaillés sont activés pour chaque étape critique (IPN, update DB, etc.)
+
+#### Debug & Test (Simulation IPN)
+- Un script de test est disponible pour simuler un IPN PayTech sans paiement réel :
+  - Fichier : `server/src/tests/simulate-paytech-ipn.cjs`
+  - Usage :
+    1. Initier un paiement sur le site, récupérer le token PayTech dans l'URL (ex: `https://paytech.sn/payment/checkout/<token>`)
+    2. Lancer : `node src/tests/simulate-paytech-ipn.cjs <token>`
+    3. Vérifier que l'abonnement passe en `active` dans la base et que l'accès premium est immédiat
+- Ce script est à conserver pour tout debug ou test futur (ne pas supprimer)
+
+#### Points de vérification production
+- Statut d'abonnement et rôle utilisateur mis à jour en base (Supabase/PostgreSQL)
+- Accès premium immédiat après paiement
+- Logs backend sans erreur sur la chaîne paiement → IPN → activation
+- Frontend utilise bien le JWT dans toutes les requêtes d'abonnement
 
 ### Corrections et Améliorations Récentes
 
@@ -962,3 +991,42 @@ Dernière mise à jour : migration complète réalisée, site prêt pour la prod
 - Aucun code ou élément essentiel supprimé, aucune perturbation du backend ou du frontend, aucune version minimaliste.
 - Le site complet reste en production, toutes les fonctionnalités sont conservées.
 - Voir la doc officielle PayTech : https://doc.paytech.sn/
+
+## 2024-06-15 — Correction UX générateur de CV : bouton 'Suivant' unique
+
+- Problème : Deux boutons 'Suivant' apparaissaient sur chaque étape du process de génération de CV (un dans le sous-formulaire, un global en bas de page).
+- Correction : Désormais, seul le bouton 'Suivant' du sous-formulaire est affiché pour chaque étape du wizard. Les boutons globaux du parent ne sont affichés que pour l'étape 0 (choix du modèle) et l'étape d'aperçu (export).
+- Fichier modifié : `src/pages/cv-generator/index.tsx`
+- Aucun code essentiel supprimé, aucune régression sur le process complet.
+- UX améliorée, plus de confusion pour l'utilisateur.
+
+# [2024-06-15] Correction complète Marketplace (email, téléphone, cohérence, visibilité)
+
+- Correction du formulaire d'annonce :
+  - L'email est désormais optionnel.
+  - Le téléphone est obligatoire et validé (format international, regex).
+  - Mapping frontend adapté pour envoyer contactEmail/contactPhone au backend.
+  - Les images uploadées sont bien transmises et affichées.
+- Backend (Express/Prisma) :
+  - Ajout des champs contactEmail (optionnel) et contactPhone (obligatoire) dans le modèle Prisma MarketplaceItem.
+  - Migration Prisma appliquée à Supabase, client Prisma régénéré.
+  - Validation stricte du téléphone côté backend (refus si absent ou invalide).
+  - Les annonces sont enregistrées avec ces champs dans la base.
+- Visibilité :
+  - Les annonces sont bien visibles par tous les utilisateurs (statut, filtrage, affichage images).
+- Aucune suppression de code, aucune version minimaliste, site complet préservé.
+- Tests et déploiement à faire sur le site complet, pas sur une version réduite.
+
+**Correction documentée et traçable, site complet, UX et fonctionnalités préservées.**
+
+# [2024-06-16] Marketplace : suppression du mock, API réelle, images, annonces publiques
+
+- Suppression totale du mock/localStorage pour la marketplace côté frontend.
+- Utilisation de l'API backend réelle (axios) pour récupérer, créer, afficher, modifier et supprimer les annonces.
+- Correction du mapping des champs : contactEmail et contactPhone à la racine, images tableau d'URLs.
+- Correction de l'affichage des images (upload, preview, fallback si manquante).
+- Correction de la navigation : les annonces sont accessibles à tous, même déconnecté, et la page de détail ne redirige plus vers une 404.
+- Cohérence totale frontend/backend/BDD (Prisma/Mongoose).
+- Testé : création, affichage, navigation, suppression, tout fonctionne en prod.
+
+---
