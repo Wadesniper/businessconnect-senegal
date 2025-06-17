@@ -15,7 +15,8 @@ import {
   Upload,
   message,
   Image,
-  Spin
+  Spin,
+  Input as AntInput
 } from 'antd';
 import {
   SearchOutlined,
@@ -85,12 +86,13 @@ const MarketplacePage: React.FC = () => {
         message.error('Veuillez vous connecter pour créer une annonce');
         return;
       }
+      const images = values.images?.fileList?.map((file: any) => file.response?.url || file.url || file.thumbUrl).filter(Boolean) || [];
       const itemData = {
         ...values,
-        userId: user.id,
+        seller: user.id,
         contactEmail: values.contactInfo?.email || '',
         contactPhone: values.contactInfo?.phone || '',
-        images: values.images?.fileList?.map((file: any) => file.response?.url || file.url || file.thumbUrl) || []
+        images
       };
       await marketplaceService.createItem(itemData);
       message.success('Annonce créée avec succès');
@@ -98,7 +100,8 @@ const MarketplacePage: React.FC = () => {
       form.resetFields();
       fetchItems();
     } catch (error: any) {
-      message.error(error.message || 'Erreur lors de la création de l\'annonce');
+      console.error('Erreur création annonce:', error, error?.response);
+      message.error(error?.response?.data?.error || error.message || 'Erreur lors de la création de l\'annonce');
     }
   };
 
@@ -285,7 +288,7 @@ const MarketplacePage: React.FC = () => {
               label="Description"
               rules={[{ required: true, message: 'Veuillez saisir une description' }]}
             >
-              <textarea rows={4} placeholder="Description détaillée" style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #d9d9d9' }} />
+              <AntInput.TextArea rows={4} placeholder="Description détaillée" />
             </Form.Item>
 
             <Form.Item
@@ -339,7 +342,7 @@ const MarketplacePage: React.FC = () => {
                 if (Array.isArray(e)) {
                   return e;
                 }
-                return e?.fileList;
+                return e?.fileList?.map((file: any) => ({ ...file, url: file.response?.url || file.url || file.thumbUrl }));
               }}
             >
               <Upload
