@@ -34,7 +34,11 @@ const CVWizard: React.FC<CVWizardProps> = ({ initialData, onSubmit, current, set
   const goPrev = () => setCurrent(Math.max(current - 1, 0));
 
   const handleChange = (key: keyof CVData) => (value: any) => {
-    setData((prev) => ({ ...prev, [key]: value }));
+    setData((prev) => {
+      const newData = { ...prev, [key]: value };
+      onSubmit(newData);
+      return newData;
+    });
   };
 
   const handleSubmit = () => {
