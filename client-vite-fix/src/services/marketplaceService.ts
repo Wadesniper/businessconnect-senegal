@@ -71,27 +71,27 @@ export const marketplaceService = {
     if (filters?.category) params.category = filters.category;
     if (filters?.search) params.query = filters.search;
     // Ajout d'autres filtres si besoin
-    const res = await api.get('/marketplace', { params });
+    const res = await api.get('/api/marketplace', { params });
     return res.data;
   },
 
   async getItem(id: string): Promise<MarketplaceItem | null> {
-    const res = await api.get(`/marketplace/${id}`);
+    const res = await api.get(`/api/marketplace/${id}`);
     return res.data;
   },
 
   async createItem(itemData: any): Promise<MarketplaceItem> {
-    const res = await api.post('/marketplace', itemData);
+    const res = await api.post('/api/marketplace', itemData);
     return res.data;
   },
 
   async updateItem(id: string, itemData: Partial<MarketplaceItem>): Promise<MarketplaceItem> {
-    const res = await api.put(`/marketplace/${id}`, itemData);
+    const res = await api.put(`/api/marketplace/${id}`, itemData);
     return res.data;
   },
 
   async deleteItem(id: string): Promise<void> {
-    await api.delete(`/marketplace/${id}`);
+    await api.delete(`/api/marketplace/${id}`);
   },
 
   async uploadImage(file: File): Promise<string> {
