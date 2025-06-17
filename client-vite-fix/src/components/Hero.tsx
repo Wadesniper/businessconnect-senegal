@@ -33,17 +33,33 @@ const HeroContainer = styled.div`
   }
 `;
 
-// Optimisation: Un seul background fixe avec overlay
+// Correction du StaticBackground pour qu'il soit semi-transparent
 const StaticBackground = styled.div`
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #001529 0%, #003366 100%);
-  z-index: 0;
+  background: rgba(0,21,41,0.72); // bleu foncé semi-transparent
+  z-index: 1;
 `;
 
+// Correction du BackgroundImage pour qu'il soit SOUS le StaticBackground
+const BackgroundImage = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url(${img5});
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+  opacity: 1;
+`;
+
+// Correction du Overlay pour qu'il soit plus léger
 const Overlay = styled.div`
   position: absolute;
   top: 0;
@@ -51,17 +67,17 @@ const Overlay = styled.div`
   width: 100%;
   height: 100%;
   background: linear-gradient(90deg, #001529b3 40%, #00336699 100%);
-  z-index: 1;
+  z-index: 2;
 `;
 
-// Variante 1 : Opacité réduite (par défaut)
+// Correction du GeometricBackground pour qu'il soit au-dessus mais bien transparent
 const GeometricBackground = styled.div`
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  opacity: 0.15;
+  opacity: 0.18;
   background-image: 
     linear-gradient(30deg, rgba(255,255,255,0.18) 12%, transparent 12.5%, transparent 87%, rgba(255,255,255,0.18) 87.5%, rgba(255,255,255,0.18)),
     linear-gradient(150deg, rgba(255,255,255,0.18) 12%, transparent 12.5%, transparent 87%, rgba(255,255,255,0.18) 87.5%, rgba(255,255,255,0.18)),
@@ -70,7 +86,7 @@ const GeometricBackground = styled.div`
     linear-gradient(60deg, rgba(255,255,255,0.12) 25%, transparent 25.5%, transparent 75%, rgba(255,255,255,0.12) 75%, rgba(255,255,255,0.12));
   background-size: 80px 140px;
   background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0;
-  z-index: 2;
+  z-index: 3;
 `;
 
 const ContentWrapper = styled.div`
@@ -158,21 +174,6 @@ const tiles = Array.from({ length: TILE_ROWS * TILE_COLS }, (_, i) => ({
   col: i % TILE_COLS,
   key: `${Math.floor(i / TILE_COLS)}-${i % TILE_COLS}`
 }));
-
-// Ajout du background datacenter
-const BackgroundImage = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url(${img5});
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  z-index: 0;
-  opacity: 1;
-`;
 
 interface HeroProps {
   onDiscoverClick?: () => void;
