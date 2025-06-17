@@ -159,6 +159,21 @@ const tiles = Array.from({ length: TILE_ROWS * TILE_COLS }, (_, i) => ({
   key: `${Math.floor(i / TILE_COLS)}-${i % TILE_COLS}`
 }));
 
+// Ajout du background datacenter
+const BackgroundImage = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url(${img5});
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+  opacity: 1;
+`;
+
 interface HeroProps {
   onDiscoverClick?: () => void;
 }
@@ -189,6 +204,7 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
 
   return (
     <HeroContainer>
+      <BackgroundImage />
       <StaticBackground />
       <Overlay />
       <GeometricBackground style={{ zIndex: 2, position: 'absolute' }} />

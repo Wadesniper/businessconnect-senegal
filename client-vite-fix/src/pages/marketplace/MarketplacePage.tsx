@@ -88,6 +88,8 @@ const MarketplacePage: React.FC = () => {
       const itemData = {
         ...values,
         userId: user.id,
+        contactEmail: values.contactInfo?.email || '',
+        contactPhone: values.contactInfo?.phone || '',
         images: values.images?.fileList?.map((file: any) => file.url || file.thumbUrl) || []
       };
       await marketplaceService.createItem(itemData, user);
@@ -111,16 +113,24 @@ const MarketplacePage: React.FC = () => {
     fetchItems();
   };
 
-  const handleRenew = () => {
-    authService.renewCurrentUserSubscription();
-    message.success('Abonnement renouvelé !');
-    refreshSubscription();
+  const handleRenew = async () => {
+    try {
+      await authService.updateSubscription('active');
+      message.success('Abonnement renouvelé !');
+      refreshSubscription();
+    } catch (e) {
+      message.error('Erreur lors du renouvellement');
+    }
   };
 
-  const handleExpire = () => {
-    authService.expireCurrentUserSubscription();
-    message.warning('Abonnement expiré !');
-    refreshSubscription();
+  const handleExpire = async () => {
+    try {
+      await authService.updateSubscription('cancelled');
+      message.warning('Abonnement expiré !');
+      refreshSubscription();
+    } catch (e) {
+      message.error('Erreur lors de l\'expiration');
+    }
   };
 
   if (loading) {
@@ -301,20 +311,18 @@ const MarketplacePage: React.FC = () => {
             </Form.Item>
 
             <Form.Item
-              name={['contactInfo', 'email']}
-              label="Email"
-              rules={[
-                { required: true, message: 'Veuillez saisir un email' },
-                { type: 'email', message: 'Email invalide' }
-              ]}
+              name={["contactInfo", "email"]}
+              label="Email (optionnel)"
+              rules={[{ type: 'email', message: 'Email invalide' }]}
             >
-              <Input placeholder="Email" />
+              <Input placeholder="Email (optionnel)" />
             </Form.Item>
             <Form.Item
-              name={['contactInfo', 'phone']}
-              label="Téléphone (optionnel)"
+              name={["contactInfo", "phone"]}
+              label="Téléphone"
+              rules={[{ required: true, message: 'Veuillez saisir un numéro de téléphone' }, { pattern: /^\+?\d{7,15}$/, message: 'Numéro de téléphone invalide' }]}
             >
-              <Input placeholder="Téléphone (optionnel)" />
+              <Input placeholder="Téléphone (obligatoire)" />
             </Form.Item>
 
             <Form.Item
