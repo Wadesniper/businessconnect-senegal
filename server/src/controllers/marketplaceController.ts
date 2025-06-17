@@ -65,13 +65,20 @@ export class MarketplaceController {
         return res.status(401).json({ error: 'Non autorisé' });
       }
 
-      const item = new MarketplaceItem({
-        ...req.body,
-        seller: userId,
-        status: 'pending'
-      });
+      const { contactEmail, contactPhone, ...rest } = req.body;
+      // Validation du téléphone obligatoire
+      if (!contactPhone || !/^\+?\d{7,15}$/.test(contactPhone)) {
+        return res.status(400).json({ error: 'Le numéro de téléphone est obligatoire et doit être valide.' });
+      }
 
-      await item.save();
+      const item = await MarketplaceItem.create({
+        ...rest,
+        contactEmail: contactEmail || null,
+        contactPhone,
+        seller: userId,
+        status: 'approved',
+        images: Array.isArray(rest.images) ? rest.images : [],
+      });
       res.status(201).json(item);
     } catch (error) {
       res.status(500).json({ error: 'Erreur lors de la création de l\'article' });
@@ -83,23 +90,37 @@ export class MarketplaceController {
       const userId = req.user?.id;
       const itemId = req.params.id;
 
+      logger.info('Tentative de modification d\'article', {
+        userId,
+        itemId,
+        userRole: req.user?.role
+      });
+
       const item = await MarketplaceItem.findById(itemId);
       if (!item) {
         return res.status(404).json({ error: 'Article non trouvé' });
       }
 
       if (item.seller !== userId && req.user?.role !== 'admin') {
+        logger.warn('Tentative non autorisée de modification', {
+          userId,
+          itemId,
+          itemSeller: item.seller,
+          userRole: req.user?.role
+        });
         return res.status(403).json({ error: 'Non autorisé à modifier cet article' });
       }
 
       const updatedItem = await MarketplaceItem.findByIdAndUpdate(
         itemId,
-        { ...req.body, status: 'pending' },
+        { ...req.body },
         { new: true }
       );
 
+      logger.info('Article modifié avec succès', { itemId, userId });
       res.json(updatedItem);
     } catch (error) {
+      logger.error('Erreur lors de la mise à jour de l\'article', { error });
       res.status(500).json({ error: 'Erreur lors de la mise à jour de l\'article' });
     }
   }
@@ -109,18 +130,32 @@ export class MarketplaceController {
       const userId = req.user?.id;
       const itemId = req.params.id;
 
+      logger.info('Tentative de suppression d\'article', {
+        userId,
+        itemId,
+        userRole: req.user?.role
+      });
+
       const item = await MarketplaceItem.findById(itemId);
       if (!item) {
         return res.status(404).json({ error: 'Article non trouvé' });
       }
 
       if (item.seller !== userId && req.user?.role !== 'admin') {
+        logger.warn('Tentative non autorisée de suppression', {
+          userId,
+          itemId,
+          itemSeller: item.seller,
+          userRole: req.user?.role
+        });
         return res.status(403).json({ error: 'Non autorisé à supprimer cet article' });
       }
 
       await MarketplaceItem.findByIdAndDelete(itemId);
+      logger.info('Article supprimé avec succès', { itemId, userId });
       res.json({ message: 'Article supprimé avec succès' });
     } catch (error) {
+      logger.error('Erreur lors de la suppression de l\'article', { error });
       res.status(500).json({ error: 'Erreur lors de la suppression de l\'article' });
     }
   }

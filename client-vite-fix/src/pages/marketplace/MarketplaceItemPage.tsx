@@ -31,6 +31,7 @@ import {
 import { marketplaceService } from '../../services/marketplaceService';
 import { authService } from '../../services/authService';
 import type { MarketplaceItem } from '../../services/marketplaceService';
+import { useAuth } from '../../context/AuthContext';
 
 const { Title, Text, Paragraph } = Typography;
 const { Content } = Layout;
@@ -42,6 +43,8 @@ const MarketplaceItemPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
   const [isOwner, setIsOwner] = useState(false);
 
   const fetchItem = useCallback(async () => {
@@ -51,14 +54,20 @@ const MarketplaceItemPage: React.FC = () => {
       const data = await marketplaceService.getItem(id);
       if (data) {
         setItem(data);
-        const user = await authService.getCurrentUser();
-        setIsOwner(user?.id === data.userId);
+        const isItemOwner = user?.id === data.userId;
+        console.log('Debug permissions:', {
+          userId: user?.id,
+          itemUserId: data.userId,
+          isAdmin,
+          isItemOwner
+        });
+        setIsOwner(isItemOwner);
       }
     } catch (error) {
       message.error('Erreur lors de la récupération de l\'annonce');
     }
     setLoading(false);
-  }, [id]);
+  }, [id, user?.id, isAdmin]);
 
   useEffect(() => {
     fetchItem();
@@ -178,7 +187,7 @@ const MarketplaceItemPage: React.FC = () => {
                       )}
                     </Space>
 
-                    {isOwner && (
+                    {(isAdmin || isOwner) && (
                       <>
                         <Divider />
                         <Space>
@@ -186,6 +195,7 @@ const MarketplaceItemPage: React.FC = () => {
                             type="primary"
                             icon={<EditOutlined />}
                             onClick={() => {
+                              console.log('Modification annonce:', { itemId: id, isAdmin, isOwner });
                               form.setFieldsValue(item);
                               setIsModalVisible(true);
                             }}
@@ -195,7 +205,10 @@ const MarketplaceItemPage: React.FC = () => {
                           <Button
                             danger
                             icon={<DeleteOutlined />}
-                            onClick={handleDelete}
+                            onClick={() => {
+                              console.log('Suppression annonce:', { itemId: id, isAdmin, isOwner });
+                              handleDelete();
+                            }}
                           >
                             Supprimer
                           </Button>
