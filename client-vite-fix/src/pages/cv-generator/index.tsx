@@ -167,7 +167,7 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
           initialData={cvData || emptyCVData}
           onSubmit={setCVData}
           current={currentStep - 1}
-          setCurrent={setCurrentStep}
+          setCurrent={step => setCurrentStep(step + 1)}
         />
       );
     }
