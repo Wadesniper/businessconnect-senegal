@@ -1,14 +1,16 @@
 import { Request, Response, AuthRequest } from '../types/custom.express.js';
 import { logger } from '../utils/logger.js';
-import { config } from '../config.js';
-import { StorageService } from '../services/storageService.js';
-import { MarketplaceItem } from '../models/marketplace.js';
+import { PrismaClient } from '../generated/prisma/index.js';
+
+const prisma = new PrismaClient();
 
 export class MarketplaceController {
   async getAllItems(req: Request, res: Response) {
     try {
       logger.info('[MARKETPLACE] getAllItems called');
-      const items = await MarketplaceItem.find({ status: 'approved' });
+      const items = await prisma.marketplaceItem.findMany({
+        where: { status: 'approved' }
+      });
       logger.info(`[MARKETPLACE] getAllItems found ${items.length} items`);
       res.json(items);
     } catch (error) {
@@ -20,7 +22,9 @@ export class MarketplaceController {
 
   async getItemById(req: Request, res: Response) {
     try {
-      const item = await MarketplaceItem.findById(req.params.id);
+      const item = await prisma.marketplaceItem.findUnique({
+        where: { id: req.params.id }
+      });
       if (!item) {
         return res.status(404).json({ error: 'Article non trouvé' });
       }
@@ -36,9 +40,9 @@ export class MarketplaceController {
       const searchQuery: any = { status: 'approved' };
 
       if (query) {
-        searchQuery.$or = [
-          { title: { $regex: query, $options: 'i' } },
-          { description: { $regex: query, $options: 'i' } }
+        searchQuery.OR = [
+          { title: { contains: query as string, mode: 'insensitive' } },
+          { description: { contains: query as string, mode: 'insensitive' } }
         ];
       }
 
@@ -46,7 +50,9 @@ export class MarketplaceController {
         searchQuery.category = category;
       }
 
-      const items = await MarketplaceItem.find(searchQuery);
+      const items = await prisma.marketplaceItem.findMany({
+        where: searchQuery
+      });
       res.json(items);
     } catch (error) {
       res.status(500).json({ error: 'Erreur lors de la recherche d\'articles' });
@@ -55,8 +61,11 @@ export class MarketplaceController {
 
   async getCategories(req: Request, res: Response) {
     try {
-      const categories = await MarketplaceItem.distinct('category');
-      res.json(categories);
+      const categories = await prisma.marketplaceItem.findMany({
+        select: { category: true },
+        distinct: ['category']
+      });
+      res.json(categories.map(c => c.category));
     } catch (error) {
       res.status(500).json({ error: 'Erreur lors de la récupération des catégories' });
     }
@@ -75,13 +84,15 @@ export class MarketplaceController {
         return res.status(400).json({ error: 'Le numéro de téléphone est obligatoire et doit être valide.' });
       }
 
-      const item = await MarketplaceItem.create({
-        ...rest,
-        contactEmail: contactEmail || null,
-        contactPhone,
-        seller: userId,
-        status: 'approved',
-        images: Array.isArray(rest.images) ? rest.images : [],
+      const item = await prisma.marketplaceItem.create({
+        data: {
+          ...rest,
+          contactEmail: contactEmail || null,
+          contactPhone,
+          sellerId: userId,
+          status: 'approved',
+          images: Array.isArray(rest.images) ? rest.images : [],
+        }
       });
       res.status(201).json(item);
     } catch (error) {
@@ -100,26 +111,28 @@ export class MarketplaceController {
         userRole: req.user?.role
       });
 
-      const item = await MarketplaceItem.findById(itemId);
+      const item = await prisma.marketplaceItem.findUnique({
+        where: { id: itemId }
+      });
+
       if (!item) {
         return res.status(404).json({ error: 'Article non trouvé' });
       }
 
-      if (item.seller !== userId && req.user?.role !== 'admin') {
+      if (item.sellerId !== userId && req.user?.role !== 'admin') {
         logger.warn('Tentative non autorisée de modification', {
           userId,
           itemId,
-          itemSeller: item.seller,
+          itemSeller: item.sellerId,
           userRole: req.user?.role
         });
         return res.status(403).json({ error: 'Non autorisé à modifier cet article' });
       }
 
-      const updatedItem = await MarketplaceItem.findByIdAndUpdate(
-        itemId,
-        { ...req.body },
-        { new: true }
-      );
+      const updatedItem = await prisma.marketplaceItem.update({
+        where: { id: itemId },
+        data: { ...req.body }
+      });
 
       logger.info('Article modifié avec succès', { itemId, userId });
       res.json(updatedItem);
@@ -140,22 +153,28 @@ export class MarketplaceController {
         userRole: req.user?.role
       });
 
-      const item = await MarketplaceItem.findById(itemId);
+      const item = await prisma.marketplaceItem.findUnique({
+        where: { id: itemId }
+      });
+
       if (!item) {
         return res.status(404).json({ error: 'Article non trouvé' });
       }
 
-      if (item.seller !== userId && req.user?.role !== 'admin') {
+      if (item.sellerId !== userId && req.user?.role !== 'admin') {
         logger.warn('Tentative non autorisée de suppression', {
           userId,
           itemId,
-          itemSeller: item.seller,
+          itemSeller: item.sellerId,
           userRole: req.user?.role
         });
         return res.status(403).json({ error: 'Non autorisé à supprimer cet article' });
       }
 
-      await MarketplaceItem.findByIdAndDelete(itemId);
+      await prisma.marketplaceItem.delete({
+        where: { id: itemId }
+      });
+
       logger.info('Article supprimé avec succès', { itemId, userId });
       res.json({ message: 'Article supprimé avec succès' });
     } catch (error) {
@@ -171,7 +190,17 @@ export class MarketplaceController {
         return res.status(403).json({ error: 'Accès non autorisé' });
       }
 
-      const items = await MarketplaceItem.find().populate('seller', 'firstName lastName email');
+      const items = await prisma.marketplaceItem.findMany({
+        include: {
+          seller: {
+            select: {
+              firstName: true,
+              lastName: true,
+              email: true
+            }
+          }
+        }
+      });
       res.json(items);
     } catch (error) {
       res.status(500).json({ error: 'Erreur lors de la récupération des articles' });
@@ -187,11 +216,10 @@ export class MarketplaceController {
       const { status } = req.body;
       const itemId = req.params.id;
 
-      const item = await MarketplaceItem.findByIdAndUpdate(
-        itemId,
-        { status },
-        { new: true }
-      );
+      const item = await prisma.marketplaceItem.update({
+        where: { id: itemId },
+        data: { status }
+      });
 
       if (!item) {
         return res.status(404).json({ error: 'Article non trouvé' });
@@ -210,7 +238,9 @@ export class MarketplaceController {
       }
 
       const itemId = req.params.id;
-      const item = await MarketplaceItem.findByIdAndDelete(itemId);
+      const item = await prisma.marketplaceItem.delete({
+        where: { id: itemId }
+      });
 
       if (!item) {
         return res.status(404).json({ error: 'Article non trouvé' });
