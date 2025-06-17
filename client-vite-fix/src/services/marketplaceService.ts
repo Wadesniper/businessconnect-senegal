@@ -69,8 +69,7 @@ function isUserSubscribed(userId: string, userContext?: any): boolean {
 export const marketplaceService = {
   async getItems(filters?: MarketplaceFilters, userContext?: any): Promise<MarketplaceItem[]> {
     let items = getStoredItems();
-    // Filtrer pour ne garder que les annonces dont le propriétaire est abonné
-    items = items.filter(i => isUserSubscribed(i.userId, userContext));
+    // SUPPRESSION du filtrage par abonnement : toutes les annonces sont publiques
     if (filters) {
       if (filters.category) items = items.filter(i => i.category === filters.category);
       if (filters.location) items = items.filter(i => i.location.toLowerCase().includes((filters.location || '').toLowerCase()));
@@ -84,8 +83,7 @@ export const marketplaceService = {
   async getItem(id: string, userContext?: any): Promise<MarketplaceItem | null> {
     const items = getStoredItems();
     const item = items.find(i => i.id === id) || null;
-    // Vérifier l'abonnement du propriétaire
-    if (item && !isUserSubscribed(item.userId, userContext)) return null;
+    // SUPPRESSION du filtrage par abonnement : toutes les annonces sont publiques
     return Promise.resolve(item);
   },
 
