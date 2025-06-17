@@ -51,7 +51,7 @@ const MarketplaceItemPage: React.FC = () => {
       const data = await marketplaceService.getItem(id);
       if (data) {
         setItem(data);
-        const user = authService.getCurrentUser();
+        const user = await authService.getCurrentUser();
         setIsOwner(user?.id === data.userId);
       }
     } catch (error) {
@@ -161,20 +161,19 @@ const MarketplaceItemPage: React.FC = () => {
 
                     <Title level={4}>Contact</Title>
                     <Space direction="vertical">
-                      {item.contactInfo ? (
-                        <>
-                          <Space>
-                            <MailOutlined />
-                            <Text>{item.contactInfo.email ?? ''}</Text>
-                          </Space>
-                          {item.contactInfo.phone && (
-                            <Space>
-                              <PhoneOutlined />
-                              <Text>{item.contactInfo.phone}</Text>
-                            </Space>
-                          )}
-                        </>
-                      ) : (
+                      {item.contactEmail && (
+                        <Space>
+                          <MailOutlined />
+                          <Text>{item.contactEmail}</Text>
+                        </Space>
+                      )}
+                      {item.contactPhone && (
+                        <Space>
+                          <PhoneOutlined />
+                          <Text>{item.contactPhone}</Text>
+                        </Space>
+                      )}
+                      {!item.contactEmail && !item.contactPhone && (
                         <Text type="secondary">Contact non renseigné</Text>
                       )}
                     </Space>

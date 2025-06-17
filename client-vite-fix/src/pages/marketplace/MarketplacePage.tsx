@@ -90,9 +90,9 @@ const MarketplacePage: React.FC = () => {
         userId: user.id,
         contactEmail: values.contactInfo?.email || '',
         contactPhone: values.contactInfo?.phone || '',
-        images: values.images?.fileList?.map((file: any) => file.url || file.thumbUrl) || []
+        images: values.images?.fileList?.map((file: any) => file.response?.url || file.url || file.thumbUrl) || []
       };
-      await marketplaceService.createItem(itemData, user);
+      await marketplaceService.createItem(itemData);
       message.success('Annonce créée avec succès');
       setIsModalVisible(false);
       form.resetFields();
@@ -233,6 +233,7 @@ const MarketplacePage: React.FC = () => {
                       alt={item.title}
                       src={item.images[0]}
                       style={{ height: 200, objectFit: 'cover' }}
+                      fallback="/no-image.png"
                     />
                   ) : null
                 }
