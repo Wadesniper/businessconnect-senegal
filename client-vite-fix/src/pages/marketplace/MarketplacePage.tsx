@@ -92,8 +92,9 @@ const MarketplacePage: React.FC = () => {
         message.error('Le prix doit être un nombre positif');
         return;
       }
+      console.log('DEBUG images field:', values.images);
       const images = values.images?.fileList?.map((file: any) => file.response?.url || file.url || file.thumbUrl).filter(Boolean) || [];
-      
+      console.log('DEBUG images URLs:', images);
       // Extraction des données de contact et suppression de contactInfo
       const { contactInfo, ...restValues } = values;
       const itemData = {
@@ -104,6 +105,7 @@ const MarketplacePage: React.FC = () => {
         contactPhone: contactInfo?.phone || '',
         images
       };
+      console.log('DEBUG itemData envoyé:', itemData);
       await marketplaceService.createItem(itemData);
       message.success('Annonce créée avec succès');
       setIsModalVisible(false);
@@ -118,6 +120,7 @@ const MarketplacePage: React.FC = () => {
   // customRequest pour mocker l'upload
   const customUpload = async ({ file, onSuccess }: any) => {
     const url = await marketplaceService.uploadImage(file as File);
+    file.url = url;
     onSuccess({ url }, file);
   };
 

@@ -40,7 +40,7 @@ const StaticBackground = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,21,41,0.72); // bleu foncé semi-transparent
+  background: rgba(0,21,41,0.45); // bleu foncé plus transparent
   z-index: 1;
 `;
 
@@ -66,11 +66,11 @@ const Overlay = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, #001529b3 40%, #00336699 100%);
+  background: linear-gradient(90deg, #00152966 40%, #00336666 100%); // opacité 0.4
   z-index: 2;
 `;
 
-// Correction du GeometricBackground pour qu'il soit au-dessus mais bien transparent
+// Correction du GeometricBackground pour qu'il soit SOUS le texte
 const GeometricBackground = styled.div`
   position: absolute;
   top: 0;
@@ -86,7 +86,7 @@ const GeometricBackground = styled.div`
     linear-gradient(60deg, rgba(255,255,255,0.12) 25%, transparent 25.5%, transparent 75%, rgba(255,255,255,0.12) 75%, rgba(255,255,255,0.12));
   background-size: 80px 140px;
   background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0;
-  z-index: 3;
+  z-index: 0;
 `;
 
 const ContentWrapper = styled.div`
@@ -98,7 +98,7 @@ const ContentWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  z-index: 1;
+  z-index: 5;
   overflow: hidden;
   @media (max-width: 600px) {
     flex-direction: column;
