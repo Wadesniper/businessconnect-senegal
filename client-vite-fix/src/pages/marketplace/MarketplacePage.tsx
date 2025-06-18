@@ -118,10 +118,11 @@ const MarketplacePage: React.FC = () => {
   };
 
   // customRequest pour mocker l'upload
-  const customUpload = async ({ file, onSuccess }: any) => {
+  const customUpload = async ({ file, onSuccess, onChange }: any) => {
     const url = await marketplaceService.uploadImage(file as File);
     file.url = url;
-    onSuccess({ url }, file);
+    if (onSuccess) onSuccess({ url }, file);
+    if (onChange) onChange({ file: { ...file, status: 'done', url } });
   };
 
   const refreshSubscription = () => {
