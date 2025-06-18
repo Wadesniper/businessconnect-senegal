@@ -91,8 +91,8 @@ const SubscriptionPage: React.FC = () => {
     );
   }
 
-  // Si l'utilisateur n'est pas authentifié, masquer les boutons d'abonnement
-  if (!isAuthenticated || !user) {
+  // Guard renforcé pour éviter tout crash même si user est mal typé ou null
+  if (!isAuthenticated || !user || typeof user !== 'object' || !user.id) {
     return (
       <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <Result
