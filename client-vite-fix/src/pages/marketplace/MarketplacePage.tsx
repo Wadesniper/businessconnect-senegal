@@ -86,9 +86,16 @@ const MarketplacePage: React.FC = () => {
         message.error('Veuillez vous connecter pour créer une annonce');
         return;
       }
+      // Conversion du prix en nombre
+      const price = Number(values.price);
+      if (isNaN(price) || price <= 0) {
+        message.error('Le prix doit être un nombre positif');
+        return;
+      }
       const images = values.images?.fileList?.map((file: any) => file.response?.url || file.url || file.thumbUrl).filter(Boolean) || [];
       const itemData = {
         ...values,
+        price, // prix converti en nombre
         seller: user.id,
         contactEmail: values.contactInfo?.email || '',
         contactPhone: values.contactInfo?.phone || '',
