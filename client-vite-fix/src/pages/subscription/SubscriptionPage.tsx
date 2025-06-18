@@ -91,12 +91,27 @@ const SubscriptionPage: React.FC = () => {
     );
   }
 
-  // Guard renforcé pour éviter tout crash même si user est mal typé ou null
+  const hasToken = !!localStorage.getItem('token');
+  const hasUser = !!localStorage.getItem('user');
+
   if (!isAuthenticated || !user || typeof user !== 'object' || !user.id) {
+    // Cas où il y a un token/user en localStorage mais pas dans le contexte React
+    if (hasToken || hasUser) {
+      return (
+        <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Result
+            status="info"
+            title="Merci de vous reconnecter pour accéder à votre abonnement."
+            extra={<Button type="primary" onClick={() => navigate('/auth')}>Se reconnecter</Button>}
+          />
+        </div>
+      );
+    }
+    // Cas classique : pas connecté du tout
     return (
       <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <Result
-          status="warning"
+          status="info"
           title="Vous devez être connecté pour souscrire à un abonnement."
           extra={<Button type="primary" onClick={() => navigate('/auth')}>Se connecter</Button>}
         />
