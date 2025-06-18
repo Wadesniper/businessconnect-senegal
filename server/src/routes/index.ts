@@ -6,7 +6,7 @@ import marketplaceRoutes from './marketplace.js';
 import notificationRoutes from './notifications.js';
 import contactRoutes from './contactRoutes.js';
 import subscriptionRoutes from './subscriptions.js';
-import { getUploadMiddleware } from '../middleware/uploadMiddleware.js';
+import { upload } from '../middleware/uploadMiddleware.js';
 import { uploadToSupabaseStorage } from '../services/supabaseStorageService.js';
 
 const router = Router();
@@ -20,20 +20,16 @@ router.use('/contact', contactRoutes);
 router.use('/subscriptions', subscriptionRoutes);
 
 // Route d'upload d'image (pour la marketplace)
-router.post('/upload', async (req, res, next) => {
-  const upload = await getUploadMiddleware();
-  upload.single('file')(req, res, async function (err: any) {
-    if (err) return next(err);
-    if (!req.file) {
-      return res.status(400).json({ error: 'Aucun fichier reçu' });
-    }
-    try {
-      const url = await uploadToSupabaseStorage(req.file);
-      res.json({ url });
-    } catch (e) {
-      res.status(500).json({ error: 'Erreur upload Supabase', details: (e as Error).message });
-    }
-  });
+router.post('/upload', upload.single('file'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'Aucun fichier reçu' });
+  }
+  try {
+    const url = await uploadToSupabaseStorage(req.file);
+    res.json({ url });
+  } catch (e) {
+    res.status(500).json({ error: 'Erreur upload Supabase', details: (e as Error).message });
+  }
 });
 
 export default router; 
