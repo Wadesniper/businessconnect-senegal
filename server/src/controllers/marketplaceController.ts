@@ -91,9 +91,12 @@ export class MarketplaceController {
         return res.status(400).json({ error: 'Le numéro de téléphone est obligatoire et doit être valide.' });
       }
 
+      // Suppression du champ seller pour éviter le conflit avec sellerId
+      const { seller, ...dataForPrisma } = rest;
+
       const item = await prisma.marketplaceItem.create({
         data: {
-          ...rest,
+          ...dataForPrisma,
           contactEmail,
           contactPhone,
           sellerId: userId,
