@@ -349,6 +349,8 @@ model MarketplaceItem {
   sellerId    String
   seller      User     @relation("ItemsSold", fields: [sellerId], references: [id])
 
+  location    String
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   transactions Transaction[] @relation("MarketplaceItemTransactions")
