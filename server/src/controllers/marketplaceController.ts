@@ -83,7 +83,9 @@ export class MarketplaceController {
       console.log('[MARKETPLACE][createItem] Body reçu:', req.body);
       console.log('[MARKETPLACE][createItem] Images:', req.body.images);
 
-      const { contactEmail, contactPhone, ...rest } = req.body;
+      const { contactInfo, ...rest } = req.body;
+      const contactEmail = contactInfo?.email || req.body.contactEmail || null;
+      const contactPhone = contactInfo?.phone || req.body.contactPhone || '';
       // Validation du téléphone obligatoire
       if (!contactPhone || !/^\+?\d{7,15}$/.test(contactPhone)) {
         return res.status(400).json({ error: 'Le numéro de téléphone est obligatoire et doit être valide.' });
@@ -92,7 +94,7 @@ export class MarketplaceController {
       const item = await prisma.marketplaceItem.create({
         data: {
           ...rest,
-          contactEmail: contactEmail || null,
+          contactEmail,
           contactPhone,
           sellerId: userId,
           status: 'approved',
