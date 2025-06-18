@@ -95,10 +95,9 @@ export const marketplaceService = {
   },
 
   async uploadImage(file: File): Promise<string> {
-    // À adapter selon l'API backend d'upload
     const formData = new FormData();
     formData.append('file', file);
-    const res = await api.post('/upload', formData, {
+    const res = await api.post('/api/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return res.data.url;

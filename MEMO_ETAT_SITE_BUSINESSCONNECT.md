@@ -1030,3 +1030,14 @@ Dernière mise à jour : migration complète réalisée, site prêt pour la prod
 - Testé : création, affichage, navigation, suppression, tout fonctionne en prod.
 
 ---
+
+# [2025-06-18] Correction complète de l'upload d'images pour la marketplace :
+  - Vérification et création du dossier `server/uploads/` si absent.
+  - Vérification que le backend sert bien `/uploads` en statique.
+  - Correction du service frontend pour cibler `/api/upload` (et non `/upload`).
+  - Vérification que la route `/api/upload` existe côté backend et retourne bien l'URL du fichier uploadé.
+  - Ajout de logs et vérification de la non-régression sur le backend et le frontend.
+- Aucune suppression de code ou fonctionnalité essentielle, tout le site reste complet et fonctionnel.
+- Le build et le déploiement doivent passer sans problème, aucune version minimaliste n'a été introduite.
+
+---

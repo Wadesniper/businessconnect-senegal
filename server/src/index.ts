@@ -16,6 +16,7 @@ import subscriptionsRoutes from './routes/subscriptions.js';
 import authRoutes from './routes/auth.js';
 import routes from './routes/index.js';
 import { logger } from './utils/logger.js';
+import prisma from './config/prisma.js';
 // import adminRoutes from './routes/admin.routes.js';
 dotenv.config();
 
@@ -65,25 +66,18 @@ process.on('unhandledRejection', (error: Error) => {
   process.exit(1);
 });
 
-// Connexion à MongoDB
-mongoose.connect(config.MONGODB_URI)
-  .then(async () => {
-    logger.info('Connecté à MongoDB');
-    try {
-      const test = await import('./config/prisma.js');
-      await test.default.$connect();
-      logger.info('Connecté à Supabase (Prisma)');
-    } catch (e) {
-      logger.error('Erreur de connexion à Supabase (Prisma):', e);
-    }
-    // Démarrer le serveur une fois connecté à MongoDB
+// Connexion à Supabase via Prisma
+prisma.$connect()
+  .then(() => {
+    logger.info('Connecté à Supabase (Prisma)');
+    // Démarrer le serveur une fois connecté
     const PORT = config.PORT || 3000;
     app.listen(PORT, () => {
       logger.info(`Serveur démarré sur le port ${PORT}`);
     });
   })
   .catch((error) => {
-    logger.error('Erreur de connexion à MongoDB:', error);
+    logger.error('Erreur de connexion à Supabase:', error);
     process.exit(1);
   });
 
