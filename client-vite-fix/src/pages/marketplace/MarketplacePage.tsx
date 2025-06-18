@@ -93,12 +93,15 @@ const MarketplacePage: React.FC = () => {
         return;
       }
       const images = values.images?.fileList?.map((file: any) => file.response?.url || file.url || file.thumbUrl).filter(Boolean) || [];
+      
+      // Extraction des données de contact et suppression de contactInfo
+      const { contactInfo, ...restValues } = values;
       const itemData = {
-        ...values,
+        ...restValues,
         price, // prix converti en nombre
         seller: user.id,
-        contactEmail: values.contactInfo?.email || '',
-        contactPhone: values.contactInfo?.phone || '',
+        contactEmail: contactInfo?.email || '',
+        contactPhone: contactInfo?.phone || '',
         images
       };
       await marketplaceService.createItem(itemData);
