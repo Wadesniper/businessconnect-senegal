@@ -4,12 +4,19 @@ import { AuthRequest } from '../types/custom.express.js';
 import { UserPayload } from '../types/user.js';
 import { config } from '../config.js';
 import { logger } from '../utils/logger.js';
-import { User } from '../models/User.js';
+import { PrismaClient } from '../generated/prisma/index.js';
+
+const prisma = new PrismaClient();
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
     // Vérifier si le token est présent
-    const token = req.header('Authorization')?.replace('Bearer ', '');
+    const authHeader = req.headers.authorization;
+    console.log('[DEBUG AUTH] Authorization header:', authHeader);
+    
+    const token = authHeader?.replace('Bearer ', '');
+    console.log('[DEBUG AUTH] Token extrait:', token);
+    
     if (!token) {
       return res.status(401).json({
         success: false,
@@ -19,32 +26,61 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 
     // Vérifier et décoder le token
     const decoded = jwt.verify(token, config.JWT_SECRET) as { id: string };
+    console.log('[DEBUG AUTH] Token décodé:', decoded);
     
-    // Vérifier si l'utilisateur existe
-    const user = await User.findById(decoded.id);
+    // Vérifier si l'utilisateur existe avec Prisma
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.id }
+    });
+    
     if (!user) {
+      console.log('[DEBUG AUTH] Utilisateur non trouvé pour ID:', decoded.id);
       return res.status(401).json({
         success: false,
         message: 'Utilisateur non trouvé'
       });
     }
 
-    // Convertir le document Mongoose en UserPayload
+    console.log('[DEBUG AUTH] Utilisateur trouvé:', { id: user.id, role: user.role, email: user.email });
+
+    // Convertir le rôle Prisma vers le type UserRole attendu
+    let userRole: 'admin' | 'etudiant' | 'annonceur' | 'employeur';
+    switch (user.role) {
+      case 'admin':
+        userRole = 'admin';
+        break;
+      case 'etudiant':
+        userRole = 'etudiant';
+        break;
+      case 'annonceur':
+        userRole = 'annonceur';
+        break;
+      case 'recruteur':
+        userRole = 'employeur'; // Mapping recruteur -> employeur
+        break;
+      default:
+        userRole = 'etudiant'; // Fallback
+    }
+
+    // Convertir le document Prisma en UserPayload
     const userPayload: UserPayload = {
-      id: user._id.toString(),
-      role: user.role,
+      id: user.id,
+      role: userRole,
       firstName: user.firstName,
       lastName: user.lastName,
       phoneNumber: user.phoneNumber,
-      email: user.email,
+      email: user.email || '', // Fallback vers string vide si undefined
       isVerified: user.isVerified
     };
 
-    // Maintenant, nous pouvons traiter req comme AuthRequest pour assigner user
-    // et pour les middlewares/handlers suivants
+    // Assigner l'utilisateur à la requête
     (req as AuthRequest).user = userPayload;
+    console.log('[DEBUG AUTH] User assigné à req.user:', userPayload);
+    
     next();
   } catch (error) {
+    console.error('[DEBUG AUTH] Erreur dans authMiddleware:', error);
+    
     if (error instanceof jwt.JsonWebTokenError) {
       return res.status(401).json({
         success: false,
@@ -59,6 +95,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
       });
     }
 
+    logger.error('Erreur lors de l\'authentification:', error);
     return res.status(500).json({
       success: false,
       message: 'Erreur lors de l\'authentification'
