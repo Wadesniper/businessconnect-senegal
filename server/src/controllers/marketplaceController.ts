@@ -80,6 +80,8 @@ export class MarketplaceController {
 
       logger.info('[MARKETPLACE][createItem] Body reçu:', req.body);
       logger.info('[MARKETPLACE][createItem] Images:', req.body.images);
+      console.log('[MARKETPLACE][createItem] Body reçu:', req.body);
+      console.log('[MARKETPLACE][createItem] Images:', req.body.images);
 
       const { contactEmail, contactPhone, ...rest } = req.body;
       // Validation du téléphone obligatoire
@@ -100,6 +102,7 @@ export class MarketplaceController {
       res.status(201).json(item);
     } catch (error) {
       logger.error('[MARKETPLACE][createItem] Erreur:', error);
+      console.log('[MARKETPLACE][createItem] Erreur:', error);
       res.status(500).json({ error: 'Erreur lors de la création de l\'article', details: (error instanceof Error ? error.message : String(error)) });
     }
   }
