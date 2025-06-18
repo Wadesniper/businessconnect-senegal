@@ -103,7 +103,13 @@ export class MarketplaceController {
     } catch (error) {
       logger.error('[MARKETPLACE][createItem] Erreur:', error);
       console.log('[MARKETPLACE][createItem] Erreur:', error);
-      res.status(500).json({ error: 'Erreur lors de la création de l\'article', details: (error instanceof Error ? error.message : String(error)) });
+      res.status(500).json({
+        error: 'Erreur lors de la création de l\'article',
+        details: (error instanceof Error ? error.message : String(error)),
+        body: req.body,
+        images: req.body.images,
+        stack: error instanceof Error ? error.stack : error
+      });
     }
   }
 
