@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { Request, Response, NextFunction, AuthRequest } from '../types/custom.express.js';
 import { MarketplaceController } from '../controllers/marketplaceController.js';
-import { getUploadMiddleware } from '../middleware/uploadMiddleware.js';
-import { authenticate } from '../middleware/auth.js';
+import { authMiddleware } from '../middleware/authMiddleware.js';
+import { upload } from '../middleware/uploadMiddleware.js';
 
 const router = Router();
 const marketplaceController = new MarketplaceController();
@@ -21,21 +21,13 @@ router.get('/search', asyncHandler((req: Request, res: Response, next: NextFunct
 router.get('/:id', asyncHandler((req: Request, res: Response, next: NextFunction) => marketplaceController.getItemById(req, res)));
 
 // Routes protégées
-router.post('/', authenticate, async (req, res, next) => {
-  const upload = await getUploadMiddleware();
-  upload.array('images', 5)(req, res, next);
-}, asyncHandler((req: AuthRequest, res: Response, next: NextFunction) => marketplaceController.createItem(req, res)));
-
-router.put('/:id', authenticate, async (req, res, next) => {
-  const upload = await getUploadMiddleware();
-  upload.array('images', 5)(req, res, next);
-}, asyncHandler((req: AuthRequest, res: Response, next: NextFunction) => marketplaceController.updateItem(req, res)));
-
-router.delete('/:id', authenticate, asyncHandler((req: AuthRequest, res: Response, next: NextFunction) => marketplaceController.deleteItem(req, res)));
+router.post('/', authMiddleware, upload.array('images', 5), asyncHandler((req: AuthRequest, res: Response, next: NextFunction) => marketplaceController.createItem(req, res)));
+router.put('/:id', authMiddleware, upload.array('images', 5), asyncHandler((req: AuthRequest, res: Response, next: NextFunction) => marketplaceController.updateItem(req, res)));
+router.delete('/:id', authMiddleware, asyncHandler((req: AuthRequest, res: Response, next: NextFunction) => marketplaceController.deleteItem(req, res)));
 
 // Routes admin
-router.get('/admin/all', authenticate, asyncHandler((req: AuthRequest, res: Response, next: NextFunction) => marketplaceController.getAllItemsAdmin(req, res)));
-router.patch('/admin/:id/status', authenticate, asyncHandler((req: AuthRequest, res: Response, next: NextFunction) => marketplaceController.updateItemStatus(req, res)));
-router.delete('/admin/:id', authenticate, asyncHandler((req: AuthRequest, res: Response, next: NextFunction) => marketplaceController.deleteItemAdmin(req, res)));
+router.get('/admin/all', authMiddleware, asyncHandler((req: AuthRequest, res: Response, next: NextFunction) => marketplaceController.getAllItemsAdmin(req, res)));
+router.patch('/admin/:id/status', authMiddleware, asyncHandler((req: AuthRequest, res: Response, next: NextFunction) => marketplaceController.updateItemStatus(req, res)));
+router.delete('/admin/:id', authMiddleware, asyncHandler((req: AuthRequest, res: Response, next: NextFunction) => marketplaceController.deleteItemAdmin(req, res)));
 
 export default router; 
