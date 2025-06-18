@@ -352,6 +352,7 @@ const MarketplacePage: React.FC = () => {
               label="Images"
               valuePropName="fileList"
               getValueFromEvent={(e) => {
+                console.log('DEBUG getValueFromEvent e:', e);
                 if (Array.isArray(e)) {
                   return e;
                 }
