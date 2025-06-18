@@ -78,6 +78,9 @@ export class MarketplaceController {
         return res.status(401).json({ error: 'Non autorisé' });
       }
 
+      logger.info('[MARKETPLACE][createItem] Body reçu:', req.body);
+      logger.info('[MARKETPLACE][createItem] Images:', req.body.images);
+
       const { contactEmail, contactPhone, ...rest } = req.body;
       // Validation du téléphone obligatoire
       if (!contactPhone || !/^\+?\d{7,15}$/.test(contactPhone)) {
@@ -96,7 +99,8 @@ export class MarketplaceController {
       });
       res.status(201).json(item);
     } catch (error) {
-      res.status(500).json({ error: 'Erreur lors de la création de l\'article' });
+      logger.error('[MARKETPLACE][createItem] Erreur:', error);
+      res.status(500).json({ error: 'Erreur lors de la création de l\'article', details: (error instanceof Error ? error.message : String(error)) });
     }
   }
 
