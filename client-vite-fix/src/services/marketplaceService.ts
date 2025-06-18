@@ -2,6 +2,7 @@ import { marketplaceData } from '../data/marketplaceData';
 import { subscriptionData } from '../data/subscriptionData';
 import type { UserSubscription } from '../data/subscriptionData';
 import api from './api';
+import { authService } from './authService';
 
 export interface MarketplaceItem {
   id: string;
@@ -33,8 +34,23 @@ function getStoredItems(): MarketplaceItem[] {
   const stored = localStorage.getItem(STORAGE_KEY);
   if (stored) return JSON.parse(stored);
   // Si rien en localStorage, on initialise avec les données statiques
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(marketplaceData));
-  return [...marketplaceData];
+  const staticData = marketplaceData.map(item => ({
+    id: item.id,
+    title: item.title,
+    description: item.description,
+    price: item.price,
+    category: item.category,
+    images: item.images,
+    location: item.location,
+    contactEmail: item.contactInfo?.email,
+    contactPhone: item.contactInfo?.phone || '',
+    userId: item.userId,
+    createdAt: item.createdAt,
+    updatedAt: item.updatedAt,
+    status: item.status as 'pending' | 'approved' | 'rejected' | 'active' | 'sold' | 'expired'
+  }));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(staticData));
+  return [...staticData];
 }
 
 function saveItems(items: MarketplaceItem[]) {
@@ -71,22 +87,29 @@ export const marketplaceService = {
     if (filters?.category) params.category = filters.category;
     if (filters?.search) params.query = filters.search;
     // Ajout d'autres filtres si besoin
-    const res = await api.get('/api/marketplace', { params });
+    const res = await api.get<MarketplaceItem[]>('/api/marketplace', { params });
     return res.data;
   },
 
   async getItem(id: string): Promise<MarketplaceItem | null> {
-    const res = await api.get(`/api/marketplace/${id}`);
+    const res = await api.get<MarketplaceItem>(`/api/marketplace/${id}`);
     return res.data;
   },
 
   async createItem(itemData: any): Promise<MarketplaceItem> {
-    const res = await api.post('/api/marketplace', itemData);
+    // Logs temporaires pour debug
+    const token = authService.getToken();
+    console.log('[MARKETPLACE DEBUG] Token disponible:', !!token);
+    console.log('[MARKETPLACE DEBUG] Token:', token);
+    console.log('[MARKETPLACE DEBUG] Données à envoyer:', itemData);
+    
+    const res = await api.post<MarketplaceItem>('/api/marketplace', itemData);
+    console.log('[MARKETPLACE DEBUG] Réponse reçue:', res.data);
     return res.data;
   },
 
   async updateItem(id: string, itemData: Partial<MarketplaceItem>): Promise<MarketplaceItem> {
-    const res = await api.put(`/api/marketplace/${id}`, itemData);
+    const res = await api.put<MarketplaceItem>(`/api/marketplace/${id}`, itemData);
     return res.data;
   },
 
@@ -97,7 +120,7 @@ export const marketplaceService = {
   async uploadImage(file: File): Promise<string> {
     const formData = new FormData();
     formData.append('file', file);
-    const res = await api.post('/api/upload', formData, {
+    const res = await api.post<{url: string}>('/api/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return res.data.url;
