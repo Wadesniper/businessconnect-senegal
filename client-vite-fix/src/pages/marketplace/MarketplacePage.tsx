@@ -80,6 +80,15 @@ const MarketplacePage: React.FC = () => {
     setLoading(false);
   };
 
+  const customUpload = async ({ file, onSuccess, onError }: any) => {
+    try {
+      const url = await marketplaceService.uploadImage(file as File);
+      onSuccess({ url }); // AntD va automatiquement ajouter url à fileList
+    } catch (err) {
+      if (onError) onError(err);
+    }
+  };
+
   const handleCreateAd = async (values: any) => {
     try {
       if (!user || !user.id) {
@@ -93,7 +102,7 @@ const MarketplacePage: React.FC = () => {
         return;
       }
       console.log('DEBUG images field:', values.images);
-      const images = values.images?.fileList?.map((file: any) => file.response?.url || file.url || file.thumbUrl).filter(Boolean) || [];
+      const images = values.images?.map((file: any) => file.url).filter(Boolean) || [];
       console.log('DEBUG images URLs:', images);
       // Extraction des données de contact et suppression de contactInfo
       const { contactInfo, ...restValues } = values;
@@ -115,14 +124,6 @@ const MarketplacePage: React.FC = () => {
       console.error('Erreur création annonce:', error, error?.response);
       message.error(error?.response?.data?.error || error.message || 'Erreur lors de la création de l\'annonce');
     }
-  };
-
-  // customRequest pour mocker l'upload
-  const customUpload = async ({ file, onSuccess, onChange }: any) => {
-    const url = await marketplaceService.uploadImage(file as File);
-    file.url = url;
-    if (onSuccess) onSuccess({ url }, file);
-    if (onChange) onChange({ file: { ...file, status: 'done', url } });
   };
 
   const refreshSubscription = () => {
