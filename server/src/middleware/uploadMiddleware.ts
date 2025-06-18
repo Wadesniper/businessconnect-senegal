@@ -10,7 +10,7 @@ let upload: any;
 export async function getUploadMiddleware() {
   if (!upload) {
     const multerModule = await import('multer');
-    const storage = multerModule.diskStorage({
+    const storage = multerModule.default.diskStorage({
       destination: function (req, file, cb) {
         cb(null, path.join(__dirname, '../../uploads'));
       },
