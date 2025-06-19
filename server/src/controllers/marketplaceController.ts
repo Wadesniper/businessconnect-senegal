@@ -83,6 +83,21 @@ export class MarketplaceController {
       console.log('[MARKETPLACE][createItem] Body reçu:', req.body);
       console.log('[MARKETPLACE][createItem] Images:', req.body.images);
 
+      // Correction robuste : garantir que req.body.images est toujours un tableau
+      if (!Array.isArray(req.body.images)) {
+        if (typeof req.body.images === 'string' && req.body.images) {
+          try {
+            req.body.images = JSON.parse(req.body.images);
+          } catch {
+            req.body.images = [req.body.images];
+          }
+        } else if (req.body.images == null) {
+          req.body.images = [];
+        } else {
+          req.body.images = [req.body.images];
+        }
+      }
+
       const { contactInfo, ...rest } = req.body;
       const contactEmail = contactInfo?.email || req.body.contactEmail || null;
       const contactPhone = contactInfo?.phone || req.body.contactPhone || '';
@@ -93,6 +108,15 @@ export class MarketplaceController {
 
       // Suppression du champ seller pour éviter le conflit avec sellerId
       const { seller, ...dataForPrisma } = rest;
+
+      console.log('[DEBUG BACKEND] data envoyé à Prisma:', {
+        ...dataForPrisma,
+        contactEmail,
+        contactPhone,
+        sellerId: userId,
+        status: 'approved',
+        images: Array.isArray(rest.images) ? rest.images : [],
+      });
 
       const item = await prisma.marketplaceItem.create({
         data: {
