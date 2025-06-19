@@ -15,6 +15,7 @@ export interface MarketplaceItem {
   contactEmail?: string;
   contactPhone: string;
   userId: string;
+  seller?: string;
   createdAt: string;
   updatedAt: string;
   status: 'pending' | 'approved' | 'rejected' | 'active' | 'sold' | 'expired';
@@ -109,8 +110,36 @@ export const marketplaceService = {
   },
 
   async updateItem(id: string, itemData: Partial<MarketplaceItem>): Promise<MarketplaceItem> {
-    const res = await api.put<MarketplaceItem>(`/api/marketplace/${id}`, itemData);
-    return res.data;
+    console.log('[DEBUG] Service - Début updateItem');
+    console.log('[DEBUG] Service - ID:', id);
+    console.log('[DEBUG] Service - Données:', itemData);
+    try {
+      // Convertir les données en FormData
+      const formData = new FormData();
+      
+      // Ajouter toutes les données sauf les images
+      Object.entries(itemData).forEach(([key, value]) => {
+        if (key !== 'images') {
+          formData.append(key, typeof value === 'object' ? JSON.stringify(value) : String(value));
+        }
+      });
+
+      // Ajouter les URLs des images existantes
+      if (itemData.images) {
+        formData.append('existingImages', JSON.stringify(itemData.images));
+      }
+
+      const res = await api.put<MarketplaceItem>(`/api/marketplace/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      console.log('[DEBUG] Service - Réponse:', res.data);
+      return res.data;
+    } catch (error) {
+      console.error('[DEBUG] Service - Erreur:', error);
+      throw error;
+    }
   },
 
   async deleteItem(id: string): Promise<void> {

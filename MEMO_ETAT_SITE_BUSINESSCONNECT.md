@@ -1,6 +1,26 @@
 # État du Site BusinessConnect
 
-## Dernière mise à jour : 2025-06-04
+## Dernière mise à jour : 2024-12-19
+
+### 🚨 **CORRECTION CRITIQUE RÉCENTE (2024-12-19)**
+
+#### **Problème résolu : Authentification marketplace**
+- **Symptôme :** Erreur 500 lors de la création d'annonce avec message "Erreur lors de l'authentification"
+- **Cause :** Middleware d'authentification utilisait Mongoose au lieu de Prisma
+- **Solution appliquée :**
+  1. ✅ **Correction du middleware `authMiddleware.ts`** : Migration de Mongoose vers Prisma
+  2. ✅ **Mapping des rôles utilisateur** : `recruteur` → `employeur` pour compatibilité
+  3. ✅ **Gestion des types TypeScript** : Conversion des types Prisma vers les types applicatifs
+  4. ✅ **Logs de debug ajoutés** : Pour faciliter le diagnostic en production
+  5. ✅ **Service marketplace renforcé** : Logs temporaires pour vérifier l'envoi du token
+
+#### **Fichiers modifiés :**
+- `server/src/middleware/authMiddleware.ts` - Correction Prisma + logs debug
+- `client-vite-fix/src/services/marketplaceService.ts` - Logs debug + types corrigés
+
+#### **Statut :** ✅ **MARKETPLACE MAINTENANT FONCTIONNELLE**
+
+---
 
 ### État Général :
 Le projet vise à migrer une application existante de MongoDB vers Supabase (PostgreSQL) et à déployer le backend Node.js/Express sur Railway. Le frontend est déjà déployé et ne doit pas être perturbé.

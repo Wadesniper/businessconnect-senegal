@@ -16,7 +16,10 @@ import {
   message,
   Image,
   Spin,
-  Input as AntInput
+  Input as AntInput,
+  Radio,
+  InputNumber,
+  Alert
 } from 'antd';
 import {
   SearchOutlined,
@@ -30,7 +33,7 @@ import type { MarketplaceItem } from '../../services/marketplaceService';
 import { authService } from '../../services/authService';
 import { useSubscription } from '../../hooks/useSubscription';
 import { useAuth } from '../../context/AuthContext';
-import type { UploadFile } from 'antd';
+import type { UploadFile, UploadFileStatus } from 'antd/es/upload/interface';
 
 const categories = [
   'Informatique',
@@ -66,6 +69,11 @@ const MarketplacePage: React.FC = () => {
       : null
   );
   const userSubscription = subscription;
+  const [priceType, setPriceType] = useState<'fixed' | 'range' | 'negotiable'>('fixed');
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [editingItem, setEditingItem] = useState<MarketplaceItem | null>(null);
+  const [editFileList, setEditFileList] = useState<UploadFile[]>([]);
+  const [editUploadedUrls, setEditUploadedUrls] = useState<string[]>([]);
 
   useEffect(() => {
     fetchItems();
@@ -113,16 +121,30 @@ const MarketplacePage: React.FC = () => {
         return;
       }
 
-      const price = Number(values.price);
-      if (isNaN(price) || price <= 0) {
-        message.error('Le prix doit être un nombre positif');
-        return;
+      let finalPrice;
+      if (priceType === 'fixed') {
+        const price = Number(values.price);
+        if (isNaN(price) || price < 0) {
+          message.error('Le prix doit être un nombre positif');
+          return;
+        }
+        finalPrice = price;
+      } else if (priceType === 'range') {
+        const minPrice = Number(values.minPrice);
+        const maxPrice = Number(values.maxPrice);
+        if (isNaN(minPrice) || isNaN(maxPrice) || minPrice < 0 || maxPrice < minPrice) {
+          message.error('La fourchette de prix n\'est pas valide');
+          return;
+        }
+        finalPrice = { min: minPrice, max: maxPrice };
+      } else {
+        finalPrice = 'Négociable';
       }
 
-      const { contactInfo, ...restValues } = values;
+      const { contactInfo, price, minPrice, maxPrice, ...restValues } = values;
       const itemData = {
         ...restValues,
-        price,
+        price: finalPrice,
         seller: user.id,
         contactEmail: contactInfo?.email || '',
         contactPhone: contactInfo?.phone || '',
@@ -164,6 +186,68 @@ const MarketplacePage: React.FC = () => {
       refreshSubscription();
     } catch (e) {
       message.error('Erreur lors de l\'expiration');
+    }
+  };
+
+  const handleEdit = (item: MarketplaceItem) => {
+    setEditingItem(item);
+    const existingFileList = item.images?.map((url, index) => ({
+      uid: `-${index}`,
+      name: `image-${index + 1}`,
+      status: 'done' as UploadFileStatus,
+      url: url,
+    })) || [];
+    setEditFileList(existingFileList);
+    setEditUploadedUrls(item.images || []);
+    setEditModalVisible(true);
+  };
+
+  const handleEditSubmit = async (values: any) => {
+    if (!editingItem?.id) return;
+    
+    try {
+      console.log('[DEBUG] Début modification annonce');
+      console.log('[DEBUG] Values reçues:', values);
+      let finalPrice;
+      if (priceType === 'fixed') {
+        const price = Number(values.price);
+        if (isNaN(price) || price < 0) {
+          message.error('Le prix doit être un nombre positif');
+          return;
+        }
+        finalPrice = price;
+      } else if (priceType === 'range') {
+        const minPrice = Number(values.minPrice);
+        const maxPrice = Number(values.maxPrice);
+        if (isNaN(minPrice) || isNaN(maxPrice) || minPrice < 0 || maxPrice < minPrice) {
+          message.error('La fourchette de prix n\'est pas valide');
+          return;
+        }
+        finalPrice = { min: minPrice, max: maxPrice };
+      } else {
+        finalPrice = 'Négociable';
+      }
+
+      const { contactInfo, price, minPrice, maxPrice, ...restValues } = values;
+      const itemData = {
+        ...restValues,
+        price: finalPrice,
+        contactEmail: contactInfo?.email || '',
+        contactPhone: contactInfo?.phone || '',
+        images: editUploadedUrls
+      };
+
+      console.log('[DEBUG] Données à envoyer:', itemData);
+      console.log('[DEBUG] ID de l\'annonce:', editingItem.id);
+      
+      await marketplaceService.updateItem(editingItem.id, itemData);
+      message.success('Annonce modifiée avec succès');
+      setEditModalVisible(false);
+      fetchItems();
+    } catch (error: any) {
+      console.error('[DEBUG] Erreur détaillée:', error);
+      console.error('[DEBUG] Response:', error.response);
+      message.error(error?.response?.data?.error || error.message || 'Erreur lors de la modification de l\'annonce');
     }
   };
 
@@ -265,6 +349,18 @@ const MarketplacePage: React.FC = () => {
                   ) : null
                 }
                 onClick={() => navigate(`/marketplace/${item.id}`)}
+                actions={user?.id === item.userId ? [
+                  <Button 
+                    key="edit" 
+                    type="link" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEdit(item);
+                    }}
+                  >
+                    Modifier
+                  </Button>
+                ] : []}
               >
                 <div style={{ minHeight: 120 }}>
                   <div style={{ fontWeight: 'bold', fontSize: 16 }}>{item.title}</div>
@@ -328,13 +424,68 @@ const MarketplacePage: React.FC = () => {
               </Select>
             </Form.Item>
 
-            <Form.Item
-              name="price"
-              label="Prix"
-              rules={[{ required: true, message: 'Veuillez saisir un prix' }]}
-            >
-              <Input type="number" prefix={<EuroOutlined style={{ color: '#1890ff' }} />} />
+            <Form.Item label="Type de prix" name="priceType">
+              <Radio.Group onChange={(e) => setPriceType(e.target.value)} value={priceType}>
+                <Radio value="fixed">Prix fixe</Radio>
+                <Radio value="range">Fourchette de prix</Radio>
+                <Radio value="negotiable">Prix négociable</Radio>
+              </Radio.Group>
             </Form.Item>
+
+            {priceType === 'fixed' && (
+              <Form.Item
+                name="price"
+                label="Prix"
+                rules={[{ required: true, message: 'Veuillez saisir un prix' }]}
+              >
+                <InputNumber
+                  style={{ width: '100%' }}
+                  min={0}
+                  prefix={<EuroOutlined style={{ color: '#1890ff' }} />}
+                  placeholder="Prix en FCFA"
+                />
+              </Form.Item>
+            )}
+
+            {priceType === 'range' && (
+              <Form.Item label="Fourchette de prix" required>
+                <Space>
+                  <Form.Item
+                    name="minPrice"
+                    rules={[{ required: true, message: 'Prix minimum requis' }]}
+                    noStyle
+                  >
+                    <InputNumber
+                      min={0}
+                      prefix={<EuroOutlined style={{ color: '#1890ff' }} />}
+                      placeholder="Prix minimum"
+                    />
+                  </Form.Item>
+                  <span>à</span>
+                  <Form.Item
+                    name="maxPrice"
+                    rules={[{ required: true, message: 'Prix maximum requis' }]}
+                    noStyle
+                  >
+                    <InputNumber
+                      min={0}
+                      prefix={<EuroOutlined style={{ color: '#1890ff' }} />}
+                      placeholder="Prix maximum"
+                    />
+                  </Form.Item>
+                </Space>
+              </Form.Item>
+            )}
+
+            {priceType === 'negotiable' && (
+              <Form.Item>
+                <Alert
+                  message="Le prix sera affiché comme 'Prix négociable'"
+                  type="info"
+                  showIcon
+                />
+              </Form.Item>
+            )}
 
             <Form.Item
               name="location"
@@ -393,6 +544,183 @@ const MarketplacePage: React.FC = () => {
             <Form.Item>
               <Button type="primary" htmlType="submit">
                 Publier l'annonce
+              </Button>
+            </Form.Item>
+          </Form>
+        </Modal>
+
+        <Modal
+          title="Modifier l'annonce"
+          open={editModalVisible}
+          onCancel={() => setEditModalVisible(false)}
+          footer={null}
+        >
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={handleEditSubmit}
+            initialValues={{
+              title: editingItem?.title,
+              description: editingItem?.description,
+              category: editingItem?.category,
+              price: editingItem?.price,
+              location: editingItem?.location,
+              contactInfo: {
+                email: editingItem?.contactEmail,
+                phone: editingItem?.contactPhone
+              },
+              images: editingItem?.images || []
+            }}
+          >
+            <Form.Item
+              name="title"
+              label="Titre"
+              rules={[{ required: true, message: 'Veuillez saisir un titre' }]}
+            >
+              <Input placeholder="Titre de l'annonce" />
+            </Form.Item>
+
+            <Form.Item
+              name="description"
+              label="Description"
+              rules={[{ required: true, message: 'Veuillez saisir une description' }]}
+            >
+              <Input.TextArea rows={4} placeholder="Description détaillée" />
+            </Form.Item>
+
+            <Form.Item
+              name="category"
+              label="Catégorie"
+              rules={[{ required: true, message: 'Veuillez sélectionner une catégorie' }]}
+            >
+              <Select placeholder="Sélectionnez une catégorie">
+                {categories.map(category => (
+                  <Select.Option key={category} value={category}>{category}</Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+
+            <Form.Item label="Type de prix" name="priceType">
+              <Radio.Group onChange={(e) => setPriceType(e.target.value)} value={priceType}>
+                <Radio value="fixed">Prix fixe</Radio>
+                <Radio value="range">Fourchette de prix</Radio>
+                <Radio value="negotiable">Prix négociable</Radio>
+              </Radio.Group>
+            </Form.Item>
+
+            {priceType === 'fixed' && (
+              <Form.Item
+                name="price"
+                label="Prix"
+                rules={[{ required: true, message: 'Veuillez saisir un prix' }]}
+              >
+                <InputNumber
+                  style={{ width: '100%' }}
+                  min={0}
+                  prefix={<EuroOutlined style={{ color: '#1890ff' }} />}
+                  placeholder="Prix en FCFA"
+                />
+              </Form.Item>
+            )}
+
+            {priceType === 'range' && (
+              <Form.Item label="Fourchette de prix" required>
+                <Space>
+                  <Form.Item
+                    name="minPrice"
+                    rules={[{ required: true, message: 'Prix minimum requis' }]}
+                    noStyle
+                  >
+                    <InputNumber
+                      min={0}
+                      prefix={<EuroOutlined style={{ color: '#1890ff' }} />}
+                      placeholder="Prix minimum"
+                    />
+                  </Form.Item>
+                  <span>à</span>
+                  <Form.Item
+                    name="maxPrice"
+                    rules={[{ required: true, message: 'Prix maximum requis' }]}
+                    noStyle
+                  >
+                    <InputNumber
+                      min={0}
+                      prefix={<EuroOutlined style={{ color: '#1890ff' }} />}
+                      placeholder="Prix maximum"
+                    />
+                  </Form.Item>
+                </Space>
+              </Form.Item>
+            )}
+
+            {priceType === 'negotiable' && (
+              <Form.Item>
+                <Alert
+                  message="Le prix sera affiché comme 'Prix négociable'"
+                  type="info"
+                  showIcon
+                />
+              </Form.Item>
+            )}
+
+            <Form.Item
+              name="location"
+              label="Localisation"
+              rules={[{ required: true, message: 'Veuillez saisir une localisation' }]}
+            >
+              <Input prefix={<EnvironmentOutlined style={{ color: '#1890ff' }} />} />
+            </Form.Item>
+
+            <Form.Item
+              name={["contactInfo", "email"]}
+              label="Email (optionnel)"
+              rules={[{ type: 'email', message: 'Email invalide' }]}
+            >
+              <Input placeholder="Email (optionnel)" />
+            </Form.Item>
+
+            <Form.Item
+              name={["contactInfo", "phone"]}
+              label="Téléphone"
+              rules={[{ required: true, message: 'Veuillez saisir un numéro de téléphone' }]}
+            >
+              <Input placeholder="Téléphone (obligatoire)" />
+            </Form.Item>
+
+            <Form.Item
+              name="images"
+              label="Images"
+              rules={[{ required: true, message: 'Veuillez ajouter au moins une image' }]}
+            >
+              <Upload
+                listType="picture-card"
+                customRequest={customUpload}
+                maxCount={5}
+                fileList={editFileList}
+                onChange={({ fileList: newFileList }) => {
+                  console.log('onChange newFileList:', newFileList);
+                  setEditFileList(newFileList);
+                }}
+                onRemove={(file) => {
+                  const url = file.url || (file.response && file.response.url);
+                  if (url) {
+                    setEditUploadedUrls(prev => prev.filter(u => u !== url));
+                  }
+                  return true;
+                }}
+              >
+                {editFileList.length < 5 && (
+                  <div>
+                    <UploadOutlined />
+                    <div style={{ marginTop: 8 }}>Upload</div>
+                  </div>
+                )}
+              </Upload>
+            </Form.Item>
+
+            <Form.Item>
+              <Button type="primary" htmlType="submit">
+                Enregistrer les modifications
               </Button>
             </Form.Item>
           </Form>

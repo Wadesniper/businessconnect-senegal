@@ -17,7 +17,8 @@ import {
   CrownOutlined,
   SafetyCertificateOutlined,
   RocketOutlined,
-  RiseOutlined
+  RiseOutlined,
+  EnvironmentOutlined
 } from '@ant-design/icons';
 import { useNavigate, Link } from 'react-router-dom';
 import { JobService } from '../services/jobService';
@@ -184,19 +185,55 @@ const Home: React.FC = () => {
       return <div style={{ textAlign: 'center', color: '#888' }}>Aucun service disponible pour le moment.</div>;
     }
 
+    const formatPrice = (price: any) => {
+      if (typeof price === 'number') {
+        return `${price.toLocaleString()} FCFA`;
+      }
+      if (typeof price === 'object' && price.min && price.max) {
+        return `${price.min.toLocaleString()} - ${price.max.toLocaleString()} FCFA`;
+      }
+      if (price === 'Négociable') {
+        return 'Prix négociable';
+      }
+      return 'Prix non spécifié';
+    };
+
     return (
       <div style={{ display: 'flex', gap: 16 }}>
         {marketplaceItems.slice(0, 3).map((item) => (
           <Card
             key={item.id}
             hoverable
-            style={{ width: 'calc(33.33% - 16px)', borderRadius: 18, boxShadow: '0 4px 24px #e3e8f7', border: 'none', minHeight: 180, background: '#fff' }}
+            cover={
+              Array.isArray(item.images) && item.images[0] ? (
+                <img
+                  alt={item.title}
+                  src={item.images[0]}
+                  style={{ height: 200, objectFit: 'cover', borderTopLeftRadius: 18, borderTopRightRadius: 18 }}
+                />
+              ) : null
+            }
+            style={{ 
+              width: 'calc(33.33% - 16px)', 
+              borderRadius: 18, 
+              boxShadow: '0 4px 24px #e3e8f7', 
+              border: 'none', 
+              minHeight: 180, 
+              background: '#fff' 
+            }}
             onClick={() => navigate(`/marketplace/${item.id}`)}
           >
             <Space direction="vertical" size={8} style={{ width: '100%' }}>
-              <Typography.Title level={4} style={{ margin: 0, color: '#457b9d' }}>{item.title}</Typography.Title>
-              <Typography.Text strong style={{ color: '#1d3557' }}>{item.contactInfo?.email ?? ''}</Typography.Text>
-              <Typography.Text type="secondary">{item.location}</Typography.Text>
+              <Typography.Title level={4} style={{ margin: 0, color: '#457b9d' }}>
+                {item.title}
+              </Typography.Title>
+              <Typography.Text type="secondary" style={{ fontSize: '16px', color: '#1d3557' }}>
+                {formatPrice(item.price)}
+              </Typography.Text>
+              <Typography.Text type="secondary">
+                <EnvironmentOutlined style={{ marginRight: 8 }} />
+                {item.location}
+              </Typography.Text>
             </Space>
           </Card>
         ))}
