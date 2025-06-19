@@ -102,9 +102,22 @@ export const marketplaceService = {
     const token = authService.getToken();
     console.log('[MARKETPLACE DEBUG] Token disponible:', !!token);
     console.log('[MARKETPLACE DEBUG] Token:', token);
-    console.log('[MARKETPLACE DEBUG] Données à envoyer:', itemData);
     
-    const res = await api.post<MarketplaceItem>('/api/marketplace', itemData);
+    // Formater les données avant l'envoi
+    const { priceType, ...rest } = itemData;
+    const formattedData = {
+      ...rest,
+      // Si le prix est négociable, on envoie la chaîne "Négociable"
+      price: priceType === 'negotiable' ? 'Négociable' : rest.price,
+      // Nettoyer les URLs des images (enlever les points-virgules éventuels)
+      images: Array.isArray(rest.images) ? rest.images.map((url: string) => url.replace(/;$/, '')) : [],
+      // S'assurer que le status est correct
+      status: 'pending'
+    };
+
+    console.log('[MARKETPLACE DEBUG] Données formatées à envoyer:', formattedData);
+    
+    const res = await api.post<MarketplaceItem>('/api/marketplace', formattedData);
     console.log('[MARKETPLACE DEBUG] Réponse reçue:', res.data);
     return res.data;
   },
@@ -112,28 +125,23 @@ export const marketplaceService = {
   async updateItem(id: string, itemData: Partial<MarketplaceItem>): Promise<MarketplaceItem> {
     console.log('[DEBUG] Service - Début updateItem');
     console.log('[DEBUG] Service - ID:', id);
-    console.log('[DEBUG] Service - Données:', itemData);
+    
     try {
-      // Convertir les données en FormData
-      const formData = new FormData();
-      
-      // Ajouter toutes les données sauf les images
-      Object.entries(itemData).forEach(([key, value]) => {
-        if (key !== 'images') {
-          formData.append(key, typeof value === 'object' ? JSON.stringify(value) : String(value));
-        }
-      });
+      // Formater les données avant l'envoi
+      const { priceType, ...rest } = itemData as any;
+      const formattedData = {
+        ...rest,
+        // Si le prix est négociable, on envoie la chaîne "Négociable"
+        price: priceType === 'negotiable' ? 'Négociable' : rest.price,
+        // Nettoyer les URLs des images (enlever les points-virgules éventuels)
+        images: Array.isArray(rest.images) ? rest.images.map((url: string) => url.replace(/;$/, '')) : [],
+        // Ne pas changer le status lors d'une mise à jour
+        status: rest.status || 'pending'
+      };
 
-      // Ajouter les URLs des images existantes
-      if (itemData.images) {
-        formData.append('existingImages', JSON.stringify(itemData.images));
-      }
+      console.log('[DEBUG] Service - Données formatées:', formattedData);
 
-      const res = await api.put<MarketplaceItem>(`/api/marketplace/${id}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
+      const res = await api.put<MarketplaceItem>(`/api/marketplace/${id}`, formattedData);
       console.log('[DEBUG] Service - Réponse:', res.data);
       return res.data;
     } catch (error) {
