@@ -303,6 +303,7 @@ const MarketplacePage: React.FC = () => {
             form={form}
             layout="vertical"
             onFinish={handleCreateAd}
+            initialValues={{ images: [] }}
           >
             <Form.Item
               name="title"
