@@ -371,7 +371,6 @@ const MarketplacePage: React.FC = () => {
               name="images"
               label="Images"
               valuePropName="fileList"
-              getValueFromEvent={fileList => Array.isArray(fileList) ? fileList : []}
             >
               <Upload
                 listType="picture-card"
