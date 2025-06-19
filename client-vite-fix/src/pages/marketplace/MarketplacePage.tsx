@@ -361,7 +361,7 @@ const MarketplacePage: React.FC = () => {
               >
                 <div style={{ minHeight: 120 }}>
                   <div style={{ fontWeight: 'bold', fontSize: 16 }}>{item.title}</div>
-                  <div style={{ margin: '8px 0' }}>{item.description.substring(0, 100)}...</div>
+                  <div style={{ margin: '8px 0' }}>{(item.description || '').substring(0, 100)}...</div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <span>{<EuroOutlined style={{ color: '#1890ff' }} />}</span>
                     <span style={{ fontWeight: 'bold' }}>{item.price}</span>
