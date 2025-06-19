@@ -48,7 +48,8 @@ const MarketplacePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
-  const [fileList, setFileList] = useState<UploadFile<any>[]>([]);
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
   const [filters, setFilters] = useState({
     category: undefined as string | undefined,
     minPrice: 0,
@@ -84,66 +85,59 @@ const MarketplacePage: React.FC = () => {
 
   const customUpload = async ({ file, onSuccess, onError }: any) => {
     try {
-      const url = await marketplaceService.uploadImage(file as File);
-      onSuccess({
-        url,
-        name: file.name,
-        status: 'done',
-        uid: file.uid || Date.now().toString()
-      });
+      const url = await marketplaceService.uploadImage(file);
+      setUploadedUrls(prev => [...prev, url]);
+      onSuccess({ url, name: file.name, status: 'done', uid: Date.now().toString() });
     } catch (err) {
-      if (onError) onError(err);
+      console.error('Erreur upload:', err);
+      onError(err);
     }
   };
 
+  const handleOpenModal = () => {
+    if (loadingSub) return;
+    if (!(user?.role === 'admin' || (hasActiveSubscription && userSubscription?.type === 'annonceur'))) {
+      message.error('Seuls les annonceurs abonnés ou les admins peuvent publier une annonce.');
+      return;
+    }
+    setFileList([]);
+    setUploadedUrls([]);
+    form.setFieldsValue({ images: [] });
+    setIsModalVisible(true);
+  };
+
   const handleCreateAd = async (values: any) => {
-    console.log('handleCreateAd values.images:', values.images, Array.isArray(values.images));
     try {
-      if (!user || !user.id) {
+      if (!user?.id) {
         message.error('Veuillez vous connecter pour créer une annonce');
         return;
       }
-      // Conversion du prix en nombre
+
       const price = Number(values.price);
       if (isNaN(price) || price <= 0) {
         message.error('Le prix doit être un nombre positif');
         return;
       }
-      // Sécurisation du mapping des images pour éviter les erreurs de type
-      let images: string[] = [];
-      if (Array.isArray(values.images)) {
-        images = values.images
-          .map((file: any) => {
-            // Ant Design Upload peut donner des objets File natifs ou des objets avec .url
-            if (file && typeof file === 'object') {
-              if (typeof file.url === 'string') return file.url;
-              if (file.response && typeof file.response.url === 'string') return file.response.url;
-            }
-            return undefined;
-          })
-          .filter(Boolean) as string[];
-      } else {
-        images = [];
-      }
-      console.log('DEBUG images URLs:', images);
-      // Extraction des données de contact et suppression de contactInfo
+
       const { contactInfo, ...restValues } = values;
       const itemData = {
         ...restValues,
-        price, // prix converti en nombre
+        price,
         seller: user.id,
         contactEmail: contactInfo?.email || '',
         contactPhone: contactInfo?.phone || '',
-        images
+        images: uploadedUrls
       };
-      console.log('DEBUG itemData envoyé:', itemData);
+
       await marketplaceService.createItem(itemData);
       message.success('Annonce créée avec succès');
       setIsModalVisible(false);
       form.resetFields();
+      setFileList([]);
+      setUploadedUrls([]);
       fetchItems();
     } catch (error: any) {
-      console.error('Erreur création annonce:', error, error?.response);
+      console.error('Erreur création annonce:', error);
       message.error(error?.response?.data?.error || error.message || 'Erreur lors de la création de l\'annonce');
     }
   };
@@ -230,16 +224,7 @@ const MarketplacePage: React.FC = () => {
                     <Button
                       type="primary"
                       icon={<PlusOutlined />}
-                      onClick={() => {
-                        if (loadingSub) return;
-                        if (!(user?.role === 'admin' || (hasActiveSubscription && userSubscription && userSubscription.type === 'annonceur'))) {
-                          message.error('Seuls les annonceurs abonnés ou les admins peuvent publier une annonce.');
-                          return;
-                        }
-                        form.setFieldsValue({ images: [] });
-                        setFileList([]);
-                        setIsModalVisible(true);
-                      }}
+                      onClick={handleOpenModal}
                     >
                       Créer une annonce
                     </Button>
@@ -377,23 +362,31 @@ const MarketplacePage: React.FC = () => {
             <Form.Item
               name="images"
               label="Images"
-              valuePropName="fileList"
+              rules={[{ required: true, message: 'Veuillez ajouter au moins une image' }]}
             >
               <Upload
                 listType="picture-card"
                 customRequest={customUpload}
                 maxCount={5}
                 fileList={fileList}
-                onChange={({ fileList }) => {
-                  console.log('onChange fileList:', fileList, Array.isArray(fileList));
-                  setFileList(Array.isArray(fileList) ? fileList : []);
+                onChange={({ fileList: newFileList }) => {
+                  console.log('onChange newFileList:', newFileList);
+                  setFileList(newFileList);
                 }}
-                showUploadList={{ showPreviewIcon: false }}
+                onRemove={(file) => {
+                  const url = file.url || (file.response && file.response.url);
+                  if (url) {
+                    setUploadedUrls(prev => prev.filter(u => u !== url));
+                  }
+                  return true;
+                }}
               >
-                <div>
-                  <span>{<UploadOutlined />}</span>
-                  <div style={{ marginTop: 8 }}>Upload</div>
-                </div>
+                {fileList.length < 5 && (
+                  <div>
+                    <UploadOutlined />
+                    <div style={{ marginTop: 8 }}>Upload</div>
+                  </div>
+                )}
               </Upload>
             </Form.Item>
 
