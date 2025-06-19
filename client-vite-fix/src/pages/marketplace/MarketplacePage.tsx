@@ -30,6 +30,7 @@ import type { MarketplaceItem } from '../../services/marketplaceService';
 import { authService } from '../../services/authService';
 import { useSubscription } from '../../hooks/useSubscription';
 import { useAuth } from '../../context/AuthContext';
+import type { UploadFile } from 'antd';
 
 const categories = [
   'Informatique',
@@ -47,6 +48,7 @@ const MarketplacePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
+  const [fileList, setFileList] = useState<UploadFile<any>[]>([]);
   const [filters, setFilters] = useState({
     category: undefined as string | undefined,
     minPrice: 0,
@@ -233,6 +235,7 @@ const MarketplacePage: React.FC = () => {
                           return;
                         }
                         form.setFieldsValue({ images: [] });
+                        setFileList([]);
                         setIsModalVisible(true);
                       }}
                     >
@@ -378,6 +381,8 @@ const MarketplacePage: React.FC = () => {
                 listType="picture-card"
                 customRequest={customUpload}
                 maxCount={5}
+                fileList={fileList}
+                onChange={({ fileList }) => setFileList(fileList)}
                 showUploadList={{ showPreviewIcon: false }}
               >
                 <div>
