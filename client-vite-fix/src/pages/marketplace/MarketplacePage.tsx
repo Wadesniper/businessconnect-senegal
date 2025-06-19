@@ -97,6 +97,7 @@ const MarketplacePage: React.FC = () => {
   };
 
   const handleCreateAd = async (values: any) => {
+    console.log('handleCreateAd values.images:', values.images, Array.isArray(values.images));
     try {
       if (!user || !user.id) {
         message.error('Veuillez vous connecter pour créer une annonce');
@@ -108,7 +109,6 @@ const MarketplacePage: React.FC = () => {
         message.error('Le prix doit être un nombre positif');
         return;
       }
-      console.log('DEBUG values.images:', values.images);
       // Sécurisation du mapping des images pour éviter les erreurs de type
       let images: string[] = [];
       if (Array.isArray(values.images)) {
@@ -122,6 +122,8 @@ const MarketplacePage: React.FC = () => {
             return undefined;
           })
           .filter(Boolean) as string[];
+      } else {
+        images = [];
       }
       console.log('DEBUG images URLs:', images);
       // Extraction des données de contact et suppression de contactInfo
@@ -382,7 +384,10 @@ const MarketplacePage: React.FC = () => {
                 customRequest={customUpload}
                 maxCount={5}
                 fileList={fileList}
-                onChange={({ fileList }) => setFileList(fileList)}
+                onChange={({ fileList }) => {
+                  console.log('onChange fileList:', fileList, Array.isArray(fileList));
+                  setFileList(Array.isArray(fileList) ? fileList : []);
+                }}
                 showUploadList={{ showPreviewIcon: false }}
               >
                 <div>
