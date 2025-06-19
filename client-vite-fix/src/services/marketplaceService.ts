@@ -110,17 +110,32 @@ class MarketplaceService {
     console.log('[MARKETPLACE DEBUG] Token:', token);
     
     // Formater les données avant l'envoi
-    const { priceType, price, minPrice, maxPrice, ...rest } = itemData;
+    const { priceType, price, minPrice, maxPrice, seller, sellerId, ...rest } = itemData;
     
+    // Nettoyer les URLs des images
+    const cleanImages = Array.isArray(rest.images) 
+      ? rest.images.map(url => url.replace(/[;,\s]+$/, '').trim())
+      : [];
+
     const formattedData = {
       ...rest,
       priceType: priceType || 'fixed',
       price: priceType === 'fixed' ? Number(price) || 0 : null,
       minPrice: priceType === 'range' ? Number(minPrice) || 0 : null,
       maxPrice: priceType === 'range' ? Number(maxPrice) || 0 : null,
-      images: Array.isArray(rest.images) ? rest.images.map(url => url.replace(/;$/, '')) : [],
-      status: 'pending'
+      images: cleanImages,
+      sellerId: sellerId || seller, // Utiliser sellerId s'il existe, sinon utiliser seller
+      status: 'pending',
+      contactPhone: rest.contactPhone?.replace(/\s+/g, ''), // Supprimer les espaces du numéro de téléphone
+      contactEmail: rest.contactEmail || ''
     };
+
+    // Supprimer les champs undefined ou null
+    Object.keys(formattedData).forEach(key => {
+      if (formattedData[key] === undefined || formattedData[key] === null) {
+        delete formattedData[key];
+      }
+    });
 
     console.log('[MARKETPLACE DEBUG] Données formatées à envoyer:', formattedData);
 
