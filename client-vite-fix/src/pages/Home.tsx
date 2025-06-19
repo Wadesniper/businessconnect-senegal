@@ -178,7 +178,7 @@ const Home: React.FC = () => {
 
   const latestJobs = jobs
     ? [...jobs]
-        .filter(job => job && job.createdAt)
+        .filter(job => job && job.id && job.createdAt)
         .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         .slice(0, 3)
     : [];
@@ -204,7 +204,7 @@ const Home: React.FC = () => {
     return (
       <div style={{ display: 'flex', gap: 16 }}>
         {marketplaceItems.slice(0, 3).map((item) => {
-          if (!item || !item.title) return null;
+          if (!item || !item.id || !item.title) return null;
 
           return (
             <Card
@@ -297,20 +297,25 @@ const Home: React.FC = () => {
             ) : latestJobs.length === 0 ? (
               <Col span={24}><div style={{ textAlign: 'center', color: '#888' }}>Aucune offre disponible pour le moment.</div></Col>
             ) : (
-              latestJobs.map((job) => (
-                <Col xs={24} sm={12} md={8} key={job.id} style={{ display: 'flex', justifyContent: 'center' }}>
-                  <JobCard
-                    job={job}
-                    user={user}
-                    isSubscribed={isPremium}
-                    onPostuler={() => navigate('/jobs/' + job.id)}
-                    onEdit={() => navigate('/jobs/' + job.id + '/edit')}
-                    onDelete={() => navigate('/jobs/' + job.id + '/delete')}
-                    onPublish={() => navigate('/jobs/publish')}
-                    onViewDetails={() => navigate('/jobs/' + job.id)}
-                  />
-                </Col>
-              ))
+              latestJobs.map((job) => {
+                if (!job || !job.id) {
+                  return null;
+                }
+                return (
+                  <Col xs={24} sm={12} md={8} key={job.id} style={{ display: 'flex', justifyContent: 'center' }}>
+                    <JobCard
+                      job={job}
+                      user={user}
+                      isSubscribed={isPremium}
+                      onPostuler={() => navigate('/jobs/' + job.id)}
+                      onEdit={() => navigate('/jobs/' + job.id + '/edit')}
+                      onDelete={() => navigate('/jobs/' + job.id + '/delete')}
+                      onPublish={() => navigate('/jobs/publish')}
+                      onViewDetails={() => navigate('/jobs/' + job.id)}
+                    />
+                  </Col>
+                );
+              })
             )}
           </Row>
         </div>
