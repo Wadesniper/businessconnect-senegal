@@ -177,7 +177,10 @@ const Home: React.FC = () => {
   };
 
   const latestJobs = jobs
-    ? [...jobs].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 3)
+    ? [...jobs]
+        .filter(job => job && job.createdAt)
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        .slice(0, 3)
     : [];
 
   const MarketplacePreview = () => {
@@ -200,43 +203,49 @@ const Home: React.FC = () => {
 
     return (
       <div style={{ display: 'flex', gap: 16 }}>
-        {marketplaceItems.slice(0, 3).map((item) => (
-          <Card
-            key={item.id}
-            hoverable
-            cover={
-              Array.isArray(item.images) && item.images[0] ? (
-                <img
-                  alt={item.title}
-                  src={item.images[0]}
-                  style={{ height: 200, objectFit: 'cover', borderTopLeftRadius: 18, borderTopRightRadius: 18 }}
-                />
-              ) : null
-            }
-            style={{ 
-              width: 'calc(33.33% - 16px)', 
-              borderRadius: 18, 
-              boxShadow: '0 4px 24px #e3e8f7', 
-              border: 'none', 
-              minHeight: 180, 
-              background: '#fff' 
-            }}
-            onClick={() => navigate(`/marketplace/${item.id}`)}
-          >
-            <Space direction="vertical" size={8} style={{ width: '100%' }}>
-              <Typography.Title level={4} style={{ margin: 0, color: '#457b9d' }}>
-                {item.title}
-              </Typography.Title>
-              <Typography.Text type="secondary" style={{ fontSize: '16px', color: '#1d3557' }}>
-                {formatPrice(item.price)}
-              </Typography.Text>
-              <Typography.Text type="secondary">
-                <EnvironmentOutlined style={{ marginRight: 8 }} />
-                {item.location}
-              </Typography.Text>
-            </Space>
-          </Card>
-        ))}
+        {marketplaceItems.slice(0, 3).map((item) => {
+          if (!item || !item.title) return null;
+
+          return (
+            <Card
+              key={item.id}
+              hoverable
+              cover={
+                Array.isArray(item.images) && item.images[0] ? (
+                  <img
+                    alt={item.title}
+                    src={item.images[0]}
+                    style={{ height: 200, objectFit: 'cover', borderTopLeftRadius: 18, borderTopRightRadius: 18 }}
+                  />
+                ) : null
+              }
+              style={{ 
+                width: 'calc(33.33% - 16px)', 
+                borderRadius: 18, 
+                boxShadow: '0 4px 24px #e3e8f7', 
+                border: 'none', 
+                minHeight: 180, 
+                background: '#fff' 
+              }}
+              onClick={() => navigate(`/marketplace/${item.id}`)}
+            >
+              <Space direction="vertical" size={8} style={{ width: '100%' }}>
+                <Typography.Title level={4} style={{ margin: 0, color: '#457b9d' }}>
+                  {item.title}
+                </Typography.Title>
+                <Typography.Text type="secondary" style={{ fontSize: '16px', color: '#1d3557' }}>
+                  {formatPrice(item.price)}
+                </Typography.Text>
+                {item.location && (
+                  <Typography.Text type="secondary">
+                    <EnvironmentOutlined style={{ marginRight: 8 }} />
+                    {item.location}
+                  </Typography.Text>
+                )}
+              </Space>
+            </Card>
+          );
+        })}
       </div>
     );
   };
