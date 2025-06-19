@@ -101,8 +101,10 @@ const MarketplacePage: React.FC = () => {
         message.error('Le prix doit être un nombre positif');
         return;
       }
-      console.log('DEBUG images field:', values.images);
-      const images = values.images?.map((file: any) => file.url).filter(Boolean) || [];
+      console.log('DEBUG values.images:', values.images);
+      const images = Array.isArray(values.images)
+        ? values.images.map((file: any) => file.url).filter(Boolean)
+        : [];
       console.log('DEBUG images URLs:', images);
       // Extraction des données de contact et suppression de contactInfo
       const { contactInfo, ...restValues } = values;
