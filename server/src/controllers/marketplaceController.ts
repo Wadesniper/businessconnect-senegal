@@ -10,6 +10,11 @@ export class MarketplaceController {
       logger.info('[MARKETPLACE] getAllItems called');
       
       const items = await prisma.marketplaceItem.findMany({
+        where: {
+          status: {
+            in: ['approved', 'pending', 'rejected', 'suspended']
+          }
+        },
         orderBy: {
           createdAt: 'desc'
         }
@@ -247,6 +252,8 @@ export class MarketplaceController {
         return res.status(403).json({ error: 'Accès non autorisé' });
       }
 
+      logger.info('[MARKETPLACE][getAllItemsAdmin] Début de la récupération');
+
       const items = await prisma.marketplaceItem.findMany({
         include: {
           seller: {
@@ -261,9 +268,16 @@ export class MarketplaceController {
           createdAt: 'desc'
         }
       });
+
+      logger.info(`[MARKETPLACE][getAllItemsAdmin] ${items.length} articles trouvés`);
       res.json(items);
     } catch (error) {
-      res.status(500).json({ error: 'Erreur lors de la récupération des articles' });
+      logger.error('[MARKETPLACE][getAllItemsAdmin] Erreur:', error);
+      console.error('[MARKETPLACE][getAllItemsAdmin] Erreur détaillée:', error);
+      res.status(500).json({ 
+        error: 'Erreur lors de la récupération des articles',
+        details: error instanceof Error ? error.message : String(error)
+      });
     }
   }
 
