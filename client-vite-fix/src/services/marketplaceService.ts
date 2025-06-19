@@ -8,10 +8,10 @@ export interface MarketplaceItem {
   id: string;
   title: string;
   description: string;
-  price?: number;
+  price?: number | null;
   priceType: 'fixed' | 'range' | 'negotiable';
-  minPrice?: number;
-  maxPrice?: number;
+  minPrice?: number | null;
+  maxPrice?: number | null;
   category: string;
   images: string[];
   location: string;
@@ -21,14 +21,14 @@ export interface MarketplaceItem {
   seller?: string;
   createdAt: string;
   updatedAt: string;
-  status: 'pending' | 'approved' | 'rejected' | 'active' | 'sold' | 'expired';
+  status: 'pending' | 'approved' | 'rejected';
 }
 
-export interface MarketplaceFilters {
+interface MarketplaceFilters {
   category?: string;
+  search?: string;
   minPrice?: number;
   maxPrice?: number;
-  search?: string;
   location?: string;
 }
 
@@ -85,50 +85,57 @@ function isUserSubscribed(userId: string, userContext?: any): boolean {
   return true;
 }
 
-export const marketplaceService = {
+class MarketplaceService {
   async getItems(filters?: MarketplaceFilters): Promise<MarketplaceItem[]> {
-    const params: any = {};
-    if (filters?.category) params.category = filters.category;
-    if (filters?.search) params.query = filters.search;
-    // Ajout d'autres filtres si besoin
-    const res = await api.get<MarketplaceItem[]>('/api/marketplace', { params });
-    return res.data;
-  },
+    const response = await api.get<Partial<MarketplaceItem>[]>('/api/marketplace', {
+      params: filters
+    });
+    return response.data.map((item: Partial<MarketplaceItem>) => ({
+      ...item,
+      priceType: item.priceType || 'fixed',
+      price: item.price || null,
+      minPrice: item.minPrice || null,
+      maxPrice: item.maxPrice || null
+    })) as MarketplaceItem[];
+  }
 
   async getItem(id: string): Promise<MarketplaceItem | null> {
     const res = await api.get<MarketplaceItem>(`/api/marketplace/${id}`);
     return res.data;
-  },
+  }
 
-  async createItem(itemData: any): Promise<MarketplaceItem> {
-    // Logs temporaires pour debug
+  async createItem(itemData: Partial<MarketplaceItem>): Promise<MarketplaceItem> {
     const token = authService.getToken();
     console.log('[MARKETPLACE DEBUG] Token disponible:', !!token);
     console.log('[MARKETPLACE DEBUG] Token:', token);
     
     // Formater les données avant l'envoi
-    const { priceType, minPrice, maxPrice, ...rest } = itemData;
+    const { priceType, price, minPrice, maxPrice, ...rest } = itemData;
+    
     const formattedData = {
       ...rest,
-      priceType,
-      // Gérer le prix selon le type
-      price: priceType === 'fixed' ? Number(rest.price) : 
-             priceType === 'range' ? null : 
-             null,
-      minPrice: priceType === 'range' ? Number(minPrice) : null,
-      maxPrice: priceType === 'range' ? Number(maxPrice) : null,
-      // Nettoyer les URLs des images
-      images: Array.isArray(rest.images) ? rest.images.map((url: string) => url.replace(/;$/, '')) : [],
-      // S'assurer que le status est correct
+      priceType: priceType || 'fixed',
+      price: priceType === 'fixed' ? Number(price) || 0 : null,
+      minPrice: priceType === 'range' ? Number(minPrice) || 0 : null,
+      maxPrice: priceType === 'range' ? Number(maxPrice) || 0 : null,
+      images: Array.isArray(rest.images) ? rest.images.map(url => url.replace(/;$/, '')) : [],
       status: 'pending'
     };
 
     console.log('[MARKETPLACE DEBUG] Données formatées à envoyer:', formattedData);
-    
-    const res = await api.post<MarketplaceItem>('/api/marketplace', formattedData);
-    console.log('[MARKETPLACE DEBUG] Réponse reçue:', res.data);
-    return res.data;
-  },
+
+    const response = await api.post<MarketplaceItem>(
+      `/api/marketplace`,
+      formattedData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  }
 
   async updateItem(id: string, itemData: Partial<MarketplaceItem>): Promise<MarketplaceItem> {
     console.log('[DEBUG] Service - Début updateItem');
@@ -161,11 +168,11 @@ export const marketplaceService = {
       console.error('[DEBUG] Service - Erreur:', error);
       throw error;
     }
-  },
+  }
 
   async deleteItem(id: string): Promise<void> {
     await api.delete(`/api/marketplace/${id}`);
-  },
+  }
 
   async uploadImage(file: File): Promise<string> {
     const formData = new FormData();
@@ -175,4 +182,6 @@ export const marketplaceService = {
     });
     return res.data.url;
   }
-}; 
+}
+
+export const marketplaceService = new MarketplaceService(); 
