@@ -227,6 +227,7 @@ const MarketplacePage: React.FC = () => {
                           message.error('Seuls les annonceurs abonnés ou les admins peuvent publier une annonce.');
                           return;
                         }
+                        form.setFieldsValue({ images: [] });
                         setIsModalVisible(true);
                       }}
                     >
