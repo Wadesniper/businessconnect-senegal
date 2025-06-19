@@ -82,9 +82,12 @@ const MarketplacePage: React.FC = () => {
 
   const customUpload = async ({ file, onSuccess, onError }: any) => {
     try {
+      console.log('UPLOAD FILE:', file);
       const url = await marketplaceService.uploadImage(file as File);
+      console.log('UPLOAD SUCCESS URL:', url);
       onSuccess({ url }); // AntD va automatiquement ajouter url à fileList
     } catch (err) {
+      console.error('UPLOAD ERROR:', err);
       if (onError) onError(err);
     }
   };
