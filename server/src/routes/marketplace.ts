@@ -25,9 +25,16 @@ router.post('/', authMiddleware, upload.array('images', 5), asyncHandler((req: A
 router.put('/:id', authMiddleware, upload.array('images', 5), asyncHandler((req: AuthRequest, res: Response, next: NextFunction) => marketplaceController.updateItem(req, res)));
 router.delete('/:id', authMiddleware, asyncHandler((req: AuthRequest, res: Response, next: NextFunction) => marketplaceController.deleteItem(req, res)));
 
+// Route pour récupérer les annonces de l'utilisateur connecté
+router.get('/user/items', authMiddleware, asyncHandler((req: AuthRequest, res: Response, next: NextFunction) => marketplaceController.getUserItems(req, res)));
+
 // Routes admin
 router.get('/admin/all', authMiddleware, asyncHandler((req: AuthRequest, res: Response, next: NextFunction) => marketplaceController.getAllItemsAdmin(req, res)));
 router.patch('/admin/:id/status', authMiddleware, asyncHandler((req: AuthRequest, res: Response, next: NextFunction) => marketplaceController.updateItemStatus(req, res)));
 router.delete('/admin/:id', authMiddleware, asyncHandler((req: AuthRequest, res: Response, next: NextFunction) => marketplaceController.deleteItemAdmin(req, res)));
+
+// Nouvelles routes de modération
+router.get('/admin/stats', authMiddleware, asyncHandler((req: AuthRequest, res: Response, next: NextFunction) => marketplaceController.getModerationStats(req, res)));
+router.get('/admin/pending', authMiddleware, asyncHandler((req: AuthRequest, res: Response, next: NextFunction) => marketplaceController.getPendingItems(req, res)));
 
 export default router; 

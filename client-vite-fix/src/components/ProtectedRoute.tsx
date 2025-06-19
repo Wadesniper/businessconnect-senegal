@@ -7,9 +7,10 @@ import { hasPremiumAccess } from '../utils/premiumAccess';
 interface ProtectedRouteProps {
   element: React.ReactElement;
   requiresSubscription?: boolean;
+  requiresAdmin?: boolean;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element, requiresSubscription = false }) => {
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element, requiresSubscription = false, requiresAdmin = false }) => {
   const { user, loading } = useAuth();
   const { hasActiveSubscription, loading: loadingSub } = useSubscription();
 
@@ -19,6 +20,10 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element, requiresSubscr
 
   if (!user) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (requiresAdmin && user.role !== 'admin') {
+    return <Navigate to="/" replace />;
   }
 
   if (requiresSubscription && !hasPremiumAccess(user, hasActiveSubscription)) {

@@ -35,6 +35,8 @@ const FAQ = lazy(() => import('./pages/help/FAQ'));
 const CareersPage = lazy(() => import('./pages/careers'));
 import AuthPage from './pages/auth/AuthPage';
 const CVPreviewGallery = lazy(() => import('./pages/cv-generator/CVPreviewGallery'));
+const MarketplaceModeration = lazy(() => import('./components/admin/MarketplaceModeration'));
+const UserItems = lazy(() => import('./components/marketplace/UserItems'));
 
 // ErrorBoundary global
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, error: any}> {
@@ -79,6 +81,20 @@ const App: React.FC = () => {
               <Route path="/jobs/:id/postuler" element={<JobApplyPage />} />
               <Route path="/marketplace" element={<MarketplacePage />} />
               <Route path="/marketplace/:id" element={<MarketplaceItemPage />} />
+              <Route path="/marketplace/create" element={<MarketplacePage />} />
+              <Route path="/marketplace/edit/:id" element={<MarketplacePage />} />
+              <Route
+                path="/marketplace/user/items"
+                element={
+                  <ProtectedRoute element={<UserItems />} />
+                }
+              />
+              <Route
+                path="/admin/marketplace/moderation"
+                element={
+                  <ProtectedRoute element={<MarketplaceModeration />} requiresAdmin />
+                }
+              />
               <Route path="/forum" element={<ForumPage />} />
               <Route path="/forum/:id" element={<DiscussionDetail />} />
               <Route path="/formations" element={<FormationsPage />} />
@@ -115,12 +131,6 @@ const App: React.FC = () => {
                 path="/cv-generator/create"
                 element={
                   <ProtectedRoute element={<CVGenerator />} requiresSubscription />
-                }
-              />
-              <Route
-                path="/marketplace/create"
-                element={
-                  <ProtectedRoute element={<MarketplacePage />} requiresSubscription />
                 }
               />
               <Route

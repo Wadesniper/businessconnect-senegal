@@ -5,12 +5,16 @@ import { PrismaClient } from '../generated/prisma/index.js';
 const prisma = new PrismaClient();
 
 export class MarketplaceController {
-  async getAllItems(req: Request, res: Response) {
+  async getAllItems(req: AuthRequest, res: Response) {
     try {
       logger.info('[MARKETPLACE] getAllItems called');
+      
       const items = await prisma.marketplaceItem.findMany({
-        where: { status: 'approved' }
+        orderBy: {
+          createdAt: 'desc'
+        }
       });
+
       logger.info(`[MARKETPLACE] getAllItems found ${items.length} items`);
       res.json(items);
     } catch (error) {
@@ -108,7 +112,7 @@ export class MarketplaceController {
         contactEmail,
         contactPhone,
         sellerId: userId,
-        status: 'pending',
+        status: 'approved',
         images: Array.isArray(rest.images) ? rest.images : []
       };
 
@@ -252,6 +256,9 @@ export class MarketplaceController {
               email: true
             }
           }
+        },
+        orderBy: {
+          createdAt: 'desc'
         }
       });
       res.json(items);
@@ -266,21 +273,124 @@ export class MarketplaceController {
         return res.status(403).json({ error: 'Accès non autorisé' });
       }
 
-      const { status } = req.body;
+      const { status, moderationComment } = req.body;
       const itemId = req.params.id;
+
+      // Valider le statut
+      const validStatuses = ['approved', 'pending', 'rejected', 'suspended'];
+      if (!validStatuses.includes(status)) {
+        return res.status(400).json({ error: 'Statut invalide' });
+      }
 
       const item = await prisma.marketplaceItem.update({
         where: { id: itemId },
-        data: { status }
+        data: { 
+          status,
+          moderationComment: moderationComment || null,
+          moderatedAt: new Date(),
+          moderatedBy: req.user.id
+        },
+        include: {
+          seller: {
+            select: {
+              firstName: true,
+              lastName: true,
+              email: true
+            }
+          }
+        }
       });
 
       if (!item) {
         return res.status(404).json({ error: 'Article non trouvé' });
       }
 
+      // TODO: Envoyer une notification à l'annonceur
+      // await this.sendModerationNotification(item, status, moderationComment);
+
       res.json(item);
     } catch (error) {
       res.status(500).json({ error: 'Erreur lors de la mise à jour du statut' });
+    }
+  }
+
+  // Méthode pour récupérer les annonces d'un utilisateur avec leur statut
+  async getUserItems(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ error: 'Utilisateur non authentifié' });
+      }
+
+      const items = await prisma.marketplaceItem.findMany({
+        where: { sellerId: userId },
+        orderBy: {
+          createdAt: 'desc'
+        }
+      });
+
+      res.json(items);
+    } catch (error) {
+      res.status(500).json({ error: 'Erreur lors de la récupération des articles' });
+    }
+  }
+
+  // Méthode pour récupérer les statistiques de modération
+  async getModerationStats(req: AuthRequest, res: Response) {
+    try {
+      if (req.user?.role !== 'admin') {
+        return res.status(403).json({ error: 'Accès non autorisé' });
+      }
+
+      const stats = await prisma.marketplaceItem.groupBy({
+        by: ['status'],
+        _count: {
+          status: true
+        }
+      });
+
+      const formattedStats = stats.reduce((acc, stat) => {
+        acc[stat.status] = stat._count.status;
+        return acc;
+      }, {} as Record<string, number>);
+
+      res.json(formattedStats);
+    } catch (error) {
+      res.status(500).json({ error: 'Erreur lors de la récupération des statistiques' });
+    }
+  }
+
+  // Méthode pour récupérer les annonces en attente de modération
+  async getPendingItems(req: AuthRequest, res: Response) {
+    try {
+      if (req.user?.role !== 'admin') {
+        return res.status(403).json({ error: 'Accès non autorisé' });
+      }
+
+      const items = await prisma.marketplaceItem.findMany({
+        where: { 
+          OR: [
+            { status: 'pending' },
+            { status: 'suspended' }
+          ]
+        },
+        include: {
+          seller: {
+            select: {
+              firstName: true,
+              lastName: true,
+              email: true
+            }
+          }
+        },
+        orderBy: {
+          createdAt: 'desc'
+        }
+      });
+
+      res.json(items);
+    } catch (error) {
+      res.status(500).json({ error: 'Erreur lors de la récupération des articles en attente' });
     }
   }
 

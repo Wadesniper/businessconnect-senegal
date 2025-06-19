@@ -331,6 +331,7 @@ enum MarketplaceItemStatus {
   pending
   approved
   rejected
+  suspended
 }
 
 enum PriceType {
@@ -348,7 +349,7 @@ model MarketplaceItem {
   minPrice    Float?
   maxPrice    Float?
   category    String
-  status      MarketplaceItemStatus @default(pending)
+  status      MarketplaceItemStatus @default(approved)
   images      String[]
   reports     Int      @default(0)
 
@@ -359,6 +360,11 @@ model MarketplaceItem {
   seller      User     @relation("ItemsSold", fields: [sellerId], references: [id])
 
   location    String
+
+  // Champs de modération
+  moderationComment String?
+  moderatedAt       DateTime?
+  moderatedBy       String?
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

@@ -17,11 +17,15 @@ export interface MarketplaceItem {
   location: string;
   contactEmail?: string;
   contactPhone: string;
-  userId: string;
+  userId?: string;
+  sellerId?: string;
   seller?: string;
   createdAt: string;
   updatedAt: string;
-  status: 'pending' | 'approved' | 'rejected';
+  status: 'pending' | 'approved' | 'rejected' | 'suspended';
+  moderationComment?: string;
+  moderatedAt?: string;
+  moderatedBy?: string;
 }
 
 interface MarketplaceFilters {
@@ -43,6 +47,9 @@ function getStoredItems(): MarketplaceItem[] {
     title: item.title,
     description: item.description,
     price: item.price,
+    priceType: 'fixed' as const,
+    minPrice: null,
+    maxPrice: null,
     category: item.category,
     images: item.images,
     location: item.location,
@@ -51,7 +58,7 @@ function getStoredItems(): MarketplaceItem[] {
     userId: item.userId,
     createdAt: item.createdAt,
     updatedAt: item.updatedAt,
-    status: item.status as 'pending' | 'approved' | 'rejected' | 'active' | 'sold' | 'expired'
+    status: item.status as 'pending' | 'approved' | 'rejected' | 'suspended'
   }));
   localStorage.setItem(STORAGE_KEY, JSON.stringify(staticData));
   return [...staticData];
@@ -117,7 +124,7 @@ class MarketplaceService {
       ? rest.images.map(url => url.replace(/[;,\s]+$/, '').trim())
       : [];
 
-    const formattedData = {
+    const formattedData: any = {
       ...rest,
       priceType: priceType || 'fixed',
       price: priceType === 'fixed' ? Number(price) || 0 : null,
@@ -125,7 +132,7 @@ class MarketplaceService {
       maxPrice: priceType === 'range' ? Number(maxPrice) || 0 : null,
       images: cleanImages,
       sellerId: sellerId || seller, // Utiliser sellerId s'il existe, sinon utiliser seller
-      status: 'pending',
+      status: 'approved',
       contactPhone: rest.contactPhone?.replace(/\s+/g, ''), // Supprimer les espaces du numéro de téléphone
       contactEmail: rest.contactEmail || ''
     };
@@ -196,6 +203,39 @@ class MarketplaceService {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return res.data.url;
+  }
+
+  // Méthodes d'administration pour la modération
+  async getAllItemsAdmin(): Promise<MarketplaceItem[]> {
+    const response = await api.get<MarketplaceItem[]>('/api/marketplace/admin/all');
+    return response.data;
+  }
+
+  async updateItemStatus(itemId: string, status: string, comment?: string): Promise<MarketplaceItem> {
+    const response = await api.patch<MarketplaceItem>(`/api/marketplace/admin/${itemId}/status`, {
+      status,
+      moderationComment: comment
+    });
+    return response.data;
+  }
+
+  async deleteItemAdmin(itemId: string): Promise<void> {
+    await api.delete(`/api/marketplace/admin/${itemId}`);
+  }
+
+  async getModerationStats(): Promise<Record<string, number>> {
+    const response = await api.get<Record<string, number>>('/api/marketplace/admin/stats');
+    return response.data;
+  }
+
+  async getPendingItems(): Promise<MarketplaceItem[]> {
+    const response = await api.get<MarketplaceItem[]>('/api/marketplace/admin/pending');
+    return response.data;
+  }
+
+  async getUserItems(): Promise<MarketplaceItem[]> {
+    const response = await api.get<MarketplaceItem[]>('/api/marketplace/user/items');
+    return response.data;
   }
 }
 

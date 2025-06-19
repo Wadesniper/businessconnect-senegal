@@ -8,7 +8,8 @@ import {
   EditOutlined,
   LogoutOutlined,
   CrownOutlined,
-  BookOutlined
+  BookOutlined,
+  AppstoreOutlined
 } from '@ant-design/icons';
 import { useAuth } from '../context/AuthContext';
 import { JobService } from '../services/jobService';
@@ -82,14 +83,11 @@ const Dashboard: React.FC = () => {
           <Card>
             <Row gutter={24} align="middle">
               <Col>
-                <Avatar size={80} src={user.avatar} icon={!user.avatar && <UserOutlined />} />
+                <Avatar size={80} icon={<UserOutlined />} />
               </Col>
               <Col flex="1">
-                <Title level={4} style={{ margin: 0 }}>{user.fullName || `${user.firstName} ${user.lastName}` || user.email}</Title>
+                <Title level={4} style={{ margin: 0 }}>{`${user.firstName} ${user.lastName}`}</Title>
                 <Text type="secondary">{user.email}</Text>
-                {user.subscription && user.subscription.status === 'active' && (
-                  <Tag color="cyan">Membre Premium</Tag>
-                )}
                 <div style={{ marginTop: 8, display: 'flex', gap: 12 }}>
                   <Button type="default" onClick={() => navigate('/profile')} icon={<UserOutlined />}>Modifier mon profil</Button>
                   <Button type="primary" danger icon={<LogoutOutlined />} onClick={logout}>Déconnexion</Button>
@@ -142,6 +140,42 @@ const Dashboard: React.FC = () => {
             `}</style>
           </Card>
         </Col>
+        {/* Section Admin */}
+        {user.role === 'admin' && (
+          <Col span={24}>
+            <Card title="Administration" style={{ borderColor: '#ff4d4f', borderWidth: 2 }}>
+              <Row gutter={[16, 16]}>
+                <Col xs={24} sm={12} md={8} lg={6}>
+                  <div style={{
+                    minHeight: 120,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'flex-start',
+                    borderRadius: 18,
+                    boxShadow: '0 2px 12px #ffe7e7',
+                    background: '#fff2f0',
+                    cursor: 'pointer',
+                    padding: 18,
+                    marginBottom: 8,
+                    transition: 'box-shadow 0.2s, transform 0.2s, background 0.2s',
+                  }}
+                    className="dashboard-quick-access-card"
+                    onClick={() => navigate('/admin/marketplace/moderation')}
+                  >
+                    <span style={{ fontSize: 32, color: '#ff4d4f', marginBottom: 8 }}>
+                      <AppstoreOutlined />
+                    </span>
+                    <div style={{ fontWeight: 700, fontSize: 17, marginBottom: 4 }}>Modération Marketplace</div>
+                    <Paragraph style={{ textAlign: 'center', margin: 0, color: '#555', fontSize: 15 }}>
+                      Modérer les annonces et gérer le contenu
+                    </Paragraph>
+                  </div>
+                </Col>
+              </Row>
+            </Card>
+          </Col>
+        )}
       </Row>
     </div>
   );

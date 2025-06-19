@@ -26,7 +26,8 @@ import {
   PlusOutlined,
   UploadOutlined,
   EnvironmentOutlined,
-  EuroOutlined
+  EuroOutlined,
+  ShopOutlined
 } from '@ant-design/icons';
 import { marketplaceService } from '../../services/marketplaceService';
 import type { MarketplaceItem } from '../../services/marketplaceService';
@@ -297,6 +298,19 @@ const MarketplacePage: React.FC = () => {
                     </Button>
                   </Col>
                 </Row>
+                {user && (
+                  <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
+                    <Col span={6}>
+                      <Button
+                        type="default"
+                        icon={<ShopOutlined />}
+                        onClick={() => navigate('/marketplace/user/items')}
+                      >
+                        Mes Annonces
+                      </Button>
+                    </Col>
+                  </Row>
+                )}
                 <Row>
                   <Col span={24}>
                     <span style={{ fontWeight: 'bold' }}>Prix :</span>
