@@ -75,59 +75,49 @@ export class MarketplaceController {
     try {
       const userId = req.user?.id;
       if (!userId) {
-        return res.status(401).json({ error: 'Non autorisé' });
+        return res.status(401).json({ error: 'Utilisateur non authentifié' });
       }
 
-      logger.info('[MARKETPLACE][createItem] Body reçu:', req.body);
-      logger.info('[MARKETPLACE][createItem] Images:', req.body.images);
-      console.log('[MARKETPLACE][createItem] Body reçu:', req.body);
-      console.log('[MARKETPLACE][createItem] Images:', req.body.images);
+      logger.info('[MARKETPLACE][createItem] Début de la création');
+      console.log('[MARKETPLACE][createItem] Données reçues:', req.body);
 
-      // Correction robuste : garantir que req.body.images est toujours un tableau
-      if (!Array.isArray(req.body.images)) {
-        if (typeof req.body.images === 'string' && req.body.images) {
-          try {
-            req.body.images = JSON.parse(req.body.images);
-          } catch {
-            req.body.images = [req.body.images];
-          }
-        } else if (req.body.images == null) {
-          req.body.images = [];
-        } else {
-          req.body.images = [req.body.images];
-        }
+      // Extraire les données nécessaires
+      const { contactEmail, contactPhone, priceType, price, minPrice, maxPrice, ...rest } = req.body;
+
+      // Valider les données selon le type de prix
+      if (priceType === 'fixed' && (typeof price !== 'number' || price < 0)) {
+        return res.status(400).json({ error: 'Prix invalide pour le type fixe' });
       }
 
-      const { contactInfo, ...rest } = req.body;
-      const contactEmail = contactInfo?.email || req.body.contactEmail || null;
-      const contactPhone = contactInfo?.phone || req.body.contactPhone || '';
-      // Validation du téléphone obligatoire
-      if (!contactPhone || !/^\+?\d{7,15}$/.test(contactPhone)) {
-        return res.status(400).json({ error: 'Le numéro de téléphone est obligatoire et doit être valide.' });
+      if (priceType === 'range' && (
+        typeof minPrice !== 'number' || 
+        typeof maxPrice !== 'number' || 
+        minPrice < 0 || 
+        maxPrice < minPrice
+      )) {
+        return res.status(400).json({ error: 'Prix invalides pour la fourchette de prix' });
       }
 
-      // Suppression du champ seller pour éviter le conflit avec sellerId
-      const { seller, ...dataForPrisma } = rest;
-
-      console.log('[DEBUG BACKEND] data envoyé à Prisma:', {
-        ...dataForPrisma,
+      // Préparer les données pour Prisma
+      const dataForPrisma = {
+        ...rest,
+        priceType,
+        price: priceType === 'fixed' ? price : null,
+        minPrice: priceType === 'range' ? minPrice : null,
+        maxPrice: priceType === 'range' ? maxPrice : null,
         contactEmail,
         contactPhone,
         sellerId: userId,
-        status: 'approved',
-        images: Array.isArray(rest.images) ? rest.images : [],
-      });
+        status: 'pending',
+        images: Array.isArray(rest.images) ? rest.images : []
+      };
+
+      logger.info('[MARKETPLACE][createItem] Données formatées:', dataForPrisma);
 
       const item = await prisma.marketplaceItem.create({
-        data: {
-          ...dataForPrisma,
-          contactEmail,
-          contactPhone,
-          sellerId: userId,
-          status: 'approved',
-          images: Array.isArray(rest.images) ? rest.images : [],
-        }
+        data: dataForPrisma
       });
+
       res.status(201).json(item);
     } catch (error) {
       logger.error('[MARKETPLACE][createItem] Erreur:', error);
@@ -145,42 +135,63 @@ export class MarketplaceController {
   async updateItem(req: AuthRequest, res: Response) {
     try {
       const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ error: 'Utilisateur non authentifié' });
+      }
+
       const itemId = req.params.id;
+      const { contactEmail, contactPhone, priceType, price, minPrice, maxPrice, ...rest } = req.body;
 
-      logger.info('Tentative de modification d\'article', {
-        userId,
-        itemId,
-        userRole: req.user?.role
+      // Vérifier que l'item existe et appartient à l'utilisateur
+      const existingItem = await prisma.marketplaceItem.findFirst({
+        where: {
+          id: itemId,
+          sellerId: userId
+        }
       });
 
-      const item = await prisma.marketplaceItem.findUnique({
-        where: { id: itemId }
-      });
-
-      if (!item) {
-        return res.status(404).json({ error: 'Article non trouvé' });
+      if (!existingItem) {
+        return res.status(404).json({ error: 'Article non trouvé ou non autorisé' });
       }
 
-      if (item.sellerId !== userId && req.user?.role !== 'admin') {
-        logger.warn('Tentative non autorisée de modification', {
-          userId,
-          itemId,
-          itemSeller: item.sellerId,
-          userRole: req.user?.role
-        });
-        return res.status(403).json({ error: 'Non autorisé à modifier cet article' });
+      // Valider les données selon le type de prix
+      if (priceType === 'fixed' && (typeof price !== 'number' || price < 0)) {
+        return res.status(400).json({ error: 'Prix invalide pour le type fixe' });
       }
+
+      if (priceType === 'range' && (
+        typeof minPrice !== 'number' || 
+        typeof maxPrice !== 'number' || 
+        minPrice < 0 || 
+        maxPrice < minPrice
+      )) {
+        return res.status(400).json({ error: 'Prix invalides pour la fourchette de prix' });
+      }
+
+      // Préparer les données pour Prisma
+      const dataForPrisma = {
+        ...rest,
+        priceType,
+        price: priceType === 'fixed' ? price : null,
+        minPrice: priceType === 'range' ? minPrice : null,
+        maxPrice: priceType === 'range' ? maxPrice : null,
+        contactEmail,
+        contactPhone,
+        images: Array.isArray(rest.images) ? rest.images : []
+      };
 
       const updatedItem = await prisma.marketplaceItem.update({
         where: { id: itemId },
-        data: { ...req.body }
+        data: dataForPrisma
       });
 
-      logger.info('Article modifié avec succès', { itemId, userId });
       res.json(updatedItem);
     } catch (error) {
-      logger.error('Erreur lors de la mise à jour de l\'article', { error });
-      res.status(500).json({ error: 'Erreur lors de la mise à jour de l\'article' });
+      logger.error('[MARKETPLACE][updateItem] Erreur:', error);
+      res.status(500).json({
+        error: 'Erreur lors de la mise à jour de l\'article',
+        details: error instanceof Error ? error.message : String(error)
+      });
     }
   }
 

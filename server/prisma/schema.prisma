@@ -333,11 +333,20 @@ enum MarketplaceItemStatus {
   rejected
 }
 
+enum PriceType {
+  fixed
+  range
+  negotiable
+}
+
 model MarketplaceItem {
   id          String   @id @default(cuid())
   title       String
   description String
-  price       Float
+  price       Float?
+  priceType   PriceType
+  minPrice    Float?
+  maxPrice    Float?
   category    String
   status      MarketplaceItemStatus @default(pending)
   images      String[]
