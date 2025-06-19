@@ -121,30 +121,13 @@ const MarketplacePage: React.FC = () => {
         return;
       }
 
-      let finalPrice;
-      if (priceType === 'fixed') {
-        const price = Number(values.price);
-        if (isNaN(price) || price < 0) {
-          message.error('Le prix doit être un nombre positif');
-          return;
-        }
-        finalPrice = price;
-      } else if (priceType === 'range') {
-        const minPrice = Number(values.minPrice);
-        const maxPrice = Number(values.maxPrice);
-        if (isNaN(minPrice) || isNaN(maxPrice) || minPrice < 0 || maxPrice < minPrice) {
-          message.error('La fourchette de prix n\'est pas valide');
-          return;
-        }
-        finalPrice = { min: minPrice, max: maxPrice };
-      } else {
-        finalPrice = 'Négociable';
-      }
-
       const { contactInfo, price, minPrice, maxPrice, ...restValues } = values;
       const itemData = {
         ...restValues,
-        price: finalPrice,
+        priceType,
+        price: priceType === 'fixed' ? Number(price) : null,
+        minPrice: priceType === 'range' ? Number(minPrice) : null,
+        maxPrice: priceType === 'range' ? Number(maxPrice) : null,
         seller: user.id,
         contactEmail: contactInfo?.email || '',
         contactPhone: contactInfo?.phone || '',
@@ -424,8 +407,13 @@ const MarketplacePage: React.FC = () => {
               </Select>
             </Form.Item>
 
-            <Form.Item label="Type de prix" name="priceType">
-              <Radio.Group onChange={(e) => setPriceType(e.target.value)} value={priceType}>
+            <Form.Item 
+              name="priceType"
+              label="Type de prix"
+              rules={[{ required: true, message: 'Veuillez sélectionner un type de prix' }]}
+              initialValue="fixed"
+            >
+              <Radio.Group onChange={(e) => setPriceType(e.target.value)}>
                 <Radio value="fixed">Prix fixe</Radio>
                 <Radio value="range">Fourchette de prix</Radio>
                 <Radio value="negotiable">Prix négociable</Radio>
@@ -600,8 +588,13 @@ const MarketplacePage: React.FC = () => {
               </Select>
             </Form.Item>
 
-            <Form.Item label="Type de prix" name="priceType">
-              <Radio.Group onChange={(e) => setPriceType(e.target.value)} value={priceType}>
+            <Form.Item 
+              name="priceType"
+              label="Type de prix"
+              rules={[{ required: true, message: 'Veuillez sélectionner un type de prix' }]}
+              initialValue="fixed"
+            >
+              <Radio.Group onChange={(e) => setPriceType(e.target.value)}>
                 <Radio value="fixed">Prix fixe</Radio>
                 <Radio value="range">Fourchette de prix</Radio>
                 <Radio value="negotiable">Prix négociable</Radio>

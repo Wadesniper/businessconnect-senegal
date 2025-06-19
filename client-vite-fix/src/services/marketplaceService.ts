@@ -8,7 +8,10 @@ export interface MarketplaceItem {
   id: string;
   title: string;
   description: string;
-  price: number;
+  price?: number;
+  priceType: 'fixed' | 'range' | 'negotiable';
+  minPrice?: number;
+  maxPrice?: number;
   category: string;
   images: string[];
   location: string;
@@ -104,12 +107,17 @@ export const marketplaceService = {
     console.log('[MARKETPLACE DEBUG] Token:', token);
     
     // Formater les données avant l'envoi
-    const { priceType, ...rest } = itemData;
+    const { priceType, minPrice, maxPrice, ...rest } = itemData;
     const formattedData = {
       ...rest,
-      // Si le prix est négociable, on envoie la chaîne "Négociable"
-      price: priceType === 'negotiable' ? 'Négociable' : rest.price,
-      // Nettoyer les URLs des images (enlever les points-virgules éventuels)
+      priceType,
+      // Gérer le prix selon le type
+      price: priceType === 'fixed' ? Number(rest.price) : 
+             priceType === 'range' ? null : 
+             null,
+      minPrice: priceType === 'range' ? Number(minPrice) : null,
+      maxPrice: priceType === 'range' ? Number(maxPrice) : null,
+      // Nettoyer les URLs des images
       images: Array.isArray(rest.images) ? rest.images.map((url: string) => url.replace(/;$/, '')) : [],
       // S'assurer que le status est correct
       status: 'pending'
@@ -128,12 +136,17 @@ export const marketplaceService = {
     
     try {
       // Formater les données avant l'envoi
-      const { priceType, ...rest } = itemData as any;
+      const { priceType, minPrice, maxPrice, ...rest } = itemData as any;
       const formattedData = {
         ...rest,
-        // Si le prix est négociable, on envoie la chaîne "Négociable"
-        price: priceType === 'negotiable' ? 'Négociable' : rest.price,
-        // Nettoyer les URLs des images (enlever les points-virgules éventuels)
+        priceType,
+        // Gérer le prix selon le type
+        price: priceType === 'fixed' ? Number(rest.price) : 
+               priceType === 'range' ? null : 
+               null,
+        minPrice: priceType === 'range' ? Number(minPrice) : null,
+        maxPrice: priceType === 'range' ? Number(maxPrice) : null,
+        // Nettoyer les URLs des images
         images: Array.isArray(rest.images) ? rest.images.map((url: string) => url.replace(/;$/, '')) : [],
         // Ne pas changer le status lors d'une mise à jour
         status: rest.status || 'pending'
