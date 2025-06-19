@@ -102,9 +102,20 @@ const MarketplacePage: React.FC = () => {
         return;
       }
       console.log('DEBUG values.images:', values.images);
-      const images = Array.isArray(values.images)
-        ? values.images.map((file: any) => file.url).filter(Boolean)
-        : [];
+      // Sécurisation du mapping des images pour éviter les erreurs de type
+      let images: string[] = [];
+      if (Array.isArray(values.images)) {
+        images = values.images
+          .map((file: any) => {
+            // Ant Design Upload peut donner des objets File natifs ou des objets avec .url
+            if (file && typeof file === 'object') {
+              if (typeof file.url === 'string') return file.url;
+              if (file.response && typeof file.response.url === 'string') return file.response.url;
+            }
+            return undefined;
+          })
+          .filter(Boolean) as string[];
+      }
       console.log('DEBUG images URLs:', images);
       // Extraction des données de contact et suppression de contactInfo
       const { contactInfo, ...restValues } = values;
