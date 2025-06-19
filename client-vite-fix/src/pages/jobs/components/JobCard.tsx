@@ -13,9 +13,24 @@ interface JobCardProps {
 }
 
 const JobCard: React.FC<JobCardProps> = ({ job, user, isSubscribed, onPostuler, onEdit, onDelete, onPublish, onViewDetails }) => {
+  // Sécurisation : si job est null ou undefined, on ne rend rien pour éviter les erreurs.
+  if (!job) {
+    return null;
+  }
+
   const isAdmin = user?.role === 'admin';
   const isEmployer = user?.role === 'employeur';
   const isOwner = user && job && job.createdBy === user.id;
+
+  // Sécurisation des propriétés de l'objet job
+  const title = job.title || 'Titre non disponible';
+  const company = job.company || 'Entreprise non spécifiée';
+  const location = job.location || 'Lieu non spécifié';
+  const description = job.description || 'Pas de description.';
+  const companyLogo = job.companyLogo;
+  const jobType = job.type;
+  const sector = job.sector;
+
   return (
     <div style={{
       border: '1px solid #e3e8f7',
@@ -32,23 +47,23 @@ const JobCard: React.FC<JobCardProps> = ({ job, user, isSubscribed, onPostuler, 
       height: '100%'
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-        {job.companyLogo ? (
-          <img src={job.companyLogo} alt="logo" style={{ width: 56, height: 56, borderRadius: 12, objectFit: 'cover', background: '#f5f5f5' }} />
+        {companyLogo ? (
+          <img src={companyLogo} alt="logo" style={{ width: 56, height: 56, borderRadius: 12, objectFit: 'cover', background: '#f5f5f5' }} />
         ) : (
           <div style={{ width: 56, height: 56, borderRadius: 12, background: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, color: '#aaa' }}>🏢</div>
         )}
         <div style={{ flex: 1 }}>
-          <div style={{ fontWeight: 700, fontSize: 20, color: '#1d3557' }}>{job.title}</div>
-          <div style={{ color: '#888', fontWeight: 500 }}>{job.company}</div>
+          <div style={{ fontWeight: 700, fontSize: 20, color: '#1d3557' }}>{title}</div>
+          <div style={{ color: '#888', fontWeight: 500 }}>{company}</div>
         </div>
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, margin: '8px 0' }}>
-        <span style={{ background: '#e3e8f7', borderRadius: 8, padding: '2px 10px', fontSize: 14 }}>{job.location}</span>
-        {job.type && <span style={{ background: '#fce4ec', borderRadius: 8, padding: '2px 10px', fontSize: 14 }}>{job.type}</span>}
-        {job.sector && <span style={{ background: '#e8f5e9', borderRadius: 8, padding: '2px 10px', fontSize: 14 }}>{job.sector}</span>}
+        <span style={{ background: '#e3e8f7', borderRadius: 8, padding: '2px 10px', fontSize: 14 }}>{location}</span>
+        {jobType && <span style={{ background: '#fce4ec', borderRadius: 8, padding: '2px 10px', fontSize: 14 }}>{jobType}</span>}
+        {sector && <span style={{ background: '#e8f5e9', borderRadius: 8, padding: '2px 10px', fontSize: 14 }}>{sector}</span>}
       </div>
       <div style={{ color: '#333', fontSize: 15, margin: '8px 0', flex: 1 }}>
-        {job.description?.length > 120 ? job.description.slice(0, 120) + '…' : job.description}
+        {description.length > 120 ? description.slice(0, 120) + '…' : description}
       </div>
       {/* BOUTON CONSULTER */}
       <button

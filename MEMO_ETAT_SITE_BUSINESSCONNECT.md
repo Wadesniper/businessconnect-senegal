@@ -1,6 +1,30 @@
 # État du Site BusinessConnect
 
-## Dernière mise à jour : 2024-12-19
+## Dernière mise à jour : 2025-06-20
+
+### 🚨 **CORRECTION CRITIQUE (2025-06-20)**
+
+#### **Problème résolu : Erreur "s is null" généralisée sur le site**
+- **Symptôme :** L'application plantait avec une page d'erreur "Something went wrong. s is null" sur de nombreuses pages (Accueil, Marketplace, etc.), en particulier après un rafraîchissement.
+- **Cause :** Plusieurs composants React tentaient d'accéder à des propriétés d'objets de données (offres d'emploi, articles de marketplace) qui étaient `null` ou `undefined`. Ces objets provenaient de l'API et certaines de leurs propriétés n'étaient pas garanties d'être présentes (par exemple, une offre d'emploi sans description, ou un article sans localisation). Le code n'était pas assez robuste pour gérer ces cas de données manquantes.
+- **Solution appliquée :**
+  1. ✅ **Sécurisation du composant `JobCard.tsx`** :
+     - Ajout d'une vérification initiale pour s'assurer que l'objet `job` n'est pas `null`.
+     - Ajout de valeurs par défaut pour chaque propriété de `job` (`title`, `company`, `location`, `description`, etc.) avant de les afficher.
+  2. ✅ **Sécurisation du composant `MarketplaceItemPage.tsx`** :
+     - Ajout de valeurs par défaut pour les propriétés de `item` (`title`, `price`, `description`, etc.) pour éviter les erreurs si elles sont manquantes.
+     - Correction d'une erreur de logique dans l'affichage du statut (remplacement de `'active'` par `'approved'`).
+  3. ✅ **Sécurisation de la page d'accueil `Home.tsx`** :
+     - Ajout de filtres pour s'assurer que les offres d'emploi et les articles du marketplace ont des données valides avant de tenter de les afficher.
+
+#### **Fichiers modifiés :**
+- `client-vite-fix/src/pages/jobs/components/JobCard.tsx` - Sécurisation complète du composant.
+- `client-vite-fix/src/pages/marketplace/MarketplaceItemPage.tsx` - Sécurisation des propriétés et correction de logique.
+- `client-vite-fix/src/pages/Home.tsx` - Sécurisation de l'affichage des `latestJobs` et `MarketplacePreview`.
+
+#### **Statut :** ✅ **STABILITÉ DU FRONTEND AMÉLIORÉE.** L'application devrait maintenant être beaucoup plus résiliente aux données incomplètes et ne plus planter à cause de l'erreur "s is null".
+
+---
 
 ### 🚨 **CORRECTION CRITIQUE RÉCENTE (2024-12-19)**
 

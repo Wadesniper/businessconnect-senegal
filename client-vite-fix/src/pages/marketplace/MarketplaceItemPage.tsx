@@ -143,28 +143,34 @@ const MarketplaceItemPage: React.FC = () => {
 
                 <Col xs={24} md={12}>
                   <Space direction="vertical" style={{ width: '100%' }}>
-                    <Title level={2}>{item.title}</Title>
+                    <Title level={2}>{item.title || 'Titre non disponible'}</Title>
                     <Space>
-                      <Tag color="blue">{item.category}</Tag>
-                      <Tag color={item.status === 'active' ? 'green' : 'red'}>
-                        {item.status === 'active' ? 'Disponible' : 'Vendu'}
-                      </Tag>
+                      {item.category && <Tag color="blue">{item.category}</Tag>}
+                      {item.status && (
+                        <Tag color={item.status === 'approved' ? 'green' : 'red'}>
+                          {item.status === 'approved' ? 'Disponible' : 'Non disponible'}
+                        </Tag>
+                      )}
                     </Space>
 
                     <Space>
                       <EuroOutlined />
-                      <Text strong style={{ fontSize: '1.5em' }}>{item.price}</Text>
+                      <Text strong style={{ fontSize: '1.5em' }}>
+                        {item.price ? `${item.price}` : 'Prix non spécifié'}
+                      </Text>
                     </Space>
 
-                    <Space>
-                      <EnvironmentOutlined />
-                      <Text>{item.location}</Text>
-                    </Space>
+                    {item.location && (
+                      <Space>
+                        <EnvironmentOutlined />
+                        <Text>{item.location}</Text>
+                      </Space>
+                    )}
 
                     <Divider />
 
                     <Title level={4}>Description</Title>
-                    <Paragraph>{item.description}</Paragraph>
+                    <Paragraph>{item.description || 'Aucune description fournie.'}</Paragraph>
 
                     <Divider />
 
@@ -264,7 +270,7 @@ const MarketplaceItemPage: React.FC = () => {
               rules={[{ required: true, message: 'Veuillez sélectionner un statut' }]}
             >
               <Select>
-                <Select.Option value="active">Disponible</Select.Option>
+                <Select.Option value="approved">Disponible</Select.Option>
                 <Select.Option value="sold">Vendu</Select.Option>
               </Select>
             </Form.Item>
