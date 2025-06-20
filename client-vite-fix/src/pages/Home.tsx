@@ -210,6 +210,7 @@ const Home: React.FC = () => {
     return (
       <div style={{ display: 'flex', gap: 16 }}>
         {marketplaceItems.slice(0, 3).map((item) => {
+          console.log('[Debug] Rendering Marketplace Item:', JSON.stringify(item, null, 2));
           if (!item || !item.id || !item.title) return null;
 
           return (
@@ -304,6 +305,7 @@ const Home: React.FC = () => {
               <Col span={24}><div style={{ textAlign: 'center', color: '#888' }}>Aucune offre disponible pour le moment.</div></Col>
             ) : (
               latestJobs.map((job) => {
+                console.log('[Debug] Rendering Job:', JSON.stringify(job, null, 2));
                 if (!job || !job.id) {
                   return null;
                 }
