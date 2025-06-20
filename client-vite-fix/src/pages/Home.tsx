@@ -34,6 +34,7 @@ import manBeret from '../assets/testimonials/man-beret.png';
 import manHeadphones from '../assets/testimonials/man-headphones.png';
 import womanGlasses from '../assets/testimonials/woman-glasses.png';
 import womanHijab from '../assets/testimonials/woman-hijab.png';
+import LazyImage from '../components/LazyImage';
 
 const { Content } = Layout;
 const { Title, Paragraph, Text } = Typography;
@@ -245,12 +246,12 @@ const Home: React.FC = () => {
                 hoverable
                 cover={
                   Array.isArray(item.images) && item.images[0] ? (
-                    <img
+                    <LazyImage
                       alt={item.title}
                       src={item.images[0]}
-                      style={{ height: 200, objectFit: 'cover' }}
+                      style={{ height: 200 }}
                     />
-                  ) : null
+                  ) : <div style={{ height: 200, background: '#f0f2f5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Pas d'image</div>
                 }
                 bodyStyle={{ padding: '16px' }}
                 onClick={() => navigate(`/marketplace/${item.id}`)}
@@ -298,19 +299,37 @@ const Home: React.FC = () => {
           <Row gutter={[32, 32]} justify="center">
             {[
               { title: "Offres d'emploi", icon: <TeamOutlined style={{ fontSize: 32, color: '#1890ff' }} />, text: "Accédez à des milliers d'offres dans tous les secteurs.", link: '/jobs' },
-              { title: "Créateur de CV", icon: <BookOutlined style={{ fontSize: 32, color: '#52c41a' }} />, text: "Créez un CV professionnel et moderne avec notre générateur.", link: '/cv-generator' },
+              { title: "Créateur de CV", icon: <BookOutlined style={{ fontSize: 32, color: '#1ec773' }} />, text: "Créez un CV professionnel et moderne avec notre générateur.", link: '/cv-generator' },
               { title: "Fiches métiers", icon: <BulbOutlined style={{ fontSize: 32, color: '#faad14' }} />, text: "Découvrez des informations détaillées sur différents métiers.", link: '/careers' },
               { title: "Formations", icon: <CrownOutlined style={{ fontSize: 32, color: '#ff4d4f' }} />, text: "Développez vos compétences avec nos programmes de formation.", link: '/formations' },
               { title: "Marketplace", icon: <ShoppingOutlined style={{ fontSize: 32, color: '#b37feb' }} />, text: "Achetez et vendez des produits et services professionnels.", link: '/marketplace' },
             ].map(service => (
-              <Col key={service.title} xs={24} sm={12} md={8} lg={8}>
-                <Card hoverable>
-                  <Space direction="vertical" size="middle" align="center" style={{ width: '100%', textAlign: 'center' }}>
+              <Col key={service.title} xs={24} sm={12} md={8} lg={8} style={{ display: 'flex' }}>
+                <Card 
+                  hoverable
+                  style={{ 
+                    borderRadius: 16, 
+                    border: '1px solid #f0f0f0', 
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                    width: '100%',
+                    display: 'flex',
+                    flexDirection: 'column'
+                  }}
+                  bodyStyle={{
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    textAlign: 'center',
+                    padding: '24px 16px'
+                  }}
+                >
+                  <div>
                     {service.icon}
-                    <Title level={4} style={{ margin: 0 }}>{service.title}</Title>
-                    <Paragraph>{service.text}</Paragraph>
-                    <Button type="link" onClick={() => navigate(service.link)}>Découvrir <ArrowRightOutlined /></Button>
-                  </Space>
+                    <Title level={4} style={{ margin: '16px 0 8px 0' }}>{service.title}</Title>
+                    <Paragraph style={{ minHeight: 44 }}>{service.text}</Paragraph>
+                  </div>
+                  <Button type="link" onClick={() => navigate(service.link)}>Découvrir <ArrowRightOutlined /></Button>
                 </Card>
               </Col>
             ))}
@@ -450,11 +469,39 @@ const Home: React.FC = () => {
         {/* Section Chiffres */}
         <div style={{ padding: '64px 24px', background: '#f0f2f5' }}>
           <Title level={2} style={{ textAlign: 'center', marginBottom: 48, color: '#002766', fontWeight: 700 }}>BusinessConnect en chiffres</Title>
-          <Row gutter={[32, 32]} justify="center" style={{ textAlign: 'center' }}>
-            <Col xs={12} md={6}><Statistic title="Entreprises" value={500} formatter={() => <AnimatedStatistic value={500} />} /></Col>
-            <Col xs={12} md={6}><Statistic title="Offres" value={1000} valueStyle={{ color: '#e91e63' }} formatter={() => <AnimatedStatistic value={1000} />} /></Col>
-            <Col xs={12} md={6}><Statistic title="Membres" value={10000} formatter={() => <AnimatedStatistic value={10000} />} /></Col>
-            <Col xs={12} md={6}><Statistic title="Secteurs" value={15} valueStyle={{ color: '#ff9800' }} formatter={() => <AnimatedStatistic value={15} />} /></Col>
+          <Row gutter={[32, 32]} justify="center">
+            <Col xs={24} sm={12} md={6}>
+              <div style={{ borderRadius: 36, background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 60%, #e0f7fa 100%)', boxShadow: '0 12px 40px 0 #1890ff22', border: '2px solid #fff', backdropFilter: 'blur(12px)', textAlign: 'center', padding: '38px 18px 32px 18px', minHeight: 140, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ fontSize: 22, color: '#1890ff', marginBottom: 8, fontWeight: 500 }}>Entreprises</div>
+                <div style={{ fontSize: 40, fontWeight: 800, color: '#1890ff', textShadow: '0 2px 12px #1890ff33' }}>
+                  <AnimatedStatistic value={500} color="#1890ff" />
+                </div>
+              </div>
+            </Col>
+            <Col xs={24} sm={12} md={6}>
+              <div style={{ borderRadius: 36, background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 60%, #fce4ec 100%)', boxShadow: '0 12px 40px 0 #e91e6333', border: '2px solid #fff', backdropFilter: 'blur(12px)', textAlign: 'center', padding: '38px 18px 32px 18px', minHeight: 140, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ fontSize: 22, color: '#e91e63', marginBottom: 8, fontWeight: 500 }}>Offres d'emploi</div>
+                <div style={{ fontSize: 40, fontWeight: 800, color: '#e91e63', textShadow: '0 2px 8px #e91e633' }}>
+                  <AnimatedStatistic value={1000} color="#e91e63" />
+                </div>
+              </div>
+            </Col>
+            <Col xs={24} sm={12} md={6}>
+              <div style={{ borderRadius: 36, background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 60%, #e8f5e9 100%)', boxShadow: '0 12px 40px 0 #43a04733', border: '2px solid #fff', backdropFilter: 'blur(12px)', textAlign: 'center', padding: '38px 18px 32px 18px', minHeight: 140, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ fontSize: 22, color: '#43a047', marginBottom: 8, fontWeight: 500 }}>Membres</div>
+                <div style={{ fontSize: 40, fontWeight: 800, color: '#43a047', textShadow: '0 2px 12px #43a04733' }}>
+                  <AnimatedStatistic value={10000} color="#43a047" />
+                </div>
+              </div>
+            </Col>
+            <Col xs={24} sm={12} md={6}>
+              <div style={{ borderRadius: 36, background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 60%, #fff3e0 100%)', boxShadow: '0 12px 40px 0 #ff980033', border: '2px solid #fff', backdropFilter: 'blur(12px)', textAlign: 'center', padding: '38px 18px 32px 18px', minHeight: 140, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ fontSize: 22, color: '#ff9800', marginBottom: 8, fontWeight: 500 }}>Secteurs</div>
+                <div style={{ fontSize: 40, fontWeight: 800, color: '#ff9800', textShadow: '0 2px 12px #ff980033' }}>
+                  <AnimatedStatistic value={15} color="#ff9800" />
+                </div>
+              </div>
+            </Col>
           </Row>
         </div>
 
@@ -464,11 +511,13 @@ const Home: React.FC = () => {
           <Row gutter={[32, 32]} justify="center">
             {TESTIMONIALS.map((t, idx) => (
               <Col xs={24} sm={12} md={6} key={idx}>
-                <Card style={{ textAlign: 'center' }}>
-                  <Avatar size={64} src={t.img} />
-                  <Title level={5} style={{ marginTop: 16 }}>{t.name}</Title>
-                  <Text type="secondary">{t.role}</Text>
-                  <Paragraph style={{ marginTop: 8 }}>"{t.text}"</Paragraph>
+                <Card style={{ borderRadius: 20, boxShadow: '0 4px 24px #e3e8f7', border: 'none', textAlign: 'center', minHeight: '100%' }} bodyStyle={{ padding: 32 }}>
+                  <Avatar size={80} src={t.img} style={{ marginBottom: 18, border: '4px solid #e0e7ff' }}/>
+                  <Title level={4} style={{ margin: 0, color: '#2563eb' }}>{t.name}</Title>
+                  <Text type="secondary" style={{ fontWeight: 600, fontSize: 16 }}>{t.role}</Text>
+                  <Paragraph style={{ marginTop: 18, fontSize: 16, color: '#333', fontStyle: 'italic' }}>
+                    "{t.text}"
+                  </Paragraph>
                 </Card>
               </Col>
             ))}

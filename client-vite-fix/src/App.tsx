@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useSubscription } from './hooks/useSubscription';
+import ScrollToTop from './components/ScrollToTop';
 // Lazy load des pages principales
 const Home = lazy(() => import('./pages/Home'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
@@ -64,6 +65,7 @@ const App: React.FC = () => {
   return (
     <ErrorBoundary>
       <Router>
+        <ScrollToTop />
         <ProLayout
           layout="top"
           navTheme="light"

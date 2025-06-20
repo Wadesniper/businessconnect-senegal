@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import styled from '@emotion/styled';
 import { Typography, Button } from 'antd';
 import { ArrowRightOutlined } from '@ant-design/icons';
+import LazyImage from './LazyImage';
 
 const { Title, Paragraph } = Typography;
 
@@ -180,7 +181,7 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
         </TextContent>
         <AnimatedMosaic>
           {images.slice(0, 9).map((src, index) => (
-            <MosaicImage key={index} src={src} alt={`Inspiration ${index + 1}`} loading="lazy" />
+            <MosaicImage key={index} src={src} alt={`Inspiration ${index + 1}`} />
           ))}
         </AnimatedMosaic>
       </ContentWrapper>
@@ -189,16 +190,16 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
 };
 
 const GreenSpan = styled.span`
-  color: #52c41a;
-  text-shadow: 0 0 12px rgba(82, 196, 26, 0.5);
+  color: #1ec773;
+  text-shadow: 0 0 12px rgba(30, 199, 115, 0.5);
 `;
 
 const StyledButton = styled(Button)`
-  background-color: #52c41a;
-  border-color: #52c41a;
+  background-color: #1ec773;
+  border-color: #1ec773;
   &:hover {
-    background-color: #73d13d;
-    border-color: #73d13d;
+    background-color: #25e088;
+    border-color: #25e088;
   }
 `;
 
@@ -234,14 +235,13 @@ const AnimatedMosaic = styled.div`
   }
 `;
 
-const MosaicImage = styled.img`
+const MosaicImage = styled(LazyImage)`
   width: 100%;
   height: 120px;
   object-fit: cover;
   border-radius: 8px;
   opacity: 0.85;
   transition: transform 0.3s, opacity 0.3s;
-  animation: fade-in 1s ease-out forwards;
   box-shadow: 0 4px 16px rgba(0,0,0,0.3);
 
   &:hover {
@@ -249,11 +249,6 @@ const MosaicImage = styled.img`
     transform: scale(1.05);
     z-index: 10;
     position: relative;
-  }
-
-  @keyframes fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
   }
 `;
 

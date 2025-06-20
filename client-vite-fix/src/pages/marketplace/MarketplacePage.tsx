@@ -19,7 +19,8 @@ import {
   Input as AntInput,
   Radio,
   InputNumber,
-  Alert
+  Alert,
+  Typography
 } from 'antd';
 import {
   SearchOutlined,
@@ -35,6 +36,7 @@ import { authService } from '../../services/authService';
 import { useSubscription } from '../../hooks/useSubscription';
 import { useAuth } from '../../context/AuthContext';
 import type { UploadFile, UploadFileStatus } from 'antd/es/upload/interface';
+import LazyImage from '../../components/LazyImage';
 
 const categories = [
   'Informatique',
@@ -235,6 +237,16 @@ const MarketplacePage: React.FC = () => {
     }
   };
 
+  const handleDelete = async (id: string) => {
+    try {
+      await marketplaceService.deleteItem(id);
+      message.success('Annonce supprimée avec succès');
+      fetchItems();
+    } catch (error) {
+      message.error('Erreur lors de la suppression de l\'annonce');
+    }
+  };
+
   if (loading) {
     return <div style={{ minHeight: 420, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement des annonces..." /></div>;
   }
@@ -337,30 +349,24 @@ const MarketplacePage: React.FC = () => {
                 hoverable
                 cover={
                   Array.isArray(item.images) && item.images[0] ? (
-                    <Image
+                    <LazyImage
                       alt={item.title}
                       src={item.images[0]}
-                      style={{ height: 200, objectFit: 'cover' }}
-                      fallback="/no-image.png"
+                      style={{ height: 200 }}
                     />
-                  ) : null
+                  ) : <div style={{ height: 200, background: '#f0f2f5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Pas d'image</div>
                 }
                 onClick={() => navigate(`/marketplace/${item.id}`)}
-                actions={user?.id === item.userId ? [
-                  <Button 
-                    key="edit" 
-                    type="link" 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleEdit(item);
-                    }}
-                  >
-                    Modifier
-                  </Button>
-                ] : []}
+                actions={[
+                  <Button type="primary" onClick={() => navigate(`/marketplace/${item.id}`)}>Voir les détails</Button>,
+                  ...(user && (user.role === 'admin' || user.id === item.seller) ? [
+                    <Button onClick={() => handleEdit(item)}>Modifier</Button>,
+                    <Button danger onClick={() => handleDelete(item.id)}>Supprimer</Button>
+                  ] : [])
+                ]}
               >
                 <div style={{ minHeight: 120 }}>
-                  <div style={{ fontWeight: 'bold', fontSize: 16 }}>{item.title}</div>
+                  <Typography.Title level={5}>{item.title}</Typography.Title>
                   <div style={{ margin: '8px 0' }}>{(item.description || '').substring(0, 100)}...</div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <span>{<EuroOutlined style={{ color: '#1890ff' }} />}</span>
