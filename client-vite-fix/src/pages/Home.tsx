@@ -167,6 +167,24 @@ const IconCircle = styled.div<{ color: string }>`
   }
 `;
 
+// Ajout du style pour cacher/montrer la bonne vue
+const GlobalStyles = `
+  .mobile-carousel {
+    display: none;
+  }
+  .desktop-grid {
+    display: block;
+  }
+  @media (max-width: 768px) {
+    .mobile-carousel {
+      display: block;
+    }
+    .desktop-grid {
+      display: none;
+    }
+  }
+`;
+
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const servicesRef = useRef<HTMLDivElement>(null);
@@ -263,6 +281,7 @@ const Home: React.FC = () => {
 
   return (
     <Layout>
+      <style>{GlobalStyles}</style>
       <Content style={{ overflow: 'hidden' }}>
         <Hero onDiscoverClick={handleScrollToServices} />
 
@@ -316,22 +335,28 @@ const Home: React.FC = () => {
         {/* Section Emploi */}
         <div style={{ padding: '64px 24px', background: '#f0f2f5' }}>
           <Title level={2} style={{ textAlign: 'center', marginBottom: 48, color: '#002766', fontWeight: 700 }}>Offres d'emploi récentes</Title>
-          <Row gutter={[32, 32]} justify="center">
-            {latestJobs.length > 0 ? latestJobs.map((job) => (
-              <Col key={job.id} xs={24} sm={12} md={8}>
-                <JobCard
-                  job={job}
-                  user={user}
-                  isSubscribed={isPremium}
-                  onViewDetails={() => navigate(`/jobs/${job.id}`)}
-                  onPostuler={() => navigate(`/jobs/${job.id}`)}
-                  onEdit={() => navigate(`/jobs/${job.id}/edit`)}
-                  onDelete={() => navigate(`/jobs/${job.id}/delete`)}
-                  onPublish={() => navigate('/jobs/publish')}
-                />
-              </Col>
-            )) : <Paragraph>Aucune offre d'emploi pour le moment.</Paragraph>}
-          </Row>
+          
+          {/* Carrousel pour mobile */}
+          <div className="mobile-carousel">
+            <Carousel autoplay autoplaySpeed={3000} dots={false}>
+              {latestJobs.map((job) => (
+                <div key={job.id} style={{ padding: '0 8px' }}>
+                  <JobCard job={job} user={user} isSubscribed={isPremium} onViewDetails={() => navigate(`/jobs/${job.id}`)} onPostuler={() => {}} onEdit={() => {}} onDelete={() => {}} onPublish={() => {}} />
+                </div>
+              ))}
+            </Carousel>
+          </div>
+
+          {/* Grille pour desktop */}
+          <div className="desktop-grid">
+            <Row gutter={[32, 32]} justify="center">
+              {latestJobs.length > 0 ? latestJobs.map((job) => (
+                <Col key={job.id} xs={24} sm={12} md={8} style={{ display: 'flex', justifyContent: 'center' }}>
+                  <JobCard job={job} user={user} isSubscribed={isPremium} onViewDetails={() => navigate(`/jobs/${job.id}`)} onPostuler={() => {}} onEdit={() => {}} onDelete={() => {}} onPublish={() => {}} />
+                </Col>
+              )) : <Paragraph>Aucune offre d'emploi pour le moment.</Paragraph>}
+            </Row>
+          </div>
         </div>
 
         {/* Section Abonnements */}
@@ -390,17 +415,30 @@ const Home: React.FC = () => {
         </div>
 
         {/* Section CV Professionnel */}
-        <div style={{ padding: '64px 24px', background: 'linear-gradient(90deg, #f7fafc 60%, #e3fcec 100%)' }}>
-          <Row justify="center" align="middle" gutter={48}>
-            <Col xs={24} md={12}>
-              <Title level={2}>Créez un CV professionnel</Title>
-              <Paragraph>Notre générateur de CV vous permet de créer un CV attrayant en quelques minutes.</Paragraph>
-              <Button type="primary" size="large" onClick={() => navigate('/cv-generator')}>Créer mon CV maintenant</Button>
-            </Col>
-            <Col xs={24} md={12}>
-              <img src="/images/cv-hero.jpg" alt="Créer un CV professionnel" style={{ width: '100%', borderRadius: 16 }} />
-            </Col>
-          </Row>
+        <div style={{ width: '100vw', maxWidth: '100vw', margin: '40px 0 0 0', padding: '0 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', background: 'linear-gradient(90deg, #f7fafc 60%, #e3fcec 100%)', borderRadius: 24, boxShadow: '0 4px 24px #e3e8f7' }}>
+          <div style={{ flex: '1 1 500px', minWidth: 320, padding: '40px 24px' }}>
+            <Title level={2} style={{ color: '#1d3557', marginBottom: 16 }}>Créez un CV professionnel</Title>
+            <Paragraph style={{ fontSize: 18, color: '#333', marginBottom: 24 }}>
+              Notre générateur de CV vous permet de créer un CV attrayant et professionnel en quelques minutes. Choisissez parmi plusieurs modèles et personnalisez-le selon vos besoins.
+            </Paragraph>
+            <ul style={{ fontSize: 16, color: '#222', marginBottom: 32, paddingLeft: 24 }}>
+              <li>✔️ Modèles professionnels conçus pour le marché sénégalais</li>
+              <li>✔️ Personnalisation simple et intuitive</li>
+              <li>✔️ Exportation en format PDF de haute qualité</li>
+              <li>✔️ Conseils professionnels pour chaque section</li>
+            </ul>
+            <Button type="primary" size="large" style={{ borderRadius: 24, fontWeight: 600, transition: 'transform 0.2s, box-shadow 0.2s' }} aria-label="Créer mon CV professionnel" onMouseOver={e => { e.currentTarget.style.transform = 'scale(1.07)'; e.currentTarget.style.boxShadow = '0 8px 32px #b7e4c7'; }} onMouseOut={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = 'none'; }} onClick={() => navigate('/cv-generator')}>
+              Créer mon CV maintenant
+            </Button>
+          </div>
+          <div style={{ flex: '1 1 500px', minWidth: 320, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 24, position: 'relative' }}>
+            {/* Carré bleu clair en haut à gauche */}
+            <div style={{ position: 'absolute', top: 18, left: 38, width: 220, height: 180, background: '#e3e8f7', borderRadius: 18, zIndex: 1, boxShadow: '0 4px 24px #e3e8f7', opacity: 0.7 }} />
+            {/* Carré beige clair en bas à droite */}
+            <div style={{ position: 'absolute', bottom: 18, right: 38, width: 220, height: 180, background: '#fdf6e3', borderRadius: 18, zIndex: 1, boxShadow: '0 4px 24px #fdf6e3', opacity: 0.7 }} />
+            {/* Image principale */}
+            <img src="/images/cv-hero.jpg" alt="Créer un CV professionnel" style={{ width: '100%', maxWidth: 500, borderRadius: 28, boxShadow: '0 8px 32px #b7e4c7', objectFit: 'cover', background: '#fff', position: 'relative', zIndex: 2 }} />
+          </div>
         </div>
 
         {/* Section Marketplace */}
