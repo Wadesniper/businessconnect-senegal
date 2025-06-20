@@ -142,38 +142,8 @@ import img12 from '../assets/12-medical.jpg';
 import img13 from '../assets/13-business.jpg';
 
 const images = [
-  { src: img1, desc: 'Concevez le monde de demain' },
-  { src: img2, desc: "Construisez l'avenir" },
-  { src: img3, desc: 'Sécurisez le numérique' },
-  { src: img4, desc: 'Cultivez la réussite' },
-  { src: img5, desc: 'Gérez les données en toute sécurité' },
-  { src: img6, desc: 'Réparez, innovez' },
-  { src: img7, desc: 'Collaborez efficacement' },
-  { src: img8, desc: "Développez des solutions d'avenir" },
-  { src: img9, desc: "L'urbanisme au service du progrès" },
-  { src: img10, desc: 'Protégez les vies' },
-  { src: img11, desc: 'Expérimentez, découvrez' },
-  { src: img12, desc: 'Soignez avec passion' },
-  { src: img13, desc: 'Entreprenez au Sénégal' },
+  img1, img2, img3, img4, img5, img6, img7, img8, img9, img10, img11, img12, img13
 ];
-
-const getShuffledTiles = () => {
-  const arr = images.map(img => img.src);
-  while (arr.length < TILE_COUNT) arr.push(...arr);
-  // Mélange Fisher-Yates
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr.slice(0, TILE_COUNT);
-};
-
-// Génère une grille de tuiles pour l'effet mosaïque
-const tiles = Array.from({ length: TILE_ROWS * TILE_COLS }, (_, i) => ({
-  row: Math.floor(i / TILE_COLS),
-  col: i % TILE_COLS,
-  key: `${Math.floor(i / TILE_COLS)}-${i % TILE_COLS}`
-}));
 
 interface HeroProps {
   onDiscoverClick?: () => void;
@@ -184,30 +154,9 @@ interface HeroProps {
 const getBlurValue = () => window.innerWidth < 700 ? '4px' : '8px';
 
 const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const [tilesImages, setTilesImages] = useState<string[]>(getShuffledTiles());
-  const [isFading, setIsFading] = useState(false);
-
-  // Animation mosaïque : fade out, puis shuffle, puis fade in
-  useEffect(() => {
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    intervalRef.current = setInterval(() => {
-      setIsFading(true);
-      setTimeout(() => {
-        setTilesImages(getShuffledTiles());
-        setIsFading(false);
-      }, 400); // fade out
-    }, 2500);
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, []);
-
   return (
     <HeroContainer>
-      <BackgroundImage />
       <StaticBackground />
-      <Overlay />
       <GeometricBackground style={{ zIndex: 2, position: 'absolute' }} />
       <ContentWrapper>
         <TextContent>
@@ -228,86 +177,72 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
             </StyledButton>
           </motion.div>
         </TextContent>
-        <CarouselContainer>
-          <ImageContainer>
-            {tiles.map(({ row, col, key }: { row: number; col: number; key: string }, idx: number) => (
-              <Tile
-                key={key}
-                animate={isFading ? { opacity: 0, scale: 0.95 } : { opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4, delay: idx * 0.02 }}
-              >
-                <TileImage $bgImage={tilesImages[idx]} />
-              </Tile>
-            ))}
-          </ImageContainer>
-        </CarouselContainer>
+        <AnimatedMosaic>
+          {images.map((src, index) => (
+            <MosaicImage key={index} src={src} alt={`Inspiration ${index + 1}`} />
+          ))}
+        </AnimatedMosaic>
       </ContentWrapper>
     </HeroContainer>
   );
 };
 
-const CarouselContainer = styled.div`
-  flex: 1;
-  position: relative;
-  height: 400px;
-  max-width: 550px;
-  border-radius: 32px;
-  overflow: hidden;
-  background: #001529;
-  box-shadow: 0 8px 32px #00152933;
-  border: 2px solid #fff;
-  margin-right: 48px;
-  @media (max-width: 600px) {
-    width: 90% !important;
-    max-width: 90% !important;
-    height: 300px;
-    border-radius: 14px;
-    margin: 18px auto 0;
-  }
-`;
-
-const ImageContainer = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: grid;
-  grid-template-columns: repeat(${TILE_COLS}, 1fr);
-  grid-template-rows: repeat(${TILE_ROWS}, 1fr);
-`;
-
-const Tile = styled(motion.div)`
-  overflow: hidden;
-  background: #001529;
-`;
-
-const TileImage = styled.div<{ $bgImage: string }>`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: ${props => `url(${props.$bgImage})`};
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+const GreenSpan = styled.span`
+  color: #52c41a;
+  text-shadow: 0 0 12px rgba(82, 196, 26, 0.5);
 `;
 
 const StyledButton = styled(Button)`
-  margin-top: 20px;
-  height: 50px;
-  padding: 0 30px;
-  font-size: 18px;
-  border-radius: 25px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  background-color: #52c41a;
+  border-color: #52c41a;
+  &:hover {
+    background-color: #73d13d;
+    border-color: #73d13d;
+  }
 `;
 
-const GreenSpan = styled.span`
-  color: #1ec773;
-  font-weight: bold;
+const AnimatedMosaic = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  width: 50%;
+  max-width: 600px;
+  animation: slide-in 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  
+  @media (max-width: 900px) {
+    display: none; // On cache la mosaïque sur mobile pour la performance
+  }
+
+  @keyframes slide-in {
+    from {
+      opacity: 0;
+      transform: translateX(50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+`;
+
+const MosaicImage = styled.img`
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  opacity: 0.8;
+  transition: transform 0.3s, opacity 0.3s;
+  animation: fade-in 1s ease-out forwards;
+
+  &:hover {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
 `;
 
 export default Hero; 

@@ -101,26 +101,33 @@ const CVGeneratorPage: React.FC = () => {
       <Title level={3} style={{ marginTop: '20px', fontSize: '20px', marginBottom: '24px' }}>
         Choisissez un modèle professionnel selon votre secteur et votre style
       </Title>
-      <Row gutter={[12, 16]}>
+      <Row gutter={[12, 16]} style={{ margin: 0 }}>
         {CV_TEMPLATES.map(template => (
-          <Col xs={24} sm={12} md={8} lg={6} key={template.id}>
+          <Col xs={24} sm={12} md={8} lg={6} key={template.id} style={{ display: 'flex', justifyContent: 'center' }}>
             <Card
               hoverable
-              cover={<img alt={template.name} src={template.thumbnail} style={{ width: '100%', height: 200, objectFit: 'cover' }} />}
+              cover={<img alt={template.name} src={template.thumbnail} style={{ width: '100%', maxWidth: 320, height: 200, objectFit: 'cover', margin: '0 auto', display: 'block' }} />}
               onClick={() => setSelectedTemplate(template as Template)}
               style={{ 
                 border: selectedTemplate?.id === template.id ? '2px solid #1890ff' : undefined,
                 borderRadius: '12px',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                width: '100%',
+                maxWidth: 340,
+                minWidth: 0,
+                margin: '0 auto',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
               }}
             >
               <Card.Meta
-                title={<div style={{ fontSize: '16px', fontWeight: 600, marginBottom: '8px' }}>
+                title={<div style={{ fontSize: '16px', fontWeight: 600, marginBottom: '8px', wordBreak: 'break-word' }}>
                   {template.name + (template.category ? ' (' + template.category + ')' : '')}
                 </div>}
                 description={<>
                   <div style={{ marginBottom: '8px' }}><b>Secteur :</b> {template.category}</div>
-                  <div style={{ marginBottom: '8px', fontSize: '14px' }}>{template.description}</div>
+                  <div style={{ marginBottom: '8px', fontSize: '14px', wordBreak: 'break-word' }}>{template.description}</div>
                   {template.features && (
                     <ul style={{ margin: 0, paddingLeft: 16, fontSize: '13px' }}>
                       {template.features.map((f, i) => <li key={i}>{f}</li>)}

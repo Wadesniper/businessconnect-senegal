@@ -94,16 +94,45 @@ function isUserSubscribed(userId: string, userContext?: any): boolean {
 
 class MarketplaceService {
   async getItems(filters?: MarketplaceFilters): Promise<MarketplaceItem[]> {
-    const response = await api.get<Partial<MarketplaceItem>[]>('/api/marketplace', {
-      params: filters
-    });
-    return response.data.map((item: Partial<MarketplaceItem>) => ({
-      ...item,
-      priceType: item.priceType || 'fixed',
-      price: item.price || null,
-      minPrice: item.minPrice || null,
-      maxPrice: item.maxPrice || null
-    })) as MarketplaceItem[];
+    try {
+      console.log('[MARKETPLACE] Tentative de récupération des articles depuis l\'API...');
+      const response = await api.get<Partial<MarketplaceItem>[]>('/api/marketplace', {
+        params: filters
+      });
+      
+      console.log('[MARKETPLACE] Articles récupérés avec succès:', response.data.length);
+      return response.data.map((item: Partial<MarketplaceItem>) => ({
+        ...item,
+        priceType: item.priceType || 'fixed',
+        price: item.price || null,
+        minPrice: item.minPrice || null,
+        maxPrice: item.maxPrice || null
+      })) as MarketplaceItem[];
+    } catch (error) {
+      console.error('[MARKETPLACE] Erreur lors de la récupération des articles:', error);
+      
+      // Fallback vers les données locales en cas d'erreur
+      console.log('[MARKETPLACE] Utilisation des données locales comme fallback...');
+      const localItems = getStoredItems();
+      
+      // Appliquer les filtres sur les données locales si nécessaire
+      if (filters) {
+        return localItems.filter(item => {
+          if (filters.category && item.category !== filters.category) return false;
+          if (filters.search) {
+            const searchLower = filters.search.toLowerCase();
+            if (!item.title.toLowerCase().includes(searchLower) && 
+                !item.description.toLowerCase().includes(searchLower)) return false;
+          }
+          if (filters.minPrice && item.price && item.price < filters.minPrice) return false;
+          if (filters.maxPrice && item.price && item.price > filters.maxPrice) return false;
+          if (filters.location && !item.location.toLowerCase().includes(filters.location.toLowerCase())) return false;
+          return true;
+        });
+      }
+      
+      return localItems;
+    }
   }
 
   async getItem(id: string): Promise<MarketplaceItem | null> {
