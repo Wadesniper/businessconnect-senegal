@@ -1,5 +1,5 @@
 // Forçage de build Vercel - commit technique
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Layout, Typography, Card, Row, Col, Button, Space, Avatar, Rate, Tag, Carousel, Statistic, Spin } from 'antd';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import styled from '@emotion/styled';
@@ -169,42 +169,31 @@ const IconCircle = styled.div<{ color: string }>`
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
-  const servicesRef = React.useRef<HTMLDivElement>(null);
-  const [jobs, setJobs] = React.useState<Job[]>([]);
-  const [isLoading, setIsLoading] = React.useState(true);
+  const servicesRef = useRef<HTMLDivElement>(null);
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [marketplaceItems, setMarketplaceItems] = useState<MarketplaceItem[]>([]);
   const { user } = useAuth();
   const { hasActiveSubscription } = useSubscription();
   const isPremium = hasPremiumAccess(user, hasActiveSubscription);
 
-  React.useEffect(() => {
+  useEffect(() => {
     JobService.getJobs().then(jobs => {
       setJobs(jobs || []);
       setIsLoading(false);
     });
-  }, []);
-
-  React.useEffect(() => {
     marketplaceService.getItems().then(items => {
       setMarketplaceItems(items || []);
     });
   }, []);
 
   const handleScrollToServices = () => {
-    if (servicesRef.current) {
-      servicesRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
+    servicesRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const latestJobs = jobs
     ? [...jobs]
-        .filter(job => {
-          if (!job || !job.id || !job.createdAt) {
-            return false;
-          }
-          // On s'assure que la date est valide avant de continuer
-          return !isNaN(new Date(job.createdAt).getTime());
-        })
+        .filter(job => job?.id && job.createdAt && !isNaN(new Date(job.createdAt).getTime()))
         .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         .slice(0, 3)
     : [];
@@ -219,25 +208,18 @@ const Home: React.FC = () => {
         case 'fixed':
           return item.price ? `${item.price.toLocaleString()} FCFA` : 'Prix non spécifié';
         case 'range':
-          if (item.minPrice && item.maxPrice) {
-            return `${item.minPrice.toLocaleString()} - ${item.maxPrice.toLocaleString()} FCFA`;
-          }
-          return 'Fourchette de prix non définie';
+          return item.minPrice && item.maxPrice ? `${item.minPrice.toLocaleString()} - ${item.maxPrice.toLocaleString()} FCFA` : 'Fourchette de prix non définie';
         case 'negotiable':
           return 'Prix négociable';
         default:
-          // Sécurité pour les anciens articles qui n'ont peut-être pas de priceType
-          if (typeof item.price === 'number') {
-            return `${item.price.toLocaleString()} FCFA`;
-          }
-          return 'Prix non spécifié';
+          return typeof item.price === 'number' ? `${item.price.toLocaleString()} FCFA` : 'Prix non spécifié';
       }
     };
 
     return (
       <Row gutter={[16, 16]}>
         {marketplaceItems.slice(0, 3).map((item) => {
-          if (!item || !item.id || !item.title) return null;
+          if (!item?.id || !item.title) return null;
 
           return (
             <Col xs={24} sm={12} md={8} key={item.id}>
@@ -248,34 +230,25 @@ const Home: React.FC = () => {
                     <img
                       alt={item.title}
                       src={item.images[0]}
-                      style={{ height: 200, objectFit: 'cover', borderTopLeftRadius: 18, borderTopRightRadius: 18 }}
+                      style={{ height: 200, objectFit: 'cover' }}
                     />
                   ) : null
                 }
-                style={{
-                  borderRadius: 18,
-                  boxShadow: '0 4px 24px #e3e8f7',
-                  border: 'none',
-                  minHeight: 180,
-                  background: '#fff',
-                  height: '100%',
-                }}
+                bodyStyle={{ padding: '16px' }}
                 onClick={() => navigate(`/marketplace/${item.id}`)}
               >
-                <Space direction="vertical" size={8} style={{ width: '100%' }}>
-                  <Typography.Title level={4} style={{ margin: 0, color: '#457b9d' }}>
-                    {item.title}
-                  </Typography.Title>
-                  <Typography.Text type="secondary" style={{ fontSize: '16px', color: '#1d3557' }}>
-                    {formatPrice(item)}
+                <Typography.Title level={5} style={{ margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {item.title}
+                </Typography.Title>
+                <Typography.Text type="secondary" style={{ fontSize: '16px' }}>
+                  {formatPrice(item)}
+                </Typography.Text>
+                {item.location && (
+                  <Typography.Text type="secondary" style={{ display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <EnvironmentOutlined style={{ marginRight: 8 }} />
+                    {item.location}
                   </Typography.Text>
-                  {item.location && (
-                    <Typography.Text type="secondary">
-                      <EnvironmentOutlined style={{ marginRight: 8 }} />
-                      {item.location}
-                    </Typography.Text>
-                  )}
-                </Space>
+                )}
               </Card>
             </Col>
           );
@@ -285,173 +258,85 @@ const Home: React.FC = () => {
   };
 
   if (isLoading) {
-    return <div style={{ minHeight: 420, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement des offres d'emploi..." /></div>;
+    return <div style={{ minHeight: 420, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement..." /></div>;
   }
 
   return (
     <Layout>
-      <Hero onDiscoverClick={handleScrollToServices} />
-      {/* Section Secteurs d'activité */}
-      <div style={{ width: '100vw', maxWidth: '100vw', margin: '40px 0 0 0', padding: '0 32px' }}>
-        <div style={{ background: '#fff', borderRadius: 32, boxShadow: '0 8px 32px #e3e8f7', padding: '48px 0', maxWidth: 1400, margin: '0 auto' }}>
-          <Title level={1} style={{ textAlign: 'center', marginBottom: 16, fontWeight: 700, fontSize: 38 }}>
-            Secteurs d'<span style={{ color: '#1890ff' }}>activité</span>
-          </Title>
-          <Paragraph style={{ textAlign: 'center', fontSize: 18, color: '#222', marginBottom: 32, opacity: 0.85, fontWeight: 500 }}>
-            Découvrez les opportunités professionnelles dans les secteurs les plus dynamiques au Sénégal
-          </Paragraph>
-          <Carousel 
-            autoplay 
-            autoplaySpeed={2500} 
-            dots 
-            slidesToShow={3} 
-            speed={900} 
-            easing="ease-in-out" 
-            responsive={[
-              { 
-                breakpoint: 1200, 
-                settings: { 
-                  slidesToShow: 2,
-                  slidesToScroll: 1
-                } 
-              }, 
-              { 
-                breakpoint: 768, 
-                settings: { 
-                  slidesToShow: 1,
-                  slidesToScroll: 1,
-                  dots: true
-                } 
-              }
-            ]} 
-            style={{ width: '100%', padding: '0 0 32px 0' }} 
-            data-testid="sector-carousel"
-          >
-            {SECTEURS.map((secteur, idx) => (
-              <div key={secteur.id} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 260, padding: '0 8px' }}>
-                <SectorCard color={secteur.couleur}
-                  onClick={() => navigate('/careers')}
-                >
-                  <IconCircle color={secteur.couleur}>
-                    <span>{secteur.icone}</span>
-                  </IconCircle>
-                  <Title level={4} style={{ color: '#1d3557', margin: 0, fontWeight: 700, fontSize: 25, letterSpacing: 0.5, textShadow: '0 2px 8px #fff8' }}>{secteur.nom}</Title>
-                  <Button type="link" style={{ color: secteur.couleur, fontWeight: 600, fontSize: 16, marginTop: 18, display: 'flex', alignItems: 'center' }}>
-                    Explorer ce secteur <ArrowRightOutlined style={{ marginLeft: 6 }} />
-                  </Button>
+      <Content style={{ overflow: 'hidden' }}>
+        <Hero onDiscoverClick={handleScrollToServices} />
+
+        {/* Section Nos Services */}
+        <div ref={servicesRef} style={{ padding: '64px 24px', background: '#f0f2f5' }}>
+          <Row justify="center" style={{ marginBottom: 48, textAlign: 'center' }}>
+            <Col xs={24} md={20} lg={16}>
+              <Title level={2} style={{ color: '#002766', fontWeight: 700, marginBottom: 8 }}>Nos Services</Title>
+              <Paragraph style={{ fontSize: 18, color: '#333' }}>
+                BusinessConnect Sénégal vous offre une gamme complète de services innovants pour propulser votre carrière.
+              </Paragraph>
+            </Col>
+          </Row>
+          <Row gutter={[32, 32]} justify="center">
+            {[
+              { title: "Offres d'emploi", icon: <TeamOutlined style={{ fontSize: 32, color: '#1890ff' }} />, text: "Accédez à des milliers d'offres dans tous les secteurs.", link: '/jobs' },
+              { title: "Créateur de CV", icon: <BookOutlined style={{ fontSize: 32, color: '#52c41a' }} />, text: "Créez un CV professionnel et moderne avec notre générateur.", link: '/cv-generator' },
+              { title: "Fiches métiers", icon: <BulbOutlined style={{ fontSize: 32, color: '#faad14' }} />, text: "Découvrez des informations détaillées sur différents métiers.", link: '/careers' },
+              { title: "Formations", icon: <CrownOutlined style={{ fontSize: 32, color: '#ff4d4f' }} />, text: "Développez vos compétences avec nos programmes de formation.", link: '/formations' },
+              { title: "Marketplace", icon: <ShoppingOutlined style={{ fontSize: 32, color: '#b37feb' }} />, text: "Achetez et vendez des produits et services professionnels.", link: '/marketplace' },
+            ].map(service => (
+              <Col key={service.title} xs={24} sm={12} md={8} lg={8}>
+                <Card hoverable>
+                  <Space direction="vertical" size="middle" align="center" style={{ width: '100%', textAlign: 'center' }}>
+                    {service.icon}
+                    <Title level={4} style={{ margin: 0 }}>{service.title}</Title>
+                    <Paragraph>{service.text}</Paragraph>
+                    <Button type="link" onClick={() => navigate(service.link)}>Découvrir <ArrowRightOutlined /></Button>
+                  </Space>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        </div>
+
+        {/* Section Secteurs d'activité */}
+        <div style={{ padding: '64px 24px' }}>
+          <Title level={2} style={{ textAlign: 'center', marginBottom: 48, color: '#002766', fontWeight: 700 }}>Secteurs d'Activité</Title>
+          <Carousel autoplay autoplaySpeed={3000} dots responsive={[{ breakpoint: 768, settings: { slidesToShow: 1 } }, { breakpoint: 1200, settings: { slidesToShow: 2 } }]} slidesToShow={3} style={{ paddingBottom: '32px' }}>
+            {SECTEURS.map((secteur) => (
+              <div key={secteur.id} style={{ padding: '0 16px' }}>
+                <SectorCard color={secteur.couleur} onClick={() => navigate('/careers')}>
+                  <IconCircle color={secteur.couleur}><span>{secteur.icone}</span></IconCircle>
+                  <Title level={4}>{secteur.nom}</Title>
                 </SectorCard>
               </div>
             ))}
           </Carousel>
         </div>
-      </div>
-      {/* Section Emploi */}
-      <div style={{ width: '100vw', maxWidth: '100vw', margin: '40px 0 0 0', padding: '0 32px' }}>
-        <div style={{ background: '#fff', borderRadius: 32, boxShadow: '0 8px 32px #e3e8f7', padding: '48px 0', maxWidth: 1400, margin: '0 auto' }}>
-          <Typography.Title level={2} style={{ color: '#1d3557', marginBottom: 24 }}>
-            Offres d'emploi récentes
-          </Typography.Title>
-          <Row gutter={[32, 32]}>
-            {isLoading ? (
-              <Col span={24}><div style={{ textAlign: 'center' }}>Chargement...</div></Col>
-            ) : latestJobs.length === 0 ? (
-              <Col span={24}><div style={{ textAlign: 'center', color: '#888' }}>Aucune offre disponible pour le moment.</div></Col>
-            ) : (
-              latestJobs.map((job) => {
-                if (!job || !job.id) {
-                  return null;
-                }
-                return (
-                  <Col xs={24} sm={12} md={8} key={job.id} style={{ display: 'flex', justifyContent: 'center' }}>
-                    <JobCard
-                      job={job}
-                      user={user}
-                      isSubscribed={isPremium}
-                      onPostuler={() => navigate('/jobs/' + job.id)}
-                      onEdit={() => navigate('/jobs/' + job.id + '/edit')}
-                      onDelete={() => navigate('/jobs/' + job.id + '/delete')}
-                      onPublish={() => navigate('/jobs/publish')}
-                      onViewDetails={() => navigate('/jobs/' + job.id)}
-                    />
-                  </Col>
-                );
-              })
-            )}
-          </Row>
-        </div>
-      </div>
-      {/* Section Nos Services Professionnels */}
-      <div style={{ width: '100vw', maxWidth: '100vw', margin: '40px 0 0 0', padding: '0 32px' }}>
-        <div style={{ background: '#fff', borderRadius: 32, boxShadow: '0 8px 32px #e3e8f7', padding: '48px 0', maxWidth: 1400, margin: '0 auto' }}>
-          <Title level={1} style={{ textAlign: 'center', marginBottom: 16 }}>
-            Nos Services <span style={{ color: '#1890ff' }}>Professionnels</span>
-          </Title>
-          <Paragraph style={{ textAlign: 'center', fontSize: 18, marginBottom: 40 }}>
-            BusinessConnect Sénégal vous offre une gamme complète de services innovants pour propulser votre carrière professionnelle.
-          </Paragraph>
+
+        {/* Section Emploi */}
+        <div style={{ padding: '64px 24px', background: '#f0f2f5' }}>
+          <Title level={2} style={{ textAlign: 'center', marginBottom: 48, color: '#002766', fontWeight: 700 }}>Offres d'emploi récentes</Title>
           <Row gutter={[32, 32]} justify="center">
-            <Col xs={24} sm={12} md={8} lg={8}>
-              <Card bordered hoverable className="service-card-bc">
-                <Space direction="vertical" size="middle">
-                  <TeamOutlined style={{ fontSize: 32, color: '#1890ff' }} />
-                  <Title level={3} style={{ margin: 0 }}>Offres d'emploi</Title>
-                  <Paragraph>Accédez à des milliers d'offres d'emploi au Sénégal dans tous les secteurs d'activité.</Paragraph>
-                  <Button type="link" onClick={() => navigate('/jobs')}>Découvrir <ArrowRightOutlined /></Button>
-                </Space>
-              </Card>
-            </Col>
-            <Col xs={24} sm={12} md={8} lg={8}>
-              <Card bordered hoverable className="service-card-bc">
-                <Space direction="vertical" size="middle">
-                  <BookOutlined style={{ fontSize: 32, color: '#52c41a' }} />
-                  <Title level={3} style={{ margin: 0 }}>Créateur de CV</Title>
-                  <Paragraph>Créez un CV professionnel attrayant avec notre générateur de CV intuitif et moderne.</Paragraph>
-                  <Button type="link" onClick={() => navigate('/cv-generator')}>Découvrir <ArrowRightOutlined /></Button>
-                </Space>
-              </Card>
-            </Col>
-            <Col xs={24} sm={12} md={8} lg={8}>
-              <Card bordered hoverable className="service-card-bc">
-                <Space direction="vertical" size="middle">
-                  <BulbOutlined style={{ fontSize: 32, color: '#faad14' }} />
-                  <Title level={3} style={{ margin: 0 }}>Fiches métiers</Title>
-                  <Paragraph>Découvrez des informations détaillées sur différents métiers et secteurs d'activité.</Paragraph>
-                  <Button type="link" onClick={() => navigate('/careers')}>Découvrir <ArrowRightOutlined /></Button>
-                </Space>
-              </Card>
-            </Col>
-            <Col xs={24} sm={12} md={8} lg={8}>
-              <Card bordered hoverable className="service-card-bc">
-                <Space direction="vertical" size="middle">
-                  <CrownOutlined style={{ fontSize: 32, color: '#ff4d4f' }} />
-                  <Title level={3} style={{ margin: 0 }}>Formations</Title>
-                  <Paragraph>Accédez à des programmes de formation pour développer vos compétences professionnelles.</Paragraph>
-                  <Button type="link" onClick={() => navigate('/formations')}>Découvrir <ArrowRightOutlined /></Button>
-                </Space>
-              </Card>
-            </Col>
-            <Col xs={24} sm={12} md={8} lg={8}>
-              <Card bordered hoverable className="service-card-bc">
-                <Space direction="vertical" size="middle">
-                  <ShoppingOutlined style={{ fontSize: 32, color: '#b37feb' }} />
-                  <Title level={3} style={{ margin: 0 }}>Marketplace</Title>
-                  <Paragraph>Achetez et vendez des produits et services professionnels sur notre place de marché.</Paragraph>
-                  <Button type="link" onClick={() => navigate('/marketplace')}>Découvrir <ArrowRightOutlined /></Button>
-                </Space>
-              </Card>
-            </Col>
+            {latestJobs.length > 0 ? latestJobs.map((job) => (
+              <Col key={job.id} xs={24} sm={12} md={8}>
+                <JobCard
+                  job={job}
+                  user={user}
+                  isSubscribed={isPremium}
+                  onViewDetails={() => navigate(`/jobs/${job.id}`)}
+                  onPostuler={() => navigate(`/jobs/${job.id}`)}
+                  onEdit={() => navigate(`/jobs/${job.id}/edit`)}
+                  onDelete={() => navigate(`/jobs/${job.id}/delete`)}
+                  onPublish={() => navigate('/jobs/publish')}
+                />
+              </Col>
+            )) : <Paragraph>Aucune offre d'emploi pour le moment.</Paragraph>}
           </Row>
         </div>
-      </div>
-      {/* Section Abonnements */}
-      <div style={{ width: '100vw', maxWidth: '100vw', margin: '40px 0 0 0', padding: '0 32px' }}>
-        <div style={{ background: '#fff', borderRadius: 32, boxShadow: '0 8px 32px #e3e8f7', padding: '48px 0', maxWidth: 1400, margin: '0 auto' }}>
-          <Title level={1} style={{ textAlign: 'center', marginBottom: 16, fontWeight: 700, fontSize: 38 }}>
-            Nos <span style={{ color: '#1890ff' }}>Abonnements</span>
-          </Title>
-          <Paragraph style={{ textAlign: 'center', fontSize: 18, marginBottom: 40 }}>
-            Choisissez l'abonnement qui correspond le mieux à vos besoins professionnels
-          </Paragraph>
+
+        {/* Section Abonnements */}
+        <div style={{ padding: '64px 24px' }}>
+          <Title level={2} style={{ textAlign: 'center', marginBottom: 48, color: '#002766', fontWeight: 700 }}>Nos Abonnements</Title>
           <Row gutter={[32, 32]} justify="center">
             <Col xs={24} sm={12} md={8}>
               <Card bordered style={{ borderRadius: 16, border: '2px solid #1890ff', minHeight: 420 }}>
@@ -502,178 +387,68 @@ const Home: React.FC = () => {
               </Card>
             </Col>
           </Row>
-          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 32 }}>
-            <Button type="primary" size="large" style={{ background: '#f59e42', borderColor: '#f59e42', borderRadius: 18, fontWeight: 600, minWidth: 260, fontSize: 18 }} onClick={() => navigate('/subscription')}>
-              Voir tous nos abonnements&nbsp;→
-            </Button>
-          </div>
         </div>
-      </div>
-      {/* Section CV Professionnel */}
-      <div style={{ width: '100vw', maxWidth: '100vw', margin: '40px 0 0 0', padding: '0 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', background: 'linear-gradient(90deg, #f7fafc 60%, #e3fcec 100%)', borderRadius: 24, boxShadow: '0 4px 24px #e3e8f7' }}>
-        <div style={{ flex: 1, minWidth: 320, padding: '40px 24px 40px 0' }}>
-          <Title level={2} style={{ color: '#1d3557', marginBottom: 16 }}>Créez un CV professionnel</Title>
-          <Paragraph style={{ fontSize: 18, color: '#333', marginBottom: 24 }}>
-            Notre générateur de CV vous permet de créer un CV attrayant et professionnel en quelques minutes. Choisissez parmi plusieurs modèles et personnalisez-le selon vos besoins.
-          </Paragraph>
-          <ul style={{ fontSize: 16, color: '#222', marginBottom: 32, paddingLeft: 24 }}>
-            <li>✔️ Modèles professionnels conçus pour le marché sénégalais</li>
-            <li>✔️ Personnalisation simple et intuitive</li>
-            <li>✔️ Exportation en format PDF de haute qualité</li>
-            <li>✔️ Conseils professionnels pour chaque section</li>
-          </ul>
-          <Button type="primary" size="large" style={{ borderRadius: 24, fontWeight: 600, transition: 'transform 0.2s, box-shadow 0.2s' }} aria-label="Créer mon CV professionnel" onMouseOver={e => { e.currentTarget.style.transform = 'scale(1.07)'; e.currentTarget.style.boxShadow = '0 8px 32px #b7e4c7'; }} onMouseOut={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = 'none'; }} onClick={() => navigate('/cv-generator')}>
-            Créer mon CV maintenant
-          </Button>
-        </div>
-        <div style={{ flex: 1, minWidth: 320, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 24, position: 'relative' }}>
-          {/* Carré bleu clair en haut à gauche */}
-          <div style={{ position: 'absolute', top: 18, left: 38, width: 220, height: 180, background: '#e3e8f7', borderRadius: 18, zIndex: 1, boxShadow: '0 4px 24px #e3e8f7', opacity: 0.7 }} />
-          {/* Carré beige clair en bas à droite */}
-          <div style={{ position: 'absolute', bottom: 18, right: 38, width: 220, height: 180, background: '#fdf6e3', borderRadius: 18, zIndex: 1, boxShadow: '0 4px 24px #fdf6e3', opacity: 0.7 }} />
-          {/* Image principale */}
-          <img src="/images/cv-hero.jpg" alt="Créer un CV professionnel" style={{ width: 500, maxWidth: '100%', borderRadius: 28, boxShadow: '0 8px 32px #b7e4c7', objectFit: 'cover', background: '#fff', position: 'relative', zIndex: 2 }} />
-        </div>
-      </div>
-      {/* Section Marketplace */}
-      <div style={{ width: '100vw', maxWidth: '100vw', margin: '40px 0 0 0', padding: '0 32px', background: 'linear-gradient(90deg, #f7fafc 60%, #e3e8f7 100%)', borderRadius: 24, boxShadow: '0 4px 24px #e3e8f7' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', padding: '32px 0 16px 0' }}>
-          <Title level={2} style={{ color: '#7c3aed', margin: 0 }}>Marketplace</Title>
-          <div style={{ display: 'flex', gap: 16 }}>
-            <Button type="primary" style={{ background: '#f59e42', borderColor: '#f59e42', fontWeight: 600, borderRadius: 20 }} onClick={() => navigate('/marketplace/create')}>Vendre un service</Button>
-            <Button type="primary" style={{ background: '#2563eb', borderColor: '#2563eb', fontWeight: 600, borderRadius: 20 }} onClick={() => navigate('/marketplace')}>Explorer tout</Button>
-          </div>
-        </div>
-        <div style={{ minHeight: 180, marginTop: 16 }}>
-          <MarketplacePreview />
-        </div>
-      </div>
-      {/* Section BusinessConnect en chiffres */}
-      <div style={{ width: '100vw', maxWidth: '100vw', margin: '40px 0 0 0', padding: '0 32px' }}>
-        <div style={{ background: '#fff', borderRadius: 32, boxShadow: '0 8px 32px #e3e8f7', padding: '48px 0', maxWidth: 1400, margin: '0 auto' }}>
-          <Title level={2} style={{ color: '#1d3557', marginBottom: 32, textAlign: 'center' }}>BusinessConnect en chiffres</Title>
-          <Row gutter={[32, 32]} justify="center">
-            <Col xs={24} sm={12} md={6}>
-              <div style={{
-                borderRadius: 36,
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 60%, #e0f7fa 100%)',
-                boxShadow: '0 12px 40px 0 #1890ff22',
-                border: '2px solid #fff',
-                backdropFilter: 'blur(12px)',
-                textAlign: 'center',
-                padding: '38px 18px 32px 18px',
-                minHeight: 140,
-                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                transition: 'transform 0.25s, box-shadow 0.25s',
-                animation: 'fadeInUp 0.7s 0.1s both',
-              }}>
-                <div style={{ fontSize: 22, color: '#1890ff', marginBottom: 8, fontWeight: 500 }}>Entreprises</div>
-                <div style={{ fontSize: 40, fontWeight: 800, color: '#1890ff', textShadow: '0 2px 12px #1890ff33' }}>
-                  <AnimatedStatistic value={500} color="#1890ff" />
-                </div>
-              </div>
+
+        {/* Section CV Professionnel */}
+        <div style={{ padding: '64px 24px', background: 'linear-gradient(90deg, #f7fafc 60%, #e3fcec 100%)' }}>
+          <Row justify="center" align="middle" gutter={48}>
+            <Col xs={24} md={12}>
+              <Title level={2}>Créez un CV professionnel</Title>
+              <Paragraph>Notre générateur de CV vous permet de créer un CV attrayant en quelques minutes.</Paragraph>
+              <Button type="primary" size="large" onClick={() => navigate('/cv-generator')}>Créer mon CV maintenant</Button>
             </Col>
-            <Col xs={24} sm={12} md={6}>
-              <div style={{
-                borderRadius: 36,
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 60%, #fce4ec 100%)',
-                boxShadow: '0 12px 40px 0 #e91e6333',
-                border: '2px solid #fff',
-                backdropFilter: 'blur(12px)',
-                textAlign: 'center',
-                padding: '38px 18px 32px 18px',
-                minHeight: 140,
-                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                transition: 'transform 0.25s, box-shadow 0.25s',
-                animation: 'fadeInUp 0.7s 0.2s both',
-              }}>
-                <div style={{ fontSize: 22, color: '#e91e63', marginBottom: 8, fontWeight: 500 }}>Offres d'emploi</div>
-                <div style={{ fontSize: 20, fontWeight: 700, color: '#e91e63', textShadow: '0 2px 8px #e91e633', lineHeight: 1.3 }}>De nouvelles offres<br />publiées chaque jour</div>
-              </div>
-            </Col>
-            <Col xs={24} sm={12} md={6}>
-              <div style={{
-                borderRadius: 36,
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 60%, #e8f5e9 100%)',
-                boxShadow: '0 12px 40px 0 #43a04733',
-                border: '2px solid #fff',
-                backdropFilter: 'blur(12px)',
-                textAlign: 'center',
-                padding: '38px 18px 32px 18px',
-                minHeight: 140,
-                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                transition: 'transform 0.25s, box-shadow 0.25s',
-                animation: 'fadeInUp 0.7s 0.3s both',
-              }}>
-                <div style={{ fontSize: 22, color: '#43a047', marginBottom: 8, fontWeight: 500 }}>Membres</div>
-                <div style={{ fontSize: 40, fontWeight: 800, color: '#43a047', textShadow: '0 2px 12px #43a04733' }}>
-                  <AnimatedStatistic value={10000} color="#43a047" />
-                </div>
-              </div>
-            </Col>
-            <Col xs={24} sm={12} md={6}>
-              <div style={{
-                borderRadius: 36,
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 60%, #fff3e0 100%)',
-                boxShadow: '0 12px 40px 0 #ff980033',
-                border: '2px solid #fff',
-                backdropFilter: 'blur(12px)',
-                textAlign: 'center',
-                padding: '38px 18px 32px 18px',
-                minHeight: 140,
-                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                transition: 'transform 0.25s, box-shadow 0.25s',
-                animation: 'fadeInUp 0.7s 0.4s both',
-              }}>
-                <div style={{ fontSize: 22, color: '#ff9800', marginBottom: 8, fontWeight: 500 }}>Secteurs</div>
-                <div style={{ fontSize: 40, fontWeight: 800, color: '#ff9800', textShadow: '0 2px 12px #ff980033' }}>
-                  <AnimatedStatistic value={15} color="#ff9800" />
-                </div>
-              </div>
+            <Col xs={24} md={12}>
+              <img src="/images/cv-hero.jpg" alt="Créer un CV professionnel" style={{ width: '100%', borderRadius: 16 }} />
             </Col>
           </Row>
         </div>
-      </div>
-      {/* Section Ils nous font confiance */}
-      <div style={{ width: '100vw', maxWidth: '100vw', margin: '40px 0 0 0', padding: '0 32px' }}>
-        <div style={{ background: '#fff', borderRadius: 32, boxShadow: '0 8px 32px #e3e8f7', padding: '48px 0', maxWidth: 1400, margin: '0 auto' }}>
-          <Title level={2} style={{ color: '#1d3557', marginBottom: 32, textAlign: 'center' }}>Ils nous font confiance</Title>
+
+        {/* Section Marketplace */}
+        <div style={{ padding: '64px 24px' }}>
+          <Title level={2} style={{ textAlign: 'center', marginBottom: 48, color: '#002766', fontWeight: 700 }}>Marketplace</Title>
+          <MarketplacePreview />
+        </div>
+
+        {/* Section Chiffres */}
+        <div style={{ padding: '64px 24px', background: '#f0f2f5' }}>
+          <Title level={2} style={{ textAlign: 'center', marginBottom: 48, color: '#002766', fontWeight: 700 }}>BusinessConnect en chiffres</Title>
+          <Row gutter={[32, 32]} justify="center" style={{ textAlign: 'center' }}>
+            <Col xs={12} md={6}><Statistic title="Entreprises" value={500} formatter={() => <AnimatedStatistic value={500} />} /></Col>
+            <Col xs={12} md={6}><Statistic title="Offres" value={1000} valueStyle={{ color: '#e91e63' }} formatter={() => <AnimatedStatistic value={1000} />} /></Col>
+            <Col xs={12} md={6}><Statistic title="Membres" value={10000} formatter={() => <AnimatedStatistic value={10000} />} /></Col>
+            <Col xs={12} md={6}><Statistic title="Secteurs" value={15} valueStyle={{ color: '#ff9800' }} formatter={() => <AnimatedStatistic value={15} />} /></Col>
+          </Row>
+        </div>
+
+        {/* Section Témoignages */}
+        <div style={{ padding: '64px 24px' }}>
+          <Title level={2} style={{ textAlign: 'center', marginBottom: 48, color: '#002766', fontWeight: 700 }}>Ils nous font confiance</Title>
           <Row gutter={[32, 32]} justify="center">
             {TESTIMONIALS.map((t, idx) => (
-              <Col xs={24} sm={12} md={12} lg={6} key={idx}>
-                <Card
-                  style={{ borderRadius: 20, boxShadow: '0 4px 24px #e3e8f7', border: 'none', textAlign: 'center', padding: 0 }}
-                  styles={{ body: { padding: 32 } }}
-                >
-                  <img src={t.img} alt={t.name} style={{ width: 90, height: 90, borderRadius: '50%', objectFit: 'cover', marginBottom: 18, border: '4px solid #e0e7ff' }} />
-                  <Title level={4} style={{ margin: 0, color: '#2563eb' }}>{t.name}</Title>
-                  <Text type="secondary" style={{ fontWeight: 600, fontSize: 16 }}>{t.role}</Text>
-                  <Paragraph style={{ marginTop: 18, fontSize: 17, color: '#333', fontStyle: 'italic' }}>
-                    "{t.text}"
-                  </Paragraph>
+              <Col xs={24} sm={12} md={6} key={idx}>
+                <Card style={{ textAlign: 'center' }}>
+                  <Avatar size={64} src={t.img} />
+                  <Title level={5} style={{ marginTop: 16 }}>{t.name}</Title>
+                  <Text type="secondary">{t.role}</Text>
+                  <Paragraph style={{ marginTop: 8 }}>"{t.text}"</Paragraph>
                 </Card>
               </Col>
             ))}
           </Row>
         </div>
-      </div>
-      {/* Section Appel à l'action */}
-      <div style={{ width: '100vw', maxWidth: '100vw', background: '#2056a8', color: '#fff', padding: '64px 0 56px 0', margin: '40px auto 0 auto', textAlign: 'center' }}>
-        <Typography.Title level={2} style={{ color: '#fff', marginBottom: 24, fontSize: 36, fontWeight: 700 }}>
-          Prêt à booster votre carrière professionnelle ?
-        </Typography.Title>
-        <Typography.Paragraph style={{ color: '#fff', fontSize: 20, marginBottom: 36, maxWidth: 700, margin: '0 auto' }}>
-          Rejoignez BusinessConnect Sénégal dès aujourd'hui et accédez à toutes nos fonctionnalités pour développer votre réseau professionnel.
-        </Typography.Paragraph>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 24, flexWrap: 'wrap' }}>
-          <Button type="primary" size="large" style={{ background: '#ffa940', borderColor: '#ffa940', color: '#fff', fontWeight: 600, borderRadius: 10, minWidth: 200, fontSize: 18 }} onClick={() => navigate('/register')}>
-            S'inscrire gratuitement
-          </Button>
-          <Button type="default" size="large" style={{ background: '#fff', color: '#2056a8', fontWeight: 600, borderRadius: 10, minWidth: 180, fontSize: 18, border: 'none' }} onClick={() => navigate('/contact')}>
-            Contactez-nous
-          </Button>
+
+        {/* Section Appel à l'action */}
+        <div style={{ padding: '64px 24px', background: '#2056a8', color: '#fff', textAlign: 'center' }}>
+          <Title level={2} style={{ color: '#fff' }}>Prêt à booster votre carrière ?</Title>
+          <Paragraph style={{ color: '#fff', fontSize: 16 }}>
+            Rejoignez BusinessConnect Sénégal dès aujourd'hui.
+          </Paragraph>
+          <Space>
+            <Button type="primary" size="large" onClick={() => navigate('/register')}>S'inscrire gratuitement</Button>
+            <Button size="large" onClick={() => navigate('/contact')}>Contactez-nous</Button>
+          </Space>
         </div>
-      </div>
+      </Content>
     </Layout>
   );
 };

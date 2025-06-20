@@ -54,9 +54,7 @@ const BackgroundImage = styled.div`
   background-image: url(${img5});
   background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
   z-index: 0;
-  opacity: 1;
 `;
 
 // Correction du Overlay pour qu'il soit plus léger
@@ -66,7 +64,7 @@ const Overlay = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, #00152966 40%, #00336666 100%); // opacité 0.4
+  background: linear-gradient(90deg, rgba(0, 21, 41, 0.7) 40%, rgba(0, 51, 102, 0.5) 100%);
   z-index: 2;
 `;
 
@@ -100,12 +98,14 @@ const ContentWrapper = styled.div`
   justify-content: space-between;
   z-index: 5;
   overflow: hidden;
-  @media (max-width: 600px) {
+  @media (max-width: 900px) {
     flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    padding: 48px 0;
     width: 100% !important;
     max-width: 100% !important;
     min-width: 0 !important;
-    padding: 0;
     overflow-x: hidden !important;
   }
 `;
@@ -116,8 +116,8 @@ const TextContent = styled.div`
   padding-left: 48px;
   padding-right: 24px;
   @media (max-width: 900px) {
-    padding-left: 16px;
-    padding-right: 16px;
+    padding: 0 16px;
+    flex: 0;
   }
 `;
 
@@ -139,10 +139,9 @@ import img9 from '../assets/9-immeuble.jpg';
 import img10 from '../assets/10-pompier.jpg';
 import img11 from '../assets/11-science.jpg';
 import img12 from '../assets/12-medical.jpg';
-import img13 from '../assets/13-business.jpg';
 
 const images = [
-  img1, img2, img3, img4, img5, img6, img7, img8, img9, img10, img11, img12, img13
+  img1, img2, img3, img4, img5, img6, img7, img8, img9, img10, img11, img12
 ];
 
 interface HeroProps {
@@ -156,8 +155,10 @@ const getBlurValue = () => window.innerWidth < 700 ? '4px' : '8px';
 const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
   return (
     <HeroContainer>
+      <BackgroundImage />
       <StaticBackground />
-      <GeometricBackground style={{ zIndex: 2, position: 'absolute' }} />
+      <Overlay />
+      <GeometricBackground style={{ zIndex: 3, position: 'absolute' }} />
       <ContentWrapper>
         <TextContent>
           <motion.div
@@ -178,8 +179,8 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
           </motion.div>
         </TextContent>
         <AnimatedMosaic>
-          {images.map((src, index) => (
-            <MosaicImage key={index} src={src} alt={`Inspiration ${index + 1}`} />
+          {images.slice(0, 9).map((src, index) => (
+            <MosaicImage key={index} src={src} alt={`Inspiration ${index + 1}`} loading="lazy" />
           ))}
         </AnimatedMosaic>
       </ContentWrapper>
@@ -205,12 +206,20 @@ const AnimatedMosaic = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
-  width: 50%;
-  max-width: 600px;
+  width: 45%;
+  max-width: 550px;
+  margin-right: 48px;
   animation: slide-in 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
   
   @media (max-width: 900px) {
-    display: none; // On cache la mosaïque sur mobile pour la performance
+    grid-template-columns: repeat(2, 1fr);
+    width: 90%;
+    max-width: 400px;
+    margin: 32px auto 0;
+
+    & > img:nth-of-type(n + 5) {
+      display: none;
+    }
   }
 
   @keyframes slide-in {
@@ -230,13 +239,16 @@ const MosaicImage = styled.img`
   height: 120px;
   object-fit: cover;
   border-radius: 8px;
-  opacity: 0.8;
+  opacity: 0.85;
   transition: transform 0.3s, opacity 0.3s;
   animation: fade-in 1s ease-out forwards;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
 
   &:hover {
     opacity: 1;
     transform: scale(1.05);
+    z-index: 10;
+    position: relative;
   }
 
   @keyframes fade-in {
