@@ -194,23 +194,29 @@ const Home: React.FC = () => {
       return <div style={{ textAlign: 'center', color: '#888' }}>Aucun service disponible pour le moment.</div>;
     }
 
-    const formatPrice = (price: any) => {
-      if (typeof price === 'number') {
-        return `${price.toLocaleString()} FCFA`;
+    const formatPrice = (item: MarketplaceItem) => {
+      switch (item.priceType) {
+        case 'fixed':
+          return item.price ? `${item.price.toLocaleString()} FCFA` : 'Prix non spécifié';
+        case 'range':
+          if (item.minPrice && item.maxPrice) {
+            return `${item.minPrice.toLocaleString()} - ${item.maxPrice.toLocaleString()} FCFA`;
+          }
+          return 'Fourchette de prix non définie';
+        case 'negotiable':
+          return 'Prix négociable';
+        default:
+          // Sécurité pour les anciens articles qui n'ont peut-être pas de priceType
+          if (typeof item.price === 'number') {
+            return `${item.price.toLocaleString()} FCFA`;
+          }
+          return 'Prix non spécifié';
       }
-      if (typeof price === 'object' && price.min && price.max) {
-        return `${price.min.toLocaleString()} - ${price.max.toLocaleString()} FCFA`;
-      }
-      if (price === 'Négociable') {
-        return 'Prix négociable';
-      }
-      return 'Prix non spécifié';
     };
 
     return (
       <div style={{ display: 'flex', gap: 16 }}>
         {marketplaceItems.slice(0, 3).map((item) => {
-          console.log('[Debug] Rendering Marketplace Item:', JSON.stringify(item, null, 2));
           if (!item || !item.id || !item.title) return null;
 
           return (
@@ -241,7 +247,7 @@ const Home: React.FC = () => {
                   {item.title}
                 </Typography.Title>
                 <Typography.Text type="secondary" style={{ fontSize: '16px', color: '#1d3557' }}>
-                  {formatPrice(item.price)}
+                  {formatPrice(item)}
                 </Typography.Text>
                 {item.location && (
                   <Typography.Text type="secondary">
@@ -305,7 +311,6 @@ const Home: React.FC = () => {
               <Col span={24}><div style={{ textAlign: 'center', color: '#888' }}>Aucune offre disponible pour le moment.</div></Col>
             ) : (
               latestJobs.map((job) => {
-                console.log('[Debug] Rendering Job:', JSON.stringify(job, null, 2));
                 if (!job || !job.id) {
                   return null;
                 }
