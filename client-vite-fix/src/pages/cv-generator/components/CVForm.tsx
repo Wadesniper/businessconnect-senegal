@@ -181,12 +181,12 @@ const CVForm: React.FC<CVFormProps> = ({ data, onChange, isPremium }) => {
         </Upload>
       </Form.Item>
 
-      <Space direction="horizontal" size={16} style={{ display: 'flex' }}>
+      <Space direction="horizontal" size={16} style={{ display: 'flex', flexWrap: 'wrap' }}>
         <Form.Item
           name={['personalInfo', 'firstName']}
           label="Prénom"
           rules={[{ required: true }]}
-          style={{ flex: 1 }}
+          style={{ flex: '1 1 200px', minWidth: '200px' }}
         >
           <Input />
         </Form.Item>
@@ -195,7 +195,7 @@ const CVForm: React.FC<CVFormProps> = ({ data, onChange, isPremium }) => {
           name={['personalInfo', 'lastName']}
           label="Nom"
           rules={[{ required: true }]}
-          style={{ flex: 1 }}
+          style={{ flex: '1 1 200px', minWidth: '200px' }}
         >
           <Input />
         </Form.Item>
@@ -209,32 +209,60 @@ const CVForm: React.FC<CVFormProps> = ({ data, onChange, isPremium }) => {
         <Input />
       </Form.Item>
 
-      <Space direction="horizontal" size={16} style={{ display: 'flex' }}>
-      <Form.Item
-        name={['personalInfo', 'email']}
-        label="Email"
+      <Space direction="horizontal" size={16} style={{ display: 'flex', flexWrap: 'wrap' }}>
+        <Form.Item
+          name={['personalInfo', 'email']}
+          label="Email"
           rules={[{ required: true, type: 'email' }]}
-          style={{ flex: 1 }}
-      >
-        <Input />
-      </Form.Item>
+          style={{ flex: '1 1 200px', minWidth: '200px' }}
+        >
+          <Input />
+        </Form.Item>
 
-      <Form.Item
-        name={['personalInfo', 'phone']}
-        label="Téléphone"
-          rules={[{ required: true }]}
-          style={{ flex: 1 }}
-      >
-        <Input />
-      </Form.Item>
+        <Form.Item
+          name={['personalInfo', 'phone']}
+          label="Téléphone"
+          style={{ flex: '1 1 200px', minWidth: '200px' }}
+        >
+          <Input />
+        </Form.Item>
       </Space>
 
-      <Form.Item
-        name={['personalInfo', 'address']}
-        label="Adresse"
-      >
-        <Input />
-      </Form.Item>
+      <Space direction="horizontal" size={16} style={{ display: 'flex', flexWrap: 'wrap' }}>
+        <Form.Item
+          name={['personalInfo', 'address']}
+          label="Adresse"
+          style={{ flex: '1 1 300px', minWidth: '250px' }}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          name={['personalInfo', 'city']}
+          label="Ville"
+          style={{ flex: '1 1 150px', minWidth: '150px' }}
+        >
+          <Input />
+        </Form.Item>
+      </Space>
+
+      <Space direction="horizontal" size={16} style={{ display: 'flex', flexWrap: 'wrap' }}>
+        <Form.Item
+          name={['personalInfo', 'country']}
+          label="Pays"
+          style={{ flex: '1 1 150px', minWidth: '150px' }}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          name={['personalInfo', 'postalCode']}
+          label="Code postal"
+          style={{ flex: '1 1 120px', minWidth: '120px' }}
+        >
+          <Input />
+        </Form.Item>
+      </Space>
 
       <Form.Item
         name={['personalInfo', 'summary']}
@@ -662,11 +690,11 @@ const CVForm: React.FC<CVFormProps> = ({ data, onChange, isPremium }) => {
               </Space>
             ))}
 
-      <Form.Item>
+            <Form.Item>
               <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
                 Ajouter un centre d'intérêt
-        </Button>
-      </Form.Item>
+              </Button>
+            </Form.Item>
           </>
         )}
       </Form.List>

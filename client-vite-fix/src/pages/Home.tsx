@@ -95,7 +95,8 @@ const TESTIMONIALS = [
 
 // Ajout des composants stylés premium pour les cartes secteurs
 const SectorCard = styled.div<{ color: string }>`
-  width: 320px;
+  width: 100%;
+  max-width: 320px;
   min-height: 220px;
   border-radius: 40px;
   background: linear-gradient(135deg, rgba(255,255,255,0.96) 60%, ${props => props.color}11 100%);
@@ -106,12 +107,19 @@ const SectorCard = styled.div<{ color: string }>`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 36px;
-  margin: 0 12px;
+  padding: 36px 24px;
+  margin: 0 auto;
   transition: transform 0.28s cubic-bezier(.4,2,.6,1), box-shadow 0.28s, border 0.28s;
   cursor: pointer;
   opacity: 1;
   position: relative;
+  
+  @media (max-width: 768px) {
+    padding: 24px 16px;
+    min-height: 200px;
+    border-radius: 32px;
+  }
+  
   &:hover {
     transform: scale(1.07) translateY(-6px);
     box-shadow: 0 24px 64px 0 ${props => props.color}44, 0 2px 16px #0002;
@@ -132,6 +140,13 @@ const IconCircle = styled.div<{ color: string }>`
   box-shadow: 0 0 0 8px ${props => props.color}22, 0 8px 32px ${props => props.color}33;
   position: relative;
   transition: box-shadow 0.3s, filter 0.3s;
+  
+  @media (max-width: 768px) {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 16px;
+  }
+  
   ${SectorCard}:hover & {
     box-shadow: 0 0 0 16px ${props => props.color}33, 0 12px 48px ${props => props.color}55;
     filter: brightness(1.15) drop-shadow(0 2px 12px ${props => props.color}99);
@@ -141,6 +156,11 @@ const IconCircle = styled.div<{ color: string }>`
     color: #fff;
     filter: drop-shadow(0 2px 8px ${props => props.color}88);
     transition: transform 0.3s;
+    
+    @media (max-width: 768px) {
+      font-size: 32px;
+    }
+    
     ${SectorCard}:hover & {
       transform: scale(1.13) rotate(-6deg);
     }
@@ -215,51 +235,52 @@ const Home: React.FC = () => {
     };
 
     return (
-      <div style={{ display: 'flex', gap: 16 }}>
+      <Row gutter={[16, 16]}>
         {marketplaceItems.slice(0, 3).map((item) => {
           if (!item || !item.id || !item.title) return null;
 
           return (
-            <Card
-              key={item.id}
-              hoverable
-              cover={
-                Array.isArray(item.images) && item.images[0] ? (
-                  <img
-                    alt={item.title}
-                    src={item.images[0]}
-                    style={{ height: 200, objectFit: 'cover', borderTopLeftRadius: 18, borderTopRightRadius: 18 }}
-                  />
-                ) : null
-              }
-              style={{ 
-                width: 'calc(33.33% - 16px)', 
-                borderRadius: 18, 
-                boxShadow: '0 4px 24px #e3e8f7', 
-                border: 'none', 
-                minHeight: 180, 
-                background: '#fff' 
-              }}
-              onClick={() => navigate(`/marketplace/${item.id}`)}
-            >
-              <Space direction="vertical" size={8} style={{ width: '100%' }}>
-                <Typography.Title level={4} style={{ margin: 0, color: '#457b9d' }}>
-                  {item.title}
-                </Typography.Title>
-                <Typography.Text type="secondary" style={{ fontSize: '16px', color: '#1d3557' }}>
-                  {formatPrice(item)}
-                </Typography.Text>
-                {item.location && (
-                  <Typography.Text type="secondary">
-                    <EnvironmentOutlined style={{ marginRight: 8 }} />
-                    {item.location}
+            <Col xs={24} sm={12} md={8} key={item.id}>
+              <Card
+                hoverable
+                cover={
+                  Array.isArray(item.images) && item.images[0] ? (
+                    <img
+                      alt={item.title}
+                      src={item.images[0]}
+                      style={{ height: 200, objectFit: 'cover', borderTopLeftRadius: 18, borderTopRightRadius: 18 }}
+                    />
+                  ) : null
+                }
+                style={{
+                  borderRadius: 18,
+                  boxShadow: '0 4px 24px #e3e8f7',
+                  border: 'none',
+                  minHeight: 180,
+                  background: '#fff',
+                  height: '100%',
+                }}
+                onClick={() => navigate(`/marketplace/${item.id}`)}
+              >
+                <Space direction="vertical" size={8} style={{ width: '100%' }}>
+                  <Typography.Title level={4} style={{ margin: 0, color: '#457b9d' }}>
+                    {item.title}
+                  </Typography.Title>
+                  <Typography.Text type="secondary" style={{ fontSize: '16px', color: '#1d3557' }}>
+                    {formatPrice(item)}
                   </Typography.Text>
-                )}
-              </Space>
-            </Card>
+                  {item.location && (
+                    <Typography.Text type="secondary">
+                      <EnvironmentOutlined style={{ marginRight: 8 }} />
+                      {item.location}
+                    </Typography.Text>
+                  )}
+                </Space>
+              </Card>
+            </Col>
           );
         })}
-      </div>
+      </Row>
     );
   };
 
@@ -279,9 +300,35 @@ const Home: React.FC = () => {
           <Paragraph style={{ textAlign: 'center', fontSize: 18, color: '#222', marginBottom: 32, opacity: 0.85, fontWeight: 500 }}>
             Découvrez les opportunités professionnelles dans les secteurs les plus dynamiques au Sénégal
           </Paragraph>
-          <Carousel autoplay autoplaySpeed={2500} dots slidesToShow={3} speed={900} easing="ease-in-out" responsive={[{ breakpoint: 900, settings: { slidesToShow: 2 } }, { breakpoint: 600, settings: { slidesToShow: 1 } }]} style={{ width: '100%', padding: '0 0 32px 0' }} data-testid="sector-carousel">
+          <Carousel 
+            autoplay 
+            autoplaySpeed={2500} 
+            dots 
+            slidesToShow={3} 
+            speed={900} 
+            easing="ease-in-out" 
+            responsive={[
+              { 
+                breakpoint: 1200, 
+                settings: { 
+                  slidesToShow: 2,
+                  slidesToScroll: 1
+                } 
+              }, 
+              { 
+                breakpoint: 768, 
+                settings: { 
+                  slidesToShow: 1,
+                  slidesToScroll: 1,
+                  dots: true
+                } 
+              }
+            ]} 
+            style={{ width: '100%', padding: '0 0 32px 0' }} 
+            data-testid="sector-carousel"
+          >
             {SECTEURS.map((secteur, idx) => (
-              <div key={secteur.id} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 260 }}>
+              <div key={secteur.id} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 260, padding: '0 8px' }}>
                 <SectorCard color={secteur.couleur}
                   onClick={() => navigate('/careers')}
                 >

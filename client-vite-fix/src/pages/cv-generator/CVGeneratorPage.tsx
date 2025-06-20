@@ -59,36 +59,37 @@ const CVGeneratorPage: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: '24px' }}>
+    <div style={{ padding: '16px', maxWidth: '100%' }}>
       {!hasActiveSubscription && (
         <div style={{
           background: 'linear-gradient(90deg, #fffbe6 0%, #f7faff 100%)',
           border: '1.5px solid #ffe58f',
           borderRadius: 16,
-          padding: '18px 12px',
-          margin: '0 auto 32px auto',
-          maxWidth: 700,
+          padding: '16px 12px',
+          margin: '0 auto 24px auto',
+          maxWidth: '100%',
           textAlign: 'center',
           color: '#ad8b00',
           fontWeight: 600,
-          fontSize: 17,
+          fontSize: '16px',
           boxShadow: '0 2px 8px #ffe58f33',
         }}>
-          <span>Pour créer et télécharger votre CV, <span style={{color:'#1890ff', fontWeight:700}}>abonnez-vous</span> à la plateforme !</span>
-          <br />
+          <div style={{ marginBottom: '8px' }}>
+            <span>Pour créer et télécharger votre CV, <span style={{color:'#1890ff', fontWeight:700}}>abonnez-vous</span> à la plateforme !</span>
+          </div>
           <button
             style={{
-              marginTop: 10,
               background: '#1890ff',
               color: '#fff',
               border: 'none',
               borderRadius: 8,
-              padding: '8px 22px',
+              padding: '10px 24px',
               fontWeight: 700,
-              fontSize: 16,
+              fontSize: '16px',
               cursor: 'pointer',
               boxShadow: '0 2px 8px #1890ff22',
               transition: 'background 0.2s',
+              minWidth: '120px',
             }}
             onClick={() => navigate('/subscription')}
           >
@@ -96,26 +97,32 @@ const CVGeneratorPage: React.FC = () => {
           </button>
         </div>
       )}
-      <Title level={2}>Générateur de CV</Title>
-      <Title level={3} style={{ marginTop: '24px' }}>
+      <Title level={2} style={{ fontSize: '28px', marginBottom: '16px' }}>Générateur de CV</Title>
+      <Title level={3} style={{ marginTop: '20px', fontSize: '20px', marginBottom: '24px' }}>
         Choisissez un modèle professionnel selon votre secteur et votre style
       </Title>
-      <Row gutter={[16, 16]}>
+      <Row gutter={[12, 16]}>
         {CV_TEMPLATES.map(template => (
           <Col xs={24} sm={12} md={8} lg={6} key={template.id}>
             <Card
               hoverable
-              cover={<img alt={template.name} src={template.thumbnail} style={{ width: '100%', height: 220, objectFit: 'cover' }} />}
+              cover={<img alt={template.name} src={template.thumbnail} style={{ width: '100%', height: 200, objectFit: 'cover' }} />}
               onClick={() => setSelectedTemplate(template as Template)}
-              style={{ border: selectedTemplate?.id === template.id ? '2px solid #1890ff' : undefined }}
+              style={{ 
+                border: selectedTemplate?.id === template.id ? '2px solid #1890ff' : undefined,
+                borderRadius: '12px',
+                overflow: 'hidden'
+              }}
             >
               <Card.Meta
-                title={template.name + (template.category ? ' (' + template.category + ')' : '')}
+                title={<div style={{ fontSize: '16px', fontWeight: 600, marginBottom: '8px' }}>
+                  {template.name + (template.category ? ' (' + template.category + ')' : '')}
+                </div>}
                 description={<>
-                  <div><b>Secteur :</b> {template.category}</div>
-                  <div style={{ marginTop: 8 }}>{template.description}</div>
+                  <div style={{ marginBottom: '8px' }}><b>Secteur :</b> {template.category}</div>
+                  <div style={{ marginBottom: '8px', fontSize: '14px' }}>{template.description}</div>
                   {template.features && (
-                    <ul style={{ margin: 0, paddingLeft: 16 }}>
+                    <ul style={{ margin: 0, paddingLeft: 16, fontSize: '13px' }}>
                       {template.features.map((f, i) => <li key={i}>{f}</li>)}
                     </ul>
                   )}
@@ -130,7 +137,14 @@ const CVGeneratorPage: React.FC = () => {
           type="primary"
           size="large"
           onClick={handleStartCV}
-          style={{ marginTop: '32px' }}
+          style={{ 
+            marginTop: '24px', 
+            width: '100%',
+            height: '48px',
+            fontSize: '16px',
+            fontWeight: 600,
+            borderRadius: '8px'
+          }}
         >
           Commencer mon CV avec ce modèle
         </Button>
@@ -139,18 +153,28 @@ const CVGeneratorPage: React.FC = () => {
           type="default"
           size="large"
           disabled
-          style={{ marginTop: '32px', background: '#f7faff', color: '#bbb', border: '1.5px solid #eee', cursor: 'not-allowed' }}
+          style={{ 
+            marginTop: '24px', 
+            width: '100%',
+            height: '48px',
+            fontSize: '16px',
+            background: '#f7faff', 
+            color: '#bbb', 
+            border: '1.5px solid #eee', 
+            cursor: 'not-allowed',
+            borderRadius: '8px'
+          }}
         >
           Abonnez-vous pour créer votre CV
         </Button>
       )}
 
       {/* Section Mes CVs */}
-      <Title level={3} style={{ marginTop: '48px' }}>
+      <Title level={3} style={{ marginTop: '40px', fontSize: '24px', marginBottom: '20px' }}>
         Mes CVs
       </Title>
       {myCVs.length === 0 ? (
-        <Empty description="Vous n'avez pas encore créé de CV" style={{ margin: '40px 0' }} />
+        <Empty description="Vous n'avez pas encore créé de CV" style={{ margin: '32px 0' }} />
       ) : (
         <List
           grid={{ gutter: 16, xs: 1, sm: 2, md: 3, lg: 4 }}
@@ -164,6 +188,7 @@ const CVGeneratorPage: React.FC = () => {
                   <DownloadOutlined key="download" onClick={() => handleDownloadCV(cv.id)} />,
                   <ShareAltOutlined key="share" onClick={() => handleShareCV(cv.id)} />
                 ]}
+                style={{ borderRadius: '12px' }}
               >
                 <Card.Meta
                   title={cv.personalInfo.fullName}
