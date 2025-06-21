@@ -124,7 +124,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                       position: 'relative',
                       background: '#fff',
                       width: '100%',
-                      aspectRatio: '210 / 297',
+                      height: 340,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
