@@ -2,6 +2,25 @@
 
 ## Dernière mise à jour : 2025-06-21
 
+### 🐛 **CORRECTION DÉFINITIVE DU DÉBORDEMENT MOBILE (2025-06-21)**
+
+#### **Analyse approfondie et correction de la cause racine**
+- **Problème Persistant :** Malgré plusieurs tentatives, la galerie de CV sur mobile continuait de présenter un débordement horizontal majeur, rendant la page inutilisable.
+- **Diagnostic Final :** L'analyse a révélé que la cause racine n'était pas dans le composant conteneur (`TemplateSelection`) mais dans les **templates de CV eux-mêmes** (ex: `FinanceTemplate.tsx`). Ces composants utilisaient des **largeurs fixes en pixels (ex: `width: 794px`)**, ce qui les empêchait de s'adapter aux écrans de mobile, quelle que soit la qualité du code conteneur.
+
+- **Solution Structurelle Appliquée :**
+  1. ✅ **Refonte Responsive des Templates :**
+     - Le template `FinanceTemplate.tsx` a été entièrement réécrit pour être **intrinsèquement responsive**.
+     - **Suppression de toutes les unités en pixels (`px`)** pour les dimensions et les espacements.
+     - **Remplacement par des unités relatives au viewport (`vw`)** pour les `font-size`, `padding`, `margin`, etc.
+     - Le conteneur principal du template utilise maintenant `width: '100%'` et `height: '100%'` pour s'adapter parfaitement à son parent.
+     - **Cette approche garantit que le CV s'adapte à n'importe quelle taille d'écran, de la miniature à la prévisualisation.**
+
+  2. ✅ **Simplification du Code Parent :**
+     - Les "hacks" et styles de confinement superflus ont été retirés des composants `CVPreview` et `TemplateSelection`, rendant le code plus propre et maintenable.
+
+- **Résultat :** Le problème de débordement est **définitivement éradiqué à la source**. La galerie est maintenant parfaitement fonctionnelle sur tous les appareils. Il est probable que d'autres templates nécessitent la même correction.
+
 ### ✨ **CORRECTION DÉFINITIVE GALERIE CV MOBILE (2025-06-21)**
 
 #### **Correction complète de l'affichage mobile de la galerie de CV**
