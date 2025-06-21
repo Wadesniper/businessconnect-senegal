@@ -262,34 +262,44 @@ const Home: React.FC = () => {
     };
 
     return (
-        <div style={{ padding: '4rem 2rem', background: '#fff' }}>
-            <Title level={2} style={{ textAlign: 'center', marginBottom: '3rem' }}>Marketplace</Title>
-            <Row gutter={[16, 16]}>
+        <div style={{ padding: '4rem 2rem', background: '#f8f9fa' }}>
+            <Title level={2} style={{ textAlign: 'center', marginBottom: '3rem', color: '#002766', fontWeight: 700 }}>Derniers ajouts sur le Marketplace</Title>
+            <Row gutter={[24, 24]}>
                 {marketplaceItems.slice(0, 3).map((item) => {
                     if (!item?.id) return null;
                     return (
-                        <Col xs={24} sm={12} md={8} key={item.id}>
+                        <Col xs={24} sm={12} md={8} key={item.id} style={{ display: 'flex' }}>
                             <Card
                                 hoverable
+                                style={{
+                                    width: '100%',
+                                    borderRadius: '16px',
+                                    boxShadow: '0 8px 24px rgba(0,0,0,0.05)',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                }}
                                 cover={
+                                  <div style={{ overflow: 'hidden', height: 220, borderRadius: '16px 16px 0 0' }}>
                                     <LazyImage
                                         alt={item.title}
                                         src={item.images?.[0] || '/placeholder.png'}
-                                        style={{ height: 200, objectFit: 'cover' }}
+                                        style={{ height: '100%', width: '100%', objectFit: 'cover' }}
                                     />
+                                  </div>
                                 }
+                                bodyStyle={{ flex: 1, padding: '1.5rem', textAlign: 'center' }}
                                 onClick={() => navigate(`/marketplace/${item.id}`)}
                             >
                                 <Card.Meta
-                                    title={item.title}
-                                    description={formatPrice(item)}
+                                    title={<Title level={5} style={{ marginBottom: '0.25rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.title}</Title>}
+                                    description={<Text style={{ color: '#1ec773', fontWeight: 'bold', fontSize: '1rem' }}>{formatPrice(item)}</Text>}
                                 />
                             </Card>
                         </Col>
                     );
                 })}
             </Row>
-            <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+            <div style={{ textAlign: 'center', marginTop: '3rem' }}>
                 <Button type="primary" size="large" onClick={() => navigate('/marketplace')} style={{ background: '#1ec773', borderColor: '#1ec773' }}>
                     Explorer le Marketplace
                 </Button>
@@ -454,15 +464,31 @@ const Home: React.FC = () => {
         {/* Section Témoignages */}
         <div style={{ padding: '4rem 2rem', backgroundColor: '#fff' }}>
           <Title level={2} style={{ textAlign: 'center', marginBottom: '3rem' }}>Ils nous font confiance</Title>
-          <Row gutter={[16, 16]} justify="center">
+          <Row gutter={[24, 24]} justify="center">
             {TESTIMONIALS.map((testimonial, index) => (
-              <Col xs={24} sm={12} md={8} lg={6} key={index}>
-                <Card style={{ borderRadius: '16px', boxShadow: '0 8px 24px rgba(0,0,0,0.05)', height: '100%', padding: '1rem' }}>
-                  <Space direction="vertical" align="center" style={{ width: '100%', textAlign: 'center' }}>
-                      <Avatar size={80} src={testimonial.img} />
-                      <Title level={5} style={{ marginTop: '1rem' }}>{testimonial.name}</Title>
-                      <Text type="secondary">{testimonial.role}</Text>
-                      <Paragraph style={{ fontStyle: 'italic', marginTop: '1rem' }}>"{testimonial.text}"</Paragraph>
+              <Col xs={24} sm={12} md={8} lg={6} key={index} style={{ display: 'flex' }}>
+                <Card 
+                  style={{ 
+                    borderRadius: '20px', 
+                    boxShadow: '0 10px 40px rgba(0,0,0,0.08)',
+                    border: '1px solid #e8e8e8',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    width: '100%'
+                  }}
+                  bodyStyle={{
+                      padding: '2rem',
+                      flex: 1,
+                      display: 'flex',
+                  }}
+                >
+                  <Space direction="vertical" align="center" style={{ width: '100%', textAlign: 'center', justifyContent: 'flex-start' }}>
+                      <Avatar size={80} src={testimonial.img} style={{ border: '4px solid #fff', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'}} />
+                      <Title level={4} style={{ marginTop: '1rem', marginBottom: 0, fontSize: '1.1rem' }}>{testimonial.name}</Title>
+                      <Text type="secondary" style={{ marginBottom: '1rem' }}>{testimonial.role}</Text>
+                      <Paragraph style={{ fontStyle: 'italic', color: '#555', fontSize: '0.95rem' }}>
+                        “{testimonial.text}”
+                      </Paragraph>
                   </Space>
                 </Card>
               </Col>
@@ -472,7 +498,7 @@ const Home: React.FC = () => {
 
         {/* Section Secteurs d'activité */}
          <div style={{ padding: '64px 24px', background: '#f8f9fa' }}>
-           <Title level={2} style={{ textAlign: 'center', marginBottom: 48, color: '#002766', fontWeight: 700 }}>Découvrez par Secteurs</Title>
+           <Title level={2} style={{ textAlign: 'center', marginBottom: 48, color: '#002766', fontWeight: 700 }}>Secteurs d'activité</Title>
            <Carousel autoplay autoplaySpeed={4000} dots={false} responsive={[{ breakpoint: 768, settings: { slidesToShow: 1 } }, { breakpoint: 1200, settings: { slidesToShow: 3 } }]} slidesToShow={4} style={{ paddingBottom: '32px' }}>
              {SECTEURS.map((secteur) => (
                <div key={secteur.id} style={{ padding: '0 16px' }}>
