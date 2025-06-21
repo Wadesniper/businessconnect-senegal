@@ -89,8 +89,6 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
 
   const previewStyle = isMiniature
     ? {
-        width: '100%',
-        height: '100%',
         transform: `scale(${autoScale * (zoom / 100)})`,
         transformOrigin: 'top left',
         background: '#fff',
@@ -118,12 +116,36 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
         padding: 0,
       }}
     >
-      <div style={{ width: '100%', height: '100%', fontSize: 11, overflow: 'hidden', padding: 0, margin: 0 }}>
-        <TemplateComponent
-          data={safeData}
-          customization={customization}
-          isMiniature={true}
-        />
+      {/* Wrapper responsive qui force l'adaptation */}
+      <div 
+        style={{ 
+          width: '100%', 
+          height: '100%', 
+          overflow: 'hidden',
+          position: 'relative',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        {/* Conteneur du template avec transformation responsive */}
+        <div
+          style={{
+            width: baseA4Width,
+            height: baseA4Height,
+            transform: 'scale(0.6)',
+            transformOrigin: 'center center',
+            position: 'relative',
+            background: '#fff',
+            overflow: 'hidden',
+          }}
+        >
+          <TemplateComponent
+            data={safeData}
+            customization={customization}
+            isMiniature={true}
+          />
+        </div>
       </div>
     </div>
   ) : (

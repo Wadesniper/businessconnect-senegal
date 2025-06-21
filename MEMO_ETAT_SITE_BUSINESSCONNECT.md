@@ -2,6 +2,23 @@
 
 ## Dernière mise à jour : 2025-06-21
 
+### 🎯 **CORRECTION PRÉCISE LARGEUR CARTES CV MOBILE (2025-06-21)**
+
+#### **Correction ciblée du débordement des cartes sur mobile**
+- **Problème Identifié :** Les cartes de CV dans la galerie dépassaient de leur conteneur sur mobile, créant un débordement horizontal et une mauvaise expérience utilisateur.
+- **Cause Racine :** Les cartes Ant Design n'avaient pas de contraintes de largeur appropriées sur mobile, permettant aux contenus internes de déborder.
+- **Solution Appliquée (Précise et Ciblée) :**
+  1. ✅ **Correction du composant `TemplateSelection.tsx`** :
+     - Ajout de `maxWidth: '100%'` et `boxSizing: 'border-box'` sur les cartes
+     - Ajout de `maxWidth: '100%'` et `overflow: 'hidden'` sur le `bodyStyle` des cartes
+     - Ces modifications garantissent que les cartes restent dans leur conteneur sur tous les écrans
+  2. ✅ **Nettoyage du CSS `TemplateSelection.module.css`** :
+     - Suppression des règles CSS trop agressives avec `!important`
+     - Conservation uniquement des corrections essentielles pour mobile
+     - Maintien des animations et effets visuels sur desktop
+- **Impact :** Les cartes de CV sont maintenant parfaitement contenues dans leur espace sur mobile, sans débordement. L'affichage desktop reste inchangé.
+- **Précision :** Aucune modification des templates de CV eux-mêmes, aucune perturbation du backend ou du frontend existant.
+
 ### 🐛 **CORRECTION DÉFINITIVE DU DÉBORDEMENT MOBILE (2025-06-21)**
 
 #### **Analyse approfondie et correction de la cause racine**

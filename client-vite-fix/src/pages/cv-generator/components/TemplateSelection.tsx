@@ -216,9 +216,11 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                   overflow: 'hidden',
                   background: '#fff',
                   width: '100%',
+                  maxWidth: '100%',
                   display: 'flex',
                   flexDirection: 'column',
-                  height: '100%'
+                  height: '100%',
+                  boxSizing: 'border-box'
                 }}
                 bodyStyle={{ 
                   padding: '12px', 
@@ -226,7 +228,9 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                   flexDirection: 'column', 
                   flex: 1, 
                   minHeight: 0,
-                  height: '100%'
+                  height: '100%',
+                  maxWidth: '100%',
+                  overflow: 'hidden'
                 }}
               >
                 <div style={{ flex: 1, minHeight: 0, overflow: 'hidden', marginBottom: 12 }}>

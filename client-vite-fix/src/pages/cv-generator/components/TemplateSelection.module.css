@@ -50,113 +50,62 @@
   }
 }
 
-/* Responsive mobile - Corrections spécifiques */
+/* Responsive mobile - Corrections essentielles */
 @media (max-width: 768px) {
   .cvMiniature {
-    transform: scale(0.8) translateY(0) !important;
-    max-width: 100% !important;
-    overflow: hidden !important;
-    width: 100% !important;
-  }
-  
-  .cvMiniature:hover {
-    transform: scale(0.85) translateY(-2px) !important;
-  }
-  
-  /* Correction pour éviter le débordement horizontal */
-  .ant-card {
-    margin: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow: hidden !important;
-  }
-  
-  .ant-card-cover {
-    overflow: hidden !important;
-    max-width: 100% !important;
-  }
-  
-  /* Correction des filtres sur mobile */
-  .ant-input-search {
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-  
-  .ant-select {
-    width: 100% !important;
-    max-width: 100% !important;
+    max-width: 100%;
+    overflow: hidden;
   }
   
   /* Correction de la grille sur mobile */
   .ant-col {
-    padding: 0 6px !important;
-    max-width: 100% !important;
-    overflow: hidden !important;
+    padding: 0 6px;
+    max-width: 100%;
   }
   
   /* Correction de la hauteur des cartes sur mobile */
   .ant-card-cover {
-    height: auto !important;
+    height: auto;
     min-height: 200px;
     max-height: 280px;
-    overflow: hidden !important;
+    overflow: hidden;
   }
   
   /* Correction du modal sur mobile */
   .ant-modal {
-    margin: 10px !important;
-    max-width: calc(100vw - 20px) !important;
+    margin: 10px;
+    max-width: calc(100vw - 20px);
   }
   
   .ant-modal-content {
-    border-radius: 12px !important;
+    border-radius: 12px;
   }
   
   .ant-modal-body {
-    padding: 12px !important;
-  }
-  
-  /* Force le confinement de tous les éléments */
-  * {
-    max-width: 100% !important;
-    box-sizing: border-box !important;
+    padding: 12px;
   }
 }
 
 /* Correction pour les très petits écrans */
 @media (max-width: 480px) {
   .cvMiniature {
-    transform: scale(0.7) !important;
-    max-width: 100% !important;
-    overflow: hidden !important;
-  }
-  
-  .cvMiniature:hover {
-    transform: scale(0.75) !important;
+    max-width: 100%;
+    overflow: hidden;
   }
   
   .ant-card-cover {
     min-height: 180px;
     max-height: 240px;
-    overflow: hidden !important;
+    overflow: hidden;
   }
   
   /* Réduction des espacements */
   .ant-row {
-    margin: 0 -4px !important;
+    margin: 0 -4px;
   }
   
   .ant-col {
-    padding: 0 4px !important;
-    max-width: 100% !important;
-    overflow: hidden !important;
-  }
-  
-  /* Force le confinement absolu */
-  .ant-card,
-  .ant-card-cover,
-  .ant-card-body {
-    max-width: 100% !important;
-    overflow: hidden !important;
+    padding: 0 4px;
+    max-width: 100%;
   }
 } 
