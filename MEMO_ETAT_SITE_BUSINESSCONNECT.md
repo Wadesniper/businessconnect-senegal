@@ -1263,3 +1263,8 @@ Dernière mise à jour : migration complète réalisée, site prêt pour la prod
 - **Cause :** Une modification précédente avait supprimé les définitions des données utilisées pour afficher les sections dynamiques (Services, Abonnements, Témoignages, etc.).
 - **Solution :** Réintégration et définition statique de toutes les données nécessaires directement dans le composant `Home.tsx`. Cela garantit que le composant est autonome et ne dépend plus de variables externes qui pourraient être manquantes.
 - **Impact :** La page d'accueil est de nouveau fonctionnelle et stable. Aucune régression, aucune fonctionnalité supprimée. Le site complet est restauré.
+
+### ✨ **NETTOYAGE GALERIE CV (2025-06-21)**
+
+- **Action :** Suppression d'un modèle de CV ("Window") qui était un doublon du modèle "Art".
+- **Impact :** La galerie de modèles est plus propre et ne présente plus de redondance. La maintenance est simplifiée.

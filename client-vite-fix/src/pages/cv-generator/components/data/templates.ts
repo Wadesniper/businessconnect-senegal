@@ -16,7 +16,6 @@ import AgroTemplate from '../templates/AgroTemplate';
 import HumanTemplate from '../templates/HumanTemplate';
 import BankTemplate from '../templates/BankTemplate';
 import TechModernTemplate from '../templates/TechModernTemplate';
-import WindowTemplate from '../templates/WindowTemplate';
 import { DEMO_PROFILES } from '../../CVPreviewGallery';
 import financePreview from '../../../../assets/cv-templates/finance-preview.png';
 import marketingPreview from '../../../../assets/cv-templates/marketing-preview.png';
@@ -303,21 +302,8 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     category: 'Tech',
     thumbnail: techModernPreview,
     previewImage: techModernPreview,
-    features: ['Design épuré', 'Sections projets', 'Palette tech'],
-    profileImage: '/images/avatars/man-4.png',
+    features: ['Design épuré', 'Forte hiérarchie visuelle', 'Mise en page moderne'],
+    profileImage: '/images/avatars/woman-1.png',
     sampleData: DEMO_PROFILES.tech,
-  },
-  {
-    id: 'window',
-    name: 'Window',
-    component: WindowTemplate,
-    description: 'CV moderne avec effet de fenêtre',
-    premium: true,
-    category: 'Créatif',
-    thumbnail: artPreview,
-    previewImage: artPreview,
-    features: ['Effet de fenêtre', 'Design moderne', 'Mise en avant des compétences'],
-    profileImage: '/images/avatars/woman-5.png',
-    sampleData: DEMO_PROFILES.art,
   },
 ]; 
