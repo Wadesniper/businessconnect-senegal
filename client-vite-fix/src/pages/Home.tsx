@@ -21,7 +21,7 @@ import {
 } from '@ant-design/icons';
 import { useNavigate, Link } from 'react-router-dom';
 import { JobService } from '../services/jobService';
-import type { Job } from '../types/job';
+import type { Job, JobData } from '../types/job';
 import { marketplaceService } from '../services/marketplaceService';
 import type { MarketplaceItem } from '../services/marketplaceService';
 import { useSpring, animated } from 'react-spring';
@@ -60,10 +60,10 @@ const StatsSection = () => {
     threshold: 0.2,
   });
 
-  const stats = [
+  const stats: { value?: number; label: string; textValue?: string }[] = [
     { value: 500, label: 'Entreprises' },
-    { value: 1000, label: 'Offres d\'emploi' },
-    { value: 2500, label: 'Candidats' },
+    { label: 'Des offres d\'emploi', textValue: 'Chaque jour' },
+    { value: 10000, label: 'Utilisateurs' },
     { value: 50, label: 'Partenaires' },
   ];
 
@@ -84,7 +84,10 @@ const StatsSection = () => {
               >
               <Statistic
                 title={<span style={{fontSize: 'clamp(1rem, 4vw, 1.1rem)', color: '#555', fontWeight: 500}}>{stat.label}</span>}
-                valueRender={() => <AnimatedStatistic value={stat.value} color="#1ec773" startAnimation={inView} />}
+                valueRender={() => stat.textValue ? 
+                    <span style={{ color: '#1ec773', fontWeight: 800, fontSize: 'clamp(2rem, 5vw, 2.5rem)' }}>{stat.textValue}</span> : 
+                    <AnimatedStatistic value={stat.value!} color="#1ec773" startAnimation={inView} />
+                }
               />
             </Card>
           </Col>
@@ -208,7 +211,7 @@ const IconCircle = styled.div<{ color: string }>`
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const servicesRef = useRef<HTMLDivElement>(null);
-  const [jobs, setJobs] = useState<Job[]>([]);
+  const [jobs, setJobs] = useState<JobData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [marketplaceItems, setMarketplaceItems] = useState<MarketplaceItem[]>([]);
   const { user } = useAuth();
@@ -299,6 +302,7 @@ const Home: React.FC = () => {
     <Layout>
       <Hero onDiscoverServicesClick={handleScrollToServices} />
       <Content>
+        <StatsSection />
         {/* Section Nos Services */}
         <div ref={servicesRef} style={{ padding: '64px 24px', background: '#fff' }}>
             <Row justify="center" style={{ marginBottom: 48, textAlign: 'center' }}>
@@ -415,14 +419,14 @@ const Home: React.FC = () => {
             <Row justify="center" align="middle" gutter={[32, 32]}>
                 <Col xs={24} md={12} style={{ textAlign: 'center' }}>
                     <motion.div initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.5 }} transition={{ duration: 0.7 }}>
-                        <LazyImage src="/images/cv-creator-showcase.png" alt="Créateur de CV" style={{ maxWidth: '100%', borderRadius: '16px', boxShadow: '0 16px 40px rgba(0,0,0,0.1)' }} />
+                        <LazyImage src="/images/cv-hero.jpg" alt="Créateur de CV" style={{ maxWidth: '100%', borderRadius: '16px', boxShadow: '0 16px 40px rgba(0,0,0,0.1)' }} />
                     </motion.div>
                 </Col>
                 <Col xs={24} md={12}>
                     <motion.div initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.5 }} transition={{ duration: 0.7 }}>
                         <Title level={2}>Créez un CV qui se démarque</Title>
                         <Paragraph>Notre outil intuitif vous permet de créer des CV professionnels et modernes en quelques clics. Choisissez parmi plusieurs modèles, personnalisez-le et téléchargez-le en PDF.</Paragraph>
-                        <Button type="primary" size="large" onClick={() => navigate('/cv-generator')} style={{ background: '#1ec773', borderColor: '#1ec773' }}>Commencer gratuitement</Button>
+                        <Button type="primary" size="large" onClick={() => navigate('/cv-generator')} style={{ background: '#1ec773', borderColor: '#1ec773' }}>Créer un CV</Button>
                     </motion.div>
                 </Col>
             </Row>
@@ -447,8 +451,6 @@ const Home: React.FC = () => {
 
         <MarketplacePreview />
 
-        <StatsSection />
-        
         {/* Section Témoignages */}
         <div style={{ padding: '4rem 2rem', backgroundColor: '#fff' }}>
           <Title level={2} style={{ textAlign: 'center', marginBottom: '3rem' }}>Ils nous font confiance</Title>
