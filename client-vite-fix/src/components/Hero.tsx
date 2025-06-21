@@ -146,14 +146,14 @@ const images = [
 ];
 
 interface HeroProps {
-  onDiscoverClick?: () => void;
+  onDiscoverServicesClick?: () => void;
 }
 
 // --- OPTIM HERO ---
 // Blur adaptatif (mobile)
 const getBlurValue = () => window.innerWidth < 700 ? '4px' : '8px';
 
-const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
+const Hero: React.FC<HeroProps> = ({ onDiscoverServicesClick }) => {
   return (
     <HeroContainer>
       <BackgroundImage />
@@ -173,7 +173,7 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverClick }) => {
             <Paragraph style={{ color: 'white', fontSize: '18px', marginBottom: '30px' }}>
               Formez-vous, créez votre CV, trouvez un emploi ou recrutez dans un écosystème numérique innovant dédié au marché de l'emploi sénégalais.
             </Paragraph>
-            <StyledButton type="primary" size="large" onClick={onDiscoverClick}>
+            <StyledButton type="primary" size="large" onClick={onDiscoverServicesClick}>
               Découvrir nos services
               <ArrowRightOutlined />
             </StyledButton>

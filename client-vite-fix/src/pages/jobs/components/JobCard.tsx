@@ -1,118 +1,130 @@
 import React from 'react';
-import LockIcon from '@mui/icons-material/Lock';
+import { useNavigate } from 'react-router-dom';
+import { Card, Tag, Typography, Button, Avatar } from 'antd';
+import { EnvironmentOutlined, ClockCircleOutlined, BankOutlined, EditOutlined, DeleteOutlined, EyeOutlined, LockOutlined } from '@ant-design/icons';
+import type { JobData as Job } from '../../../types/job';
+import styled from '@emotion/styled';
+import LazyImage from '../../../components/LazyImage';
+import { useAuth } from '../../../context/AuthContext';
+
+const { Title, Text, Paragraph } = Typography;
 
 interface JobCardProps {
-  job: any;
-  user: any;
-  isSubscribed: boolean;
-  onPostuler: (jobId: string) => void;
-  onEdit: (jobId: string) => void;
-  onDelete: (jobId: string) => void;
-  onPublish: () => void;
-  onViewDetails: (jobId: string) => void;
+  job: Job;
+  isPremium?: boolean;
+  onEdit?: (jobId: string) => void;
+  onDelete?: (jobId:string) => void;
 }
 
-const JobCard: React.FC<JobCardProps> = ({ job, user, isSubscribed, onPostuler, onEdit, onDelete, onPublish, onViewDetails }) => {
-  // Sécurisation : si job est null ou undefined, on ne rend rien pour éviter les erreurs.
+const StyledCard = styled(Card)`
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, box-shadow 0.2s;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  }
+
+  .ant-card-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+  }
+`;
+
+const CardHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+`;
+
+const CardContent = styled.div`
+  flex-grow: 1;
+`;
+
+const CardFooter = styled.div`
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const JobCard: React.FC<JobCardProps> = ({ job, isPremium, onEdit, onDelete }) => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
   if (!job) {
     return null;
   }
 
+  const {
+    id,
+    title = 'Titre non disponible',
+    company = 'Entreprise non spécifiée',
+    location = 'Lieu non spécifié',
+    description = 'Pas de description.',
+    companyLogo,
+    type,
+    sector,
+    employerId,
+  } = job;
+  
+  const isOwner = user && employerId === user.id;
   const isAdmin = user?.role === 'admin';
-  const isEmployer = user?.role === 'employeur';
-  const isOwner = user && job && job.createdBy === user.id;
 
-  // Sécurisation des propriétés de l'objet job
-  const title = job.title || 'Titre non disponible';
-  const company = job.company || 'Entreprise non spécifiée';
-  const location = job.location || 'Lieu non spécifié';
-  const description = job.description || 'Pas de description.';
-  const companyLogo = job.companyLogo;
-  const jobType = job.type;
-  const sector = job.sector;
+  const handleViewDetails = () => {
+    if (isPremium || isOwner || isAdmin) {
+        navigate(`/jobs/${id}`);
+    } else {
+        navigate('/subscription');
+    }
+  };
 
   return (
-    <div style={{
-      border: '1px solid #e3e8f7',
-      borderRadius: 16,
-      boxShadow: '0 2px 12px #e3e8f7',
-      padding: 24,
-      background: '#fff',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 12,
-      minHeight: 320,
-      maxWidth: 340,
-      justifyContent: 'space-between',
-      height: '100%'
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-        {companyLogo ? (
-          <img src={companyLogo} alt="logo" style={{ width: 56, height: 56, borderRadius: 12, objectFit: 'cover', background: '#f5f5f5' }} />
-        ) : (
-          <div style={{ width: 56, height: 56, borderRadius: 12, background: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, color: '#aaa' }}>🏢</div>
+    <StyledCard hoverable>
+        <CardHeader>
+            {companyLogo ? (
+                <Avatar src={companyLogo} size={50} />
+            ) : (
+                <Avatar icon={<BankOutlined />} size={50} />
+            )}
+            <div>
+                <Title level={5} style={{ marginBottom: 0, lineHeight: 1.2 }} ellipsis={{rows: 2}}>{title}</Title>
+                <Text type="secondary">{company}</Text>
+            </div>
+        </CardHeader>
+      <CardContent>
+        <Paragraph ellipsis={{ rows: 3, expandable: false }} style={{ marginBottom: 12 }}>
+            {description}
+        </Paragraph>
+        <div>
+          {location && <Tag icon={<EnvironmentOutlined />} color="blue">{location}</Tag>}
+          {type && <Tag icon={<ClockCircleOutlined />} color="green">{type}</Tag>}
+          {sector && <Tag color="purple">{sector}</Tag>}
+        </div>
+      </CardContent>
+      <CardFooter>
+        <Button 
+            type="primary" 
+            block 
+            onClick={handleViewDetails} 
+            icon={isPremium || isOwner || isAdmin ? <EyeOutlined /> : <LockOutlined />}
+            style={{ background: '#1ec773', borderColor: '#1ec773' }}
+        >
+          {isPremium || isOwner || isAdmin ? 'Voir les détails' : 'Accès Premium'}
+        </Button>
+        {(isOwner || isAdmin) && onEdit && onDelete && (
+            <div style={{display: 'flex', gap: '8px'}}>
+                <Button block icon={<EditOutlined />} onClick={() => onEdit(id)}>Modifier</Button>
+                <Button block danger icon={<DeleteOutlined />} onClick={() => onDelete(id)}>Supprimer</Button>
+            </div>
         )}
-        <div style={{ flex: 1 }}>
-          <div style={{ fontWeight: 700, fontSize: 20, color: '#1d3557' }}>{title}</div>
-          <div style={{ color: '#888', fontWeight: 500 }}>{company}</div>
-        </div>
-      </div>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, margin: '8px 0' }}>
-        <span style={{ background: '#e3e8f7', borderRadius: 8, padding: '2px 10px', fontSize: 14 }}>{location}</span>
-        {jobType && <span style={{ background: '#fce4ec', borderRadius: 8, padding: '2px 10px', fontSize: 14 }}>{jobType}</span>}
-        {sector && <span style={{ background: '#e8f5e9', borderRadius: 8, padding: '2px 10px', fontSize: 14 }}>{sector}</span>}
-      </div>
-      <div style={{ color: '#333', fontSize: 15, margin: '8px 0', flex: 1 }}>
-        {description.length > 120 ? description.slice(0, 120) + '…' : description}
-      </div>
-      {/* BOUTON CONSULTER */}
-      <button
-        style={{
-          background: isSubscribed ? '#1890ff' : '#f5f5f5',
-          color: isSubscribed ? '#fff' : '#aaa',
-          border: 'none',
-          borderRadius: 8,
-          padding: '12px 0',
-          fontWeight: 700,
-          fontSize: 15,
-          cursor: isSubscribed ? 'pointer' : 'not-allowed',
-          width: '100%',
-          minHeight: 44,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 8
-        }}
-        onClick={() => {
-          if (isSubscribed) {
-            onViewDetails(job.id);
-          } else {
-            window.location.href = '/subscription';
-          }
-        }}
-        aria-label={isSubscribed ? 'Consulter cette offre' : 'Abonnement requis pour consulter'}
-      >
-        {!isSubscribed && <LockIcon style={{ fontSize: 18, color: '#aaa' }} />}
-        Consulter
-      </button>
-      {/* BOUTONS ADMIN/EMPLOYEUR */}
-      {(isAdmin || (isEmployer && isOwner)) && (
-        <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-          <button
-            style={{ background: '#fff', color: '#52c41a', border: '1px solid #52c41a', borderRadius: 8, padding: '8px 12px', fontWeight: 600, fontSize: 15, cursor: 'pointer', flex: 1 }}
-            onClick={onEdit ? () => onEdit(job.id) : undefined}
-          >
-            Modifier
-          </button>
-          <button
-            style={{ background: '#fff', color: '#ff4d4f', border: '1px solid #ff4d4f', borderRadius: 8, padding: '8px 12px', fontWeight: 600, fontSize: 15, cursor: 'pointer', flex: 1 }}
-            onClick={onDelete ? () => onDelete(job.id) : undefined}
-          >
-            Supprimer
-          </button>
-        </div>
-      )}
-    </div>
+      </CardFooter>
+    </StyledCard>
   );
 };
 
