@@ -276,7 +276,7 @@
 
 #### **Fichiers modifiés :**
 - `client-vite-fix/src/pages/marketplace/MarketplaceItemPage.tsx` - Refonte complète de l'interface, correction de la logique et des fonctionnalités.
-- `client-vite-fix/src/services/marketplaceService.ts` - Mise à jour du type `MarketplaceItem`.
+- `client-vite-fix/src/services/marketplaceService.ts` - Logs debug + types corrigés.
 
 #### **Statut :** ✅ **EXPÉRIENCE UTILISATEUR AMÉLIORÉE SUR LE MARKETPLACE.** La page est maintenant plus sécurisée, fonctionnelle et agréable à utiliser.
 
@@ -584,8 +584,8 @@ Le projet vise à migrer une application existante de MongoDB vers Supabase (Pos
   - Configuration optimisée pour Railway
   - Installation native des dépendances
 - Simplification du déploiement :
-  - Configuration via Procfile
-  - Optimisation du package.json
+  - Utilisation des standards Heroku/Node.js
+  - Configuration du heroku-postbuild
   - Gestion native des dépendances
   - Build plus fiable
 - Maintien de la qualité :
@@ -644,23 +644,6 @@ Le projet vise à migrer une application existante de MongoDB vers Supabase (Pos
   - Structure complète préservée
   - Pas de version minimaliste
   - Stabilité accrue du déploiement
-
-#### 2025-06-02 (Suite - Configuration Nixpacks)
-- Configuration explicite de nixpacks :
-  - Configuration détaillée dans railway.json
-  - Création du fichier nixpacks.toml dédié
-  - Définition claire des phases de build
-  - Optimisation des commandes d'installation
-- Amélioration de la stabilité :
-  - Configuration plus précise et robuste
-  - Meilleure gestion des dépendances
-  - Processus de build plus fiable
-  - Déploiement plus stable
-- Maintien de la qualité :
-  - Conservation de toutes les fonctionnalités
-  - Structure complète préservée
-  - Pas de version minimaliste
-  - Installation fiable des packages
 
 #### 2025-06-02 (Suite - Retour à Docker)
 - Retour à une configuration Docker complète :

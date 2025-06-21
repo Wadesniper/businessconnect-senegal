@@ -250,34 +250,70 @@ const Home: React.FC = () => {
           text: `Grâce à BusinessConnect, j'ai pu recruter rapidement des profils qualifiés pour mon entreprise. La plateforme facilite la mise en relation avec des candidats motivés et sérieux, ce qui a considérablement simplifié notre processus de recrutement.`
       },
       {
-          img: manHeadphones,
-          name: 'Cheikh Ndiaye',
-          role: 'Chercheur d\'emploi',
-          text: `Après plusieurs mois de recherche, c'est sur BusinessConnect que j'ai enfin trouvé un emploi qui correspond à mes compétences. Les offres sont variées et la navigation sur le site est très intuitive. Je recommande vivement à tous les jeunes diplômés !`
-      },
-      {
           img: womanGlasses,
-          name: 'Awa Sarr',
+          name: 'Aïssatou Gueye',
           role: 'Étudiante',
-          text: `En tant qu'étudiante, j'ai pu trouver un stage enrichissant grâce à BusinessConnect. J'ai aussi pu élargir mon réseau professionnel et découvrir de nombreuses opportunités adaptées à mon profil. C'est un vrai tremplin pour débuter sa carrière.`
+          text: `Le générateur de CV de BusinessConnect est incroyable ! J'ai créé un CV moderne et professionnel en quelques minutes seulement. Cela m'a vraiment aidée à me démarquer auprès des employeurs.`
       },
       {
-          img: womanHijab,
-          name: 'Fatou Bâ',
-          role: 'Annonceuse',
-          text: `Publier mes offres sur BusinessConnect m'a permis de recevoir rapidement des candidatures pertinentes. J'apprécie la simplicité de la plateforme et la qualité des profils proposés. C'est devenu un outil indispensable pour mon activité.`
+          img: manHeadphones,
+          name: 'Ibrahima Fall',
+          role: 'Entrepreneur',
+          text: `Le marketplace de BusinessConnect est une excellente initiative. J'y ai trouvé des prestataires de services fiables pour mon entreprise et j'ai même pu y proposer mes propres services. C'est un écosystème très dynamique.`
+      },
+      {
+        img: womanHijab,
+        name: 'Fatima Sow',
+        role: 'Professionnelle en reconversion',
+        text: `Les fiches métiers sont une mine d'or d'informations. Elles m'ont permis de mieux comprendre les opportunités de carrière et de choisir une voie qui me correspond vraiment. Un grand merci à BusinessConnect pour cette ressource précieuse.`
       }
   ];
-  
-  const secteurs = [
-    { id: 1, nom: 'Informatique', icone: '💻', couleur: '#1890ff' },
-    { id: 2, nom: 'Finance', icone: '💰', couleur: '#52c41a' },
-    { id: 3, nom: 'Santé', icone: '❤️', couleur: '#ff4d4f' },
-    { id: 4, nom: 'Éducation', icone: '🎓', couleur: '#faad14' },
-    { id: 5, nom: 'Marketing', icone: '📈', couleur: '#b37feb' },
-    { id: 6, nom: 'Industrie', icone: '🏭', couleur: '#1890ff' },
-    { id: 7, nom: 'Services', icone: '🤝', couleur: '#52c41a' },
-    { id: 8, nom: 'Agriculture', icone: '🌱', couleur: '#faad14' },
+
+  const sectors = [
+    { name: 'Informatique', icon: '💻', color: '#2db7f5' },
+    { name: 'Commerce', icon: '🛒', color: '#87d068' },
+    { name: 'Industrie', icon: '🏭', color: '#f50' },
+    { name: 'Santé', icon: '❤️', color: '#ff4d4f' },
+    { name: 'Finance', icon: '💰', color: '#ffd700' },
+    { name: 'Services', icon: '🤝', color: '#b37feb' },
+    { name: 'Éducation', icon: '🎓', color: '#3b5998' },
+    { name: 'Tourisme', icon: '✈️', color: '#1ec773' },
+  ];
+
+  const subscriptions = [
+    { 
+      title: 'Étudiant', 
+      price: '2 500 F CFA', 
+      features: [
+        'Accès à toutes les offres',
+        'Création de CV professionnels',
+        'Accès aux formations',
+        'Postuler en illimité',
+        'Publier sur le Marketplace',
+        'Publier des offres d\'emploi'
+      ]
+    },
+    {
+      title: 'Annonceur Marketplace',
+      price: '5 000 F CFA',
+      features: [
+        'Tous les avantages Étudiant',
+        'Visibilité accrue',
+        'Messagerie professionnelle',
+        'Notifications en temps réel'
+      ]
+    },
+    {
+      title: 'Employeur',
+      price: '9 000 F CFA',
+      features: [
+        'Tous les avantages Annonceur',
+        'Accès à la CVthèque',
+        'Tableau de bord de suivi',
+        'Statistiques des offres',
+        'Support prioritaire'
+      ]
+    }
   ];
 
   const latestJobs = jobs
@@ -519,9 +555,9 @@ const Home: React.FC = () => {
             <Title level={2} style={{ textAlign: 'center', marginBottom: 48, color: '#002766', fontWeight: 700 }}>Secteurs d'activité</Title>
           </motion.div>
           <Carousel autoplay autoplaySpeed={4000} dots={false} responsive={[{ breakpoint: 768, settings: { slidesToShow: 1 } }, { breakpoint: 1200, settings: { slidesToShow: 3 } }]} slidesToShow={4} style={{ paddingBottom: '32px' }}>
-            {secteurs.map((secteur, index) => (
+            {sectors.map((sector, index) => (
               <motion.div
-                key={secteur.id}
+                key={index}
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.2 }}
@@ -529,9 +565,9 @@ const Home: React.FC = () => {
                 style={{padding: '10px'}}
               >
                 <div style={{ padding: '0 16px' }}>
-                  <SectorCard color={secteur.couleur} onClick={() => navigate('/careers')}>
-                    <IconCircle color={secteur.couleur}><span>{secteur.icone}</span></IconCircle>
-                    <Title level={4}>{secteur.nom}</Title>
+                  <SectorCard color={sector.color} onClick={() => navigate('/careers')}>
+                    <IconCircle color={sector.color}><span>{sector.icon}</span></IconCircle>
+                    <Title level={4}>{sector.name}</Title>
                   </SectorCard>
                 </div>
               </motion.div>
