@@ -2,6 +2,21 @@
 
 ## Dernière mise à jour : 2025-06-21
 
+### 롤 **RESTAURATION ET CORRECTIF CSS ROBUSTE (2025-06-21)**
+
+#### **Rollback d'une solution instable et application d'un correctif ciblé**
+- **Incident :** Une tentative de correction du responsive mobile via la bibliothèque `react-helmet-async` (pour forcer un viewport de bureau) a provoqué une **panne complète du site**. La cause était une incompatibilité de la bibliothèque avec la configuration de build Vite (SSR/SSG) du projet.
+- **Action Immédiate :** Toutes les modifications liées à `react-helmet-async` ont été **intégralement annulées** pour restaurer immédiatement la stabilité du site. Le `HelmetProvider` a été retiré de `main.tsx` et le composant `Helmet` de `TemplateSelection.tsx`.
+- **Nouvelle Solution (Stable et CSS-Only) :**
+  1. ✅ **Confinement CSS dans `TemplateSelection.tsx`** :
+     - Un `div` avec une classe `cvPreviewWrapper` a été ajouté autour de chaque composant `CVPreview` dans la galerie.
+  2. ✅ **Redimensionnement dynamique dans `TemplateSelection.module.css`** :
+     - Via des **media queries**, ce `wrapper` applique une transformation CSS (`transform: scale(...)`) au `CVPreview` sur les écrans mobiles.
+     - Le `scale` (ex: `0.4`) réduit visuellement la taille de l'aperçu pour qu'il s'insère parfaitement dans les limites de sa carte, sans déborder.
+     - Le `transform-origin: top center` garantit que l'aperçu reste bien centré verticalement et horizontalement pendant sa réduction.
+
+- **Impact :** Le problème de débordement des CV sur mobile est résolu de manière **fiable, isolée et sans risque** pour le reste de l'application. La solution n'utilise aucune nouvelle dépendance et est purement CSS.
+
 ### 🎯 **SOLUTION DÉFINITIVE : CARROUSEL HORIZONTAL MOBILE (2025-06-21)**
 
 #### **Nouvelle approche robuste pour la galerie CV mobile**

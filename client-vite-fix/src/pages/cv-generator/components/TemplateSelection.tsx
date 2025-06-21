@@ -10,7 +10,6 @@ import { useAuth } from '../../../context/AuthContext';
 import { hasPremiumAccess } from '../../../utils/premiumAccess';
 import CVPreview from './CVPreview';
 import { defaultCustomization } from '../context/CVContext';
-import { Helmet } from 'react-helmet-async';
 
 const { Text } = Typography;
 const { Search } = Input;
@@ -39,16 +38,6 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
   const [previewTemplate, setPreviewTemplate] = useState<Template | null>(null);
   const modalContentRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      // Détection plus fiable d'un appareil mobile/tactile
-      const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      setIsMobile(mobile);
-    };
-    checkMobile();
-  }, []);
 
   useEffect(() => {
     if (previewTemplate && modalContentRef.current) {
@@ -82,11 +71,6 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
 
   return (
     <div style={{ padding: '0 8px', width: '100%', overflow: 'hidden', boxSizing: 'border-box' }}>
-      {isMobile && (
-        <Helmet>
-          <meta name="viewport" content="width=1200, initial-scale=0.25" />
-        </Helmet>
-      )}
       {/* Header premium modernisé */}
       <div style={{ textAlign: 'center', marginBottom: 18, marginTop: 0 }}>
         <span style={{ fontWeight: 600, color: '#1890ff', fontSize: 'clamp(18px, 4vw, 20px)', letterSpacing: 1 }}>
@@ -187,22 +171,24 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                         alignItems: 'center',
                         justifyContent: 'center'
                       }}>
-                        <CVPreview
-                          data={DEMO_PROFILES[template.id] || {
-                            personalInfo: { firstName: '', lastName: '', title: '', email: '', phone: '', address: '', photo: '', summary: '' },
-                            experience: [],
-                            education: [],
-                            skills: [],
-                            languages: [],
-                            certifications: [],
-                            projects: [],
-                            interests: [],
-                          }}
-                          template={template}
-                          customization={defaultCustomization}
-                          isPremium={true}
-                          isMiniature={true}
-                        />
+                        <div className={styles.cvPreviewWrapper}>
+                          <CVPreview
+                            data={DEMO_PROFILES[template.id] || {
+                              personalInfo: { firstName: '', lastName: '', title: '', email: '', phone: '', address: '', photo: '', summary: '' },
+                              experience: [],
+                              education: [],
+                              skills: [],
+                              languages: [],
+                              certifications: [],
+                              projects: [],
+                              interests: [],
+                            }}
+                            template={template}
+                            customization={defaultCustomization}
+                            isPremium={true}
+                            isMiniature={true}
+                          />
+                        </div>
                       </div>
                     )}
                   </div>
@@ -383,22 +369,24 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                 justifyContent: 'center',
                 overflow: 'hidden'
               }}>
-                <CVPreview
-                  data={DEMO_PROFILES[previewTemplate.id] || {
-                    personalInfo: { firstName: '', lastName: '', title: '', email: '', phone: '', address: '', photo: '', summary: '' },
-                    experience: [],
-                    education: [],
-                    skills: [],
-                    languages: [],
-                    certifications: [],
-                    projects: [],
-                    interests: [],
-                  }}
-                  template={previewTemplate}
-                  customization={defaultCustomization}
-                  isPremium={true}
-                  isMiniature={true}
-                />
+                <div className={styles.cvPreviewWrapper}>
+                  <CVPreview
+                    data={DEMO_PROFILES[previewTemplate.id] || {
+                      personalInfo: { firstName: '', lastName: '', title: '', email: '', phone: '', address: '', photo: '', summary: '' },
+                      experience: [],
+                      education: [],
+                      skills: [],
+                      languages: [],
+                      certifications: [],
+                      projects: [],
+                      interests: [],
+                    }}
+                    template={previewTemplate}
+                    customization={defaultCustomization}
+                    isPremium={true}
+                    isMiniature={true}
+                  />
+                </div>
               </div>
             )}
           </div>

@@ -8,7 +8,6 @@ import { ConfigProvider } from 'antd';
 import frFR from 'antd/locale/fr_FR';
 import { AuthProvider } from './context/AuthContext';
 import { BrowserRouter } from 'react-router-dom';
-import { HelmetProvider } from 'react-helmet-async';
 
 // Google Analytics (gtag.js)
 // @ts-ignore
@@ -31,13 +30,11 @@ console.log('Avant le rendu ReactDOM');
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <HelmetProvider>
-        <AuthProvider>
-          <ConfigProvider locale={frFR}>
-            <App />
-          </ConfigProvider>
-        </AuthProvider>
-      </HelmetProvider>
+      <AuthProvider>
+        <ConfigProvider locale={frFR}>
+          <App />
+        </ConfigProvider>
+      </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>
 );
