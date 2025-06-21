@@ -199,7 +199,7 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
   };
 
   return (
-    <div style={{ maxWidth: 1200, minWidth: 820, margin: '0 auto', padding: 24 }}>
+    <div style={{ maxWidth: 1200, margin: '0 auto', padding: 24 }}>
       {currentStep === 0 ? (
         // Galerie de modèles : pas de stepper vertical, affichage horizontal
         <div>{renderStepContent()}</div>

@@ -1248,3 +1248,18 @@ Dernière mise à jour : migration complète réalisée, site prêt pour la prod
 - `client-vite-fix/src/main.tsx` - Ajout du `HelmetProvider`.
 
 #### **Statut :** ✅ **AFFICHAGE MOBILE STABILISÉ.** La page s'affiche de manière cohérente sur tous les appareils, conformément à la demande.
+
+### 🎯 **CORRECTION STRUCTURELLE : DÉBORDEMENT PAGE CV (2025-06-21)**
+
+- **Problème Identifié :** Toute la page du générateur de CV (filtres, galerie) était décalée sur mobile, créant un débordement horizontal.
+- **Cause Racine :** Le conteneur principal du composant `CVGenerator` (`cv-generator/index.tsx`) avait une largeur minimale fixe (`minWidth: 820px`), ce qui forçait la page à être plus large que les écrans mobiles.
+- **Solution Appliquée (Structurelle) :**
+  - ✅ **Suppression du `minWidth` fixe** : La propriété `minWidth: 820px` a été retirée du conteneur.
+  - Le conteneur peut maintenant se redimensionner librement et s'adapter à la largeur de l'écran mobile, éliminant ainsi le débordement horizontal à la source.
+- **Impact :** La page du générateur de CV est maintenant **parfaitement alignée et fonctionnelle sur tous les appareils**, sans aucun débordement. L'expérience de bureau, contrôlée par `maxWidth: 1200px`, reste inchangée.
+
+## [Correction Critique - Crash Page d'Accueil] (date : voir commit)
+- **Problème :** La page d'accueil ne s'affichait plus et présentait une erreur "services is not defined", bloquant complètement l'accès au site.
+- **Cause :** Une modification précédente avait supprimé les définitions des données utilisées pour afficher les sections dynamiques (Services, Abonnements, Témoignages, etc.).
+- **Solution :** Réintégration et définition statique de toutes les données nécessaires directement dans le composant `Home.tsx`. Cela garantit que le composant est autonome et ne dépend plus de variables externes qui pourraient être manquantes.
+- **Impact :** La page d'accueil est de nouveau fonctionnelle et stable. Aucune régression, aucune fonctionnalité supprimée. Le site complet est restauré.
