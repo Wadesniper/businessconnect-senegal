@@ -20,18 +20,21 @@ const StyledCard = styled(Card)`
   height: 100%;
   display: flex;
   flex-direction: column;
-  transition: transform 0.2s, box-shadow 0.2s;
+  border-radius: 16px;
+  border: 1px solid #e8e8e8;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: transform 0.3s, box-shadow 0.3s;
   
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.1);
   }
 
   .ant-card-body {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    padding: 16px;
+    padding: 24px;
   }
 `;
 
@@ -64,8 +67,8 @@ const JobCard: React.FC<JobCardProps> = ({ job, isPremium, onEdit, onDelete }) =
   const {
     id,
     title = 'Titre non disponible',
-    company = 'Entreprise non spécifiée',
-    location = 'Lieu non spécifié',
+    company,
+    location,
     description = 'Pas de description.',
     companyLogo,
     type,
@@ -88,17 +91,17 @@ const JobCard: React.FC<JobCardProps> = ({ job, isPremium, onEdit, onDelete }) =
     <StyledCard hoverable>
         <CardHeader>
             {companyLogo ? (
-                <Avatar src={companyLogo} size={50} />
+                <Avatar src={companyLogo} size={50} style={{border: '2px solid #f0f0f0'}} />
             ) : (
-                <Avatar icon={<BankOutlined />} size={50} />
+                <Avatar icon={<BankOutlined />} size={50} style={{backgroundColor: '#f0f2f5', color: '#8c8c8c'}} />
             )}
             <div>
-                <Title level={5} style={{ marginBottom: 0, lineHeight: 1.2 }} ellipsis={{rows: 2}}>{title}</Title>
-                <Text type="secondary">{company}</Text>
+                <Title level={5} style={{ marginBottom: 0, lineHeight: 1.3, fontWeight: 600 }} ellipsis={{rows: 2}}>{title}</Title>
+                {company && <Text type="secondary">{company}</Text>}
             </div>
         </CardHeader>
       <CardContent>
-        <Paragraph ellipsis={{ rows: 3, expandable: false }} style={{ marginBottom: 12 }}>
+        <Paragraph ellipsis={{ rows: 3, expandable: false }} style={{ marginBottom: 16, marginTop: 8 }}>
             {description}
         </Paragraph>
         <div>
@@ -113,12 +116,12 @@ const JobCard: React.FC<JobCardProps> = ({ job, isPremium, onEdit, onDelete }) =
             block 
             onClick={handleViewDetails} 
             icon={isPremium || isOwner || isAdmin ? <EyeOutlined /> : <LockOutlined />}
-            style={{ background: '#1ec773', borderColor: '#1ec773' }}
+            style={{ background: '#1ec773', borderColor: '#1ec773', fontWeight: 'bold' }}
         >
-          {isPremium || isOwner || isAdmin ? 'Voir les détails' : 'Accès Premium'}
+          {isPremium || isOwner || isAdmin ? "Détails de l'offre" : 'Accès Premium'}
         </Button>
         {(isOwner || isAdmin) && onEdit && onDelete && (
-            <div style={{display: 'flex', gap: '8px'}}>
+            <div style={{display: 'flex', gap: '8px', marginTop: '8px'}}>
                 <Button block icon={<EditOutlined />} onClick={() => onEdit(id)}>Modifier</Button>
                 <Button block danger icon={<DeleteOutlined />} onClick={() => onDelete(id)}>Supprimer</Button>
             </div>
