@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Tag, Typography, Button, Avatar } from 'antd';
-import { EnvironmentOutlined, ClockCircleOutlined, BankOutlined, EditOutlined, DeleteOutlined, EyeOutlined, LockOutlined } from '@ant-design/icons';
+import { EnvironmentOutlined, ClockCircleOutlined, SolutionOutlined, EditOutlined, DeleteOutlined, EyeOutlined, LockOutlined } from '@ant-design/icons';
 import type { JobData as Job } from '../../../types/job';
 import styled from '@emotion/styled';
 import LazyImage from '../../../components/LazyImage';
@@ -56,6 +56,8 @@ const CardFooter = styled.div`
   gap: 8px;
 `;
 
+const isSpecified = (value: string | undefined | null) => value && !/non précisé|non spécifié/i.test(value);
+
 const JobCard: React.FC<JobCardProps> = ({ job, isPremium, onEdit, onDelete }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -93,11 +95,11 @@ const JobCard: React.FC<JobCardProps> = ({ job, isPremium, onEdit, onDelete }) =
             {companyLogo ? (
                 <Avatar src={companyLogo} size={50} style={{border: '3px solid #f0f0f0'}} />
             ) : (
-                <Avatar icon={<BankOutlined />} size={50} style={{backgroundColor: '#e6f7ff', color: '#1890ff', border: '3px solid #e6f7ff'}} />
+                <Avatar icon={<SolutionOutlined />} size={50} style={{backgroundColor: '#e6f7ff', color: '#1890ff', border: '3px solid #e6f7ff'}} />
             )}
             <div>
                 <Title level={5} style={{ marginBottom: '4px', lineHeight: 1.3, fontWeight: 700, color: '#002766' }} ellipsis={{rows: 2}}>{title}</Title>
-                {company && <Text type="secondary" style={{fontSize: '0.9rem'}}>{company}</Text>}
+                {isSpecified(company) && <Text type="secondary" style={{fontSize: '0.9rem'}}>{company}</Text>}
             </div>
         </CardHeader>
       <CardContent>
@@ -105,9 +107,9 @@ const JobCard: React.FC<JobCardProps> = ({ job, isPremium, onEdit, onDelete }) =
             {description}
         </Paragraph>
         <div>
-          {location && <Tag icon={<EnvironmentOutlined />} color="processing">{location}</Tag>}
-          {type && <Tag icon={<ClockCircleOutlined />} color="success">{type}</Tag>}
-          {sector && <Tag color="warning">{sector}</Tag>}
+          {isSpecified(location) && <Tag icon={<EnvironmentOutlined />} color="blue">{location}</Tag>}
+          {isSpecified(type) && <Tag icon={<ClockCircleOutlined />} color="green">{type}</Tag>}
+          {isSpecified(sector) && <Tag color="purple">{sector}</Tag>}
         </div>
       </CardContent>
       <CardFooter>
