@@ -133,11 +133,11 @@
 
 #### **Correction finale et structurelle de la page de galerie CV sur mobile**
 - **Problème :** La page entière (titres, filtres, cartes) était décalée sur mobile, créant un débordement horizontal et une mauvaise expérience utilisateur.
-- **Cause Racine Identifiée :** La cause fondamentale était l'utilisation de **largeurs fixes en pixels** sur les éléments de filtre (barre de recherche, sélecteur). Ces largeurs étaient supérieures à celles de nombreux écrans mobiles, ce qui provoquait un débordement de toute la page et rendait inefficaces les tentatives de correction ciblées sur les cartes.
+- **Cause Racine Identifiée :** La cause fondamentale était l'utilisation de **largeurs minimales en pixels (`minWidth`)** sur les éléments de filtre (barre de recherche, sélecteur). La somme de ces largeurs minimales était supérieure à la largeur des écrans mobiles, ce qui provoquait un débordement de toute la page et rendait inefficaces les tentatives de correction ciblées sur les cartes.
 - **Solution Appliquée (Structurelle et Définitive) :**
-  - ✅ **Flexbox pour les filtres dans `TemplateSelection.tsx`** :
-    - Les largeurs fixes (`width`) ont été supprimées et remplacées par des propriétés `flex` responsives (`flex: '2 1 250px'` et `flex: '1 1 180px'`).
-    - Cela permet aux filtres de s'adapter, de réduire leur taille et de s'empiler verticalement sur les petits écrans, grâce à la propriété `flex-wrap: 'wrap'` déjà présente.
+  - ✅ **Flexbox adaptatif pour les filtres dans `TemplateSelection.tsx`** :
+    - Les `minWidth` fixes ont été supprimés.
+    - Les propriétés `flex` ont été ajustées (`flex: '2 1 250px'` et `flex: '1 1 180px'`) pour permettre aux filtres de se réduire de manière flexible (`flex-shrink`) et de s'empiler verticalement sur les petits écrans (`flex-wrap`), sans jamais forcer la page à s'élargir.
 - **Impact :** Le débordement horizontal est éliminé. Par conséquent, les titres sont correctement centrés, les filtres s'affichent de manière lisible et les cartes de CV (qui étaient déjà dans une grille responsive) occupent leur espace normalement, sans être décalées. L'affichage est désormais stable et professionnel sur tous les appareils.
 
 #### **Fichiers modifiés :**

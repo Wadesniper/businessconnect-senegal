@@ -94,8 +94,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
         <Search
           placeholder="Rechercher un modèle..."
           style={{ 
-            flex: '1 1 280px',
-            minWidth: '250px',
+            flex: '2 1 250px',
             maxWidth: '100%'
           }}
           onChange={e => setSearchTerm(e.target.value)}
@@ -104,8 +103,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
           value={selectedCategory}
           onChange={setSelectedCategory}
           style={{ 
-            flex: '1 1 200px',
-            minWidth: '180px',
+            flex: '1 1 180px',
             maxWidth: '100%'
           }}
         >
