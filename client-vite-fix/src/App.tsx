@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { ProLayout } from '@ant-design/pro-layout';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -64,112 +64,110 @@ const App: React.FC = () => {
   const { hasActiveSubscription } = useSubscription();
   return (
     <ErrorBoundary>
-      <Router>
-        <ScrollToTop />
-        <ProLayout
-          layout="top"
-          navTheme="light"
-          headerRender={() => <Navbar />}
-          footerRender={() => <Footer />}
-          contentWidth="Fluid"
-          style={{ width: '100vw', maxWidth: '100vw' }}
-        >
-          <Suspense fallback={<></>}>
-            <Routes>
-              {/* Pages publiques */}
-              <Route path="/" element={<Home />} />
-              <Route path="/jobs" element={<JobsPage />} />
-              <Route path="/jobs/:id" element={<JobDetailsPage />} />
-              <Route path="/jobs/:id/postuler" element={<JobApplyPage />} />
-              <Route path="/marketplace" element={<MarketplacePage />} />
-              <Route path="/marketplace/:id" element={<MarketplaceItemPage />} />
-              <Route path="/marketplace/create" element={<MarketplacePage />} />
-              <Route path="/marketplace/edit/:id" element={<MarketplacePage />} />
-              <Route
-                path="/marketplace/user/items"
-                element={
-                  <ProtectedRoute element={<UserItems />} />
-                }
-              />
-              <Route
-                path="/admin/marketplace/moderation"
-                element={
-                  <ProtectedRoute element={<MarketplaceModeration />} requiresAdmin />
-                }
-              />
-              <Route path="/forum" element={<ForumPage />} />
-              <Route path="/forum/:id" element={<DiscussionDetail />} />
-              <Route path="/formations" element={<FormationsPage />} />
-              <Route path="/contact" element={<ContactPage />} />
-              <Route path="/cv-generator" element={<CVGenerator isSubscribed={hasActiveSubscription} />} />
-              <Route path="/careers" element={<CareersPage />} />
+      <ScrollToTop />
+      <ProLayout
+        layout="top"
+        navTheme="light"
+        headerRender={() => <Navbar />}
+        footerRender={() => <Footer />}
+        contentWidth="Fluid"
+        style={{ width: '100vw', maxWidth: '100vw' }}
+      >
+        <Suspense fallback={<></>}>
+          <Routes>
+            {/* Pages publiques */}
+            <Route path="/" element={<Home />} />
+            <Route path="/jobs" element={<JobsPage />} />
+            <Route path="/jobs/:id" element={<JobDetailsPage />} />
+            <Route path="/jobs/:id/postuler" element={<JobApplyPage />} />
+            <Route path="/marketplace" element={<MarketplacePage />} />
+            <Route path="/marketplace/:id" element={<MarketplaceItemPage />} />
+            <Route path="/marketplace/create" element={<MarketplacePage />} />
+            <Route path="/marketplace/edit/:id" element={<MarketplacePage />} />
+            <Route
+              path="/marketplace/user/items"
+              element={
+                <ProtectedRoute element={<UserItems />} />
+              }
+            />
+            <Route
+              path="/admin/marketplace/moderation"
+              element={
+                <ProtectedRoute element={<MarketplaceModeration />} requiresAdmin />
+              }
+            />
+            <Route path="/forum" element={<ForumPage />} />
+            <Route path="/forum/:id" element={<DiscussionDetail />} />
+            <Route path="/formations" element={<FormationsPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/cv-generator" element={<CVGenerator isSubscribed={hasActiveSubscription} />} />
+            <Route path="/careers" element={<CareersPage />} />
 
-              {/* Pages légales */}
-              <Route path="/legal/mentions-legales" element={<MentionsLegales />} />
-              <Route path="/legal/cgv" element={<CGV />} />
-              <Route path="/legal/cgu" element={<CGU />} />
-              <Route path="/legal/privacy" element={<Privacy />} />
-              <Route path="/legal/cookies" element={<Cookies />} />
+            {/* Pages légales */}
+            <Route path="/legal/mentions-legales" element={<MentionsLegales />} />
+            <Route path="/legal/cgv" element={<CGV />} />
+            <Route path="/legal/cgu" element={<CGU />} />
+            <Route path="/legal/privacy" element={<Privacy />} />
+            <Route path="/legal/cookies" element={<Cookies />} />
 
-              {/* Routes d'authentification */}
-              <Route path="/auth" element={<AuthPage />} />
-              <Route path="/login" element={<Navigate to="/auth" replace />} />
-              <Route path="/register" element={<Navigate to="/auth" replace />} />
+            {/* Routes d'authentification */}
+            <Route path="/auth" element={<AuthPage />} />
+            <Route path="/login" element={<Navigate to="/auth" replace />} />
+            <Route path="/register" element={<Navigate to="/auth" replace />} />
 
-              {/* Routes protégées */}
-              <Route
-                path="/profile"
-                element={
-                  <ProtectedRoute element={<ProfilePage />} requiresSubscription />
-                }
-              />
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute element={<Dashboard />} requiresSubscription />
-                }
-              />
-              <Route
-                path="/cv-generator/create"
-                element={
-                  <ProtectedRoute element={<CVGenerator />} requiresSubscription />
-                }
-              />
-              <Route
-                path="/subscription"
-                element={
-                  <SubscriptionPage />
-                }
-              />
-              <Route
-                path="/payment/success"
-                element={
-                  <ProtectedRoute element={<PaymentSuccess />} requiresSubscription />
-                }
-              />
-              <Route
-                path="/payment/cancel"
-                element={
-                  <ProtectedRoute element={<PaymentCancel />} requiresSubscription />
-                }
-              />
-              <Route
-                path="/payment/return"
-                element={<PaymentReturnPage />}
-              />
+            {/* Routes protégées */}
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute element={<ProfilePage />} requiresSubscription />
+              }
+            />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute element={<Dashboard />} requiresSubscription />
+              }
+            />
+            <Route
+              path="/cv-generator/create"
+              element={
+                <ProtectedRoute element={<CVGenerator />} requiresSubscription />
+              }
+            />
+            <Route
+              path="/subscription"
+              element={
+                <SubscriptionPage />
+              }
+            />
+            <Route
+              path="/payment/success"
+              element={
+                <ProtectedRoute element={<PaymentSuccess />} requiresSubscription />
+              }
+            />
+            <Route
+              path="/payment/cancel"
+              element={
+                <ProtectedRoute element={<PaymentCancel />} requiresSubscription />
+              }
+            />
+            <Route
+              path="/payment/return"
+              element={<PaymentReturnPage />}
+            />
 
-              {/* Page 404 */}
-              <Route path="*" element={<NotFoundPage />} />
+            {/* Page 404 */}
+            <Route path="*" element={<NotFoundPage />} />
 
-              {/* New route */}
-              <Route path="/help/FAQ" element={<FAQ />} />
+            {/* New route */}
+            <Route path="/help/FAQ" element={<FAQ />} />
 
-              {/* New route */}
-              <Route path="/cv-preview/:templateId" element={<CVPreviewGallery />} />
-            </Routes>
-          </Suspense>
-        </ProLayout>
-      </Router>
+            {/* New route */}
+            <Route path="/cv-preview/:templateId" element={<CVPreviewGallery />} />
+          </Routes>
+        </Suspense>
+      </ProLayout>
     </ErrorBoundary>
   );
 };
