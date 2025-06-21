@@ -115,7 +115,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
       ) : (
         <Row gutter={[16, 24]}>
           {filteredTemplates.map((template, idx) => (
-            <Col xs={12} sm={8} md={8} lg={6} key={template.id} style={{ display: 'flex', alignItems: 'stretch' }}>
+            <Col xs={24} sm={12} md={8} lg={6} key={template.id} style={{ display: 'flex', alignItems: 'stretch' }}>
               <Card
                 hoverable
                 cover={
