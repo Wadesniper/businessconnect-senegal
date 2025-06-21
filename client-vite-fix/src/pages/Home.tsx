@@ -38,6 +38,117 @@ import womanGlasses from '../assets/testimonials/woman-glasses.png';
 import womanHijab from '../assets/testimonials/woman-hijab.png';
 import LazyImage from '../components/LazyImage';
 
+const services = [
+  {
+    icon: <TeamOutlined />,
+    title: "Offres d'emploi",
+    description: "Accédez à des milliers d'offres dans tous les secteurs.",
+    link: '/jobs',
+  },
+  {
+    icon: <BookOutlined />,
+    title: 'Créateur de CV',
+    description: 'Créez un CV professionnel et moderne avec notre générateur.',
+    link: '/cv-generator',
+  },
+  {
+    icon: <BulbOutlined />,
+    title: 'Fiches métiers',
+    description: 'Découvrez des informations détaillées sur différents métiers.',
+    link: '/careers',
+  },
+  {
+    icon: <CrownOutlined />,
+    title: 'Formations',
+    description: 'Développez vos compétences avec nos programmes de formation.',
+    link: '/formations',
+  },
+  {
+    icon: <ShoppingOutlined />,
+    title: 'Marketplace',
+    description: 'Achetez et vendez des produits et services professionnels.',
+    link: '/marketplace',
+  },
+    {
+    icon: <SearchOutlined />,
+    title: 'Recherche Avancée',
+    description: 'Trouvez précisément ce que vous cherchez avec nos filtres avancés.',
+    link: '/jobs',
+  },
+];
+
+const subscriptionPlans = [
+    {
+      title: 'Étudiant & Candidat',
+      description: 'Idéal pour démarrer sa carrière.',
+      features: [
+        'Accès à toutes les offres',
+        'Création de CV professionnels',
+        'Accès aux formations',
+        'Postuler en illimité'
+      ],
+      color: '#1ec773',
+    },
+    {
+      title: 'Annonceur Marketplace',
+      description: 'Pour les vendeurs et freelances.',
+      features: [
+        'Tous les avantages Étudiant',
+        'Publier sur le Marketplace',
+        'Visibilité accrue',
+        'Messagerie professionnelle'
+      ],
+      color: '#1890ff',
+    },
+    {
+      title: 'Employeur',
+      description: 'Pour les entreprises qui recrutent.',
+      features: [
+        'Tous les avantages Annonceur',
+        'Publier des offres d\'emploi',
+        'Accès à la CVthèque',
+        'Tableau de bord de suivi'
+      ],
+      color: '#8a2be2',
+    },
+];
+
+const testimonials = [
+    {
+        avatar: manBeret,
+        name: 'Mamadou Diop',
+        title: 'Recruteur',
+        quote: `Grâce à BusinessConnect, j'ai pu recruter rapidement des profils qualifiés pour mon entreprise. La plateforme facilite la mise en relation avec des candidats motivés et sérieux, ce qui a considérablement simplifié notre processus de recrutement.`
+    },
+    {
+        avatar: manHeadphones,
+        name: 'Cheikh Ndiaye',
+        title: 'Chercheur d\'emploi',
+        quote: `Après plusieurs mois de recherche, c'est sur BusinessConnect que j'ai enfin trouvé un emploi qui correspond à mes compétences. Les offres sont variées et la navigation sur le site est très intuitive. Je recommande vivement à tous les jeunes diplômés !`
+    },
+    {
+        avatar: womanGlasses,
+        name: 'Awa Sarr',
+        title: 'Étudiante',
+        quote: `En tant qu'étudiante, j'ai pu trouver un stage enrichissant grâce à BusinessConnect. J'ai aussi pu élargir mon réseau professionnel et découvrir de nombreuses opportunités adaptées à mon profil. C'est un vrai tremplin pour débuter sa carrière.`
+    },
+    {
+        avatar: womanHijab,
+        name: 'Fatou Bâ',
+        title: 'Annonceuse',
+        quote: `Publier mes offres sur BusinessConnect m'a permis de recevoir rapidement des candidatures pertinentes. J'apprécie la simplicité de la plateforme et la qualité des profils proposés. C'est devenu un outil indispensable pour mon activité.`
+    }
+];
+
+const sectors = [
+  { name: 'Informatique', icon: <TeamOutlined /> },
+  { name: 'Finance', icon: <ShoppingOutlined /> },
+  { name: 'Santé', icon: <BulbOutlined /> },
+  { name: 'Éducation', icon: <BookOutlined /> },
+  { name: 'Marketing', icon: <ShoppingOutlined /> },
+  { name: 'Industrie', icon: <BuildOutlined /> },
+];
+
 const { Content } = Layout;
 const { Title, Paragraph, Text } = Typography;
 
