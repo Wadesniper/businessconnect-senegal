@@ -17,8 +17,10 @@ import {
   SafetyCertificateOutlined,
   RocketOutlined,
   RiseOutlined,
-  EnvironmentOutlined
+  EnvironmentOutlined,
+  CheckCircleOutlined,
 } from '@ant-design/icons';
+import { FaQuoteLeft } from 'react-icons/fa';
 import { useNavigate, Link } from 'react-router-dom';
 import { JobService } from '../services/jobService';
 import type { Job, JobData } from '../types/job';
@@ -314,116 +316,82 @@ const Home: React.FC = () => {
       <Content>
         <StatsSection />
         {/* Section Nos Services */}
-        <div ref={servicesRef} style={{ padding: '64px 24px', background: '#fff' }}>
-            <Row justify="center" style={{ marginBottom: 48, textAlign: 'center' }}>
-                <Col xs={24} md={20} lg={16}>
-                    <Title level={2} style={{ color: '#002766', fontWeight: 700, marginBottom: 8 }}>Nos Services</Title>
-                    <Paragraph style={{ fontSize: 18, color: '#333' }}>
-                        BusinessConnect Sénégal vous offre une gamme complète de services innovants pour propulser votre carrière.
-                    </Paragraph>
-                </Col>
-            </Row>
-            <Row gutter={[32, 32]} justify="center">
-             {[
-               { title: "Offres d'emploi", icon: <TeamOutlined style={{ fontSize: 32, color: '#1890ff' }} />, text: "Accédez à des milliers d'offres dans tous les secteurs.", link: '/jobs' },
-               { title: "Créateur de CV", icon: <BookOutlined style={{ fontSize: 32, color: '#1ec773' }} />, text: "Créez un CV professionnel et moderne avec notre générateur.", link: '/cv-generator' },
-               { title: "Fiches métiers", icon: <BulbOutlined style={{ fontSize: 32, color: '#faad14' }} />, text: "Découvrez des informations détaillées sur différents métiers.", link: '/careers' },
-               { title: "Formations", icon: <CrownOutlined style={{ fontSize: 32, color: '#ff4d4f' }} />, text: "Développez vos compétences avec nos programmes de formation.", link: '/formations' },
-               { title: "Marketplace", icon: <ShoppingOutlined style={{ fontSize: 32, color: '#b37feb' }} />, text: "Achetez et vendez des produits et services professionnels.", link: '/marketplace' },
-             ].map(service => (
-               <Col key={service.title} xs={24} sm={12} md={8} lg={8} style={{ display: 'flex', justifyContent: 'center' }}>
-                 <Card 
-                   hoverable
-                   style={{ 
-                     borderRadius: 16, 
-                     border: '1px solid #f0f0f0', 
-                     boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
-                     width: '100%',
-                     display: 'flex',
-                     flexDirection: 'column'
-                   }}
-                   bodyStyle={{
-                     flex: 1,
-                     display: 'flex',
-                     flexDirection: 'column',
-                     justifyContent: 'space-between',
-                     textAlign: 'center',
-                     padding: '24px 16px'
-                   }}
-                 >
-                   <div>
-                     {service.icon}
-                     <Title level={4} style={{ margin: '16px 0 8px 0' }}>{service.title}</Title>
-                     <Paragraph style={{ minHeight: 44 }}>{service.text}</Paragraph>
-                   </div>
-                   <Button type="link" onClick={() => navigate(service.link)} style={{fontWeight: 'bold'}}>Découvrir <ArrowRightOutlined /></Button>
-                 </Card>
-               </Col>
-             ))}
-           </Row>
+        <div ref={servicesRef} style={{ padding: '4rem 2rem' }}>
+          <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.7 }}>
+            <Title level={2} style={{ textAlign: 'center', marginBottom: '3rem' }}>Nos Services Professionnels</Title>
+          </motion.div>
+          <Row gutter={[24, 24]} justify="center">
+            {services.map((service, index) => (
+              <Col xs={24} sm={12} md={8} key={index} style={{ display: 'flex' }}>
+                <motion.div
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  style={{ width: '100%' }}
+                  whileHover={{ y: -10, transition: { duration: 0.3 } }}
+                >
+                  <Card
+                    hoverable
+                    style={{ borderRadius: '16px', overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%' }}
+                    bodyStyle={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}
+                    onClick={() => navigate(service.link)}
+                  >
+                    <div style={{ fontSize: '2.5rem', color: '#1ec773', marginBottom: '1rem' }}>{service.icon}</div>
+                    <Title level={4}>{service.title}</Title>
+                    <Paragraph style={{ flexGrow: 1 }}>{service.description}</Paragraph>
+                    <Button type="primary" ghost style={{ marginTop: 'auto', borderColor: '#1ec773', color: '#1ec773' }}>En savoir plus <ArrowRightOutlined /></Button>
+                  </Card>
+                </motion.div>
+              </Col>
+            ))}
+          </Row>
         </div>
 
-        {/* Section Abonnements */}
-         <div style={{ padding: '64px 24px', background: '#f8f9fa' }}>
-           <Title level={2} style={{ textAlign: 'center', marginBottom: 48, color: '#002766', fontWeight: 700 }}>Nos Abonnements</Title>
-           <Row gutter={[32, 32]} justify="center">
-             <Col xs={24} sm={12} md={8}>
-                <Card bordered style={{ borderRadius: 16, border: '2px solid #1ec773', minHeight: 420, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                  <div>
-                    <Title level={3} style={{ textAlign: 'center', color: '#222', marginBottom: 0 }}>Étudiant & Candidat</Title>
-                    <div style={{ textAlign: 'center', fontWeight: 700, fontSize: 34, color: '#1ec773', margin: '12px 0 0 0' }}>1 000 F CFA<small style={{ fontSize: 16, color: '#888' }}>/mois</small></div>
-                    <Paragraph style={{ textAlign: 'center', color: '#888', marginBottom: 18 }}>Idéal pour démarrer sa carrière.</Paragraph>
-                    <ul style={{ fontSize: 16, color: '#222', marginBottom: 24, paddingLeft: 0, listStyle: 'none' }}>
-                      <li>✔️ Accès à toutes les offres</li>
-                      <li>✔️ Création de CV professionnels</li>
-                      <li>✔️ Accès aux formations</li>
-                      <li>✔️ Postuler en illimité</li>
-                      <li style={{ color: '#bbb' }}>✖️ Publier sur le Marketplace</li>
-                      <li style={{ color: '#bbb' }}>✖️ Publier des offres d'emploi</li>
-                    </ul>
-                  </div>
-                  <Button type="primary" block style={{ borderRadius: 8, fontWeight: 600, background: '#1ec773', borderColor: '#1ec773' }} onClick={() => navigate('/subscription')}>S'abonner</Button>
-                </Card>
-             </Col>
-             <Col xs={24} sm={12} md={8}>
-               <Card bordered style={{ borderRadius: 16, border: '2px solid #1890ff', minHeight: 420, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                 <div>
-                    <Title level={3} style={{ textAlign: 'center', color: '#222', marginBottom: 0 }}>Annonceur Marketplace</Title>
-                    <div style={{ textAlign: 'center', fontWeight: 700, fontSize: 34, color: '#1890ff', margin: '12px 0 0 0' }}>5 000 F CFA<small style={{ fontSize: 16, color: '#888' }}>/mois</small></div>
-                    <Paragraph style={{ textAlign: 'center', color: '#888', marginBottom: 18 }}>Pour les vendeurs et freelances.</Paragraph>
-                    <ul style={{ fontSize: 16, color: '#222', marginBottom: 24, paddingLeft: 0, listStyle: 'none' }}>
-                      <li>✔️ Tous les avantages Étudiant</li>
-                      <li>✔️ Publier sur le Marketplace</li>
-                      <li>✔️ Visibilité accrue</li>
-                      <li>✔️ Messagerie professionnelle</li>
-                      <li>✔️ Notifications en temps réel</li>
-                      <li style={{ color: '#bbb' }}>✖️ Publier des offres d'emploi</li>
-                    </ul>
-                 </div>
-                 <Button type="primary" block style={{ borderRadius: 8, fontWeight: 600 }} onClick={() => navigate('/subscription')}>S'abonner</Button>
-               </Card>
-             </Col>
-             <Col xs={24} sm={12} md={8}>
-               <Card bordered style={{ borderRadius: 16, border: '2px solid #8a2be2', minHeight: 420, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                 <div>
-                    <Title level={3} style={{ textAlign: 'center', color: '#222', marginBottom: 0 }}>Employeur</Title>
-                    <div style={{ textAlign: 'center', fontWeight: 700, fontSize: 34, color: '#8a2be2', margin: '12px 0 0 0' }}>9 000 F CFA<small style={{ fontSize: 16, color: '#888' }}>/mois</small></div>
-                    <Paragraph style={{ textAlign: 'center', color: '#888', marginBottom: 18 }}>Pour les entreprises qui recrutent.</Paragraph>
-                    <ul style={{ fontSize: 16, color: '#222', marginBottom: 24, paddingLeft: 0, listStyle: 'none' }}>
-                      <li>✔️ Tous les avantages Annonceur</li>
-                      <li>✔️ Publier des offres d'emploi</li>
-                      <li>✔️ Accès à la CVthèque</li>
-                      <li>✔️ Tableau de bord de suivi</li>
-                      <li>✔️ Statistiques des offres</li>
-                      <li>✔️ Support prioritaire</li>
-                    </ul>
-                 </div>
-                 <Button type="primary" block style={{ borderRadius: 8, fontWeight: 600, background: '#8a2be2', borderColor: '#8a2be2' }} onClick={() => navigate('/subscription')}>S'abonner</Button>
-               </Card>
-             </Col>
-           </Row>
-         </div>
-
+        {/* Section Nos abonnements */}
+        <div style={{ padding: '4rem 2rem', background: '#f8f9fa' }}>
+          <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.7 }}>
+            <Title level={2} style={{ textAlign: 'center', marginBottom: '1rem' }}>Nos Abonnements</Title>
+            <Paragraph style={{ textAlign: 'center', maxWidth: '600px', margin: '0 auto 3rem' }}>
+              Choisissez le plan qui correspond le mieux à vos besoins et débloquez des fonctionnalités exclusives pour accélérer votre carrière ou vos recrutements.
+            </Paragraph>
+          </motion.div>
+          <Row gutter={[24, 24]} justify="center">
+            {subscriptionPlans.map((plan, index) => (
+              <Col xs={24} sm={12} md={8} key={index}>
+                <motion.div
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  style={{ height: '100%' }}
+                  whileHover={{ y: -10, transition: { duration: 0.3 } }}
+                >
+                  <Card
+                    hoverable
+                    style={{ borderRadius: '16px', display: 'flex', flexDirection: 'column', height: '100%', borderTop: `4px solid ${plan.color}` }}
+                    bodyStyle={{ padding: '24px', flexGrow: 1, display: 'flex', flexDirection: 'column' }}
+                  >
+                    <Title level={3} style={{ color: plan.color }}>{plan.title}</Title>
+                    <Paragraph>{plan.description}</Paragraph>
+                    <div style={{ margin: '1rem 0', flexGrow: 1 }}>
+                      {plan.features.map((feature, i) => (
+                        <div key={i} style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+                          <CheckCircleOutlined style={{ color: '#1ec773', marginRight: '8px' }} />
+                          <Text>{feature}</Text>
+                        </div>
+                      ))}
+                    </div>
+                    <Button type="primary" size="large" block onClick={() => navigate('/subscription')} style={{ background: plan.color, borderColor: plan.color, marginTop: 'auto' }}>
+                      Choisir ce plan
+                    </Button>
+                  </Card>
+                </motion.div>
+              </Col>
+            ))}
+          </Row>
+        </div>
+        
         {/* Section Créateur de CV */}
         <div style={{ padding: '4rem 2rem', background: '#fff' }}>
             <Row justify="center" align="middle" gutter={[32, 32]}>
@@ -463,53 +431,80 @@ const Home: React.FC = () => {
 
         {/* Section Témoignages */}
         <div style={{ padding: '4rem 2rem', backgroundColor: '#fff' }}>
-          <Title level={2} style={{ textAlign: 'center', marginBottom: '3rem' }}>Ils nous font confiance</Title>
-          <Row gutter={[24, 24]} justify="center">
-            {TESTIMONIALS.map((testimonial, index) => (
-              <Col xs={24} sm={12} md={8} lg={6} key={index} style={{ display: 'flex' }}>
-                <Card 
-                  style={{ 
-                    borderRadius: '20px', 
-                    boxShadow: '0 10px 40px rgba(0,0,0,0.08)',
-                    border: '1px solid #e8e8e8',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    width: '100%'
-                  }}
-                  bodyStyle={{
-                      padding: '2rem',
-                      flex: 1,
-                      display: 'flex',
-                  }}
+          <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.7 }}>
+            <Title level={2} style={{ textAlign: 'center', marginBottom: '3rem' }}>Ils nous font confiance</Title>
+          </motion.div>
+          <Row gutter={[24, 24]} justify="center" style={{ alignItems: 'stretch' }}>
+            {testimonials.map((testimonial, index) => (
+              <Col xs={24} sm={12} md={8} key={index} style={{ display: 'flex' }}>
+                <motion.div
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  style={{ width: '100%' }}
+                  whileHover={{ y: -10, transition: { duration: 0.3 } }}
                 >
-                  <Space direction="vertical" align="center" style={{ width: '100%', textAlign: 'center', justifyContent: 'flex-start' }}>
-                      <Avatar size={80} src={testimonial.img} style={{ border: '4px solid #fff', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'}} />
-                      <Title level={4} style={{ marginTop: '1rem', marginBottom: 0, fontSize: '1.1rem' }}>{testimonial.name}</Title>
-                      <Text type="secondary" style={{ marginBottom: '1rem' }}>{testimonial.role}</Text>
-                      <Paragraph style={{ fontStyle: 'italic', color: '#555', fontSize: '0.95rem' }}>
-                        “{testimonial.text}”
-                      </Paragraph>
-                  </Space>
-                </Card>
+                  <Card
+                    hoverable
+                    style={{
+                      borderRadius: '16px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      height: '100%',
+                      boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+                      border: '1px solid #f0f0f0'
+                    }}
+                    bodyStyle={{ padding: '24px', flexGrow: 1, display: 'flex', flexDirection: 'column' }}
+                  >
+                    <div style={{ fontSize: '2rem', color: '#1ec773', marginBottom: '1rem', opacity: 0.6 }}>
+                      <FaQuoteLeft />
+                    </div>
+                    <Paragraph style={{ fontStyle: 'italic', flexGrow: 1 }}>"{testimonial.quote}"</Paragraph>
+                    <div style={{ display: 'flex', alignItems: 'center', marginTop: '1rem' }}>
+                      <Avatar src={testimonial.avatar} size={50} style={{ marginRight: '1rem', border: '3px solid #1ec773' }} />
+                      <div>
+                        <Text strong>{testimonial.name}</Text>
+                        <br />
+                        <Text type="secondary">{testimonial.title}</Text>
+                      </div>
+                    </div>
+                  </Card>
+                </motion.div>
               </Col>
             ))}
           </Row>
         </div>
 
         {/* Section Secteurs d'activité */}
-         <div style={{ padding: '64px 24px', background: '#f8f9fa' }}>
-           <Title level={2} style={{ textAlign: 'center', marginBottom: 48, color: '#002766', fontWeight: 700 }}>Secteurs d'activité</Title>
-           <Carousel autoplay autoplaySpeed={4000} dots={false} responsive={[{ breakpoint: 768, settings: { slidesToShow: 1 } }, { breakpoint: 1200, settings: { slidesToShow: 3 } }]} slidesToShow={4} style={{ paddingBottom: '32px' }}>
-             {SECTEURS.map((secteur) => (
-               <div key={secteur.id} style={{ padding: '0 16px' }}>
-                 <SectorCard color={secteur.couleur} onClick={() => navigate('/careers')}>
-                   <IconCircle color={secteur.couleur}><span>{secteur.icone}</span></IconCircle>
-                   <Title level={4}>{secteur.nom}</Title>
-                 </SectorCard>
-               </div>
-             ))}
-           </Carousel>
-         </div>
+        <div style={{ padding: '4rem 2rem', background: '#f8f9fa' }}>
+          <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.7 }}>
+            <Title level={2} style={{ textAlign: 'center', marginBottom: '3rem' }}>Secteurs d'activité</Title>
+          </motion.div>
+          <Row gutter={[16, 16]}>
+            {sectors.map((sector, index) => (
+              <Col xs={12} sm={8} md={6} lg={4} key={index}>
+                <motion.div
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 0.5, delay: index * 0.05 }}
+                  whileHover={{ y: -5, transition: { duration: 0.3 } }}
+                >
+                  <Card
+                    hoverable
+                    style={{ textAlign: 'center', borderRadius: '12px' }}
+                    bodyStyle={{ padding: '1rem 0.5rem' }}
+                    onClick={() => navigate(`/jobs?sector=${sector.name}`)}
+                  >
+                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>{sector.icon}</div>
+                    <Text>{sector.name}</Text>
+                  </Card>
+                </motion.div>
+              </Col>
+            ))}
+          </Row>
+        </div>
 
       </Content>
     </Layout>
