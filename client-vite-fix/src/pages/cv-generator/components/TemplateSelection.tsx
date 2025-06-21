@@ -91,13 +91,13 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
       }}>
         <Search
           placeholder="Rechercher un modèle..."
-          style={{ width: 300 }}
+          style={{ flex: '2 1 250px' }}
           onChange={e => setSearchTerm(e.target.value)}
         />
         <Select
           value={selectedCategory}
           onChange={setSelectedCategory}
-          style={{ width: 200 }}
+          style={{ flex: '1 1 180px' }}
         >
           {categories.map(cat => (
             <Option key={cat} value={cat}>
