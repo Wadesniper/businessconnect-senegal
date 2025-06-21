@@ -17,24 +17,99 @@ import {
   message,
   Carousel,
   Select,
-  Spin
+  Spin,
+  Result,
 } from 'antd';
+import type { ImageProps } from 'antd';
 import {
   EnvironmentOutlined,
-  EuroOutlined,
+  DollarCircleOutlined,
   MailOutlined,
   PhoneOutlined,
   ArrowLeftOutlined,
   EditOutlined,
-  DeleteOutlined
+  DeleteOutlined,
+  WhatsAppOutlined,
+  SafetyCertificateOutlined,
 } from '@ant-design/icons';
 import { marketplaceService } from '../../services/marketplaceService';
-import { authService } from '../../services/authService';
 import type { MarketplaceItem } from '../../services/marketplaceService';
 import { useAuth } from '../../context/AuthContext';
+import styled from '@emotion/styled';
 
 const { Title, Text, Paragraph } = Typography;
 const { Content } = Layout;
+
+// Styled components for better UI
+const PageLayout = styled(Layout)`
+  padding: 2rem;
+  background: #f0f2f5;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+`;
+
+const BackButton = styled(Button)`
+  margin-bottom: 1.5rem;
+`;
+
+const MainCard = styled(Card)`
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+`;
+
+const ImageCarousel = styled(Carousel)`
+  .slick-slide div {
+    height: 500px;
+  }
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 16px 0 0 16px;
+  }
+
+  @media (max-width: 991px) {
+    img {
+      border-radius: 16px 16px 0 0;
+    }
+  }
+`;
+
+const InfoCol = styled(Col)`
+  padding: 2rem !important;
+  display: flex;
+  flex-direction: column;
+`;
+
+const InfoTag = styled(Tag)`
+  font-size: 0.9rem;
+  padding: 0.3rem 0.7rem;
+`;
+
+const PriceText = styled(Text)`
+  font-size: clamp(1.8rem, 4vw, 2.2rem);
+  font-weight: 700;
+  color: #1ec773;
+`;
+
+const SectionDivider = styled(Divider)`
+  margin: 1.5rem 0;
+`;
+
+const ContactLink = styled.a`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.1rem;
+  color: #333;
+  transition: color 0.3s;
+
+  &:hover {
+    color: #1890ff;
+  }
+`;
 
 const MarketplaceItemPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -43,31 +118,24 @@ const MarketplaceItemPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
+  
+  // Derived state is simpler and less prone to errors
+  const isOwner = !!user && item?.userId === user.id;
   const isAdmin = user?.role === 'admin';
-  const [isOwner, setIsOwner] = useState(false);
 
   const fetchItem = useCallback(async () => {
     if (!id) return;
     setLoading(true);
     try {
       const data = await marketplaceService.getItem(id);
-      if (data) {
-        setItem(data);
-        const isItemOwner = user?.id === data.userId;
-        console.log('Debug permissions:', {
-          userId: user?.id,
-          itemUserId: data.userId,
-          isAdmin,
-          isItemOwner
-        });
-        setIsOwner(isItemOwner);
-      }
+      setItem(data);
     } catch (error) {
-      message.error('Erreur lors de la récupération de l\'annonce');
+      message.error("Erreur lors de la récupération de l'annonce");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-  }, [id, user?.id, isAdmin]);
+  }, [id]);
 
   useEffect(() => {
     fetchItem();
@@ -96,194 +164,222 @@ const MarketplaceItemPage: React.FC = () => {
     }
   };
 
+  const formatPrice = (itemData: MarketplaceItem) => {
+    if (!itemData) return 'Prix non disponible';
+    switch (itemData.priceType) {
+        case 'fixed':
+            return itemData.price ? `${itemData.price.toLocaleString()} FCFA` : 'Prix fixe non spécifié';
+        case 'range':
+            return itemData.minPrice && itemData.maxPrice
+                ? `Entre ${itemData.minPrice.toLocaleString()} et ${itemData.maxPrice.toLocaleString()} FCFA`
+                : 'Fourchette de prix non définie';
+        case 'negotiable':
+            return 'Prix à négocier';
+        case 'contact':
+            return 'Contacter pour le prix';
+        default:
+            return 'Prix non spécifié';
+    }
+  };
+
   if (loading) {
-    return <div style={{ minHeight: 320, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement de l'annonce..." /></div>;
+    return <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement de l'annonce..." /></div>;
   }
 
   if (!item) {
-    return <div>Annonce non trouvée</div>;
+    return (
+        <PageLayout>
+            <Result
+                status="404"
+                title="Annonce non trouvée"
+                subTitle="Désolé, l'annonce que vous recherchez n'existe pas ou a été supprimée."
+                extra={<Button type="primary" onClick={() => navigate('/marketplace')}>Retour au Marketplace</Button>}
+            />
+        </PageLayout>
+    );
   }
 
+  const canManage = isAuthenticated && (isOwner || isAdmin);
+  
   return (
-    <Layout style={{ padding: '24px' }}>
-      <Content>
-        <Row gutter={[24, 24]}>
-          <Col span={24}>
-            <Button
-              icon={<ArrowLeftOutlined />}
-              onClick={() => navigate('/marketplace')}
-              style={{ marginBottom: 16 }}
-            >
-              Retour
-            </Button>
-          </Col>
-
-          <Col span={24}>
-            <Card>
-              <Row gutter={[24, 24]}>
-                <Col xs={24} md={12}>
-                  {Array.isArray(item.images) && item.images.length > 0 ? (
-                    <Carousel autoplay>
-                      {item.images.map((image, index) => (
+    <PageLayout>
+      <BackButton
+        icon={<ArrowLeftOutlined />}
+        onClick={() => navigate('/marketplace')}
+      >
+        Retour au Marketplace
+      </BackButton>
+      
+      <MainCard bodyStyle={{ padding: 0 }}>
+        <Row>
+          <Col xs={24} lg={12}>
+            {Array.isArray(item.images) && item.images.length > 0 ? (
+                <Image.PreviewGroup items={item.images}>
+                    <ImageCarousel autoplay dotPosition="top">
+                    {item.images.map((image, index) => (
                         <div key={index}>
-                          <Image
+                        <Image
                             src={image}
                             alt={`${item.title} - Image ${index + 1}`}
-                            style={{ width: '100%', height: 400, objectFit: 'cover' }}
-                          />
+                        />
                         </div>
-                      ))}
-                    </Carousel>
-                  ) : (
-                    <div style={{ height: 400, background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <Text>Aucune image</Text>
-                    </div>
-                  )}
-                </Col>
-
-                <Col xs={24} md={12}>
-                  <Space direction="vertical" style={{ width: '100%' }}>
-                    <Title level={2}>{item.title || 'Titre non disponible'}</Title>
-                    <Space>
-                      {item.category && <Tag color="blue">{item.category}</Tag>}
-                      {item.status && (
-                        <Tag color={item.status === 'approved' ? 'green' : 'red'}>
-                          {item.status === 'approved' ? 'Disponible' : 'Non disponible'}
-                        </Tag>
-                      )}
-                    </Space>
-
-                    <Space>
-                      <EuroOutlined />
-                      <Text strong style={{ fontSize: '1.5em' }}>
-                        {item.price ? `${item.price}` : 'Prix non spécifié'}
-                      </Text>
-                    </Space>
-
-                    {item.location && (
-                      <Space>
-                        <EnvironmentOutlined />
-                        <Text>{item.location}</Text>
-                      </Space>
-                    )}
-
-                    <Divider />
-
-                    <Title level={4}>Description</Title>
-                    <Paragraph>{item.description || 'Aucune description fournie.'}</Paragraph>
-
-                    <Divider />
-
-                    <Title level={4}>Contact</Title>
-                    <Space direction="vertical">
-                      {item.contactEmail && (
-                        <Space>
-                          <MailOutlined />
-                          <Text>{item.contactEmail}</Text>
-                        </Space>
-                      )}
-                      {item.contactPhone && (
-                        <Space>
-                          <PhoneOutlined />
-                          <Text>{item.contactPhone}</Text>
-                        </Space>
-                      )}
-                      {!item.contactEmail && !item.contactPhone && (
-                        <Text type="secondary">Contact non renseigné</Text>
-                      )}
-                    </Space>
-
-                    {(isAdmin || isOwner) && (
-                      <>
-                        <Divider />
-                        <Space>
-                          <Button
-                            type="primary"
-                            icon={<EditOutlined />}
-                            onClick={() => {
-                              console.log('Modification annonce:', { itemId: id, isAdmin, isOwner });
-                              form.setFieldsValue(item);
-                              setIsModalVisible(true);
-                            }}
-                          >
-                            Modifier
-                          </Button>
-                          <Button
-                            danger
-                            icon={<DeleteOutlined />}
-                            onClick={() => {
-                              console.log('Suppression annonce:', { itemId: id, isAdmin, isOwner });
-                              handleDelete();
-                            }}
-                          >
-                            Supprimer
-                          </Button>
-                        </Space>
-                      </>
-                    )}
-                  </Space>
-                </Col>
-              </Row>
-            </Card>
+                    ))}
+                    </ImageCarousel>
+                </Image.PreviewGroup>
+            ) : (
+              <div style={{ height: 500, background: '#f0f2f5', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '16px 0 0 16px' }}>
+                <Text type="secondary">Aucune image disponible</Text>
+              </div>
+            )}
           </Col>
+
+          <InfoCol xs={24} lg={12}>
+            <Space direction="vertical" style={{ width: '100%', flexGrow: 1 }}>
+              <Space wrap>
+                {item.category && <InfoTag color="blue">{item.category}</InfoTag>}
+                {item.status === 'approved' && <InfoTag icon={<SafetyCertificateOutlined/>} color="green">Vérifié</InfoTag>}
+              </Space>
+
+              <Title level={2} style={{ marginBottom: 0, marginTop: '0.5rem' }}>{item.title || 'Titre non disponible'}</Title>
+              
+              {item.location && (
+                  <Space align="center" style={{ color: '#888', fontSize: '1rem' }}>
+                    <EnvironmentOutlined />
+                    <Text>{item.location}</Text>
+                  </Space>
+              )}
+              
+              <SectionDivider/>
+
+              <Space align="center" >
+                <DollarCircleOutlined style={{ fontSize: '2.2rem', color: '#1ec773' }}/>
+                <PriceText>{formatPrice(item)}</PriceText>
+              </Space>
+
+              <SectionDivider />
+
+              <Title level={4}>Description</Title>
+              <Paragraph style={{ whiteSpace: 'pre-wrap', color: '#555' }}>
+                  {item.description || 'Aucune description fournie.'}
+              </Paragraph>
+
+              <SectionDivider />
+
+              <Title level={4}>Contacter le vendeur</Title>
+              <Space direction="vertical" size="middle">
+                {item.contactPhone && (
+                  <ContactLink href={`tel:${item.contactPhone}`}>
+                    <PhoneOutlined />
+                    <Text>{item.contactPhone}</Text>
+                  </ContactLink>
+                )}
+                {item.contactPhone && (
+                   <ContactLink href={`https://wa.me/${item.contactPhone.replace(/\s/g, '')}`} target="_blank" rel="noopener noreferrer" style={{color: '#25D366'}}>
+                     <WhatsAppOutlined />
+                     <Text>Discuter sur WhatsApp</Text>
+                   </ContactLink>
+                )}
+                {item.contactEmail && (
+                  <ContactLink href={`mailto:${item.contactEmail}`}>
+                    <MailOutlined />
+                    <Text>{item.contactEmail}</Text>
+                  </ContactLink>
+                )}
+                {!item.contactEmail && !item.contactPhone && (
+                  <Text type="secondary">Aucune information de contact fournie.</Text>
+                )}
+              </Space>
+            </Space>
+
+            {canManage && (
+              <>
+                <SectionDivider />
+                <Space>
+                  <Button
+                    type="primary"
+                    icon={<EditOutlined />}
+                    onClick={() => {
+                      form.setFieldsValue(item);
+                      setIsModalVisible(true);
+                    }}
+                  >
+                    Modifier
+                  </Button>
+                  <Button
+                    danger
+                    icon={<DeleteOutlined />}
+                    onClick={() => Modal.confirm({
+                        title: 'Êtes-vous sûr de vouloir supprimer cette annonce ?',
+                        content: 'Cette action est irréversible.',
+                        okText: 'Oui, supprimer',
+                        cancelText: 'Annuler',
+                        onOk: handleDelete,
+                    })}
+                  >
+                    Supprimer
+                  </Button>
+                </Space>
+              </>
+            )}
+          </InfoCol>
         </Row>
+      </MainCard>
 
-        <Modal
-          title="Modifier l'annonce"
-          open={isModalVisible}
-          onCancel={() => setIsModalVisible(false)}
-          footer={null}
+      <Modal
+        title="Modifier l'annonce"
+        open={isModalVisible}
+        onCancel={() => setIsModalVisible(false)}
+        footer={null}
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleUpdate}
+          initialValues={item}
         >
-          <Form
-            form={form}
-            layout="vertical"
-            onFinish={handleUpdate}
-            initialValues={item}
+          <Form.Item
+            name="title"
+            label="Titre"
+            rules={[{ required: true, message: 'Veuillez saisir un titre' }]}
           >
-            <Form.Item
-              name="title"
-              label="Titre"
-              rules={[{ required: true, message: 'Veuillez saisir un titre' }]}
-            >
-              <Input />
-            </Form.Item>
+            <Input />
+          </Form.Item>
 
-            <Form.Item
-              name="description"
-              label="Description"
-              rules={[{ required: true, message: 'Veuillez saisir une description' }]}
-            >
-              <Input.TextArea rows={4} />
-            </Form.Item>
+          <Form.Item
+            name="description"
+            label="Description"
+            rules={[{ required: true, message: 'Veuillez saisir une description' }]}
+          >
+            <Input.TextArea rows={4} />
+          </Form.Item>
 
-            <Form.Item
-              name="price"
-              label="Prix"
-              rules={[{ required: true, message: 'Veuillez saisir un prix' }]}
-            >
-              <Input type="number" prefix={<EuroOutlined />} />
-            </Form.Item>
+          <Form.Item
+            name="price"
+            label="Prix"
+            rules={[{ required: true, message: 'Veuillez saisir un prix' }]}
+          >
+            <Input type="number" prefix={<DollarCircleOutlined />} />
+          </Form.Item>
 
-            <Form.Item
-              name="status"
-              label="Statut"
-              rules={[{ required: true, message: 'Veuillez sélectionner un statut' }]}
-            >
-              <Select>
-                <Select.Option value="approved">Disponible</Select.Option>
-                <Select.Option value="sold">Vendu</Select.Option>
-              </Select>
-            </Form.Item>
+          <Form.Item
+            name="status"
+            label="Statut"
+            rules={[{ required: true, message: 'Veuillez sélectionner un statut' }]}
+          >
+            <Select>
+              <Select.Option value="approved">Disponible</Select.Option>
+              <Select.Option value="sold">Vendu</Select.Option>
+            </Select>
+          </Form.Item>
 
-            <Form.Item>
-              <Button type="primary" htmlType="submit">
-                Enregistrer les modifications
-              </Button>
-            </Form.Item>
-          </Form>
-        </Modal>
-      </Content>
-    </Layout>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Enregistrer les modifications
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+    </PageLayout>
   );
 };
 

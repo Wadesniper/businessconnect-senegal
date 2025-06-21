@@ -165,6 +165,41 @@ const IconCircle = styled.div<{ color: string }>`
   }
 `;
 
+const ServiceCard = styled(Card)`
+  border-radius: 20px;
+  border: 1px solid #e8e8e8;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .ant-card-body {
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+`;
+
+const ServiceIconWrapper = styled.div<{color: string}>`
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  margin: 0 auto 1.5rem auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${props => props.color}1a;
+  
+  .anticon {
+    font-size: 32px;
+    color: ${props => props.color};
+  }
+`;
+
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const servicesRef = useRef<HTMLDivElement>(null);
@@ -199,12 +234,12 @@ const Home: React.FC = () => {
   };
   
   const services = [
-    { title: "Offres d'emploi", icon: <TeamOutlined/>, text: "Accédez à des milliers d'offres dans tous les secteurs.", link: '/jobs' },
-    { title: "Créateur de CV", icon: <BookOutlined/>, text: "Créez un CV professionnel et moderne avec notre générateur.", link: '/cv-generator' },
-    { title: "Fiches métiers", icon: <BulbOutlined/>, text: "Découvrez des informations détaillées sur différents métiers.", link: '/careers' },
-    { title: "Formations", icon: <CrownOutlined/>, text: "Développez vos compétences avec nos programmes de formation.", link: '/formations' },
-    { title: "Marketplace", icon: <ShoppingOutlined/>, text: "Achetez et vendez des produits et services professionnels.", link: '/marketplace' },
-    { title: "Recherche Avancée", icon: <SearchOutlined/>, text: "Trouvez précisément ce que vous cherchez avec nos filtres avancés.", link: '/jobs' },
+    { title: "Offres d'emploi", icon: <TeamOutlined/>, text: "Accédez à des milliers d'offres dans tous les secteurs.", link: '/jobs', color: '#1890ff' },
+    { title: "Créateur de CV", icon: <BookOutlined/>, text: "Créez un CV professionnel et moderne avec notre générateur.", link: '/cv-generator', color: '#1ec773' },
+    { title: "Fiches métiers", icon: <BulbOutlined/>, text: "Découvrez des informations détaillées sur différents métiers.", link: '/careers', color: '#faad14' },
+    { title: "Formations", icon: <CrownOutlined/>, text: "Développez vos compétences avec nos programmes de formation.", link: '/formations', color: '#ff4d4f' },
+    { title: "Marketplace", icon: <ShoppingOutlined/>, text: "Achetez et vendez des produits et services professionnels.", link: '/marketplace', color: '#b37feb' },
+    { title: "Recherche Avancée", icon: <SearchOutlined/>, text: "Trouvez précisément ce que vous cherchez avec nos filtres avancés.", link: '/jobs', color: '#3b5998' },
   ];
 
   const testimonials = [
@@ -330,20 +365,24 @@ const Home: React.FC = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.3 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  whileHover={{ y: -10, transition: { duration: 0.3 } }}
                   style={{ width: '100%' }}
+                  whileHover={{ y: -10, transition: { duration: 0.3 } }}
                 >
-                  <Card 
-                    hoverable
-                    style={{ borderRadius: '16px', overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%' }}
-                    bodyStyle={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}
-                    onClick={() => navigate(service.link)}
-                  >
-                    <div style={{ fontSize: '2.5rem', color: '#1ec773', marginBottom: '1rem' }}>{service.icon}</div>
-                    <Title level={4}>{service.title}</Title>
-                    <Paragraph style={{ flexGrow: 1 }}>{service.text}</Paragraph>
-                    <Button type="primary" ghost style={{ marginTop: 'auto', borderColor: '#1ec773', color: '#1ec773' }}>En savoir plus <ArrowRightOutlined /></Button>
-                  </Card>
+                 <ServiceCard hoverable onClick={() => navigate(service.link)}>
+                    <div>
+                      <ServiceIconWrapper color={service.color}>
+                        {service.icon}
+                      </ServiceIconWrapper>
+                      <Title level={4} style={{ marginBottom: '0.5rem' }}>{service.title}</Title>
+                      <Paragraph type="secondary" style={{ minHeight: '44px' }}>{service.text}</Paragraph>
+                    </div>
+                    <Button
+                      type="link"
+                      style={{ fontWeight: '600', padding: '0', marginTop: '1rem', color: service.color }}
+                    >
+                      Découvrir <ArrowRightOutlined />
+                    </Button>
+                 </ServiceCard>
                 </motion.div>
                </Col>
              ))}
@@ -474,6 +513,32 @@ const Home: React.FC = () => {
 
         <MarketplacePreview />
         
+        {/* Section Secteurs d'activité */}
+        <div style={{ padding: '64px 24px', background: '#f8f9fa' }}>
+          <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.7 }}>
+            <Title level={2} style={{ textAlign: 'center', marginBottom: 48, color: '#002766', fontWeight: 700 }}>Secteurs d'activité</Title>
+          </motion.div>
+          <Carousel autoplay autoplaySpeed={4000} dots={false} responsive={[{ breakpoint: 768, settings: { slidesToShow: 1 } }, { breakpoint: 1200, settings: { slidesToShow: 3 } }]} slidesToShow={4} style={{ paddingBottom: '32px' }}>
+            {secteurs.map((secteur, index) => (
+              <motion.div
+                key={secteur.id}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.5, delay: index * 0.05 }}
+                style={{padding: '10px'}}
+              >
+                <div style={{ padding: '0 16px' }}>
+                  <SectorCard color={secteur.couleur} onClick={() => navigate('/careers')}>
+                    <IconCircle color={secteur.couleur}><span>{secteur.icone}</span></IconCircle>
+                    <Title level={4}>{secteur.nom}</Title>
+                  </SectorCard>
+                </div>
+              </motion.div>
+            ))}
+          </Carousel>
+        </div>
+
         {/* Section Témoignages */}
         <div style={{ padding: '4rem 2rem', backgroundColor: '#fff' }}>
           <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.7 }}>
@@ -526,32 +591,6 @@ const Home: React.FC = () => {
               </Col>
             ))}
           </Row>
-        </div>
-
-        {/* Section Secteurs d'activité */}
-        <div style={{ padding: '64px 24px', background: '#f8f9fa' }}>
-          <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.7 }}>
-            <Title level={2} style={{ textAlign: 'center', marginBottom: 48, color: '#002766', fontWeight: 700 }}>Découvrez par Secteurs</Title>
-          </motion.div>
-          <Carousel autoplay autoplaySpeed={4000} dots={false} responsive={[{ breakpoint: 768, settings: { slidesToShow: 1 } }, { breakpoint: 1200, settings: { slidesToShow: 3 } }]} slidesToShow={4} style={{ paddingBottom: '32px' }}>
-            {secteurs.map((secteur, index) => (
-              <motion.div
-                key={secteur.id}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 0.5, delay: index * 0.05 }}
-                style={{padding: '10px'}}
-              >
-                <div style={{ padding: '0 16px' }}>
-                  <SectorCard color={secteur.couleur} onClick={() => navigate('/careers')}>
-                    <IconCircle color={secteur.couleur}><span>{secteur.icone}</span></IconCircle>
-                    <Title level={4}>{secteur.nom}</Title>
-                  </SectorCard>
-                </div>
-              </motion.div>
-            ))}
-          </Carousel>
         </div>
 
       </Content>

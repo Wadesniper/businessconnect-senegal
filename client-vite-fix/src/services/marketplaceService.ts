@@ -9,7 +9,7 @@ export interface MarketplaceItem {
   title: string;
   description: string;
   price?: number | null;
-  priceType: 'fixed' | 'range' | 'negotiable';
+  priceType: 'fixed' | 'range' | 'negotiable' | 'contact';
   minPrice?: number | null;
   maxPrice?: number | null;
   category: string;
