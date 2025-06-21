@@ -1238,3 +1238,30 @@ Dernière mise à jour : migration complète réalisée, site prêt pour la prod
 ## [Amélioration UI - Animations & Cohérence] (date : voir commit)
 - Ajout d'animations d'apparition au défilement (`fade-in`) sur les sections "Nos Services", "Nos Abonnements", et "Témoignages" pour une expérience utilisateur plus fluide et moderne.
 - Ajout d'effets de survol (`hover`) sur les cartes des mêmes sections pour une meilleure interactivité.
+
+### 🎯 **SOLUTION FINALE : VUE "ORDINATEUR" FORCÉE SUR MOBILE (2025-06-21)**
+
+#### **Stratégie finale et pragmatique pour la galerie CV sur mobile**
+- **Problème :** Malgré de multiples tentatives pour corriger le responsive de la galerie de CV, des problèmes de débordement persistaient sur certains appareils mobiles.
+- **Solution Appliquée (sur demande) :** Forcer l'affichage de la "Version pour ordinateur" de la page de la galerie de CV, uniquement sur les appareils mobiles. Cela garantit que la mise en page complète est visible, bien que dézoomée.
+
+- **Implémentation Technique :**
+  1. ✅ **Modification dynamique du Viewport avec `react-helmet-async`** :
+     - La librairie `react-helmet-async` a été utilisée pour modifier les balises `<meta>` de l'en-tête HTML de manière dynamique.
+     - Le `HelmetProvider` a été ajouté à la racine de l'application (`main.tsx`) pour activer cette fonctionnalité.
+  2. ✅ **Détection Mobile dans `TemplateSelection.tsx`** :
+     - Un `useEffect` détecte si l'utilisateur est sur un appareil mobile en analysant le `navigator.userAgent`.
+  3. ✅ **Injection de la balise Viewport** :
+     - Si un mobile est détecté, le composant injecte la balise suivante : `<meta name="viewport" content="width=1200, initial-scale=0.25">`.
+     - `width=1200` force le navigateur à rendre la page sur une largeur de 1200px.
+     - `initial-scale=0.25` applique un dézoom initial pour que la page s'adapte à l'écran.
+  4. ✅ **Comportement Isolé** :
+     - Cette modification ne s'applique **que** lorsque le composant de la galerie de CV est affiché. En quittant la page, la balise viewport standard du site est restaurée, et le reste du site conserve son comportement responsive normal.
+
+- **Impact :** La galerie de CV s'affiche désormais sur mobile comme sur un ordinateur, éliminant tout problème de débordement ou d'élément tronqué.
+
+#### **Fichiers modifiés :**
+- `client-vite-fix/src/pages/cv-generator/components/TemplateSelection.tsx` - Ajout de la logique Helmet.
+- `client-vite-fix/src/main.tsx` - Ajout du `HelmetProvider`.
+
+#### **Statut :** ✅ **AFFICHAGE MOBILE STABILISÉ.** La page s'affiche de manière cohérente sur tous les appareils, conformément à la demande.

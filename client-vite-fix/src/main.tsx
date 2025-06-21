@@ -7,28 +7,18 @@ import 'antd/dist/reset.css';
 import { ConfigProvider } from 'antd';
 import frFR from 'antd/locale/fr_FR';
 import { AuthProvider } from './context/AuthContext';
+import { BrowserRouter } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 
 // Google Analytics (gtag.js)
-declare global {
-  interface Window { dataLayer: any[]; gtag: (...args: any[]) => void; }
-}
-
+// @ts-ignore
+window.dataLayer = window.dataLayer || [];
 function gtag(...args: any[]) {
+  // @ts-ignore
   window.dataLayer.push(args);
 }
-
-if (typeof window !== 'undefined' && !window.matchMedia) {
-  window.matchMedia = function() {
-    return {
-      matches: false,
-      addListener: function() {},
-      removeListener: function() {},
-      addEventListener: function() {},
-      removeEventListener: function() {},
-      dispatchEvent: function() { return false; }
-    };
-  };
-}
+gtag('js', new Date());
+gtag('config', 'G-N909TR188M');
 
 console.log('Démarrage de l’application React');
 
@@ -37,16 +27,31 @@ const root = ReactDOM.createRoot(
 );
 
 console.log('Avant le rendu ReactDOM');
+
 root.render(
   <React.StrictMode>
-    <AuthProvider>
-      <ConfigProvider locale={frFR}>
-        <App />
-      </ConfigProvider>
-    </AuthProvider>
+    <BrowserRouter>
+      <HelmetProvider>
+        <AuthProvider>
+          <ConfigProvider locale={frFR}>
+            <App />
+          </ConfigProvider>
+        </AuthProvider>
+      </HelmetProvider>
+    </BrowserRouter>
   </React.StrictMode>
 );
+
 console.log('Après le rendu ReactDOM');
+
+// Polyfill pour matchMedia
+window.matchMedia = window.matchMedia || function() {
+    return {
+        matches: false,
+        addListener: function() {},
+        removeListener: function() {}
+    };
+};
 
 // Purge automatique du localStorage au premier chargement pour forcer la reconnexion propre
 if (window && window.localStorage && !window.localStorage.getItem('purge_done')) {
