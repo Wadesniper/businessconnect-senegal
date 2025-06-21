@@ -314,8 +314,8 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     description: 'CV moderne avec effet de fenêtre',
     premium: true,
     category: 'Créatif',
-    thumbnail: techModernPreview, // Placeholder
-    previewImage: techModernPreview, // Placeholder
+    thumbnail: artPreview,
+    previewImage: artPreview,
     features: ['Effet de fenêtre', 'Design moderne', 'Mise en avant des compétences'],
     profileImage: '/images/avatars/woman-5.png',
     sampleData: DEMO_PROFILES.art,
