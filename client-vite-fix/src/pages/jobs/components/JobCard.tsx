@@ -107,9 +107,9 @@ const JobCard: React.FC<JobCardProps> = ({ job, isPremium, onEdit, onDelete }) =
             {description}
         </Paragraph>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-          {isSpecified(location) && <Tag icon={<EnvironmentOutlined />} color="blue">{location}</Tag>}
-          {isSpecified(type) && <Tag icon={<ClockCircleOutlined />} color="green">{type}</Tag>}
-          {isSpecified(sector) && <Tag color="purple">{sector}</Tag>}
+          {isSpecified(location) && <Tag icon={<EnvironmentOutlined />} color="blue" style={{ whiteSpace: 'normal', height: 'auto', lineHeight: '1.4' }}>{location}</Tag>}
+          {isSpecified(type) && <Tag icon={<ClockCircleOutlined />} color="green" style={{ whiteSpace: 'normal', height: 'auto', lineHeight: '1.4' }}>{type}</Tag>}
+          {isSpecified(sector) && <Tag color="purple" style={{ whiteSpace: 'normal', height: 'auto', lineHeight: '1.4' }}>{sector}</Tag>}
         </div>
       </CardContent>
       <CardFooter>

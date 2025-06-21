@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { marketplaceService } from '../../services/marketplaceService';
 import type { MarketplaceItem } from '../../services/marketplaceService';
 
 const UserItems: React.FC = () => {
   const [items, setItems] = useState<MarketplaceItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadUserItems();
@@ -71,7 +73,7 @@ const UserItems: React.FC = () => {
         <div className="text-center py-12">
           <div className="text-gray-500 text-lg mb-4">Vous n'avez pas encore d'annonces</div>
           <button
-            onClick={() => window.location.href = '/marketplace/create'}
+            onClick={() => navigate('/marketplace/create')}
             className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
           >
             Créer une annonce
@@ -128,13 +130,13 @@ const UserItems: React.FC = () => {
 
                 <div className="mt-4 flex space-x-2">
                   <button
-                    onClick={() => window.location.href = `/marketplace/edit/${item.id}`}
+                    onClick={() => navigate(`/marketplace/edit/${item.id}`)}
                     className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm"
                   >
                     Modifier
                   </button>
                   <button
-                    onClick={() => window.location.href = `/marketplace/${item.id}`}
+                    onClick={() => navigate(`/marketplace/${item.id}`)}
                     className="flex-1 bg-gray-600 text-white px-3 py-2 rounded-md hover:bg-gray-700 transition-colors text-sm"
                   >
                     Voir

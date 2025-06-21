@@ -127,7 +127,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
 
         {!hideRegisterLink && (
         <div className="register-link">
-          Pas encore de compte ? <a href="/auth?tab=register">Créer un compte</a>
+          Pas encore de compte ? <a onClick={() => navigate('/auth?tab=register')} style={{ cursor: 'pointer', color: '#1890ff' }}>Créer un compte</a>
           </div>
         )}
       </Form>

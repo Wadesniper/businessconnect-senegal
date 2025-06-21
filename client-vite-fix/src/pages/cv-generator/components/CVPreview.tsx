@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, Avatar, Typography, Divider, Tag, Space, Button, Slider } from 'antd';
 import { ZoomInOutlined, ZoomOutOutlined, DownloadOutlined, EyeOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 import type { CVData, Template, CustomizationOptions } from '../../../types/cv';
 
 const { Title, Text, Paragraph } = Typography;
@@ -19,6 +20,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
   const [autoScale, setAutoScale] = useState(1);
   const [needsScroll, setNeedsScroll] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   const handleZoomChange = (value: number) => {
     setZoom(value);
@@ -172,7 +174,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
         }}>
           <Title level={3}>Version d'aperçu</Title>
           <Text>Abonnez-vous pour télécharger votre CV</Text>
-          <Button type="primary" href="/subscription">S'abonner</Button>
+          <Button type="primary" onClick={() => navigate('/subscription')}>S'abonner</Button>
         </div>
       )}
     </div>

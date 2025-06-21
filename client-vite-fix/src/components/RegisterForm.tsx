@@ -256,7 +256,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
         </Form.Item>
         {!hideLoginLink && (
           <div style={{ textAlign: 'center', marginTop: 8 }}>
-            <a href="/login">Déjà inscrit ? Se connecter</a>
+            <a onClick={() => navigate('/login')} style={{ cursor: 'pointer', color: '#1890ff' }}>Déjà inscrit ? Se connecter</a>
           </div>
         )}
       </Form>
@@ -421,7 +421,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
           </Form.Item>
           {!hideLoginLink && (
             <div style={{ textAlign: 'center', marginTop: 8 }}>
-              <a href="/login">Déjà inscrit ? Se connecter</a>
+              <a onClick={() => navigate('/login')} style={{ cursor: 'pointer', color: '#1890ff' }}>Déjà inscrit ? Se connecter</a>
             </div>
           )}
         </Form>
