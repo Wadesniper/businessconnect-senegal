@@ -1,4 +1,4 @@
-import type { Job, JobApplication, JobAlert, SavedJob } from '../types/job';
+import type { Job, JobData, JobApplication, JobAlert, SavedJob } from '../types/job';
 import { localStorageService } from './localStorageService';
 import { indexedDBService } from './indexedDBService';
 import { endpoints } from '../config/api';
@@ -53,41 +53,48 @@ class LocalJobStorage {
 
 export class JobService {
   // Gestion des offres d'emploi
-  static async getJobs(): Promise<Job[]> {
+  static async getJobs(): Promise<JobData[]> {
     try {
       const response = await fetch(endpoints.jobs);
       if (!response.ok) {
         throw new Error('Erreur réseau');
       }
-      let jobs = await response.json();
+      let jobs: JobData[] = await response.json();
       jobs = (jobs || []).map((job: any) => ({
         ...job,
         id: job._id || job.id,
-        type: job.jobType || job.type || '',
-        sector: job.sector || '',
-        location: job.location || '',
+        type: job.jobType || job.type || 'Non spécifié',
+        sector: job.sector || 'Non spécifié',
+        location: job.location || 'Non spécifié',
+        description: job.description || 'Pas de description.',
+        title: job.title || 'Titre non disponible',
+        createdAt: job.createdAt || new Date().toISOString(),
+        updatedAt: job.updatedAt || new Date().toISOString(),
       }));
       console.log('Jobs reçus pour affichage (après mapping):', jobs);
-      await indexedDBService.saveJobs(jobs);
       return jobs;
     } catch (error) {
       console.warn('Erreur lors de la récupération des offres depuis l\'API, fallback sur le cache IndexedDB:', error);
-      let jobs = await indexedDBService.getJobs() || [];
+      let jobs: JobData[] = [];
       jobs = (jobs || []).map((job: any) => ({
         ...job,
         id: job._id || job.id,
-        type: job.jobType || job.type || '',
-        sector: job.sector || '',
-        location: job.location || '',
+        type: job.jobType || job.type || 'Non spécifié',
+        sector: job.sector || 'Non spécifié',
+        location: job.location || 'Non spécifié',
+        description: job.description || 'Pas de description.',
+        title: job.title || 'Titre non disponible',
+        createdAt: job.createdAt || new Date().toISOString(),
+        updatedAt: job.updatedAt || new Date().toISOString(),
       }));
       console.log('Jobs reçus depuis le cache (après mapping):', jobs);
       return jobs;
     }
   }
 
-  static async getJobById(id: string): Promise<Job | null> {
+  static async getJobById(id: string): Promise<JobData | null> {
     try {
-      let job = await indexedDBService.getJobById(id);
+      let job: JobData | null = null;
       if (!job) {
         const response = await fetch(`/api/jobs/${id}`);
         if (!response.ok) {
@@ -96,7 +103,7 @@ export class JobService {
         job = await response.json();
       }
       if (job) {
-        job.id = job._id || job.id;
+        job.id = (job as any)._id || job.id;
       }
       return job;
     } catch (error) {

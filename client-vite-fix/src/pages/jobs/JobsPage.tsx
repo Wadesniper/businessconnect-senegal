@@ -1,5 +1,5 @@
-import React from 'react';
-import { Container, Grid, Typography, Box } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Layout, Row, Col, Typography, Spin, Button } from 'antd';
 import JobAdviceBanner from './components/JobAdviceBanner';
 import RedirectBanners from './components/RedirectBanners';
 import JobFilters from './components/JobFilters';
@@ -7,10 +7,12 @@ import JobCard from './components/JobCard';
 import { useAuth } from '../../context/AuthContext';
 import { useSubscription } from '../../hooks/useSubscription';
 import { hasPremiumAccess } from '../../utils/premiumAccess';
-import type { JobType } from '../../types/job';
+import type { JobData, JobType } from '../../types/job';
 import { useNavigate } from 'react-router-dom';
 import { JobService } from '../../services/jobService';
-import CircularProgress from '@mui/material/CircularProgress';
+
+const { Content } = Layout;
+const { Title, Text } = Typography;
 
 const JobsPage: React.FC = () => {
   const { user } = useAuth();
@@ -18,90 +20,54 @@ const JobsPage: React.FC = () => {
   const isPremium = hasPremiumAccess(user, hasActiveSubscription);
   const navigate = useNavigate();
 
-  // États des filtres
-  const [selectedSector, setSelectedSector] = React.useState<string | null>(null);
-  const [selectedType, setSelectedType] = React.useState<JobType | null>(null);
-  const [selectedLocation, setSelectedLocation] = React.useState<string | null>(null);
-  const [salaryRange, setSalaryRange] = React.useState<[number, number]>([0, 5000000]);
-  const [experienceLevel, setExperienceLevel] = React.useState<string | null>(null);
-  const [workLocation, setWorkLocation] = React.useState<string | null>(null);
+  const [jobs, setJobs] = useState<any[]>([]);
+  const [sectors, setSectors] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Récupération des offres et secteurs
-  const [jobs, setJobs] = React.useState<any[]>([]);
-  const [sectors, setSectors] = React.useState<string[]>([]);
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
+  // Filter states
+  const [selectedSector, setSelectedSector] = useState<string | null>(null);
+  const [selectedType, setSelectedType] = useState<JobType | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setIsLoading(true);
     JobService.getJobs()
-      .then(jobs => {
-        console.log('Réponse API /api/jobs :', jobs);
-        setJobs(jobs || []);
-        // Extraire les secteurs uniques
-        const uniqueSectors = Array.from(new Set((jobs || []).map((j: any) => j.sector).filter(Boolean)));
+      .then(fetchedJobs => {
+        setJobs(fetchedJobs || []);
+        const uniqueSectors = Array.from(new Set((fetchedJobs || []).map((j: any) => j.sector).filter(Boolean)));
         setSectors(uniqueSectors);
-        setIsLoading(false);
       })
-      .catch(() => {
-        setError("Erreur lors du chargement des offres d'emploi");
-        setIsLoading(false);
-      });
+      .catch(() => setError("Erreur lors du chargement des offres d'emploi"))
+      .finally(() => setIsLoading(false));
   }, []);
 
   const filteredJobs = React.useMemo(() => {
     return jobs.filter(job => {
       if (selectedSector && job.sector !== selectedSector) return false;
       if (selectedType && job.type !== selectedType) return false;
-      if (selectedLocation && !job.location.toLowerCase().includes(selectedLocation.toLowerCase())) return false;
-      if (job.salary) {
-        const jobMaxSalary = job.salary.max;
-        if (jobMaxSalary < salaryRange[0] || jobMaxSalary > salaryRange[1]) return false;
-      }
-      if (experienceLevel && job.experienceLevel !== experienceLevel) return false;
-      if (workLocation && job.workLocation !== workLocation) return false;
+      if (selectedLocation && job.location && !job.location.toLowerCase().includes(selectedLocation.toLowerCase())) return false;
       return true;
     });
-  }, [jobs, selectedSector, selectedType, selectedLocation, salaryRange, experienceLevel, workLocation]);
+  }, [jobs, selectedSector, selectedType, selectedLocation]);
 
-  // Tri des offres filtrées par date décroissante
   const sortedJobs = React.useMemo(() => {
     return [...filteredJobs].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }, [filteredJobs]);
 
-  const handlePostuler = (jobId: string) => {
-    if (!isPremium) {
-      navigate('/subscription');
-    } else {
-      navigate(`/jobs/${jobId}`);
-    }
-  };
-
-  const handleEdit = (jobId: string) => {
-    navigate(`/jobs/${jobId}/edit`);
-  };
-
-  const handleDelete = (jobId: string) => {
-    navigate(`/jobs/${jobId}/delete`);
-  };
-
-  const handlePublish = () => {
-    navigate('/jobs/publish');
-  };
-
-  const handleViewDetails = (jobId: string) => {
-    navigate(`/jobs/${jobId}`);
-  };
+  const handleEdit = (jobId: string) => navigate(`/jobs/edit/${jobId}`);
+  const handleDelete = (jobId: string) => console.log(`Supprimer le job ${jobId}`);
+  const handlePublish = () => navigate('/jobs/publish');
 
   if (isLoading) {
-    return <Box sx={{ minHeight: 420, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><CircularProgress size={48} color="primary" /></Box>;
+    return <div style={{ minHeight: 420, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" /></div>;
   }
 
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
+    <Content style={{ padding: '24px' }}>
       <JobAdviceBanner />
       <RedirectBanners />
-      <Box sx={{ mb: 2 }}>
+      <div style={{ marginBottom: 16 }}>
         <JobFilters
           sectors={sectors}
           selectedSector={selectedSector}
@@ -110,70 +76,53 @@ const JobsPage: React.FC = () => {
           onTypeChange={setSelectedType}
           selectedLocation={selectedLocation}
           onLocationChange={setSelectedLocation}
-          salaryRange={salaryRange}
-          onSalaryRangeChange={setSalaryRange}
-          experienceLevel={experienceLevel}
-          onExperienceLevelChange={setExperienceLevel}
-          workLocation={workLocation}
-          onWorkLocationChange={setWorkLocation}
+          salaryRange={[0,0]}
+          onSalaryRangeChange={() => {}}
+          experienceLevel={null}
+          onExperienceLevelChange={() => {}}
+          workLocation={null}
+          onWorkLocationChange={() => {}}
           renderAction={
             (user?.role === 'admin' || user?.role === 'employeur') ? (
-              <button
-                style={{ background: '#1890ff', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 28px', fontWeight: 700, fontSize: 17, cursor: 'pointer', boxShadow: '0 2px 8px #e3e8f7', marginLeft: 18 }}
-                onClick={handlePublish}
-              >
+              <Button type="primary" style={{ marginLeft: 16 }} onClick={handlePublish}>
                 Publier une offre
-              </button>
+              </Button>
             ) : null
           }
         />
-      </Box>
-      <Grid container spacing={4}>
-        <Grid item xs={12}>
-          {error ? (
-            <Box sx={{ textAlign: 'center', py: 4 }}>
-              <Typography variant="h6" gutterBottom>
-                {error}
-              </Typography>
-              <Typography color="text.secondary">
-                Essayez de rafraîchir la page.
-              </Typography>
-            </Box>
-          ) : filteredJobs.length === 0 ? (
-            <Box sx={{ textAlign: 'center', py: 4 }}>
-              <Typography variant="h6" gutterBottom>
-                Aucune offre ne correspond à vos critères de recherche.
-              </Typography>
-              <Typography color="text.secondary">
-                Essayez de modifier vos filtres pour voir plus de résultats.
-              </Typography>
-            </Box>
-          ) : (
-            <>
-              <Typography variant="subtitle1" gutterBottom>
-                {filteredJobs.length} offre{filteredJobs.length > 1 ? 's' : ''} trouvée{filteredJobs.length > 1 ? 's' : ''}
-              </Typography>
-              <Grid container spacing={3}>
-                {sortedJobs.map((job, idx) => (
-                  <Grid item xs={12} sm={6} md={4} lg={3} key={job.id}>
-                    <JobCard
-                      job={job}
-                      user={user}
-                      isSubscribed={isPremium}
-                      onPostuler={handlePostuler}
-                      onEdit={handleEdit}
-                      onDelete={handleDelete}
-                      onPublish={handlePublish}
-                      onViewDetails={handleViewDetails}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-            </>
-          )}
-        </Grid>
-      </Grid>
-    </Container>
+      </div>
+      {error ? (
+        <div style={{ textAlign: 'center', padding: '32px 0' }}>
+          <Title level={4}>{error}</Title>
+          <Text type="secondary">Essayez de rafraîchir la page.</Text>
+        </div>
+      ) : (
+        <>
+          <Text style={{ marginBottom: 16, display: 'block' }}>
+            {sortedJobs.length} offre{sortedJobs.length > 1 ? 's' : ''} trouvée{sortedJobs.length > 1 ? 's' : ''}
+          </Text>
+          <Row gutter={[24, 24]}>
+            {sortedJobs.length > 0 ? (
+              sortedJobs.map((job) => (
+                <Col xs={24} sm={12} md={8} lg={6} key={job.id}>
+                  <JobCard
+                    job={job as JobData}
+                    isPremium={isPremium}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                  />
+                </Col>
+              ))
+            ) : (
+              <Col span={24} style={{ textAlign: 'center', padding: '32px 0' }}>
+                <Title level={4}>Aucune offre ne correspond à vos critères.</Title>
+                <Text type="secondary">Essayez de modifier vos filtres.</Text>
+              </Col>
+            )}
+          </Row>
+        </>
+      )}
+    </Content>
   );
 };
 
