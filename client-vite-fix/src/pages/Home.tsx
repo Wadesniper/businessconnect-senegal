@@ -369,13 +369,13 @@ const Home: React.FC = () => {
                   whileHover={{ y: -10, transition: { duration: 0.3 } }}
                 >
                  <ServiceCard hoverable onClick={() => navigate(service.link)}>
-                    <div>
+                   <div>
                       <ServiceIconWrapper color={service.color}>
-                        {service.icon}
+                     {service.icon}
                       </ServiceIconWrapper>
                       <Title level={4} style={{ marginBottom: '0.5rem' }}>{service.title}</Title>
                       <Paragraph type="secondary" style={{ minHeight: '44px' }}>{service.text}</Paragraph>
-                    </div>
+                   </div>
                     <Button
                       type="link"
                       style={{ fontWeight: '600', padding: '0', marginTop: '1rem', color: service.color }}
@@ -390,12 +390,12 @@ const Home: React.FC = () => {
         </div>
 
         {/* Section Nos abonnements */}
-        <div style={{ padding: '64px 24px', background: '#f8f9fa' }}>
+         <div style={{ padding: '64px 24px', background: '#f8f9fa' }}>
           <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.7 }}>
-            <Title level={2} style={{ textAlign: 'center', marginBottom: 48, color: '#002766', fontWeight: 700 }}>Nos Abonnements</Title>
+           <Title level={2} style={{ textAlign: 'center', marginBottom: 48, color: '#002766', fontWeight: 700 }}>Nos Abonnements</Title>
           </motion.div>
-          <Row gutter={[32, 32]} justify="center">
-            <Col xs={24} sm={12} md={8}>
+           <Row gutter={[32, 32]} justify="center">
+             <Col xs={24} sm={12} md={8}>
               <motion.div
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -420,8 +420,8 @@ const Home: React.FC = () => {
                   <Button type="primary" block style={{ borderRadius: 8, fontWeight: 600, background: '#1ec773', borderColor: '#1ec773' }} onClick={() => navigate('/subscription')}>S'abonner</Button>
                 </Card>
               </motion.div>
-            </Col>
-            <Col xs={24} sm={12} md={8}>
+             </Col>
+             <Col xs={24} sm={12} md={8}>
               <motion.div
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -429,8 +429,8 @@ const Home: React.FC = () => {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 whileHover={{ y: -10, transition: { duration: 0.3 } }}
               >
-                <Card bordered style={{ borderRadius: 16, border: '2px solid #1890ff', minHeight: 420, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                  <div>
+               <Card bordered style={{ borderRadius: 16, border: '2px solid #1890ff', minHeight: 420, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                 <div>
                     <Title level={3} style={{ textAlign: 'center', color: '#222', marginBottom: 0 }}>Annonceur Marketplace</Title>
                     <div style={{ textAlign: 'center', fontWeight: 700, fontSize: 34, color: '#1890ff', margin: '12px 0 0 0' }}>5 000 F CFA<small style={{ fontSize: 16, color: '#888' }}>/mois</small></div>
                     <Paragraph style={{ textAlign: 'center', color: '#888', marginBottom: 18 }}>Pour les vendeurs et freelances.</Paragraph>
@@ -442,12 +442,12 @@ const Home: React.FC = () => {
                       <li>✔️ Notifications en temps réel</li>
                       <li style={{ color: '#bbb' }}>✖️ Publier des offres d'emploi</li>
                     </ul>
-                  </div>
-                  <Button type="primary" block style={{ borderRadius: 8, fontWeight: 600 }} onClick={() => navigate('/subscription')}>S'abonner</Button>
-                </Card>
+                 </div>
+                 <Button type="primary" block style={{ borderRadius: 8, fontWeight: 600 }} onClick={() => navigate('/subscription')}>S'abonner</Button>
+               </Card>
               </motion.div>
-            </Col>
-            <Col xs={24} sm={12} md={8}>
+             </Col>
+             <Col xs={24} sm={12} md={8}>
               <motion.div
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -455,8 +455,8 @@ const Home: React.FC = () => {
                 transition={{ duration: 0.5, delay: 0.3 }}
                 whileHover={{ y: -10, transition: { duration: 0.3 } }}
               >
-                <Card bordered style={{ borderRadius: 16, border: '2px solid #8a2be2', minHeight: 420, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                  <div>
+               <Card bordered style={{ borderRadius: 16, border: '2px solid #8a2be2', minHeight: 420, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                 <div>
                     <Title level={3} style={{ textAlign: 'center', color: '#222', marginBottom: 0 }}>Employeur</Title>
                     <div style={{ textAlign: 'center', fontWeight: 700, fontSize: 34, color: '#8a2be2', margin: '12px 0 0 0' }}>9 000 F CFA<small style={{ fontSize: 16, color: '#888' }}>/mois</small></div>
                     <Paragraph style={{ textAlign: 'center', color: '#888', marginBottom: 18 }}>Pour les entreprises qui recrutent.</Paragraph>
@@ -468,13 +468,13 @@ const Home: React.FC = () => {
                       <li>✔️ Statistiques des offres</li>
                       <li>✔️ Support prioritaire</li>
                     </ul>
-                  </div>
-                  <Button type="primary" block style={{ borderRadius: 8, fontWeight: 600, background: '#8a2be2', borderColor: '#8a2be2' }} onClick={() => navigate('/subscription')}>S'abonner</Button>
-                </Card>
+                 </div>
+                 <Button type="primary" block style={{ borderRadius: 8, fontWeight: 600, background: '#8a2be2', borderColor: '#8a2be2' }} onClick={() => navigate('/subscription')}>S'abonner</Button>
+               </Card>
               </motion.div>
-            </Col>
-          </Row>
-        </div>
+             </Col>
+           </Row>
+         </div>
 
         {/* Section Créateur de CV */}
         <div style={{ padding: '4rem 2rem', background: '#fff' }}>
@@ -512,7 +512,7 @@ const Home: React.FC = () => {
         </div>
 
         <MarketplacePreview />
-        
+
         {/* Section Secteurs d'activité */}
         <div style={{ padding: '64px 24px', background: '#f8f9fa' }}>
           <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.7 }}>
@@ -538,11 +538,11 @@ const Home: React.FC = () => {
             ))}
           </Carousel>
         </div>
-
+        
         {/* Section Témoignages */}
         <div style={{ padding: '4rem 2rem', backgroundColor: '#fff' }}>
           <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.7 }}>
-            <Title level={2} style={{ textAlign: 'center', marginBottom: '3rem' }}>Ils nous font confiance</Title>
+          <Title level={2} style={{ textAlign: 'center', marginBottom: '3rem' }}>Ils nous font confiance</Title>
           </motion.div>
           <Row gutter={[24, 24]} justify="center">
             {testimonials.map((testimonial, index) => (
@@ -573,7 +573,7 @@ const Home: React.FC = () => {
                       justifyContent: 'space-between'
                     }}
                   >
-                    <Space direction="vertical" align="center" style={{ width: '100%', textAlign: 'center' }}>
+                  <Space direction="vertical" align="center" style={{ width: '100%', textAlign: 'center' }}>
                        <div style={{ fontSize: '2rem', color: '#1ec773', marginBottom: '1rem', opacity: 0.6 }}>
                         <FaQuoteLeft />
                       </div>
@@ -583,15 +583,15 @@ const Home: React.FC = () => {
                       <Space direction="vertical" align="center">
                         <Avatar size={80} src={testimonial.img} style={{ border: '4px solid #fff', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
                         <Title level={4} style={{ marginTop: '1rem', marginBottom: 0, fontSize: '1.1rem' }}>{testimonial.name}</Title>
-                        <Text type="secondary">{testimonial.role}</Text>
+                      <Text type="secondary">{testimonial.role}</Text>
                       </Space>
-                    </Space>
-                  </Card>
+                  </Space>
+                </Card>
                 </motion.div>
               </Col>
             ))}
           </Row>
-        </div>
+         </div>
 
       </Content>
     </Layout>

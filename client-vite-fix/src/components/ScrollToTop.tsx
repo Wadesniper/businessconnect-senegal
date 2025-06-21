@@ -10,7 +10,7 @@ const ScrollToTop = () => {
       window.scrollTo({
         top: 0,
         left: 0,
-        behavior: 'auto',
+        behavior: 'auto', // 'auto' pour un défilement instantané
       });
 
       // Trouve et force le défilement du conteneur de contenu de ProLayout

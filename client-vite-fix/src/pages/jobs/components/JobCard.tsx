@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Tag, Typography, Button, Avatar } from 'antd';
-import { EnvironmentOutlined, ClockCircleOutlined, SolutionOutlined, EditOutlined, DeleteOutlined, EyeOutlined, LockOutlined } from '@ant-design/icons';
+import { EnvironmentOutlined, ClockCircleOutlined, ApartmentOutlined, EditOutlined, DeleteOutlined, EyeOutlined, LockOutlined } from '@ant-design/icons';
 import type { JobData as Job } from '../../../types/job';
 import styled from '@emotion/styled';
 import LazyImage from '../../../components/LazyImage';
@@ -95,7 +95,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, isPremium, onEdit, onDelete }) =
             {companyLogo ? (
                 <Avatar src={companyLogo} size={50} style={{border: '3px solid #f0f0f0'}} />
             ) : (
-                <Avatar icon={<SolutionOutlined />} size={50} style={{backgroundColor: '#e6f7ff', color: '#1890ff', border: '3px solid #e6f7ff'}} />
+                <Avatar icon={<ApartmentOutlined />} size={50} style={{backgroundColor: '#e6f7ff', color: '#1890ff', border: '3px solid #e6f7ff'}} />
             )}
             <div>
                 <Title level={5} style={{ marginBottom: '4px', lineHeight: 1.3, fontWeight: 700, color: '#002766' }} ellipsis={{rows: 2}}>{title}</Title>
@@ -106,7 +106,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, isPremium, onEdit, onDelete }) =
         <Paragraph ellipsis={{ rows: 3, expandable: false }} style={{ marginBottom: 16, marginTop: 12, color: '#595959' }}>
             {description}
         </Paragraph>
-        <div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
           {isSpecified(location) && <Tag icon={<EnvironmentOutlined />} color="blue">{location}</Tag>}
           {isSpecified(type) && <Tag icon={<ClockCircleOutlined />} color="green">{type}</Tag>}
           {isSpecified(sector) && <Tag color="purple">{sector}</Tag>}

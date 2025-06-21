@@ -113,9 +113,9 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
           style={{ margin: '40px 0' }}
         />
       ) : (
-        <Row gutter={[16, 16]}>
+        <Row gutter={[16, 24]}>
           {filteredTemplates.map((template, idx) => (
-            <Col xs={24} sm={12} md={8} lg={6} key={template.id} style={{ display: 'flex', alignItems: 'stretch' }}>
+            <Col xs={12} sm={8} md={8} lg={6} key={template.id} style={{ display: 'flex', alignItems: 'stretch' }}>
               <Card
                 hoverable
                 cover={
@@ -213,18 +213,17 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                   transition: 'box-shadow 0.22s cubic-bezier(.4,2,.3,1), border 0.22s',
                   overflow: 'hidden',
                   background: '#fff',
-                  height: 620,
-                  minHeight: 620,
-                  maxHeight: 620,
+                  height: 'auto',
+                  minHeight: 520,
                   display: 'flex',
                   flexDirection: 'column',
                 }}
-                bodyStyle={{ padding: 18, display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}
+                bodyStyle={{ padding: '12px', display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}
               >
-                <div style={{ flex: 1, minHeight: 0, overflow: 'auto', marginBottom: 12 }}>
+                <div style={{ flex: 1, minHeight: 0, overflow: 'hidden', marginBottom: 12, textOverflow: 'ellipsis' }}>
                 <Card.Meta
                   title={
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, fontSize: 18 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, fontSize: '1rem', whiteSpace: 'normal', lineHeight: '1.2' }}>
                       {template.name}
                       {template.premium && (
                         <Tooltip title="Template Premium">
@@ -235,12 +234,12 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                   }
                   description={
                     <>
-                      <div><b>Secteur :</b> {template.category}</div>
-                      <div style={{ marginTop: 8 }}>{template.description}</div>
+                      <div style={{fontSize: '0.85rem'}}><b>Secteur :</b> {template.category}</div>
+                      <div style={{ marginTop: 6, fontSize: '0.8rem', whiteSpace: 'normal' }}>{template.description}</div>
                       {template.features && (
-                        <div style={{ marginTop: 8 }}>
+                        <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
                           {template.features.map((feature, index) => (
-                            <Tag key={index} color="blue" style={{ margin: '4px' }}>
+                            <Tag key={index} color="blue" style={{ margin: 0 }}>
                               {feature}
                             </Tag>
                           ))}

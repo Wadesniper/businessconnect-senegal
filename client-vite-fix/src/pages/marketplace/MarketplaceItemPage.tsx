@@ -50,6 +50,11 @@ const PageLayout = styled(Layout)`
   }
 `;
 
+const ContentWrapper = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+`;
+
 const BackButton = styled(Button)`
   margin-bottom: 1.5rem;
 `;
@@ -61,12 +66,16 @@ const MainCard = styled(Card)`
 
 const ImageCarousel = styled(Carousel)`
   .slick-slide div {
-    height: 500px;
+    height: 450px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f2f5;
   }
   img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     border-radius: 16px 0 0 16px;
   }
 
@@ -89,26 +98,18 @@ const InfoTag = styled(Tag)`
 `;
 
 const PriceText = styled(Text)`
-  font-size: clamp(1.8rem, 4vw, 2.2rem);
+  font-size: clamp(1.5rem, 4vw, 2rem);
   font-weight: 700;
   color: #1ec773;
 `;
 
 const SectionDivider = styled(Divider)`
-  margin: 1.5rem 0;
+  margin: 1.2rem 0;
 `;
 
-const ContactLink = styled.a`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 1.1rem;
-  color: #333;
-  transition: color 0.3s;
-
-  &:hover {
-    color: #1890ff;
-  }
+const ContactButton = styled(Button)`
+  width: 100%;
+  justify-content: center;
 `;
 
 const MarketplaceItemPage: React.FC = () => {
@@ -203,127 +204,141 @@ const MarketplaceItemPage: React.FC = () => {
   
   return (
     <PageLayout>
-      <BackButton
-        icon={<ArrowLeftOutlined />}
-        onClick={() => navigate('/marketplace')}
-      >
-        Retour au Marketplace
-      </BackButton>
-      
-      <MainCard bodyStyle={{ padding: 0 }}>
-        <Row>
-          <Col xs={24} lg={12}>
-            {Array.isArray(item.images) && item.images.length > 0 ? (
-                <Image.PreviewGroup items={item.images}>
-                    <ImageCarousel autoplay dotPosition="top">
-                    {item.images.map((image, index) => (
-                        <div key={index}>
-                        <Image
-                            src={image}
-                            alt={`${item.title} - Image ${index + 1}`}
-                        />
-                        </div>
-                    ))}
-                    </ImageCarousel>
-                </Image.PreviewGroup>
-            ) : (
-              <div style={{ height: 500, background: '#f0f2f5', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '16px 0 0 16px' }}>
-                <Text type="secondary">Aucune image disponible</Text>
-              </div>
-            )}
-          </Col>
-
-          <InfoCol xs={24} lg={12}>
-            <Space direction="vertical" style={{ width: '100%', flexGrow: 1 }}>
-              <Space wrap>
-                {item.category && <InfoTag color="blue">{item.category}</InfoTag>}
-                {item.status === 'approved' && <InfoTag icon={<SafetyCertificateOutlined/>} color="green">Vérifié</InfoTag>}
-              </Space>
-
-              <Title level={2} style={{ marginBottom: 0, marginTop: '0.5rem' }}>{item.title || 'Titre non disponible'}</Title>
-              
-              {item.location && (
-                  <Space align="center" style={{ color: '#888', fontSize: '1rem' }}>
-                    <EnvironmentOutlined />
-                    <Text>{item.location}</Text>
-                  </Space>
+      <ContentWrapper>
+        <BackButton
+          icon={<ArrowLeftOutlined />}
+          onClick={() => navigate('/marketplace')}
+        >
+          Retour au Marketplace
+        </BackButton>
+        
+        <MainCard bodyStyle={{ padding: 0 }}>
+          <Row>
+            <Col xs={24} lg={12}>
+              {Array.isArray(item.images) && item.images.length > 0 ? (
+                  <Image.PreviewGroup items={item.images}>
+                      <ImageCarousel autoplay dotPosition="top">
+                      {item.images.map((image, index) => (
+                          <div key={index}>
+                          <Image
+                              src={image}
+                              alt={`${item.title} - Image ${index + 1}`}
+                          />
+                          </div>
+                      ))}
+                      </ImageCarousel>
+                  </Image.PreviewGroup>
+              ) : (
+                <div style={{ height: 450, background: '#f0f2f5', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '16px 0 0 16px' }}>
+                  <Text type="secondary">Aucune image disponible</Text>
+                </div>
               )}
-              
-              <SectionDivider/>
+            </Col>
 
-              <Space align="center" >
-                <DollarCircleOutlined style={{ fontSize: '2.2rem', color: '#1ec773' }}/>
-                <PriceText>{formatPrice(item)}</PriceText>
-              </Space>
-
-              <SectionDivider />
-
-              <Title level={4}>Description</Title>
-              <Paragraph style={{ whiteSpace: 'pre-wrap', color: '#555' }}>
-                  {item.description || 'Aucune description fournie.'}
-              </Paragraph>
-
-              <SectionDivider />
-
-              <Title level={4}>Contacter le vendeur</Title>
-              <Space direction="vertical" size="middle">
-                {item.contactPhone && (
-                  <ContactLink href={`tel:${item.contactPhone}`}>
-                    <PhoneOutlined />
-                    <Text>{item.contactPhone}</Text>
-                  </ContactLink>
-                )}
-                {item.contactPhone && (
-                   <ContactLink href={`https://wa.me/${item.contactPhone.replace(/\s/g, '')}`} target="_blank" rel="noopener noreferrer" style={{color: '#25D366'}}>
-                     <WhatsAppOutlined />
-                     <Text>Discuter sur WhatsApp</Text>
-                   </ContactLink>
-                )}
-                {item.contactEmail && (
-                  <ContactLink href={`mailto:${item.contactEmail}`}>
-                    <MailOutlined />
-                    <Text>{item.contactEmail}</Text>
-                  </ContactLink>
-                )}
-                {!item.contactEmail && !item.contactPhone && (
-                  <Text type="secondary">Aucune information de contact fournie.</Text>
-                )}
-              </Space>
-            </Space>
-
-            {canManage && (
-              <>
-                <SectionDivider />
-                <Space>
-                  <Button
-                    type="primary"
-                    icon={<EditOutlined />}
-                    onClick={() => {
-                      form.setFieldsValue(item);
-                      setIsModalVisible(true);
-                    }}
-                  >
-                    Modifier
-                  </Button>
-                  <Button
-                    danger
-                    icon={<DeleteOutlined />}
-                    onClick={() => Modal.confirm({
-                        title: 'Êtes-vous sûr de vouloir supprimer cette annonce ?',
-                        content: 'Cette action est irréversible.',
-                        okText: 'Oui, supprimer',
-                        cancelText: 'Annuler',
-                        onOk: handleDelete,
-                    })}
-                  >
-                    Supprimer
-                  </Button>
+            <InfoCol xs={24} lg={12}>
+              <Space direction="vertical" style={{ width: '100%', flexGrow: 1 }}>
+                <Space wrap>
+                  {item.category && <InfoTag color="blue">{item.category}</InfoTag>}
+                  {item.status === 'approved' && <InfoTag icon={<SafetyCertificateOutlined/>} color="green">Vérifié</InfoTag>}
                 </Space>
-              </>
-            )}
-          </InfoCol>
-        </Row>
-      </MainCard>
+
+                <Title level={3} style={{ marginBottom: 0, marginTop: '0.5rem' }}>{item.title || 'Titre non disponible'}</Title>
+                
+                {item.location && (
+                    <Space align="center" style={{ color: '#888', fontSize: '0.9rem' }}>
+                      <EnvironmentOutlined />
+                      <Text>{item.location}</Text>
+                    </Space>
+                )}
+                
+                <SectionDivider/>
+
+                <Space align="center" >
+                  <DollarCircleOutlined style={{ fontSize: '2.2rem', color: '#1ec773' }}/>
+                  <PriceText>{formatPrice(item)}</PriceText>
+                </Space>
+
+                <SectionDivider />
+
+                <Title level={4}>Description</Title>
+                <Paragraph style={{ whiteSpace: 'pre-wrap', color: '#555' }}>
+                    {item.description || 'Aucune description fournie.'}
+                </Paragraph>
+
+                <SectionDivider />
+
+                <Title level={4}>Contacter le vendeur</Title>
+                <Space direction="vertical" size="middle" style={{width: '100%'}}>
+                  {item.contactPhone && (
+                    <ContactButton 
+                      icon={<PhoneOutlined />}
+                      size="large"
+                      href={`tel:${item.contactPhone}`}
+                    >
+                      Appeler ({item.contactPhone})
+                    </ContactButton>
+                  )}
+                  {item.contactPhone && (
+                     <ContactButton 
+                      icon={<WhatsAppOutlined />} 
+                      size="large"
+                      href={`https://wa.me/${item.contactPhone.replace(/\s/g, '')}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      style={{background: '#25D366', color: 'white', borderColor: '#25D366'}}
+                     >
+                       Discuter sur WhatsApp
+                     </ContactButton>
+                  )}
+                  {item.contactEmail && (
+                    <ContactButton 
+                      icon={<MailOutlined />}
+                      size="large"
+                      href={`mailto:${item.contactEmail}`}
+                    >
+                      Envoyer un e-mail
+                    </ContactButton>
+                  )}
+                  {!item.contactEmail && !item.contactPhone && (
+                    <Text type="secondary">Aucune information de contact fournie.</Text>
+                  )}
+                </Space>
+              </Space>
+
+              {canManage && (
+                <>
+                  <SectionDivider />
+                  <Space>
+                    <Button
+                      type="primary"
+                      icon={<EditOutlined />}
+                      onClick={() => {
+                        form.setFieldsValue(item);
+                        setIsModalVisible(true);
+                      }}
+                    >
+                      Modifier
+                    </Button>
+                    <Button
+                      danger
+                      icon={<DeleteOutlined />}
+                      onClick={() => Modal.confirm({
+                          title: 'Êtes-vous sûr de vouloir supprimer cette annonce ?',
+                          content: 'Cette action est irréversible.',
+                          okText: 'Oui, supprimer',
+                          cancelText: 'Annuler',
+                          onOk: handleDelete,
+                      })}
+                    >
+                      Supprimer
+                    </Button>
+                  </Space>
+                </>
+              )}
+            </InfoCol>
+          </Row>
+        </MainCard>
+      </ContentWrapper>
 
       <Modal
         title="Modifier l'annonce"
