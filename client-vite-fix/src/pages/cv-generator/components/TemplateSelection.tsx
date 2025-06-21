@@ -144,9 +144,6 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                       margin: '0 auto',
                       overflow: 'hidden',
                       padding: 6,
-                      animationDelay: `${0.08 * idx + 0.08}s`,
-                      maxWidth: '100%',
-                      boxSizing: 'border-box'
                     }}
                     className={`${styles.cvMiniature} appear`}
                   >
@@ -216,21 +213,15 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                   overflow: 'hidden',
                   background: '#fff',
                   width: '100%',
-                  maxWidth: '100%',
                   display: 'flex',
                   flexDirection: 'column',
-                  height: '100%',
-                  boxSizing: 'border-box'
+                  height: '100%'
                 }}
                 bodyStyle={{ 
                   padding: '12px', 
                   display: 'flex', 
                   flexDirection: 'column', 
-                  flex: 1, 
-                  minHeight: 0,
-                  height: '100%',
-                  maxWidth: '100%',
-                  overflow: 'hidden'
+                  flex: 1
                 }}
               >
                 <div style={{ flex: 1, minHeight: 0, overflow: 'hidden', marginBottom: 12 }}>

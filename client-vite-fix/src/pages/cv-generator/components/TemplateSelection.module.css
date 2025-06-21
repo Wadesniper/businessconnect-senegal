@@ -50,62 +50,12 @@
   }
 }
 
-/* Responsive mobile - Corrections essentielles */
+/* On garde le minimum pour le responsive */
 @media (max-width: 768px) {
-  .cvMiniature {
-    max-width: 100%;
-    overflow: hidden;
-  }
-  
-  /* Correction de la grille sur mobile */
-  .ant-col {
-    padding: 0 6px;
-    max-width: 100%;
-  }
-  
   /* Correction de la hauteur des cartes sur mobile */
   .ant-card-cover {
-    height: auto;
-    min-height: 200px;
-    max-height: 280px;
-    overflow: hidden;
-  }
-  
-  /* Correction du modal sur mobile */
-  .ant-modal {
-    margin: 10px;
-    max-width: calc(100vw - 20px);
-  }
-  
-  .ant-modal-content {
-    border-radius: 12px;
-  }
-  
-  .ant-modal-body {
-    padding: 12px;
-  }
-}
-
-/* Correction pour les très petits écrans */
-@media (max-width: 480px) {
-  .cvMiniature {
-    max-width: 100%;
-    overflow: hidden;
-  }
-  
-  .ant-card-cover {
-    min-height: 180px;
-    max-height: 240px;
-    overflow: hidden;
-  }
-  
-  /* Réduction des espacements */
-  .ant-row {
-    margin: 0 -4px;
-  }
-  
-  .ant-col {
-    padding: 0 4px;
-    max-width: 100%;
+    height: auto !important;
+    min-height: 250px;
+    max-height: 320px;
   }
 } 

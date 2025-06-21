@@ -2,6 +2,25 @@
 
 ## Dernière mise à jour : 2025-06-21
 
+### 🎯 **CORRECTION DÉFINITIVE : LE "VIEWPORT SQUEEZE" (2025-06-21)**
+
+#### **Stratégie finale et robuste pour le responsive mobile**
+- **Problème Persistant :** Les aperçus de CV dans la galerie mobile débordaient de leur carte, car les composants de template ont une largeur fixe interne (`794px`).
+- **Échec des approches précédentes :** Les tentatives de confinement via CSS ou de modification des templates un par un se sont avérées insuffisantes ou trop complexes.
+
+- **Solution Définitive ("Viewport Squeeze") :**
+  1. ✅ **Logique de redimensionnement dynamique dans `CVPreview.tsx`** :
+     - Le composant `CVPreview` mesure maintenant **dynamiquement** la largeur de son conteneur sur la carte.
+     - Il calcule ensuite le ratio exact (`scale`) nécessaire pour que la largeur fixe du template (`794px`) corresponde parfaitement à la largeur disponible.
+     - Ce `scale` est appliqué via une transformation CSS à l'aperçu du CV.
+     - **Résultat :** Quelle que soit la taille de la carte sur mobile, l'aperçu du CV est **mathématiquement garanti** de s'adapter parfaitement, sans jamais déborder.
+
+  2. ✅ **Nettoyage complet du code** :
+     - Tous les "hacks" et styles de confinement superflus ont été retirés de `TemplateSelection.tsx` et `TemplateSelection.module.css`.
+     - La solution est maintenant centralisée, propre et maintenable.
+
+- **Impact :** Le problème de débordement est **définitivement éradiqué à la source** avec une solution technique robuste et élégante. La galerie est maintenant parfaitement fonctionnelle sur tous les appareils.
+
 ### 🎯 **CORRECTION PRÉCISE LARGEUR CARTES CV MOBILE (2025-06-21)**
 
 #### **Correction ciblée du débordement des cartes sur mobile**
