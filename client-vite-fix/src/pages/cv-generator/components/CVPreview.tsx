@@ -89,16 +89,12 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
 
   const previewStyle = isMiniature
     ? {
-        width: `${baseA4Width}px`,
-        height: `${baseA4Height}px`,
+        width: '100%',
+        height: '100%',
         transform: `scale(${autoScale * (zoom / 100)})`,
         transformOrigin: 'top left',
         background: '#fff',
-        borderRadius: 12,
-        boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
-        margin: 0,
-        padding: 0,
-        overflow: 'visible',
+        overflow: 'hidden',
         pointerEvents: 'none' as const,
       }
     : {
@@ -110,8 +106,8 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
   const preview = isMiniature ? (
     <div
       style={{
-        width: `${baseA4Width}px`,
-        height: `${baseA4Height}px`,
+        width: '100%',
+        height: '100%',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -119,12 +115,10 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
         overflow: 'hidden',
         position: 'relative',
         margin: '0 auto',
-        boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
-        borderRadius: 12,
         padding: 0,
       }}
     >
-      <div style={{ width: '100%', height: '100%', fontSize: 11, overflow: 'hidden', padding: 8, margin: 0 }}>
+      <div style={{ width: '100%', height: '100%', fontSize: 11, overflow: 'hidden', padding: 0, margin: 0 }}>
         <TemplateComponent
           data={safeData}
           customization={customization}

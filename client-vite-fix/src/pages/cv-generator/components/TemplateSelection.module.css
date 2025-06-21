@@ -13,8 +13,6 @@
   opacity: 0;
   transform: translateY(32px) scale(1);
   animation: fadeInUpCV 0.7s both;
-  max-width: 100% !important;
-  overflow: hidden !important;
 }
 .cvMiniature.appear {
   opacity: 1;
