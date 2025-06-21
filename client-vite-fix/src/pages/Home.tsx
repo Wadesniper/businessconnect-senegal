@@ -1,29 +1,22 @@
 // Forçage de build Vercel - commit technique
 import React, { useEffect, useState, useRef } from 'react';
-import { Layout, Typography, Card, Row, Col, Button, Space, Avatar, Carousel, Statistic, Spin, Tag } from 'antd';
+import { Layout, Typography, Card, Row, Col, Button, Space, Avatar, Carousel, Statistic, Spin } from 'antd';
 import { motion } from 'framer-motion';
 import styled from '@emotion/styled';
 import Hero from '../components/Hero';
-import type { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
 import {
   TeamOutlined,
   ShoppingOutlined,
   BookOutlined,
   BulbOutlined,
   ArrowRightOutlined,
-  BuildOutlined,
-  SearchOutlined,
   CrownOutlined,
-  SafetyCertificateOutlined,
-  RocketOutlined,
-  RiseOutlined,
-  EnvironmentOutlined,
-  CheckCircleOutlined,
+  SearchOutlined,
 } from '@ant-design/icons';
 import { FaQuoteLeft } from 'react-icons/fa';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { JobService } from '../services/jobService';
-import type { Job, JobData } from '../types/job';
+import type { JobData } from '../types/job';
 import { marketplaceService } from '../services/marketplaceService';
 import type { MarketplaceItem } from '../services/marketplaceService';
 import { useSpring, animated } from 'react-spring';
@@ -37,117 +30,6 @@ import manHeadphones from '../assets/testimonials/man-headphones.png';
 import womanGlasses from '../assets/testimonials/woman-glasses.png';
 import womanHijab from '../assets/testimonials/woman-hijab.png';
 import LazyImage from '../components/LazyImage';
-
-const services = [
-  {
-    icon: <TeamOutlined />,
-    title: "Offres d'emploi",
-    description: "Accédez à des milliers d'offres dans tous les secteurs.",
-    link: '/jobs',
-  },
-  {
-    icon: <BookOutlined />,
-    title: 'Créateur de CV',
-    description: 'Créez un CV professionnel et moderne avec notre générateur.',
-    link: '/cv-generator',
-  },
-  {
-    icon: <BulbOutlined />,
-    title: 'Fiches métiers',
-    description: 'Découvrez des informations détaillées sur différents métiers.',
-    link: '/careers',
-  },
-  {
-    icon: <CrownOutlined />,
-    title: 'Formations',
-    description: 'Développez vos compétences avec nos programmes de formation.',
-    link: '/formations',
-  },
-  {
-    icon: <ShoppingOutlined />,
-    title: 'Marketplace',
-    description: 'Achetez et vendez des produits et services professionnels.',
-    link: '/marketplace',
-  },
-    {
-    icon: <SearchOutlined />,
-    title: 'Recherche Avancée',
-    description: 'Trouvez précisément ce que vous cherchez avec nos filtres avancés.',
-    link: '/jobs',
-  },
-];
-
-const subscriptionPlans = [
-    {
-      title: 'Étudiant & Candidat',
-      description: 'Idéal pour démarrer sa carrière.',
-      features: [
-        'Accès à toutes les offres',
-        'Création de CV professionnels',
-        'Accès aux formations',
-        'Postuler en illimité'
-      ],
-      color: '#1ec773',
-    },
-    {
-      title: 'Annonceur Marketplace',
-      description: 'Pour les vendeurs et freelances.',
-      features: [
-        'Tous les avantages Étudiant',
-        'Publier sur le Marketplace',
-        'Visibilité accrue',
-        'Messagerie professionnelle'
-      ],
-      color: '#1890ff',
-    },
-    {
-      title: 'Employeur',
-      description: 'Pour les entreprises qui recrutent.',
-      features: [
-        'Tous les avantages Annonceur',
-        'Publier des offres d\'emploi',
-        'Accès à la CVthèque',
-        'Tableau de bord de suivi'
-      ],
-      color: '#8a2be2',
-    },
-];
-
-const testimonials = [
-    {
-        avatar: manBeret,
-        name: 'Mamadou Diop',
-        title: 'Recruteur',
-        quote: `Grâce à BusinessConnect, j'ai pu recruter rapidement des profils qualifiés pour mon entreprise. La plateforme facilite la mise en relation avec des candidats motivés et sérieux, ce qui a considérablement simplifié notre processus de recrutement.`
-    },
-    {
-        avatar: manHeadphones,
-        name: 'Cheikh Ndiaye',
-        title: 'Chercheur d\'emploi',
-        quote: `Après plusieurs mois de recherche, c'est sur BusinessConnect que j'ai enfin trouvé un emploi qui correspond à mes compétences. Les offres sont variées et la navigation sur le site est très intuitive. Je recommande vivement à tous les jeunes diplômés !`
-    },
-    {
-        avatar: womanGlasses,
-        name: 'Awa Sarr',
-        title: 'Étudiante',
-        quote: `En tant qu'étudiante, j'ai pu trouver un stage enrichissant grâce à BusinessConnect. J'ai aussi pu élargir mon réseau professionnel et découvrir de nombreuses opportunités adaptées à mon profil. C'est un vrai tremplin pour débuter sa carrière.`
-    },
-    {
-        avatar: womanHijab,
-        name: 'Fatou Bâ',
-        title: 'Annonceuse',
-        quote: `Publier mes offres sur BusinessConnect m'a permis de recevoir rapidement des candidatures pertinentes. J'apprécie la simplicité de la plateforme et la qualité des profils proposés. C'est devenu un outil indispensable pour mon activité.`
-    }
-];
-
-const sectors = [
-  { name: 'Informatique', icon: <TeamOutlined /> },
-  { name: 'Finance', icon: <ShoppingOutlined /> },
-  { name: 'Santé', icon: <BulbOutlined /> },
-  { name: 'Éducation', icon: <BookOutlined /> },
-  { name: 'Marketing', icon: <ShoppingOutlined /> },
-  { name: 'Industrie', icon: <BuildOutlined /> },
-];
 
 const { Content } = Layout;
 const { Title, Paragraph, Text } = Typography;
@@ -209,44 +91,6 @@ const StatsSection = () => {
     </div>
   );
 };
-
-const SECTEURS = [
-  { id: 1, nom: 'Informatique', icone: <TeamOutlined />, couleur: '#1890ff', description: 'Secteur lié à l\'informatique et à la technologie' },
-  { id: 2, nom: 'Finance', icone: <ShoppingOutlined />, couleur: '#52c41a', description: 'Secteur lié à la finance et à l\'économie' },
-  { id: 3, nom: 'Santé', icone: <BulbOutlined />, couleur: '#faad14', description: 'Secteur lié à la santé et à la médecine' },
-  { id: 4, nom: 'Éducation', icone: <BookOutlined />, couleur: '#ff4d4f', description: 'Secteur lié à l\'éducation et à la formation' },
-  { id: 5, nom: 'Marketing', icone: <ShoppingOutlined />, couleur: '#b37feb', description: 'Secteur lié au marketing et à la communication' },
-  { id: 6, nom: 'Industrie', icone: <BuildOutlined />, couleur: '#1890ff', description: 'Secteur lié à l\'industrie et à la production' },
-  { id: 7, nom: 'Services', icone: <ShoppingOutlined />, couleur: '#52c41a', description: 'Secteur lié aux services et à la prestation de services' },
-  { id: 8, nom: 'Agriculture', icone: <ShoppingOutlined />, couleur: '#faad14', description: 'Secteur lié à l\'agriculture et à l\'élevage' },
-];
-
-const TESTIMONIALS = [
-    {
-        img: manBeret,
-        name: 'Mamadou Diop',
-        role: 'Recruteur',
-        text: `Grâce à BusinessConnect, j'ai pu recruter rapidement des profils qualifiés pour mon entreprise. La plateforme facilite la mise en relation avec des candidats motivés et sérieux, ce qui a considérablement simplifié notre processus de recrutement.`
-    },
-    {
-        img: manHeadphones,
-        name: 'Cheikh Ndiaye',
-        role: 'Chercheur d\'emploi',
-        text: `Après plusieurs mois de recherche, c'est sur BusinessConnect que j'ai enfin trouvé un emploi qui correspond à mes compétences. Les offres sont variées et la navigation sur le site est très intuitive. Je recommande vivement à tous les jeunes diplômés !`
-    },
-    {
-        img: womanGlasses,
-        name: 'Awa Sarr',
-        role: 'Étudiante',
-        text: `En tant qu'étudiante, j'ai pu trouver un stage enrichissant grâce à BusinessConnect. J'ai aussi pu élargir mon réseau professionnel et découvrir de nombreuses opportunités adaptées à mon profil. C'est un vrai tremplin pour débuter sa carrière.`
-    },
-    {
-        img: womanHijab,
-        name: 'Fatou Bâ',
-        role: 'Annonceuse',
-        text: `Publier mes offres sur BusinessConnect m'a permis de recevoir rapidement des candidatures pertinentes. J'apprécie la simplicité de la plateforme et la qualité des profils proposés. C'est devenu un outil indispensable pour mon activité.`
-    }
-];
 
 const SectorCard = styled.div<{ color: string }>`
   width: 100%;
@@ -353,6 +197,53 @@ const Home: React.FC = () => {
   const handleScrollToServices = () => {
     servicesRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
+  
+  const services = [
+    { title: "Offres d'emploi", icon: <TeamOutlined/>, text: "Accédez à des milliers d'offres dans tous les secteurs.", link: '/jobs' },
+    { title: "Créateur de CV", icon: <BookOutlined/>, text: "Créez un CV professionnel et moderne avec notre générateur.", link: '/cv-generator' },
+    { title: "Fiches métiers", icon: <BulbOutlined/>, text: "Découvrez des informations détaillées sur différents métiers.", link: '/careers' },
+    { title: "Formations", icon: <CrownOutlined/>, text: "Développez vos compétences avec nos programmes de formation.", link: '/formations' },
+    { title: "Marketplace", icon: <ShoppingOutlined/>, text: "Achetez et vendez des produits et services professionnels.", link: '/marketplace' },
+    { title: "Recherche Avancée", icon: <SearchOutlined/>, text: "Trouvez précisément ce que vous cherchez avec nos filtres avancés.", link: '/jobs' },
+  ];
+
+  const testimonials = [
+      {
+          img: manBeret,
+          name: 'Mamadou Diop',
+          role: 'Recruteur',
+          text: `Grâce à BusinessConnect, j'ai pu recruter rapidement des profils qualifiés pour mon entreprise. La plateforme facilite la mise en relation avec des candidats motivés et sérieux, ce qui a considérablement simplifié notre processus de recrutement.`
+      },
+      {
+          img: manHeadphones,
+          name: 'Cheikh Ndiaye',
+          role: 'Chercheur d\'emploi',
+          text: `Après plusieurs mois de recherche, c'est sur BusinessConnect que j'ai enfin trouvé un emploi qui correspond à mes compétences. Les offres sont variées et la navigation sur le site est très intuitive. Je recommande vivement à tous les jeunes diplômés !`
+      },
+      {
+          img: womanGlasses,
+          name: 'Awa Sarr',
+          role: 'Étudiante',
+          text: `En tant qu'étudiante, j'ai pu trouver un stage enrichissant grâce à BusinessConnect. J'ai aussi pu élargir mon réseau professionnel et découvrir de nombreuses opportunités adaptées à mon profil. C'est un vrai tremplin pour débuter sa carrière.`
+      },
+      {
+          img: womanHijab,
+          name: 'Fatou Bâ',
+          role: 'Annonceuse',
+          text: `Publier mes offres sur BusinessConnect m'a permis de recevoir rapidement des candidatures pertinentes. J'apprécie la simplicité de la plateforme et la qualité des profils proposés. C'est devenu un outil indispensable pour mon activité.`
+      }
+  ];
+  
+  const secteurs = [
+    { id: 1, nom: 'Informatique', icone: '💻', couleur: '#1890ff' },
+    { id: 2, nom: 'Finance', icone: '💰', couleur: '#52c41a' },
+    { id: 3, nom: 'Santé', icone: '❤️', couleur: '#ff4d4f' },
+    { id: 4, nom: 'Éducation', icone: '🎓', couleur: '#faad14' },
+    { id: 5, nom: 'Marketing', icone: '📈', couleur: '#b37feb' },
+    { id: 6, nom: 'Industrie', icone: '🏭', couleur: '#1890ff' },
+    { id: 7, nom: 'Services', icone: '🤝', couleur: '#52c41a' },
+    { id: 8, nom: 'Agriculture', icone: '🌱', couleur: '#faad14' },
+  ];
 
   const latestJobs = jobs
     .filter(job => job?.id && job.createdAt)
@@ -439,10 +330,10 @@ const Home: React.FC = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.3 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  style={{ width: '100%' }}
                   whileHover={{ y: -10, transition: { duration: 0.3 } }}
+                  style={{ width: '100%' }}
                 >
-                  <Card
+                  <Card 
                     hoverable
                     style={{ borderRadius: '16px', overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%' }}
                     bodyStyle={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}
@@ -450,59 +341,102 @@ const Home: React.FC = () => {
                   >
                     <div style={{ fontSize: '2.5rem', color: '#1ec773', marginBottom: '1rem' }}>{service.icon}</div>
                     <Title level={4}>{service.title}</Title>
-                    <Paragraph style={{ flexGrow: 1 }}>{service.description}</Paragraph>
+                    <Paragraph style={{ flexGrow: 1 }}>{service.text}</Paragraph>
                     <Button type="primary" ghost style={{ marginTop: 'auto', borderColor: '#1ec773', color: '#1ec773' }}>En savoir plus <ArrowRightOutlined /></Button>
                   </Card>
                 </motion.div>
-              </Col>
-            ))}
-          </Row>
+               </Col>
+             ))}
+           </Row>
         </div>
 
         {/* Section Nos abonnements */}
-        <div style={{ padding: '4rem 2rem', background: '#f8f9fa' }}>
+        <div style={{ padding: '64px 24px', background: '#f8f9fa' }}>
           <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.7 }}>
-            <Title level={2} style={{ textAlign: 'center', marginBottom: '1rem' }}>Nos Abonnements</Title>
-            <Paragraph style={{ textAlign: 'center', maxWidth: '600px', margin: '0 auto 3rem' }}>
-              Choisissez le plan qui correspond le mieux à vos besoins et débloquez des fonctionnalités exclusives pour accélérer votre carrière ou vos recrutements.
-            </Paragraph>
+            <Title level={2} style={{ textAlign: 'center', marginBottom: 48, color: '#002766', fontWeight: 700 }}>Nos Abonnements</Title>
           </motion.div>
-          <Row gutter={[24, 24]} justify="center">
-            {subscriptionPlans.map((plan, index) => (
-              <Col xs={24} sm={12} md={8} key={index}>
-                <motion.div
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.3 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  style={{ height: '100%' }}
-                  whileHover={{ y: -10, transition: { duration: 0.3 } }}
-                >
-                  <Card
-                    hoverable
-                    style={{ borderRadius: '16px', display: 'flex', flexDirection: 'column', height: '100%', borderTop: `4px solid ${plan.color}` }}
-                    bodyStyle={{ padding: '24px', flexGrow: 1, display: 'flex', flexDirection: 'column' }}
-                  >
-                    <Title level={3} style={{ color: plan.color }}>{plan.title}</Title>
-                    <Paragraph>{plan.description}</Paragraph>
-                    <div style={{ margin: '1rem 0', flexGrow: 1 }}>
-                      {plan.features.map((feature, i) => (
-                        <div key={i} style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
-                          <CheckCircleOutlined style={{ color: '#1ec773', marginRight: '8px' }} />
-                          <Text>{feature}</Text>
-                        </div>
-                      ))}
-                    </div>
-                    <Button type="primary" size="large" block onClick={() => navigate('/subscription')} style={{ background: plan.color, borderColor: plan.color, marginTop: 'auto' }}>
-                      Choisir ce plan
-                    </Button>
-                  </Card>
-                </motion.div>
-              </Col>
-            ))}
+          <Row gutter={[32, 32]} justify="center">
+            <Col xs={24} sm={12} md={8}>
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                whileHover={{ y: -10, transition: { duration: 0.3 } }}
+              >
+                <Card bordered style={{ borderRadius: 16, border: '2px solid #1ec773', minHeight: 420, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div>
+                    <Title level={3} style={{ textAlign: 'center', color: '#222', marginBottom: 0 }}>Étudiant & Candidat</Title>
+                    <div style={{ textAlign: 'center', fontWeight: 700, fontSize: 34, color: '#1ec773', margin: '12px 0 0 0' }}>1 000 F CFA<small style={{ fontSize: 16, color: '#888' }}>/mois</small></div>
+                    <Paragraph style={{ textAlign: 'center', color: '#888', marginBottom: 18 }}>Idéal pour démarrer sa carrière.</Paragraph>
+                    <ul style={{ fontSize: 16, color: '#222', marginBottom: 24, paddingLeft: 0, listStyle: 'none' }}>
+                      <li>✔️ Accès à toutes les offres</li>
+                      <li>✔️ Création de CV professionnels</li>
+                      <li>✔️ Accès aux formations</li>
+                      <li>✔️ Postuler en illimité</li>
+                      <li style={{ color: '#bbb' }}>✖️ Publier sur le Marketplace</li>
+                      <li style={{ color: '#bbb' }}>✖️ Publier des offres d'emploi</li>
+                    </ul>
+                  </div>
+                  <Button type="primary" block style={{ borderRadius: 8, fontWeight: 600, background: '#1ec773', borderColor: '#1ec773' }} onClick={() => navigate('/subscription')}>S'abonner</Button>
+                </Card>
+              </motion.div>
+            </Col>
+            <Col xs={24} sm={12} md={8}>
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                whileHover={{ y: -10, transition: { duration: 0.3 } }}
+              >
+                <Card bordered style={{ borderRadius: 16, border: '2px solid #1890ff', minHeight: 420, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div>
+                    <Title level={3} style={{ textAlign: 'center', color: '#222', marginBottom: 0 }}>Annonceur Marketplace</Title>
+                    <div style={{ textAlign: 'center', fontWeight: 700, fontSize: 34, color: '#1890ff', margin: '12px 0 0 0' }}>5 000 F CFA<small style={{ fontSize: 16, color: '#888' }}>/mois</small></div>
+                    <Paragraph style={{ textAlign: 'center', color: '#888', marginBottom: 18 }}>Pour les vendeurs et freelances.</Paragraph>
+                    <ul style={{ fontSize: 16, color: '#222', marginBottom: 24, paddingLeft: 0, listStyle: 'none' }}>
+                      <li>✔️ Tous les avantages Étudiant</li>
+                      <li>✔️ Publier sur le Marketplace</li>
+                      <li>✔️ Visibilité accrue</li>
+                      <li>✔️ Messagerie professionnelle</li>
+                      <li>✔️ Notifications en temps réel</li>
+                      <li style={{ color: '#bbb' }}>✖️ Publier des offres d'emploi</li>
+                    </ul>
+                  </div>
+                  <Button type="primary" block style={{ borderRadius: 8, fontWeight: 600 }} onClick={() => navigate('/subscription')}>S'abonner</Button>
+                </Card>
+              </motion.div>
+            </Col>
+            <Col xs={24} sm={12} md={8}>
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                whileHover={{ y: -10, transition: { duration: 0.3 } }}
+              >
+                <Card bordered style={{ borderRadius: 16, border: '2px solid #8a2be2', minHeight: 420, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div>
+                    <Title level={3} style={{ textAlign: 'center', color: '#222', marginBottom: 0 }}>Employeur</Title>
+                    <div style={{ textAlign: 'center', fontWeight: 700, fontSize: 34, color: '#8a2be2', margin: '12px 0 0 0' }}>9 000 F CFA<small style={{ fontSize: 16, color: '#888' }}>/mois</small></div>
+                    <Paragraph style={{ textAlign: 'center', color: '#888', marginBottom: 18 }}>Pour les entreprises qui recrutent.</Paragraph>
+                    <ul style={{ fontSize: 16, color: '#222', marginBottom: 24, paddingLeft: 0, listStyle: 'none' }}>
+                      <li>✔️ Tous les avantages Annonceur</li>
+                      <li>✔️ Publier des offres d'emploi</li>
+                      <li>✔️ Accès à la CVthèque</li>
+                      <li>✔️ Tableau de bord de suivi</li>
+                      <li>✔️ Statistiques des offres</li>
+                      <li>✔️ Support prioritaire</li>
+                    </ul>
+                  </div>
+                  <Button type="primary" block style={{ borderRadius: 8, fontWeight: 600, background: '#8a2be2', borderColor: '#8a2be2' }} onClick={() => navigate('/subscription')}>S'abonner</Button>
+                </Card>
+              </motion.div>
+            </Col>
           </Row>
         </div>
-        
+
         {/* Section Créateur de CV */}
         <div style={{ padding: '4rem 2rem', background: '#fff' }}>
             <Row justify="center" align="middle" gutter={[32, 32]}>
@@ -539,47 +473,54 @@ const Home: React.FC = () => {
         </div>
 
         <MarketplacePreview />
-
+        
         {/* Section Témoignages */}
         <div style={{ padding: '4rem 2rem', backgroundColor: '#fff' }}>
           <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.7 }}>
             <Title level={2} style={{ textAlign: 'center', marginBottom: '3rem' }}>Ils nous font confiance</Title>
           </motion.div>
-          <Row gutter={[24, 24]} justify="center" style={{ alignItems: 'stretch' }}>
+          <Row gutter={[24, 24]} justify="center">
             {testimonials.map((testimonial, index) => (
-              <Col xs={24} sm={12} md={8} key={index} style={{ display: 'flex' }}>
+              <Col xs={24} sm={12} md={8} lg={6} key={index} style={{ display: 'flex' }}>
                 <motion.div
                   initial={{ opacity: 0, y: 50 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.3 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  style={{ width: '100%' }}
                   whileHover={{ y: -10, transition: { duration: 0.3 } }}
+                  style={{ width: '100%', height: '100%' }}
                 >
                   <Card
-                    hoverable
                     style={{
-                      borderRadius: '16px',
+                      borderRadius: '20px',
+                      boxShadow: '0 10px 40px rgba(0,0,0,0.08)',
+                      border: '1px solid #e8e8e8',
                       display: 'flex',
                       flexDirection: 'column',
+                      width: '100%',
                       height: '100%',
-                      boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
-                      border: '1px solid #f0f0f0'
                     }}
-                    bodyStyle={{ padding: '24px', flexGrow: 1, display: 'flex', flexDirection: 'column' }}
+                    bodyStyle={{
+                      padding: '2rem',
+                      flex: 1,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between'
+                    }}
                   >
-                    <div style={{ fontSize: '2rem', color: '#1ec773', marginBottom: '1rem', opacity: 0.6 }}>
-                      <FaQuoteLeft />
-                    </div>
-                    <Paragraph style={{ fontStyle: 'italic', flexGrow: 1 }}>"{testimonial.quote}"</Paragraph>
-                    <div style={{ display: 'flex', alignItems: 'center', marginTop: '1rem' }}>
-                      <Avatar src={testimonial.avatar} size={50} style={{ marginRight: '1rem', border: '3px solid #1ec773' }} />
-                      <div>
-                        <Text strong>{testimonial.name}</Text>
-                        <br />
-                        <Text type="secondary">{testimonial.title}</Text>
+                    <Space direction="vertical" align="center" style={{ width: '100%', textAlign: 'center' }}>
+                       <div style={{ fontSize: '2rem', color: '#1ec773', marginBottom: '1rem', opacity: 0.6 }}>
+                        <FaQuoteLeft />
                       </div>
-                    </div>
+                      <Paragraph style={{ fontStyle: 'italic', color: '#555', fontSize: '0.95rem', flexGrow: 1, marginBottom: '1.5rem' }}>
+                        "{testimonial.text}"
+                      </Paragraph>
+                      <Space direction="vertical" align="center">
+                        <Avatar size={80} src={testimonial.img} style={{ border: '4px solid #fff', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                        <Title level={4} style={{ marginTop: '1rem', marginBottom: 0, fontSize: '1.1rem' }}>{testimonial.name}</Title>
+                        <Text type="secondary">{testimonial.role}</Text>
+                      </Space>
+                    </Space>
                   </Card>
                 </motion.div>
               </Col>
@@ -588,33 +529,29 @@ const Home: React.FC = () => {
         </div>
 
         {/* Section Secteurs d'activité */}
-        <div style={{ padding: '4rem 2rem', background: '#f8f9fa' }}>
+        <div style={{ padding: '64px 24px', background: '#f8f9fa' }}>
           <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.7 }}>
-            <Title level={2} style={{ textAlign: 'center', marginBottom: '3rem' }}>Secteurs d'activité</Title>
+            <Title level={2} style={{ textAlign: 'center', marginBottom: 48, color: '#002766', fontWeight: 700 }}>Découvrez par Secteurs</Title>
           </motion.div>
-          <Row gutter={[16, 16]}>
-            {sectors.map((sector, index) => (
-              <Col xs={12} sm={8} md={6} lg={4} key={index}>
-                <motion.div
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.3 }}
-                  transition={{ duration: 0.5, delay: index * 0.05 }}
-                  whileHover={{ y: -5, transition: { duration: 0.3 } }}
-                >
-                  <Card
-                    hoverable
-                    style={{ textAlign: 'center', borderRadius: '12px' }}
-                    bodyStyle={{ padding: '1rem 0.5rem' }}
-                    onClick={() => navigate(`/jobs?sector=${sector.name}`)}
-                  >
-                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>{sector.icon}</div>
-                    <Text>{sector.name}</Text>
-                  </Card>
-                </motion.div>
-              </Col>
+          <Carousel autoplay autoplaySpeed={4000} dots={false} responsive={[{ breakpoint: 768, settings: { slidesToShow: 1 } }, { breakpoint: 1200, settings: { slidesToShow: 3 } }]} slidesToShow={4} style={{ paddingBottom: '32px' }}>
+            {secteurs.map((secteur, index) => (
+              <motion.div
+                key={secteur.id}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.5, delay: index * 0.05 }}
+                style={{padding: '10px'}}
+              >
+                <div style={{ padding: '0 16px' }}>
+                  <SectorCard color={secteur.couleur} onClick={() => navigate('/careers')}>
+                    <IconCircle color={secteur.couleur}><span>{secteur.icone}</span></IconCircle>
+                    <Title level={4}>{secteur.nom}</Title>
+                  </SectorCard>
+                </div>
+              </motion.div>
             ))}
-          </Row>
+          </Carousel>
         </div>
 
       </Content>
