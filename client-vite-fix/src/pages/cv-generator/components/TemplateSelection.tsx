@@ -171,24 +171,22 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                         alignItems: 'center',
                         justifyContent: 'center'
                       }}>
-                        <div className={styles.cvPreviewWrapper}>
-                          <CVPreview
-                            data={DEMO_PROFILES[template.id] || {
-                              personalInfo: { firstName: '', lastName: '', title: '', email: '', phone: '', address: '', photo: '', summary: '' },
-                              experience: [],
-                              education: [],
-                              skills: [],
-                              languages: [],
-                              certifications: [],
-                              projects: [],
-                              interests: [],
-                            }}
-                            template={template}
-                            customization={defaultCustomization}
-                            isPremium={true}
-                            isMiniature={true}
-                          />
-                        </div>
+                        <CVPreview
+                          data={DEMO_PROFILES[template.id] || {
+                            personalInfo: { firstName: '', lastName: '', title: '', email: '', phone: '', address: '', photo: '', summary: '' },
+                            experience: [],
+                            education: [],
+                            skills: [],
+                            languages: [],
+                            certifications: [],
+                            projects: [],
+                            interests: [],
+                          }}
+                          template={template}
+                          customization={defaultCustomization}
+                          isPremium={true}
+                          isMiniature={true}
+                        />
                       </div>
                     )}
                   </div>
@@ -369,24 +367,22 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                 justifyContent: 'center',
                 overflow: 'hidden'
               }}>
-                <div className={styles.cvPreviewWrapper}>
-                  <CVPreview
-                    data={DEMO_PROFILES[previewTemplate.id] || {
-                      personalInfo: { firstName: '', lastName: '', title: '', email: '', phone: '', address: '', photo: '', summary: '' },
-                      experience: [],
-                      education: [],
-                      skills: [],
-                      languages: [],
-                      certifications: [],
-                      projects: [],
-                      interests: [],
-                    }}
-                    template={previewTemplate}
-                    customization={defaultCustomization}
-                    isPremium={true}
-                    isMiniature={true}
-                  />
-                </div>
+                <CVPreview
+                  data={DEMO_PROFILES[previewTemplate.id] || {
+                    personalInfo: { firstName: '', lastName: '', title: '', email: '', phone: '', address: '', photo: '', summary: '' },
+                    experience: [],
+                    education: [],
+                    skills: [],
+                    languages: [],
+                    certifications: [],
+                    projects: [],
+                    interests: [],
+                  }}
+                  template={previewTemplate}
+                  customization={defaultCustomization}
+                  isPremium={true}
+                  isMiniature={true}
+                />
               </div>
             )}
           </div>
