@@ -2,6 +2,14 @@
 
 ## Dernière mise à jour : 2025-06-21
 
+### 🚨 **RESTAURATION D'URGENCE SUITE À UNE ERREUR DE BUILD (2025-06-21)**
+
+#### **Rollback d'une modification ayant causé une panne complète**
+- **Incident Critique :** Une précédente manipulation a créé par erreur un fichier `src/main.tsx` à la **racine du projet**, en dehors du projet `client-vite-fix`. Ce fichier a été inclus dans le commit et a **cassé le processus de déploiement**, rendant le site entièrement inaccessible.
+- **Action Immédiate :** Le fichier `src/main.tsx` erroné a été **supprimé** du projet.
+- **Résolution :** Un nouveau commit contenant uniquement la suppression de ce fichier a été poussé en production pour déclencher un nouveau build et **restaurer immédiatement le site**.
+- **Impact :** Le site est de nouveau fonctionnel. La correction pour l'affichage des CV sur mobile est toujours en place.
+
 ### 롤 **RESTAURATION ET CORRECTIF CSS ROBUSTE (2025-06-21)**
 
 #### **Rollback d'une solution instable et application d'un correctif ciblé**
