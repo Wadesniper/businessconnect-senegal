@@ -155,16 +155,16 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                         }}
                       />
                     ) : (
-                      <div style={{ width: '100%', height: '100%', overflow: 'hidden', position: 'relative' }}>
+                      <div style={{ width: '100%', height: '100%', overflow: 'hidden', position: 'relative', background: '#f0f2f5' }}>
                         <div
                           style={{
                             position: 'absolute',
-                            top: 0,
+                            top: '50%',
                             left: '50%',
                             width: 794,
                             height: 1123,
-                            transform: 'scale(0.45) translateX(-50%)',
-                            transformOrigin: 'top left',
+                            transform: 'translate(-50%, -50%) scale(0.45)',
+                            transformOrigin: 'center center',
                             pointerEvents: 'none',
                             background: '#fff',
                             borderRadius: 12,
@@ -174,7 +174,6 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                             alignItems: 'center',
                             justifyContent: 'center',
                             overflow: 'hidden',
-                            padding: 0,
                           }}
                           className={styles.cvMiniature}
                         >

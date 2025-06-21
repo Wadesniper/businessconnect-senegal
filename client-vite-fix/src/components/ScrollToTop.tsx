@@ -5,24 +5,30 @@ const ScrollToTop = () => {
   const { pathname } = useLocation();
 
   useEffect(() => {
+    // Défilement automatique et instantané vers le haut
+    // Force le défilement sur tous les conteneurs possibles
     try {
-      // Force le défilement de la fenêtre principale en haut
-      window.scrollTo({
-        top: 0,
-        left: 0,
-        behavior: 'auto', // 'auto' pour un défilement instantané
-      });
-
-      // Trouve et force le défilement du conteneur de contenu de ProLayout
-      // C'est la solution robuste pour les layouts Ant Design
+      // 1. Fenêtre principale - défilement instantané
+      window.scrollTo(0, 0);
+      
+      // 2. Conteneur de contenu Ant Design Pro
       const proLayoutContent = document.querySelector('.ant-pro-layout-content');
       if (proLayoutContent) {
-        proLayoutContent.scrollTo({
-          top: 0,
-          left: 0,
-          behavior: 'auto',
-        });
+        proLayoutContent.scrollTop = 0;
       }
+      
+      // 3. Body et HTML pour être sûr
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+      
+      // 4. Tous les conteneurs avec overflow
+      const scrollableElements = document.querySelectorAll('[style*="overflow"], [class*="scroll"]');
+      scrollableElements.forEach(element => {
+        if (element instanceof HTMLElement) {
+          element.scrollTop = 0;
+        }
+      });
+      
     } catch (error) {
       console.error('Erreur lors du défilement vers le haut:', error);
     }
