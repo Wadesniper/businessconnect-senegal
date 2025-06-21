@@ -145,6 +145,8 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                       overflow: 'hidden',
                       padding: 6,
                       animationDelay: `${0.08 * idx + 0.08}s`,
+                      maxWidth: '100%',
+                      boxSizing: 'border-box'
                     }}
                     className={`${styles.cvMiniature} appear`}
                   >
@@ -178,14 +180,15 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                           style={{
                             width: '100%',
                             height: '100%',
-                            transform: 'scale(0.75)',
+                            transform: 'scale(0.6)',
                             transformOrigin: 'center center',
                             pointerEvents: 'none',
                             background: '#fff',
                             display: 'flex',
                             maxWidth: '100%',
                             maxHeight: '100%',
-                            overflow: 'hidden'
+                            overflow: 'hidden',
+                            position: 'relative'
                           }}
                           className={styles.cvMiniature}
                         >
@@ -195,24 +198,34 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                             overflow: 'hidden',
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'center'
+                            justifyContent: 'center',
+                            position: 'relative'
                           }}>
-                            <CVPreview
-                              data={DEMO_PROFILES[template.id] || {
-                                personalInfo: { firstName: '', lastName: '', title: '', email: '', phone: '', address: '', photo: '', summary: '' },
-                                experience: [],
-                                education: [],
-                                skills: [],
-                                languages: [],
-                                certifications: [],
-                                projects: [],
-                                interests: [],
-                              }}
-                              template={template}
-                              customization={defaultCustomization}
-                              isPremium={true}
-                              isMiniature={true}
-                            />
+                            <div style={{
+                              width: '100%',
+                              height: '100%',
+                              overflow: 'hidden',
+                              position: 'relative',
+                              maxWidth: '100%',
+                              maxHeight: '100%'
+                            }}>
+                              <CVPreview
+                                data={DEMO_PROFILES[template.id] || {
+                                  personalInfo: { firstName: '', lastName: '', title: '', email: '', phone: '', address: '', photo: '', summary: '' },
+                                  experience: [],
+                                  education: [],
+                                  skills: [],
+                                  languages: [],
+                                  certifications: [],
+                                  projects: [],
+                                  interests: [],
+                                }}
+                                template={template}
+                                customization={defaultCustomization}
+                                isPremium={true}
+                                isMiniature={true}
+                              />
+                            </div>
                           </div>
                         </div>
                       </div>

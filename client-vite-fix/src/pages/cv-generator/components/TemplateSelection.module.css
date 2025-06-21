@@ -13,6 +13,8 @@
   opacity: 0;
   transform: translateY(32px) scale(1);
   animation: fadeInUpCV 0.7s both;
+  max-width: 100% !important;
+  overflow: hidden !important;
 }
 .cvMiniature.appear {
   opacity: 1;
@@ -53,21 +55,27 @@
 /* Responsive mobile - Corrections spécifiques */
 @media (max-width: 768px) {
   .cvMiniature {
-    transform: scale(0.9) translateY(0);
-    max-width: 100%;
-    overflow: hidden;
+    transform: scale(0.8) translateY(0) !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    width: 100% !important;
   }
   
   .cvMiniature:hover {
-    transform: scale(0.95) translateY(-2px);
+    transform: scale(0.85) translateY(-2px) !important;
   }
   
   /* Correction pour éviter le débordement horizontal */
   .ant-card {
-    margin: 0;
-    width: 100%;
-    max-width: 100%;
-    overflow: hidden;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+  
+  .ant-card-cover {
+    overflow: hidden !important;
+    max-width: 100% !important;
   }
   
   /* Correction des filtres sur mobile */
@@ -84,6 +92,8 @@
   /* Correction de la grille sur mobile */
   .ant-col {
     padding: 0 6px !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
   }
   
   /* Correction de la hauteur des cartes sur mobile */
@@ -91,6 +101,7 @@
     height: auto !important;
     min-height: 200px;
     max-height: 280px;
+    overflow: hidden !important;
   }
   
   /* Correction du modal sur mobile */
@@ -106,21 +117,30 @@
   .ant-modal-body {
     padding: 12px !important;
   }
+  
+  /* Force le confinement de tous les éléments */
+  * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
 }
 
 /* Correction pour les très petits écrans */
 @media (max-width: 480px) {
   .cvMiniature {
-    transform: scale(0.85);
+    transform: scale(0.7) !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
   }
   
   .cvMiniature:hover {
-    transform: scale(0.9);
+    transform: scale(0.75) !important;
   }
   
   .ant-card-cover {
     min-height: 180px;
     max-height: 240px;
+    overflow: hidden !important;
   }
   
   /* Réduction des espacements */
@@ -130,5 +150,15 @@
   
   .ant-col {
     padding: 0 4px !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+  
+  /* Force le confinement absolu */
+  .ant-card,
+  .ant-card-cover,
+  .ant-card-body {
+    max-width: 100% !important;
+    overflow: hidden !important;
   }
 } 
