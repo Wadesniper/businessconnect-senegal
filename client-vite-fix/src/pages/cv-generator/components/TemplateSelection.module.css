@@ -48,4 +48,87 @@
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+}
+
+/* Responsive mobile - Corrections spécifiques */
+@media (max-width: 768px) {
+  .cvMiniature {
+    transform: scale(0.9) translateY(0);
+    max-width: 100%;
+    overflow: hidden;
+  }
+  
+  .cvMiniature:hover {
+    transform: scale(0.95) translateY(-2px);
+  }
+  
+  /* Correction pour éviter le débordement horizontal */
+  .ant-card {
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+  
+  /* Correction des filtres sur mobile */
+  .ant-input-search {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  .ant-select {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  /* Correction de la grille sur mobile */
+  .ant-col {
+    padding: 0 6px !important;
+  }
+  
+  /* Correction de la hauteur des cartes sur mobile */
+  .ant-card-cover {
+    height: auto !important;
+    min-height: 200px;
+    max-height: 280px;
+  }
+  
+  /* Correction du modal sur mobile */
+  .ant-modal {
+    margin: 10px !important;
+    max-width: calc(100vw - 20px) !important;
+  }
+  
+  .ant-modal-content {
+    border-radius: 12px !important;
+  }
+  
+  .ant-modal-body {
+    padding: 12px !important;
+  }
+}
+
+/* Correction pour les très petits écrans */
+@media (max-width: 480px) {
+  .cvMiniature {
+    transform: scale(0.85);
+  }
+  
+  .cvMiniature:hover {
+    transform: scale(0.9);
+  }
+  
+  .ant-card-cover {
+    min-height: 180px;
+    max-height: 240px;
+  }
+  
+  /* Réduction des espacements */
+  .ant-row {
+    margin: 0 -4px !important;
+  }
+  
+  .ant-col {
+    padding: 0 4px !important;
+  }
 } 

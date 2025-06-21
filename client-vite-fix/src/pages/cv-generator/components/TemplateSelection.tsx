@@ -70,34 +70,44 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
   }
 
   return (
-    <div>
+    <div style={{ padding: '0 8px' }}>
       {/* Header premium modernisé */}
       <div style={{ textAlign: 'center', marginBottom: 18, marginTop: 0 }}>
-        <span style={{ fontWeight: 600, color: '#1890ff', fontSize: 20, letterSpacing: 1 }}>
+        <span style={{ fontWeight: 600, color: '#1890ff', fontSize: 'clamp(18px, 4vw, 20px)', letterSpacing: 1 }}>
           Galerie de modèles de CV
         </span>
-        <div style={{ color: '#888', fontSize: 15, marginBottom: 8 }}>
+        <div style={{ color: '#888', fontSize: 'clamp(13px, 3vw, 15px)', marginBottom: 8 }}>
           Explorez tous nos modèles professionnels.
         </div>
       </div>
-      {/* Filtres */}
+      
+      {/* Filtres - Responsive amélioré */}
       <div style={{ 
         marginTop: 8,
         marginBottom: 24,
         display: 'flex',
-        gap: 16,
+        gap: '12px',
         alignItems: 'center',
-        flexWrap: 'wrap'
+        flexWrap: 'wrap',
+        justifyContent: 'center'
       }}>
         <Search
           placeholder="Rechercher un modèle..."
-          style={{ flex: '2 1 250px' }}
+          style={{ 
+            flex: '1 1 280px',
+            minWidth: '250px',
+            maxWidth: '100%'
+          }}
           onChange={e => setSearchTerm(e.target.value)}
         />
         <Select
           value={selectedCategory}
           onChange={setSelectedCategory}
-          style={{ flex: '1 1 180px' }}
+          style={{ 
+            flex: '1 1 200px',
+            minWidth: '180px',
+            maxWidth: '100%'
+          }}
         >
           {categories.map(cat => (
             <Option key={cat} value={cat}>
@@ -106,6 +116,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
           ))}
         </Select>
       </div>
+      
       {/* Galerie de modèles */}
       {filteredTemplates.length === 0 ? (
         <Empty
@@ -113,7 +124,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
           style={{ margin: '40px 0' }}
         />
       ) : (
-        <Row gutter={[16, 24]}>
+        <Row gutter={[12, 20]} style={{ margin: 0 }}>
           {filteredTemplates.map((template, idx) => (
             <Col xs={24} sm={12} md={8} lg={6} key={template.id} style={{ display: 'flex', alignItems: 'stretch' }}>
               <Card
@@ -124,7 +135,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                       position: 'relative',
                       background: '#fff',
                       width: '100%',
-                      height: 340,
+                      height: 'clamp(280px, 40vw, 340px)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -153,38 +164,56 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                         }}
                       />
                     ) : (
-                      <div style={{ width: '100%', height: '100%', overflow: 'hidden', position: 'relative', background: '#f0f2f5' }}>
+                      <div style={{ 
+                        width: '100%', 
+                        height: '100%', 
+                        overflow: 'hidden', 
+                        position: 'relative', 
+                        background: '#f0f2f5',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}>
                         <div
                           style={{
-                            position: 'absolute',
-                            top: '50%',
-                            left: '50%',
                             width: '100%',
                             height: '100%',
-                            transform: 'translate(-50%, -50%) scale(1)',
+                            transform: 'scale(0.75)',
                             transformOrigin: 'center center',
                             pointerEvents: 'none',
                             background: '#fff',
                             display: 'flex',
+                            maxWidth: '100%',
+                            maxHeight: '100%',
+                            overflow: 'hidden'
                           }}
                           className={styles.cvMiniature}
                         >
-                          <CVPreview
-                            data={DEMO_PROFILES[template.id] || {
-                              personalInfo: { firstName: '', lastName: '', title: '', email: '', phone: '', address: '', photo: '', summary: '' },
-                              experience: [],
-                              education: [],
-                              skills: [],
-                              languages: [],
-                              certifications: [],
-                              projects: [],
-                              interests: [],
-                            }}
-                            template={template}
-                            customization={defaultCustomization}
-                            isPremium={true}
-                            isMiniature={true}
-                          />
+                          <div style={{ 
+                            width: '100%', 
+                            height: '100%', 
+                            overflow: 'hidden',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}>
+                            <CVPreview
+                              data={DEMO_PROFILES[template.id] || {
+                                personalInfo: { firstName: '', lastName: '', title: '', email: '', phone: '', address: '', photo: '', summary: '' },
+                                experience: [],
+                                education: [],
+                                skills: [],
+                                languages: [],
+                                certifications: [],
+                                projects: [],
+                                interests: [],
+                              }}
+                              template={template}
+                              customization={defaultCustomization}
+                              isPremium={true}
+                              isMiniature={true}
+                            />
+                          </div>
                         </div>
                       </div>
                     )}
@@ -212,29 +241,57 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                   width: '100%',
                   display: 'flex',
                   flexDirection: 'column',
+                  height: '100%'
                 }}
-                bodyStyle={{ padding: '12px', display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}
+                bodyStyle={{ 
+                  padding: '12px', 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  flex: 1, 
+                  minHeight: 0,
+                  height: '100%'
+                }}
               >
-                <div style={{ flex: 1, minHeight: 0, overflow: 'hidden', marginBottom: 12, textOverflow: 'ellipsis' }}>
+                <div style={{ flex: 1, minHeight: 0, overflow: 'hidden', marginBottom: 12 }}>
                 <Card.Meta
                   title={
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, fontSize: '1rem', whiteSpace: 'normal', lineHeight: '1.2' }}>
+                    <div style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '8px', 
+                      fontWeight: 600, 
+                      fontSize: 'clamp(14px, 3vw, 16px)', 
+                      whiteSpace: 'normal', 
+                      lineHeight: '1.2',
+                      wordBreak: 'break-word'
+                    }}>
                       {template.name}
                       {template.premium && (
                         <Tooltip title="Template Premium">
-                          <StarOutlined style={{ color: '#ffd700' }} />
+                          <StarOutlined style={{ color: '#ffd700', flexShrink: 0 }} />
                         </Tooltip>
                       )}
                     </div>
                   }
                   description={
                     <>
-                      <div style={{fontSize: '0.85rem'}}><b>Secteur :</b> {template.category}</div>
-                      <div style={{ marginTop: 6, fontSize: '0.8rem', whiteSpace: 'normal' }}>{template.description}</div>
+                      <div style={{fontSize: 'clamp(12px, 2.5vw, 14px)'}}><b>Secteur :</b> {template.category}</div>
+                      <div style={{ 
+                        marginTop: 6, 
+                        fontSize: 'clamp(11px, 2.5vw, 13px)', 
+                        whiteSpace: 'normal',
+                        lineHeight: '1.3',
+                        wordBreak: 'break-word'
+                      }}>{template.description}</div>
                       {template.features && (
                         <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
                           {template.features.map((feature, index) => (
-                            <Tag key={index} color="blue" style={{ margin: 0 }}>
+                            <Tag key={index} color="blue" style={{ 
+                              margin: 0,
+                              fontSize: 'clamp(10px, 2.5vw, 12px)',
+                              whiteSpace: 'normal',
+                              wordBreak: 'break-word'
+                            }}>
                               {feature}
                             </Tag>
                           ))}
@@ -244,7 +301,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                   }
                 />
                 </div>
-                <div style={{ width: '100%' }}>
+                <div style={{ width: '100%', marginTop: 'auto' }}>
                 {selected?.id === template.id && (
                     <div style={{ textAlign: 'center', marginTop: 0, marginBottom: 8 }}>
                     <Button type="primary" size="large" htmlType="button" onClick={onContinue} style={{ width: '100%' }}>
@@ -266,40 +323,97 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
           ))}
         </Row>
       )}
+      
+      {/* Modal de prévisualisation - Responsive */}
       <Modal
         open={!!previewTemplate}
         onCancel={() => setPreviewTemplate(null)}
         footer={null}
-        width={900}
-        style={{ top: 40, display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-        bodyStyle={{ padding: 0, background: '#f7faff', borderRadius: 16, maxHeight: '90vh', overflowY: 'auto', overflowX: 'auto', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+        width="95vw"
+        style={{ 
+          top: 20, 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center',
+          maxWidth: '900px',
+          margin: '0 auto'
+        }}
+        bodyStyle={{ 
+          padding: 0, 
+          background: '#f7faff', 
+          borderRadius: 16, 
+          maxHeight: '90vh', 
+          overflowY: 'auto', 
+          overflowX: 'hidden', 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center' 
+        }}
         destroyOnClose
       >
         {previewTemplate && (
-          <div ref={modalContentRef} style={{ background: '#fff', borderRadius: 16, boxShadow: '0 4px 24px #0002', padding: 0, margin: 0, width: 794, height: 1123, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+          <div 
+            ref={modalContentRef} 
+            style={{ 
+              background: '#fff', 
+              borderRadius: 16, 
+              boxShadow: '0 4px 24px #0002', 
+              padding: 0, 
+              margin: 0, 
+              width: '100%',
+              maxWidth: '794px',
+              height: 'auto',
+              maxHeight: '80vh',
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              overflow: 'hidden',
+              transform: 'scale(0.9)',
+              transformOrigin: 'center center'
+            }}
+          >
             {previewTemplate.previewImage ? (
               <img
                 src={previewTemplate.previewImage}
                 alt={previewTemplate.name + ' preview'}
-                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', borderRadius: 12, display: 'block', background: '#fff' }}
+                style={{ 
+                  width: '100%', 
+                  height: 'auto',
+                  maxHeight: '80vh',
+                  objectFit: 'contain', 
+                  objectPosition: 'top', 
+                  borderRadius: 12, 
+                  display: 'block', 
+                  background: '#fff' 
+                }}
               />
             ) : (
-              <CVPreview
-                data={DEMO_PROFILES[previewTemplate.id] || {
-                  personalInfo: { firstName: '', lastName: '', title: '', email: '', phone: '', address: '', photo: '', summary: '' },
-                  experience: [],
-                  education: [],
-                  skills: [],
-                  languages: [],
-                  certifications: [],
-                  projects: [],
-                  interests: [],
-                }}
-                template={previewTemplate}
-                customization={defaultCustomization}
-                isPremium={true}
-                isMiniature={true}
-              />
+              <div style={{
+                width: '100%',
+                height: 'auto',
+                maxHeight: '80vh',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden'
+              }}>
+                <CVPreview
+                  data={DEMO_PROFILES[previewTemplate.id] || {
+                    personalInfo: { firstName: '', lastName: '', title: '', email: '', phone: '', address: '', photo: '', summary: '' },
+                    experience: [],
+                    education: [],
+                    skills: [],
+                    languages: [],
+                    certifications: [],
+                    projects: [],
+                    interests: [],
+                  }}
+                  template={previewTemplate}
+                  customization={defaultCustomization}
+                  isPremium={true}
+                  isMiniature={true}
+                />
+              </div>
             )}
           </div>
         )}
