@@ -48,14 +48,4 @@
     opacity: 1;
     transform: translateY(0) scale(1);
   }
-}
-
-/* On garde le minimum pour le responsive */
-@media (max-width: 768px) {
-  /* Correction de la hauteur des cartes sur mobile */
-  .ant-card-cover {
-    height: auto !important;
-    min-height: 250px;
-    max-height: 320px;
-  }
 } 

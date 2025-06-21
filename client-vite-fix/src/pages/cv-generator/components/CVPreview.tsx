@@ -18,10 +18,8 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
   const [zoom, setZoom] = useState(100);
   const [showFullscreen, setShowFullscreen] = useState(false);
   const [autoScale, setAutoScale] = useState(1);
-  const [miniatureScale, setMiniatureScale] = useState(1);
   const [needsScroll, setNeedsScroll] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
-  const miniatureContainerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   const handleZoomChange = (value: number) => {
@@ -60,25 +58,6 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
   const maxPages = 1;
   const maxA4Height = baseA4Height * maxPages;
 
-  // Calcul du scale pour la miniature
-  useEffect(() => {
-    if (!isMiniature || !miniatureContainerRef.current) return;
-
-    const calculateScale = () => {
-      if (miniatureContainerRef.current) {
-        const containerWidth = miniatureContainerRef.current.offsetWidth;
-        // Ajoute un petit padding
-        const newScale = (containerWidth - 10) / baseA4Width; 
-        setMiniatureScale(newScale);
-      }
-    };
-
-    calculateScale();
-    // Recalculer si la fenêtre est redimensionnée
-    window.addEventListener('resize', calculateScale);
-    return () => window.removeEventListener('resize', calculateScale);
-  }, [isMiniature]);
-
   // Calcul du scale automatique pour tenir dans la fenêtre
   useEffect(() => {
     if (isMiniature) return;
@@ -110,7 +89,7 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
 
   const previewStyle = isMiniature
     ? {
-        transform: `scale(${autoScale * (zoom / 100)})`,
+        transform: `scale(0.3)`,
         transformOrigin: 'top left',
         background: '#fff',
         overflow: 'hidden',
@@ -124,37 +103,21 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
 
   const preview = isMiniature ? (
     <div
-      ref={miniatureContainerRef}
       style={{
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        alignItems: 'flex-start',
-        justifyContent: 'flex-start',
+        width: baseA4Width,
+        height: baseA4Height,
+        transform: `scale(0.3)`,
+        transformOrigin: 'top left',
+        position: 'relative',
         background: '#fff',
         overflow: 'hidden',
-        position: 'relative',
-        margin: '0 auto',
-        padding: 0,
       }}
     >
-      <div
-        style={{
-          width: baseA4Width,
-          height: baseA4Height,
-          transform: `scale(${miniatureScale})`,
-          transformOrigin: 'top left',
-          position: 'relative',
-          background: '#fff',
-          overflow: 'hidden',
-        }}
-      >
-        <TemplateComponent
-          data={safeData}
-          customization={customization}
-          isMiniature={true}
-        />
-      </div>
+      <TemplateComponent
+        data={safeData}
+        customization={customization}
+        isMiniature={true}
+      />
     </div>
   ) : (
     <div

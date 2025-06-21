@@ -2,6 +2,42 @@
 
 ## Dernière mise à jour : 2025-06-21
 
+### 🎯 **SOLUTION DÉFINITIVE : CARROUSEL HORIZONTAL MOBILE (2025-06-21)**
+
+#### **Nouvelle approche robuste pour la galerie CV mobile**
+- **Problème Persistant :** Malgré plusieurs tentatives de correction responsive, les cartes de CV continuaient de déborder sur mobile, rendant la galerie inutilisable.
+- **Solution Définitive :** Remplacement de la grille responsive par un **carrousel horizontal** sur mobile (≤768px).
+
+- **Implémentation Technique :**
+  1. ✅ **Détection automatique mobile** dans `TemplateSelection.tsx` :
+     - Hook `useEffect` pour détecter `window.innerWidth <= 768px`
+     - État `isMobile` qui se met à jour automatiquement lors du redimensionnement
+     - Écouteur d'événement `resize` pour la réactivité
+
+  2. ✅ **Carrousel Ant Design** sur mobile :
+     - Composant `Carousel` d'Ant Design avec `slidesToShow={1.2}` (affiche 1.2 cartes)
+     - Flèches de navigation (`arrows={true}`) pour une navigation intuitive
+     - Pas de points de navigation (`dots={false}`) pour un design épuré
+     - Responsive breakpoint à 480px avec `slidesToShow={1.1}` pour les très petits écrans
+
+  3. ✅ **Grille classique maintenue** sur desktop :
+     - Conservation de la grille responsive Ant Design pour les écrans >768px
+     - Aucune régression sur l'expérience desktop
+
+  4. ✅ **Simplification du code** :
+     - Suppression de la logique complexe "Viewport Squeeze" dans `CVPreview.tsx`
+     - Scale fixe de `0.3` pour les miniatures (plus simple et fiable)
+     - Nettoyage du CSS `TemplateSelection.module.css` (suppression des règles responsive obsolètes)
+
+- **Avantages de cette approche :**
+  - **Zéro débordement** : Le carrousel garantit que les cartes restent dans leur conteneur
+  - **Navigation intuitive** : Défilement horizontal naturel sur mobile
+  - **Performance optimale** : Pas de calculs complexes de scale dynamique
+  - **Maintenance simplifiée** : Code plus simple et plus robuste
+  - **UX cohérente** : Expérience utilisateur moderne et attendue sur mobile
+
+- **Impact :** La galerie de CV est maintenant **parfaitement fonctionnelle sur tous les appareils** avec une expérience utilisateur optimale et intuitive.
+
 ### 🎯 **CORRECTION DÉFINITIVE : LE "VIEWPORT SQUEEZE" (2025-06-21)**
 
 #### **Stratégie finale et robuste pour le responsive mobile**
