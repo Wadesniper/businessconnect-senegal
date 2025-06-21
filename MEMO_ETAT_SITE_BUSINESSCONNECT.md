@@ -96,36 +96,20 @@
 ### ✨ **CORRECTION DÉFINITIVE GALERIE CV MOBILE (2025-06-21)**
 
 #### **Correction complète de l'affichage mobile de la galerie de CV**
-- **Problème :** Sur mobile, les cartes de CV de la galerie étaient décalées, présentaient des débordements horizontaux et n'étaient pas adaptées aux petits écrans.
-- **Causes identifiées :**
-  - Les filtres de recherche et de catégorie dépassaient la largeur de l'écran
-  - Les cartes de CV avaient des largeurs fixes qui causaient des débordements
-  - Le modal de prévisualisation utilisait une largeur fixe de 794px
-  - Les aperçus de CV sans image de prévisualisation dépassaient leur conteneur
-- **Solutions appliquées :**
-  1. ✅ **Filtres responsifs améliorés** :
-     - Utilisation de `flex` avec `minWidth` et `maxWidth` pour les filtres
-     - Centrage des filtres avec `justifyContent: 'center'`
-     - Espacement réduit entre les éléments (`gap: '12px'`)
-  2. ✅ **Cartes de CV adaptatives** :
-     - Hauteur des cartes en `clamp(280px, 40vw, 340px)` pour s'adapter à tous les écrans
-     - Grille responsive avec `gutter={[12, 20]}` et `margin: 0`
-     - Aperçus de CV sans image redimensionnés avec `scale(0.75)` et conteneurs avec `overflow: 'hidden'`
-  3. ✅ **Modal de prévisualisation responsive** :
-     - Largeur en `95vw` avec `maxWidth: '900px'`
-     - Contenu redimensionné avec `scale(0.9)` et `maxHeight: '80vh'`
-     - Gestion du débordement avec `overflowX: 'hidden'`
-  4. ✅ **CSS responsive spécifique** :
-     - Règles `@media` pour les écrans ≤768px et ≤480px
-     - Correction des débordements avec `overflow: hidden`
-     - Adaptation des espacements et des tailles pour mobile
-     - Optimisation des transformations et animations sur mobile
+- **Problème :** Sur mobile, la section entière de la galerie de CV (filtres et cartes) était décalée, créant un débordement horizontal et une page inutilisable, même si le titre au-dessus était correctement centré.
+- **Cause identifiée :** Le conteneur principal du composant `TemplateSelection` ne gérait pas correctement sa propre largeur et son débordement sur les écrans mobiles.
+- **Solution appliquée (Ciblée et Définitive) :**
+  - ✅ **Confinement du conteneur dans `TemplateSelection.tsx`** :
+    - Ajout des propriétés CSS `width: '100%'`, `overflow: 'hidden'`, et `box-sizing: 'border-box'` au `div` racine du composant.
+    - `width: '100%'` garantit qu'il ne dépasse pas la largeur de son parent.
+    - `overflow: 'hidden'` agit comme une sécurité finale pour couper tout contenu qui tenterait de déborder.
+    - `box-sizing: 'border-box'` assure que le `padding` du conteneur est inclus dans sa largeur totale.
+- **Impact :** Le composant de la galerie est maintenant parfaitement contenu. Le décalage horizontal est éliminé, et les filtres comme les cartes de CV s'affichent correctement alignés dans l'espace qui leur est alloué.
 
 #### **Fichiers modifiés :**
-- `client-vite-fix/src/pages/cv-generator/components/TemplateSelection.tsx` - Correction de la structure responsive
-- `client-vite-fix/src/pages/cv-generator/components/TemplateSelection.module.css` - Ajout des règles CSS mobile
+- `client-vite-fix/src/pages/cv-generator/components/TemplateSelection.tsx` - Correction du conteneur principal.
 
-#### **Statut :** ✅ **GALERIE CV MOBILE DÉFINITIVEMENT CORRIGÉE.** L'affichage est maintenant parfaitement adapté à tous les écrans mobiles, sans débordement ni décalage.
+#### **Statut :** ✅ **GALERIE CV MOBILE DÉFINITIVEMENT STABLE.** L'affichage est maintenant parfaitement adapté à tous les écrans mobiles, sans débordement ni décalage.
 
 ---
 

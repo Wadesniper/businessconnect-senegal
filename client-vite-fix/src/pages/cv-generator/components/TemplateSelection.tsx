@@ -70,7 +70,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
   }
 
   return (
-    <div style={{ padding: '0 8px' }}>
+    <div style={{ padding: '0 8px', width: '100%', overflow: 'hidden', boxSizing: 'border-box' }}>
       {/* Header premium modernisé */}
       <div style={{ textAlign: 'center', marginBottom: 18, marginTop: 0 }}>
         <span style={{ fontWeight: 600, color: '#1890ff', fontSize: 'clamp(18px, 4vw, 20px)', letterSpacing: 1 }}>
