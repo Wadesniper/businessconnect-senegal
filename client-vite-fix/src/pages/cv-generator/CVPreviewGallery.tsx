@@ -1346,36 +1346,35 @@ const DEMO_PROFILES: Record<string, any> = {
 };
 
 const CVPreviewGallery: React.FC = () => {
-  const { templateId } = useParams();
+  const { templateId } = useParams<{ templateId: string }>();
   const template = CV_TEMPLATES.find(t => t.id === templateId);
 
-  const demoData = DEMO_PROFILES[templateId || ''] || DEMO_PROFILES['finance'];
-
   if (!template) {
-    return <Alert type="error" message="Modèle introuvable" description="Aucun template ne correspond à cet identifiant." showIcon style={{ margin: 40 }} />;
+    return <Alert type="error" message="Modèle introuvable" />;
   }
-
-  const TemplateComponent = template.component;
+  
+  const demoData = DEMO_PROFILES[templateId as keyof typeof DEMO_PROFILES] || DEMO_PROFILES.finance;
 
   return (
-    <div style={{ maxWidth: 900, margin: '40px auto', padding: 24 }}>
-      <Card style={{ borderRadius: 18, boxShadow: '0 4px 24px #1890ff11' }}>
-        <Title level={2} style={{ textAlign: 'center', color: '#1890ff', fontWeight: 800, marginBottom: 32 }}>
-          Aperçu du modèle : {template.name}
-        </Title>
-        <div style={{ background: '#f7faff', padding: 32, borderRadius: 16, minHeight: 600, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <CVPreview
-            data={demoData}
-            template={template}
-            customization={defaultCustomization}
-            isPremium={true}
-            isMiniature={false}
-          />
+    <div style={{ padding: '24px', width: '100%', maxWidth: '100vw', boxSizing: 'border-box' }}>
+      <Card
+        style={{
+          maxWidth: 1200,
+          margin: '0 auto',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
+          borderRadius: 16
+        }}
+      >
+        <Title level={2} style={{ textAlign: 'center', marginBottom: 24 }}>{template.name}</Title>
+        <div style={{ textAlign: 'center', marginBottom: 24 }}>
+          <Alert message={`Ceci est un aperçu du modèle ${template.name}. Les informations ci-dessous sont des données de démonstration.`} type="info" showIcon />
         </div>
+        <CVPreview data={demoData} customization={defaultCustomization} template={template} isPremium={true} />
       </Card>
     </div>
   );
 };
 
 export default CVPreviewGallery;
+
 export { DEMO_PROFILES }; 

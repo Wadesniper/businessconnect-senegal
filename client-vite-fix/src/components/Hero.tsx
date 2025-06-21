@@ -218,7 +218,7 @@ const AnimatedMosaic = styled.div`
     max-width: 400px;
     margin: 32px auto 0;
 
-    & > img:nth-of-type(n + 5) {
+    & > div:nth-of-type(n + 5) {
       display: none;
     }
   }
