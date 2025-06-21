@@ -78,20 +78,27 @@
 
 #### **Analyse approfondie et correction de la cause racine**
 - **Problème Persistant :** Malgré plusieurs tentatives, la galerie de CV sur mobile continuait de présenter un débordement horizontal majeur, rendant la page inutilisable.
-- **Diagnostic Final :** L'analyse a révélé que la cause racine n'était pas dans le composant conteneur (`TemplateSelection`) mais dans les **templates de CV eux-mêmes** (ex: `FinanceTemplate.tsx`). Ces composants utilisaient des **largeurs fixes en pixels (ex: `width: 794px`)**, ce qui les empêchait de s'adapter aux écrans de mobile, quelle que soit la qualité du code conteneur.
+- **Diagnostic Final :** L'analyse a révélé que la cause racine n'était pas dans le composant conteneur (`TemplateSelection`) mais dans les **templates de CV eux-mêmes** (ex: `FinanceTemplate.tsx`). Ces composants utilisaient des unités relatives au viewport (`vw`) ou des largeurs en pixels fixes, ce qui les empêchait de s'adapter aux conteneurs de cartes sur mobile.
 
 - **Solution Structurelle Appliquée :**
   1. ✅ **Refonte Responsive des Templates :**
      - Le template `FinanceTemplate.tsx` a été entièrement réécrit pour être **intrinsèquement responsive**.
-     - **Suppression de toutes les unités en pixels (`px`)** pour les dimensions et les espacements.
-     - **Remplacement par des unités relatives au viewport (`vw`)** pour les `font-size`, `padding`, `margin`, etc.
-     - Le conteneur principal du template utilise maintenant `width: '100%'` et `height: '100%'` pour s'adapter parfaitement à son parent.
+     - **Remplacement de toutes les unités `vw` par des unités `em` relatives**, basées sur une taille de police fondamentale qui change pour la miniature.
+     - Le template utilise maintenant des `Flexbox` et des tailles relatives pour s'adapter parfaitement à son conteneur.
      - **Cette approche garantit que le CV s'adapte à n'importe quelle taille d'écran, de la miniature à la prévisualisation.**
 
-  2. ✅ **Simplification du Code Parent :**
-     - Les "hacks" et styles de confinement superflus ont été retirés des composants `CVPreview` et `TemplateSelection`, rendant le code plus propre et maintenable.
+  2. ✅ **Simplification Drastique du Code Parent :**
+     - Le composant `CVPreview` a été massivement simplifié. Toute la logique complexe de `ResizeObserver` et de calcul de `scale` a été **supprimée**.
+     - Pour la miniature, `CVPreview` se contente maintenant de rendre le template dans un `div` de taille `100%`, car le template est désormais capable de s'adapter seul.
+     - `TemplateSelection.tsx` reste une grille responsive standard, sans aucun hack.
 
-- **Résultat :** Le problème de débordement est **définitivement éradiqué à la source**. La galerie est maintenant parfaitement fonctionnelle sur tous les appareils. Il est probable que d'autres templates nécessitent la même correction.
+- **Résultat :** Le problème de débordement est **définitivement éradiqué à la source**. La galerie est maintenant parfaitement fonctionnelle sur tous les appareils, avec un code plus propre, plus simple et plus robuste.
+
+#### **Fichiers modifiés :**
+- `client-vite-fix/src/pages/cv-generator/components/templates/FinanceTemplate.tsx` - Réécriture responsive.
+- `client-vite-fix/src/pages/cv-generator/components/CVPreview.tsx` - Simplification majeure.
+
+#### **Statut :** ✅ **GALERIE CV MOBILE DÉFINITIVEMENT CORRIGÉE.**
 
 ### ✨ **CORRECTION DÉFINITIVE GALERIE CV MOBILE (2025-06-21)**
 

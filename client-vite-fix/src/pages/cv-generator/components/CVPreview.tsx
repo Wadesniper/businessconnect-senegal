@@ -18,10 +18,8 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
   const [zoom, setZoom] = useState(100);
   const [showFullscreen, setShowFullscreen] = useState(false);
   const [autoScale, setAutoScale] = useState(1);
-  const [miniatureScale, setMiniatureScale] = useState(1);
   const [needsScroll, setNeedsScroll] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
-  const miniatureContainerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   const handleZoomChange = (value: number) => {
@@ -30,7 +28,6 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
 
   const TemplateComponent = template.component;
 
-  // Sécurisation des données pour éviter les crashs
   const safeData = {
     personalInfo: {
       firstName: data?.personalInfo?.firstName || '',
@@ -53,37 +50,14 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
     references: Array.isArray(data?.references) ? data.references : [],
   };
 
-  // Dimensions A4
-  const baseA4Width = 794; // px
-  const baseA4Height = 1123; // px
-  // Forcer 1 seule page A4
-  const maxPages = 1;
-  const maxA4Height = baseA4Height * maxPages;
+  const baseA4Width = 794;
+  const baseA4Height = 1123;
+  const maxA4Height = baseA4Height;
 
-  // Calcul du scale pour la miniature - la seule méthode robuste
-  useEffect(() => {
-    if (!isMiniature || !miniatureContainerRef.current) return;
-
-    const calculateScale = () => {
-      if (miniatureContainerRef.current) {
-        const containerWidth = miniatureContainerRef.current.offsetWidth;
-        const newScale = containerWidth / baseA4Width; 
-        setMiniatureScale(newScale);
-      }
-    };
-
-    // Utilise ResizeObserver pour détecter les changements de taille du conteneur
-    const resizeObserver = new ResizeObserver(calculateScale);
-    resizeObserver.observe(miniatureContainerRef.current);
-
-    return () => resizeObserver.disconnect();
-  }, [isMiniature]);
-
-  // Calcul du scale automatique pour tenir dans la fenêtre
   useEffect(() => {
     if (isMiniature) return;
     const handleResize = () => {
-      const maxW = Math.min(window.innerWidth - 64, 900); // padding
+      const maxW = Math.min(window.innerWidth - 64, 900);
       const maxH = window.innerHeight * 0.9;
       const scaleW = maxW / baseA4Width;
       const scaleH = maxH / maxA4Height;
@@ -94,13 +68,12 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
     return () => window.removeEventListener('resize', handleResize);
   }, [isMiniature]);
 
-  // Mesure la hauteur réelle du CV après rendu
   useEffect(() => {
     if (isMiniature) return;
     const checkHeight = () => {
       if (contentRef.current) {
         const realHeight = contentRef.current.getBoundingClientRect().height;
-        setNeedsScroll(realHeight > baseA4Height + 2); // +2 pour tolérance de bordure
+        setNeedsScroll(realHeight > baseA4Height + 2);
       }
     };
     checkHeight();
@@ -108,42 +81,17 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
     return () => window.removeEventListener('resize', checkHeight);
   }, [data, template, customization, isMiniature]);
 
-
   if (isMiniature) {
+    // Le template est maintenant responsive, il s'adaptera tout seul
     return (
-      <div
-        ref={miniatureContainerRef}
-        style={{
-          width: '100%',
-          // La hauteur est proportionnelle pour éviter la déformation
-          height: baseA4Height * miniatureScale,
-          overflow: 'hidden',
-          position: 'relative',
-          background: '#f0f2f5'
-        }}
-      >
-        {/* Ce conteneur a la taille réelle mais est scalé, et son parent a overflow:hidden */}
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: baseA4Width,
-            height: baseA4Height,
-            transform: `scale(${miniatureScale})`,
-            transformOrigin: 'top left',
-            background: '#fff',
-            pointerEvents: 'none'
-          }}
-        >
-          <TemplateComponent
-            data={safeData}
-            customization={customization}
-            isMiniature={true}
-          />
-        </div>
+      <div style={{ width: '100%', height: '100%', overflow: 'hidden' }}>
+        <TemplateComponent
+          data={safeData}
+          customization={customization}
+          isMiniature={true}
+        />
       </div>
-    )
+    );
   }
 
   const preview = (
@@ -152,7 +100,6 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
       style={{
         width: baseA4Width,
         height: baseA4Height,
-        overflow: 'hidden',
         background: '#fff',
         borderRadius: 12,
         boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
@@ -160,14 +107,14 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        overflowX: 'hidden',
         position: 'relative',
         transform: `scale(${autoScale * (zoom / 100)})`,
         transformOrigin: 'top center',
         transition: 'transform 0.3s ease',
+        overflow: 'hidden'
       }}
     >
-      <div ref={contentRef} style={{ width: '100%', height: '100%', fontSize: 11, overflow: 'hidden', padding: 8, margin: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+      <div ref={contentRef} style={{ width: '100%', height: '100%' }}>
         <TemplateComponent
           data={safeData}
           customization={customization}
@@ -177,17 +124,10 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
       {!isPremium && (
         <div style={{
           position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
+          top: 0, left: 0, right: 0, bottom: 0,
           background: 'rgba(255,255,255,0.8)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexDirection: 'column',
-          gap: '16px',
-          zIndex: 2,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          flexDirection: 'column', gap: '16px', zIndex: 2,
         }}>
           <Title level={3}>Version d'aperçu</Title>
           <Text>Abonnez-vous pour télécharger votre CV</Text>
@@ -196,13 +136,6 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
       )}
     </div>
   );
-
-  if (isMiniature) {
-    // DEBUG : Affiche les données reçues pour la miniature
-    // @ts-ignore
-    window._lastMiniatureData = data;
-    console.log('[CVPreview][miniature] Données reçues :', data);
-  }
 
   return (
     <div className="cv-preview-root" style={{ position: 'relative', width: '100%', minHeight: '90vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', overflowX: 'auto', overflowY: 'hidden' }}>
