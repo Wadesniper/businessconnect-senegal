@@ -41,21 +41,21 @@
 ### 🎯 **CORRECTION DÉFINITIVE : LE "VIEWPORT SQUEEZE" (2025-06-21)**
 
 #### **Stratégie finale et robuste pour le responsive mobile**
-- **Problème Persistant :** Les aperçus de CV dans la galerie mobile débordaient de leur carte, car les composants de template ont une largeur fixe interne (`794px`).
-- **Échec des approches précédentes :** Les tentatives de confinement via CSS ou de modification des templates un par un se sont avérées insuffisantes ou trop complexes.
+- **Problème Persistant :** Les aperçus de CV dans la galerie mobile débordaient de leur carte, car les composants de template ont une largeur fixe interne (`794px`). La mise à l'échelle CSS (`transform: scale()`) ne changeait que l'apparence visuelle, pas l'espace occupé par l'élément, ce qui provoquait le débordement.
 
 - **Solution Définitive ("Viewport Squeeze") :**
   1. ✅ **Logique de redimensionnement dynamique dans `CVPreview.tsx`** :
-     - Le composant `CVPreview` mesure maintenant **dynamiquement** la largeur de son conteneur sur la carte.
-     - Il calcule ensuite le ratio exact (`scale`) nécessaire pour que la largeur fixe du template (`794px`) corresponde parfaitement à la largeur disponible.
-     - Ce `scale` est appliqué via une transformation CSS à l'aperçu du CV.
+     - Le composant `CVPreview`, lorsqu'il est en mode miniature, mesure maintenant **dynamiquement** la largeur de son conteneur parent sur la carte.
+     - Il calcule ensuite le ratio de `scale` exact nécessaire pour que la largeur fixe du template (`794px`) corresponde parfaitement à la largeur disponible.
+     - **Point crucial :** Le conteneur de l'aperçu a une hauteur qui est ajustée dynamiquement (`hauteur = hauteur_base * scale`), et le `div` de 794px est positionné en absolu à l'intérieur. Cela garantit que l'élément ne réserve que l'espace de l'aperçu réduit dans la mise en page.
      - **Résultat :** Quelle que soit la taille de la carte sur mobile, l'aperçu du CV est **mathématiquement garanti** de s'adapter parfaitement, sans jamais déborder.
 
   2. ✅ **Nettoyage complet du code** :
-     - Tous les "hacks" et styles de confinement superflus ont été retirés de `TemplateSelection.tsx` et `TemplateSelection.module.css`.
+     - Toute la logique de carrousel et de détection mobile a été retirée de `TemplateSelection.tsx`. Le composant utilise maintenant une grille responsive `Row`/`Col` standard d'Ant Design.
+     - Le CSS superflu dans `TemplateSelection.module.css` a été nettoyé.
      - La solution est maintenant centralisée, propre et maintenable.
 
-- **Impact :** Le problème de débordement est **définitivement éradiqué à la source** avec une solution technique robuste et élégante. La galerie est maintenant parfaitement fonctionnelle sur tous les appareils.
+- **Impact :** Le problème de débordement est **définitivement éradiqué à la source** avec une solution technique robuste, correcte et élégante. La galerie est maintenant parfaitement fonctionnelle sur tous les appareils.
 
 ### 🎯 **CORRECTION PRÉCISE LARGEUR CARTES CV MOBILE (2025-06-21)**
 

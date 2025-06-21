@@ -18,8 +18,10 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
   const [zoom, setZoom] = useState(100);
   const [showFullscreen, setShowFullscreen] = useState(false);
   const [autoScale, setAutoScale] = useState(1);
+  const [miniatureScale, setMiniatureScale] = useState(1);
   const [needsScroll, setNeedsScroll] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+  const miniatureContainerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   const handleZoomChange = (value: number) => {
@@ -58,6 +60,25 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
   const maxPages = 1;
   const maxA4Height = baseA4Height * maxPages;
 
+  // Calcul du scale pour la miniature - la seule méthode robuste
+  useEffect(() => {
+    if (!isMiniature || !miniatureContainerRef.current) return;
+
+    const calculateScale = () => {
+      if (miniatureContainerRef.current) {
+        const containerWidth = miniatureContainerRef.current.offsetWidth;
+        const newScale = containerWidth / baseA4Width; 
+        setMiniatureScale(newScale);
+      }
+    };
+
+    // Utilise ResizeObserver pour détecter les changements de taille du conteneur
+    const resizeObserver = new ResizeObserver(calculateScale);
+    resizeObserver.observe(miniatureContainerRef.current);
+
+    return () => resizeObserver.disconnect();
+  }, [isMiniature]);
+
   // Calcul du scale automatique pour tenir dans la fenêtre
   useEffect(() => {
     if (isMiniature) return;
@@ -87,39 +108,45 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
     return () => window.removeEventListener('resize', checkHeight);
   }, [data, template, customization, isMiniature]);
 
-  const previewStyle = isMiniature
-    ? {
-        transform: `scale(0.3)`,
-        transformOrigin: 'top left',
-        background: '#fff',
-        overflow: 'hidden',
-        pointerEvents: 'none' as const,
-      }
-    : {
-        transform: `scale(${autoScale * (zoom / 100)})`,
-        transformOrigin: 'top center',
-        transition: 'transform 0.3s ease',
-      };
 
-  const preview = isMiniature ? (
-    <div
-      style={{
-        width: baseA4Width,
-        height: baseA4Height,
-        transform: `scale(0.3)`,
-        transformOrigin: 'top left',
-        position: 'relative',
-        background: '#fff',
-        overflow: 'hidden',
-      }}
-    >
-      <TemplateComponent
-        data={safeData}
-        customization={customization}
-        isMiniature={true}
-      />
-    </div>
-  ) : (
+  if (isMiniature) {
+    return (
+      <div
+        ref={miniatureContainerRef}
+        style={{
+          width: '100%',
+          // La hauteur est proportionnelle pour éviter la déformation
+          height: baseA4Height * miniatureScale,
+          overflow: 'hidden',
+          position: 'relative',
+          background: '#f0f2f5'
+        }}
+      >
+        {/* Ce conteneur a la taille réelle mais est scalé, et son parent a overflow:hidden */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: baseA4Width,
+            height: baseA4Height,
+            transform: `scale(${miniatureScale})`,
+            transformOrigin: 'top left',
+            background: '#fff',
+            pointerEvents: 'none'
+          }}
+        >
+          <TemplateComponent
+            data={safeData}
+            customization={customization}
+            isMiniature={true}
+          />
+        </div>
+      </div>
+    )
+  }
+
+  const preview = (
     <div
       className="cv-preview-root"
       style={{
@@ -135,9 +162,12 @@ const CVPreview: React.FC<CVPreviewProps> = ({ data, template, customization, is
         justifyContent: 'center',
         overflowX: 'hidden',
         position: 'relative',
+        transform: `scale(${autoScale * (zoom / 100)})`,
+        transformOrigin: 'top center',
+        transition: 'transform 0.3s ease',
       }}
     >
-      <div style={{ width: '100%', height: '100%', fontSize: 11, overflow: 'hidden', padding: 8, margin: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+      <div ref={contentRef} style={{ width: '100%', height: '100%', fontSize: 11, overflow: 'hidden', padding: 8, margin: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
         <TemplateComponent
           data={safeData}
           customization={customization}

@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { Card, Typography, Row, Col, Select, Input, Empty, Tag, Tooltip, Button, Modal, Spin, Carousel } from 'antd';
-import { LockOutlined, StarOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
+import { Card, Typography, Row, Col, Select, Input, Empty, Tag, Tooltip, Button, Modal, Spin } from 'antd';
+import { LockOutlined, StarOutlined } from '@ant-design/icons';
 import type { Template } from '../../../types/cv';
 import { CV_TEMPLATES } from '../components/data/templates';
 import { useNavigate } from 'react-router-dom';
@@ -38,16 +38,6 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
   const [previewTemplate, setPreviewTemplate] = useState<Template | null>(null);
   const modalContentRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   useEffect(() => {
     if (previewTemplate && modalContentRef.current) {
@@ -78,175 +68,6 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
   if (!CV_TEMPLATES || CV_TEMPLATES.length === 0) {
     return <div style={{ minHeight: 420, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement de la galerie..." /></div>;
   }
-
-  const renderTemplateCard = (template: Template) => (
-    <div key={template.id} style={{ padding: '0 8px', width: isMobile ? '280px' : '100%' }}>
-      <Card
-        hoverable
-        cover={
-          <div
-            style={{
-              position: 'relative',
-              background: '#fff',
-              width: '100%',
-              height: isMobile ? '200px' : 'clamp(280px, 40vw, 340px)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: 12,
-              boxShadow: '0 4px 16px #0001',
-              margin: '0 auto',
-              overflow: 'hidden',
-              padding: 6,
-            }}
-            className={`${styles.cvMiniature} appear`}
-          >
-            {template.previewImage ? (
-              <img
-                src={template.previewImage}
-                alt={template.name + ' preview'}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  objectPosition: 'top',
-                  borderRadius: 6,
-                  display: 'block',
-                  background: '#fff',
-                  margin: '0 auto',
-                }}
-              />
-            ) : (
-              <div style={{ 
-                width: '100%', 
-                height: '100%', 
-                overflow: 'hidden', 
-                position: 'relative', 
-                background: '#f0f2f5',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <CVPreview
-                  data={DEMO_PROFILES[template.id] || {
-                    personalInfo: { firstName: '', lastName: '', title: '', email: '', phone: '', address: '', photo: '', summary: '' },
-                    experience: [],
-                    education: [],
-                    skills: [],
-                    languages: [],
-                    certifications: [],
-                    projects: [],
-                    interests: [],
-                  }}
-                  template={template}
-                  customization={defaultCustomization}
-                  isPremium={true}
-                  isMiniature={true}
-                />
-              </div>
-            )}
-          </div>
-        }
-        onClick={() => {
-          if (!isPremium) {
-            Modal.info({
-              title: 'Fonctionnalité réservée',
-              content: 'Cette fonctionnalité est réservée aux abonnés. Abonnez-vous pour utiliser le générateur de CV.',
-              onOk: () => navigate('/subscription')
-            });
-            return;
-          }
-          onSelect(template);
-        }}
-        style={{
-          border: selected?.id === template.id ? '3px solid #1890ff' : '1px solid #eee',
-          boxShadow: selected?.id === template.id ? '0 0 0 2px #1890ff33, 0 8px 32px #1890ff11' : '0 4px 18px #1890ff11',
-          cursor: isPremium ? 'pointer' : 'not-allowed',
-          borderRadius: 16,
-          transition: 'box-shadow 0.22s cubic-bezier(.4,2,.3,1), border 0.22s',
-          overflow: 'hidden',
-          background: '#fff',
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100%'
-        }}
-        bodyStyle={{ 
-          padding: '12px', 
-          display: 'flex', 
-          flexDirection: 'column', 
-          flex: 1
-        }}
-      >
-        <div style={{ flex: 1, minHeight: 0, overflow: 'hidden', marginBottom: 12 }}>
-        <Card.Meta
-          title={
-            <div style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '8px', 
-              fontWeight: 600, 
-              fontSize: isMobile ? '14px' : 'clamp(14px, 3vw, 16px)', 
-              whiteSpace: 'normal', 
-              lineHeight: '1.2',
-              wordBreak: 'break-word'
-            }}>
-              {template.name}
-              {template.premium && (
-                <Tooltip title="Template Premium">
-                  <StarOutlined style={{ color: '#ffd700', flexShrink: 0 }} />
-                </Tooltip>
-              )}
-            </div>
-          }
-          description={
-            <>
-              <div style={{fontSize: isMobile ? '12px' : 'clamp(12px, 2.5vw, 14px)'}}><b>Secteur :</b> {template.category}</div>
-              <div style={{ 
-                marginTop: 6, 
-                fontSize: isMobile ? '11px' : 'clamp(11px, 2.5vw, 13px)', 
-                whiteSpace: 'normal',
-                lineHeight: '1.3',
-                wordBreak: 'break-word'
-              }}>{template.description}</div>
-              {template.features && (
-                <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-                  {template.features.map((feature, index) => (
-                    <Tag key={index} color="blue" style={{ 
-                      margin: 0,
-                      fontSize: isMobile ? '10px' : 'clamp(10px, 2.5vw, 12px)',
-                      whiteSpace: 'normal',
-                      wordBreak: 'break-word'
-                    }}>
-                      {feature}
-                    </Tag>
-                  ))}
-                </div>
-              )}
-            </>
-          }
-        />
-        </div>
-        <div style={{ width: '100%', marginTop: 'auto' }}>
-        {selected?.id === template.id && (
-            <div style={{ textAlign: 'center', marginTop: 0, marginBottom: 8 }}>
-            <Button type="primary" size="large" htmlType="button" onClick={onContinue} style={{ width: '100%' }}>
-              Utiliser ce modèle
-            </Button>
-          </div>
-        )}
-        <Button
-          type="default"
-          size="small"
-            style={{ width: '100%' }}
-          onClick={e => { e.stopPropagation(); setPreviewTemplate(template); }}
-        >
-          Aperçu
-        </Button>
-        </div>
-      </Card>
-    </div>
-  );
 
   return (
     <div style={{ padding: '0 8px' }}>
@@ -302,38 +123,174 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
           description="Aucun modèle ne correspond à vos critères"
           style={{ margin: '40px 0' }}
         />
-      ) : isMobile ? (
-        // Carrousel horizontal sur mobile
-        <div style={{ margin: '0 -8px' }}>
-          <Carousel
-            dots={false}
-            arrows={true}
-            infinite={false}
-            slidesToShow={1.2}
-            slidesToScroll={1}
-            responsive={[
-              {
-                breakpoint: 480,
-                settings: {
-                  slidesToShow: 1.1,
-                  slidesToScroll: 1,
-                }
-              }
-            ]}
-            style={{ 
-              background: 'transparent',
-              padding: '0 8px'
-            }}
-          >
-            {filteredTemplates.map(template => renderTemplateCard(template))}
-          </Carousel>
-        </div>
       ) : (
-        // Grille responsive sur desktop
         <Row gutter={[12, 20]} style={{ margin: 0 }}>
-          {filteredTemplates.map((template) => (
+          {filteredTemplates.map((template, idx) => (
             <Col xs={24} sm={12} md={8} lg={6} key={template.id} style={{ display: 'flex', alignItems: 'stretch' }}>
-              {renderTemplateCard(template)}
+              <Card
+                hoverable
+                cover={
+                  <div
+                    style={{
+                      position: 'relative',
+                      background: '#fff',
+                      width: '100%',
+                      height: 'clamp(280px, 40vw, 340px)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderRadius: 12,
+                      boxShadow: '0 4px 16px #0001',
+                      margin: '0 auto',
+                      overflow: 'hidden',
+                      padding: 6,
+                    }}
+                    className={`${styles.cvMiniature} appear`}
+                  >
+                    {template.previewImage ? (
+                      <img
+                        src={template.previewImage}
+                        alt={template.name + ' preview'}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          objectPosition: 'top',
+                          borderRadius: 6,
+                          display: 'block',
+                          background: '#fff',
+                          margin: '0 auto',
+                        }}
+                      />
+                    ) : (
+                      <div style={{ 
+                        width: '100%', 
+                        height: '100%', 
+                        overflow: 'hidden', 
+                        position: 'relative', 
+                        background: '#f0f2f5',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}>
+                        <CVPreview
+                          data={DEMO_PROFILES[template.id] || {
+                            personalInfo: { firstName: '', lastName: '', title: '', email: '', phone: '', address: '', photo: '', summary: '' },
+                            experience: [],
+                            education: [],
+                            skills: [],
+                            languages: [],
+                            certifications: [],
+                            projects: [],
+                            interests: [],
+                          }}
+                          template={template}
+                          customization={defaultCustomization}
+                          isPremium={true}
+                          isMiniature={true}
+                        />
+                      </div>
+                    )}
+                  </div>
+                }
+                onClick={() => {
+                  if (!isPremium) {
+                    Modal.info({
+                      title: 'Fonctionnalité réservée',
+                      content: 'Cette fonctionnalité est réservée aux abonnés. Abonnez-vous pour utiliser le générateur de CV.',
+                      onOk: () => navigate('/subscription')
+                    });
+                    return;
+                  }
+                  onSelect(template);
+                }}
+                style={{
+                  border: selected?.id === template.id ? '3px solid #1890ff' : '1px solid #eee',
+                  boxShadow: selected?.id === template.id ? '0 0 0 2px #1890ff33, 0 8px 32px #1890ff11' : '0 4px 18px #1890ff11',
+                  cursor: isPremium ? 'pointer' : 'not-allowed',
+                  borderRadius: 16,
+                  transition: 'box-shadow 0.22s cubic-bezier(.4,2,.3,1), border 0.22s',
+                  overflow: 'hidden',
+                  background: '#fff',
+                  width: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: '100%'
+                }}
+                bodyStyle={{ 
+                  padding: '12px', 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  flex: 1
+                }}
+              >
+                <div style={{ flex: 1, minHeight: 0, overflow: 'hidden', marginBottom: 12 }}>
+                <Card.Meta
+                  title={
+                    <div style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '8px', 
+                      fontWeight: 600, 
+                      fontSize: 'clamp(14px, 3vw, 16px)', 
+                      whiteSpace: 'normal', 
+                      lineHeight: '1.2',
+                      wordBreak: 'break-word'
+                    }}>
+                      {template.name}
+                      {template.premium && (
+                        <Tooltip title="Template Premium">
+                          <StarOutlined style={{ color: '#ffd700', flexShrink: 0 }} />
+                        </Tooltip>
+                      )}
+                    </div>
+                  }
+                  description={
+                    <>
+                      <div style={{fontSize: 'clamp(12px, 2.5vw, 14px)'}}><b>Secteur :</b> {template.category}</div>
+                      <div style={{ 
+                        marginTop: 6, 
+                        fontSize: 'clamp(11px, 2.5vw, 13px)', 
+                        whiteSpace: 'normal',
+                        lineHeight: '1.3',
+                        wordBreak: 'break-word'
+                      }}>{template.description}</div>
+                      {template.features && (
+                        <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                          {template.features.map((feature, index) => (
+                            <Tag key={index} color="blue" style={{ 
+                              margin: 0,
+                              fontSize: 'clamp(10px, 2.5vw, 12px)',
+                              whiteSpace: 'normal',
+                              wordBreak: 'break-word'
+                            }}>
+                              {feature}
+                            </Tag>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  }
+                />
+                </div>
+                <div style={{ width: '100%', marginTop: 'auto' }}>
+                {selected?.id === template.id && (
+                    <div style={{ textAlign: 'center', marginTop: 0, marginBottom: 8 }}>
+                    <Button type="primary" size="large" htmlType="button" onClick={onContinue} style={{ width: '100%' }}>
+                      Utiliser ce modèle
+                    </Button>
+                  </div>
+                )}
+                <Button
+                  type="default"
+                  size="small"
+                    style={{ width: '100%' }}
+                  onClick={e => { e.stopPropagation(); setPreviewTemplate(template); }}
+                >
+                  Aperçu
+                </Button>
+                </div>
+              </Card>
             </Col>
           ))}
         </Row>
