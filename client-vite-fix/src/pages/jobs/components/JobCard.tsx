@@ -20,14 +20,14 @@ const StyledCard = styled(Card)`
   height: 100%;
   display: flex;
   flex-direction: column;
-  border-radius: 16px;
-  border: 1px solid #e8e8e8;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  transition: transform 0.3s, box-shadow 0.3s;
+  border-radius: 20px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+    transform: translateY(-8px);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
   }
 
   .ant-card-body {
@@ -91,23 +91,23 @@ const JobCard: React.FC<JobCardProps> = ({ job, isPremium, onEdit, onDelete }) =
     <StyledCard hoverable>
         <CardHeader>
             {companyLogo ? (
-                <Avatar src={companyLogo} size={50} style={{border: '2px solid #f0f0f0'}} />
+                <Avatar src={companyLogo} size={50} style={{border: '3px solid #f0f0f0'}} />
             ) : (
-                <Avatar icon={<BankOutlined />} size={50} style={{backgroundColor: '#f0f2f5', color: '#8c8c8c'}} />
+                <Avatar icon={<BankOutlined />} size={50} style={{backgroundColor: '#e6f7ff', color: '#1890ff', border: '3px solid #e6f7ff'}} />
             )}
             <div>
-                <Title level={5} style={{ marginBottom: 0, lineHeight: 1.3, fontWeight: 600 }} ellipsis={{rows: 2}}>{title}</Title>
-                {company && <Text type="secondary">{company}</Text>}
+                <Title level={5} style={{ marginBottom: '4px', lineHeight: 1.3, fontWeight: 700, color: '#002766' }} ellipsis={{rows: 2}}>{title}</Title>
+                {company && <Text type="secondary" style={{fontSize: '0.9rem'}}>{company}</Text>}
             </div>
         </CardHeader>
       <CardContent>
-        <Paragraph ellipsis={{ rows: 3, expandable: false }} style={{ marginBottom: 16, marginTop: 8 }}>
+        <Paragraph ellipsis={{ rows: 3, expandable: false }} style={{ marginBottom: 16, marginTop: 12, color: '#595959' }}>
             {description}
         </Paragraph>
         <div>
-          {location && <Tag icon={<EnvironmentOutlined />} color="blue">{location}</Tag>}
-          {type && <Tag icon={<ClockCircleOutlined />} color="green">{type}</Tag>}
-          {sector && <Tag color="purple">{sector}</Tag>}
+          {location && <Tag icon={<EnvironmentOutlined />} color="processing">{location}</Tag>}
+          {type && <Tag icon={<ClockCircleOutlined />} color="success">{type}</Tag>}
+          {sector && <Tag color="warning">{sector}</Tag>}
         </div>
       </CardContent>
       <CardFooter>
@@ -116,12 +116,18 @@ const JobCard: React.FC<JobCardProps> = ({ job, isPremium, onEdit, onDelete }) =
             block 
             onClick={handleViewDetails} 
             icon={isPremium || isOwner || isAdmin ? <EyeOutlined /> : <LockOutlined />}
-            style={{ background: '#1ec773', borderColor: '#1ec773', fontWeight: 'bold' }}
+            style={{ 
+                background: 'linear-gradient(135deg, #1ec773, #28a745)', 
+                borderColor: '#1ec773', 
+                fontWeight: 'bold',
+                boxShadow: '0 4px 12px rgba(30, 199, 115, 0.3)',
+                height: '40px'
+            }}
         >
           {isPremium || isOwner || isAdmin ? "Détails de l'offre" : 'Accès Premium'}
         </Button>
         {(isOwner || isAdmin) && onEdit && onDelete && (
-            <div style={{display: 'flex', gap: '8px', marginTop: '8px'}}>
+            <div style={{display: 'flex', gap: '8px', marginTop: '12px'}}>
                 <Button block icon={<EditOutlined />} onClick={() => onEdit(id)}>Modifier</Button>
                 <Button block danger icon={<DeleteOutlined />} onClick={() => onDelete(id)}>Supprimer</Button>
             </div>
