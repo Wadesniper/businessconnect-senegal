@@ -1,11 +1,10 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { Card, Typography, Row, Col, Select, Input, Empty, Tag, Tooltip, Button, Modal, Spin } from 'antd';
-import { LockOutlined, StarOutlined, EyeOutlined } from '@ant-design/icons';
+import { Card, Typography, Row, Col, Select, Input, Empty, Tag, Button, Modal, Spin } from 'antd';
+import { StarOutlined, EyeOutlined } from '@ant-design/icons';
 import type { Template } from '../../../types/cv';
 import { CV_TEMPLATES } from '../components/data/templates';
-import { useNavigate } from 'react-router-dom';
 import { DEMO_PROFILES } from '../CVPreviewGallery';
-import styles from './TemplateSelection.module.css';
+import styles from './TemplateSelection.module.css'; // Note: ce fichier est peu utilisé maintenant
 import { useAuth } from '../../../context/AuthContext';
 import { hasPremiumAccess } from '../../../utils/premiumAccess';
 import CVPreview from './CVPreview';
@@ -30,10 +29,9 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [showPremiumOnly, setShowPremiumOnly] = useState(false);
-  const { user } = useAuth();
   const [previewTemplate, setPreviewTemplate] = useState<Template | null>(null);
   const modalContentRef = useRef<HTMLDivElement>(null);
+  const { user } = useAuth();
 
   useEffect(() => {
     if (previewTemplate && modalContentRef.current) {
@@ -52,10 +50,9 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
         template.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
         template.category.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory = selectedCategory === 'all' || template.category === selectedCategory;
-      const matchesPremium = !showPremiumOnly || template.premium;
-      return matchesSearch && matchesCategory && matchesPremium;
+      return matchesSearch && matchesCategory;
     });
-  }, [searchTerm, selectedCategory, showPremiumOnly]);
+  }, [searchTerm, selectedCategory]);
 
   const renderCard = (template: Template) => {
     const canSelect = user?.role === 'admin' || hasPremiumAccess(user) || !template.premium;
@@ -64,81 +61,96 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
     return (
       <Card
         key={template.id}
-        className={`${styles.templateCard} ${isSelected ? styles.selected : ''}`}
+        hoverable
+        className={isSelected ? 'template-card-selected' : ''}
         style={{
-          height: '100%',
+          border: isSelected ? '2px solid #1890ff' : '1px solid #e8e8e8',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'space-between',
-          border: isSelected ? '2px solid #1890ff' : '1px solid #e8e8e8'
+          justifyContent: 'space-between'
         }}
+        bodyStyle={{ flexGrow: 1, display: 'flex', flexDirection: 'column', padding: '16px' }}
         cover={
-          <div className={styles.cardCover}>
-            {template.previewImage ? (
-              <img src={template.previewImage} alt={template.name} className={styles.previewImage} />
-            ) : (
-              <div className={styles.cvPreviewContainer}>
-                <CVPreview
-                  data={DEMO_PROFILES[template.id] || { personalInfo: { firstName: '', lastName: '', title: '', email: '', phone: '', address: '', photo: '', summary: '' }, experience: [], education: [], skills: [], languages: [], certifications: [], projects: [], interests: [] }}
-                  template={template}
-                  customization={defaultCustomization}
-                  isPremium={true}
-                  isMiniature={true}
-                />
-              </div>
-            )}
-            <div className={styles.overlay}>
-              <Button icon={<EyeOutlined />} onClick={() => setPreviewTemplate(template)}>Aperçu</Button>
+          <div style={{
+            height: '350px', // Hauteur fixe pour l'aperçu
+            overflow: 'hidden',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'relative',
+            background: '#f5f5f5'
+          }}>
+            <div style={{
+              transform: 'scale(0.3)', // Réduit la taille de l'aperçu
+              transformOrigin: 'top center',
+              width: '100%',
+              height: '100%'
+            }}>
+              <CVPreview
+                data={DEMO_PROFILES[template.id] || { personalInfo: { firstName: 'John', lastName: 'Doe' }, experience: [], education: [], skills: [], languages: [], certifications: [], projects: [], interests: [] }}
+                template={template}
+                customization={defaultCustomization}
+                isPremium={true}
+              />
             </div>
-            {template.premium && <Tag icon={<StarOutlined />} color="gold" className={styles.premiumTag}>Premium</Tag>}
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(0,0,0,0.3)',
+              opacity: 0,
+              transition: 'opacity 0.3s',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+            onMouseOver={e => e.currentTarget.style.opacity = '1'}
+            onMouseOut={e => e.currentTarget.style.opacity = '0'}
+            >
+              <Button icon={<EyeOutlined />} onClick={(e) => { e.stopPropagation(); setPreviewTemplate(template); }}>
+                Aperçu
+              </Button>
+            </div>
+            {template.premium && (
+              <Tag icon={<StarOutlined />} color="gold" style={{ position: 'absolute', top: 8, right: 8 }}>
+                Premium
+              </Tag>
+            )}
           </div>
         }
       >
-        <Card.Meta
-          title={<span className={styles.cardTitle}>{template.name}</span>}
-          description={
-            <>
-              <Text type="secondary">Secteur : {template.category}</Text>
-              <p className={styles.cardDescription}>{template.description}</p>
-            </>
-          }
-        />
-        <div style={{ marginTop: 'auto', paddingTop: '16px' }}>
-          <Button
-            type="primary"
-            block
-            disabled={!canSelect}
-            onClick={() => {
-              onSelect(template);
-              if (onContinue) {
-                onContinue();
-              }
-            }}
-          >
-            Utiliser ce modèle
-          </Button>
+        <div style={{ flexGrow: 1 }}>
+          <Card.Meta
+            title={template.name}
+            description={`Secteur : ${template.category}`}
+          />
         </div>
+        <Button
+          type="primary"
+          block
+          disabled={!canSelect}
+          onClick={() => {
+            onSelect(template);
+            if (onContinue) onContinue();
+          }}
+          style={{ marginTop: '16px' }}
+        >
+          Utiliser ce modèle
+        </Button>
       </Card>
     );
   };
 
-  if (!CV_TEMPLATES || CV_TEMPLATES.length === 0) {
-    return <div style={{ minHeight: 420, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement de la galerie..." /></div>;
-  }
-
   return (
-    <div style={{ padding: '0 8px', width: '100%', overflow: 'hidden', boxSizing: 'border-box' }}>
-      <div style={{ textAlign: 'center', marginBottom: 18, marginTop: 0 }}>
-        <span style={{ fontWeight: 600, color: '#1890ff', fontSize: 'clamp(18px, 4vw, 20px)', letterSpacing: 1 }}>
-          Galerie de modèles de CV
-        </span>
-        <div style={{ color: '#888', fontSize: 'clamp(13px, 3vw, 15px)', marginBottom: 8 }}>
-          Explorez tous nos modèles professionnels.
-        </div>
+    <div style={{ padding: '0 8px', width: '100%', boxSizing: 'border-box' }}>
+      <div style={{ textAlign: 'center', margin: '24px 0' }}>
+        <Typography.Title level={2}>Galerie de modèles de CV</Typography.Title>
+        <Typography.Text type="secondary">Explorez tous nos modèles professionnels.</Typography.Text>
       </div>
       
-      <div style={{ 
-        marginTop: 8,
+      <div style={{
         marginBottom: 24,
         display: 'flex',
         gap: '12px',
@@ -148,16 +160,17 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
       }}>
         <Search
           placeholder="Rechercher un modèle..."
-          style={{ flex: '2 1 250px', maxWidth: '100%' }}
+          style={{ flex: '1 1 250px', maxWidth: '400px' }}
           onChange={e => setSearchTerm(e.target.value)}
         />
         <Select
           value={selectedCategory}
           onChange={setSelectedCategory}
-          style={{ flex: '1 1 180px', maxWidth: '100%' }}
+          style={{ flex: '1 1 180px', maxWidth: '250px' }}
         >
-          {categories.map(cat => (
-            <Option key={cat} value={cat}>{cat === 'all' ? 'Tous les secteurs' : cat}</Option>
+          <Option value="all">Tous les secteurs</Option>
+          {categories.filter(c => c !== 'all').map(cat => (
+            <Option key={cat} value={cat}>{cat}</Option>
           ))}
         </Select>
       </div>
@@ -165,9 +178,9 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
       {filteredTemplates.length === 0 ? (
         <Empty description="Aucun modèle ne correspond à vos critères" style={{ margin: '40px 0' }} />
       ) : (
-        <Row gutter={[24, 24]} style={{ margin: 0 }}>
+        <Row gutter={[24, 24]}>
           {filteredTemplates.map((template) => (
-            <Col xs={24} sm={12} md={8} lg={6} key={template.id} style={{ display: 'flex', alignItems: 'stretch' }}>
+            <Col xs={24} sm={12} md={8} lg={6} key={template.id}>
               {renderCard(template)}
             </Col>
           ))}
@@ -184,43 +197,13 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
         destroyOnClose
       >
         {previewTemplate && (
-          <div 
-            ref={modalContentRef} 
-            style={{ 
-              background: '#fff', 
-              borderRadius: 16, 
-              boxShadow: '0 4px 24px #0002', 
-              padding: 0, 
-              margin: 0, 
-              width: '100%',
-              maxWidth: '794px',
-              height: 'auto',
-              maxHeight: '80vh',
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              overflow: 'hidden',
-              transform: 'scale(0.9)',
-              transformOrigin: 'center center'
-            }}
-          >
-            {previewTemplate.previewImage ? (
-              <img
-                src={previewTemplate.previewImage}
-                alt={previewTemplate.name + ' preview'}
-                style={{ width: '100%', height: 'auto', maxHeight: '80vh', objectFit: 'contain', objectPosition: 'top', borderRadius: 12, display: 'block', background: '#fff' }}
-              />
-            ) : (
-              <div style={{ width: '100%', height: 'auto', maxHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                <CVPreview
-                  data={DEMO_PROFILES[previewTemplate.id] || { personalInfo: { firstName: '', lastName: '', title: '', email: '', phone: '', address: '', photo: '', summary: '' }, experience: [], education: [], skills: [], languages: [], certifications: [], projects: [], interests: [] }}
-                  template={previewTemplate}
-                  customization={defaultCustomization}
-                  isPremium={true}
-                  isMiniature={true}
-                />
-              </div>
-            )}
+          <div ref={modalContentRef}>
+            <CVPreview
+              data={DEMO_PROFILES[previewTemplate.id] || { personalInfo: { firstName: 'John', lastName: 'Doe' }, experience: [], education: [], skills: [], languages: [], certifications: [], projects: [], interests: [] }}
+              template={previewTemplate}
+              customization={defaultCustomization}
+              isPremium={true}
+            />
           </div>
         )}
       </Modal>
