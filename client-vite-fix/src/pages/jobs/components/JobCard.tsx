@@ -80,9 +80,11 @@ const JobCard: React.FC<JobCardProps> = ({ job, isPremium, onEdit, onDelete }) =
   
   const isOwner = user && employerId === user.id;
   const isAdmin = user?.role === 'admin';
+  
+  const hasAccess = isPremium || isOwner || isAdmin;
 
   const handleViewDetails = () => {
-    if (isPremium || isOwner || isAdmin) {
+    if (hasAccess) {
         navigate(`/jobs/${id}`);
     } else {
         navigate('/subscription');
@@ -117,7 +119,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, isPremium, onEdit, onDelete }) =
             type="primary" 
             block 
             onClick={handleViewDetails} 
-            icon={isPremium || isOwner || isAdmin ? <EyeOutlined /> : <LockOutlined />}
+            icon={hasAccess ? <EyeOutlined /> : <LockOutlined />}
             style={{ 
                 background: 'linear-gradient(135deg, #1ec773, #28a745)', 
                 borderColor: '#1ec773', 
@@ -126,7 +128,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, isPremium, onEdit, onDelete }) =
                 height: '40px'
             }}
         >
-          {isPremium || isOwner || isAdmin ? "Détails de l'offre" : 'Accès Premium'}
+          {hasAccess ? "Détails de l'offre" : 'Accès Premium'}
         </Button>
         {(isOwner || isAdmin) && onEdit && onDelete && (
             <div style={{display: 'flex', gap: '8px', marginTop: '12px'}}>
