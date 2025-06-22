@@ -1312,3 +1312,14 @@ Dernière mise à jour : migration complète réalisée, site prêt pour la prod
 
 ## [Correction Critique - Crash Page d'Accueil] (date : voir commit)
 ... existant ...
+
+### 🐛 **CORRECTION FINALE - VALIDATION CV (2025-06-21)**
+
+- **Problème :** La validation échouait toujours car le composant `CVWizard` utilisait un état local qui n'était pas synchronisé avec l'état global utilisé pour la validation. Un bouton "Suivant" en double était également apparu.
+- **Solution (Finale et Structurelle) :**
+  - ✅ **Suppression de l'état local :** Le composant `CVWizard` a été modifié pour lire et écrire directement dans le `CVContext` global. Il n'y a plus de conflit d'état.
+  - ✅ **Suppression du bouton dupliqué :** Le bouton redondant dans le composant parent a été supprimé.
+- **Impact :** Le générateur de CV est maintenant **définitivement corrigé**. Le flux de données est cohérent, la validation est fiable, et l'interface est propre.
+
+## [Correction Critique - Crash Page d'Accueil] (date : voir commit)
+... existant ...

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import type { CVData } from '../../../types/cv';
 import ExperienceForm from './ExperienceForm';
 import EducationForm from './EducationForm';
@@ -9,10 +9,9 @@ import ProjectsForm from './ProjectsForm';
 import InterestsForm from './InterestsForm';
 import PersonalInfoForm from './PersonalInfoForm';
 import { Button, message } from 'antd';
+import { useCV } from '../context/CVContext';
 
 interface CVWizardProps {
-  initialData: CVData;
-  onSubmit: (data: CVData) => void;
   current: number;
   setCurrent: (step: number) => void;
   isStepValid: (step: number) => boolean;
@@ -30,8 +29,8 @@ const steps = [
   { key: 'interests', label: 'Centres d\'intérêt', component: InterestsForm },
 ];
 
-const CVWizard: React.FC<CVWizardProps> = ({ initialData, onSubmit, current, setCurrent, isStepValid, goPrevious }) => {
-  const [data, setData] = useState<CVData>(initialData);
+const CVWizard: React.FC<CVWizardProps> = ({ current, setCurrent, isStepValid, goPrevious }) => {
+  const { cvData, setCVData } = useCV();
 
   const goNext = () => {
     if (isStepValid(current + 1)) {
@@ -44,26 +43,17 @@ const CVWizard: React.FC<CVWizardProps> = ({ initialData, onSubmit, current, set
   const goPrev = () => goPrevious();
 
   const handleChange = (key: keyof CVData) => (value: any) => {
-    setData((prev) => {
-      const newData = { ...prev, [key]: value };
-      onSubmit(newData);
-      return newData;
-    });
-  };
-
-  const handleSubmit = () => {
-    onSubmit(data);
+    setCVData({ ...cvData!, [key]: value });
   };
 
   const StepComponent = steps[current].component;
   const stepKey = steps[current].key as keyof CVData;
-  let stepData: any = data[stepKey];
-  if (stepData === undefined) {
-    if (Array.isArray(data[stepKey])) stepData = [];
-    else if (typeof data[stepKey] === 'object') stepData = {};
-    else if (stepKey === 'personalInfo') stepData = { firstName: '', lastName: '', title: '', email: '', phone: '' };
-    else stepData = '';
+  
+  if (!cvData) {
+    return null;
   }
+  
+  const stepData: any = cvData[stepKey];
 
   return (
     <div style={{ maxWidth: 800, margin: '0 auto', background: '#fff', borderRadius: 16, boxShadow: '0 2px 16px #eee', padding: 32 }}>

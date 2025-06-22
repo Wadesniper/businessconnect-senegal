@@ -250,6 +250,7 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
               </div>
             )}
             {renderStepContent()}
+            {/* Les boutons de navigation sont maintenant dans CVWizard, sauf pour la dernière étape */}
             {(currentStep === steps.length - 1) && (
               <div style={{ marginTop: 32, display: 'flex', gap: 16 }}>
                 {currentStep > 0 && <Button onClick={handlePrev}>Précédent</Button>}
