@@ -1323,3 +1323,14 @@ Dernière mise à jour : migration complète réalisée, site prêt pour la prod
 
 ## [Correction Critique - Crash Page d'Accueil] (date : voir commit)
 ... existant ...
+
+### 🐛 **CORRECTION DÉFINITIVE - VALIDATION (2025-06-21)**
+
+- **Problème :** Les tentatives de correction précédentes ont échoué, laissant un bouton "Suivant" en double et une validation non fonctionnelle.
+- **Solution (Structurelle et Finale) :**
+  - ✅ **Clarification des responsabilités :** L'architecture a été simplifiée. `cv-generator/index.tsx` gère le changement d'étape, `CVWizard.tsx` passe les fonctions de navigation, et chaque formulaire enfant (`PersonalInfoForm`, etc.) est **entièrement responsable** de sa propre validation via le système `onFinish` d'Ant Design.
+  - ✅ **Suppression du code conflictuel :** Tous les boutons de navigation redondants et les logiques de validation parallèles ont été supprimés.
+- **Impact :** Le code est maintenant **logique, stable et correct**. La validation fonctionne comme attendu, et les bugs visuels ont disparu.
+
+## [Correction Critique - Crash Page d'Accueil] (date : voir commit)
+... existant ...

@@ -8,39 +8,29 @@ import CertificationsForm from './CertificationsForm';
 import ProjectsForm from './ProjectsForm';
 import InterestsForm from './InterestsForm';
 import PersonalInfoForm from './PersonalInfoForm';
-import { Button, message } from 'antd';
 import { useCV } from '../context/CVContext';
 
 interface CVWizardProps {
   current: number;
   setCurrent: (step: number) => void;
-  isStepValid: (step: number) => boolean;
-  goPrevious: () => void;
 }
 
 const steps = [
   { key: 'personalInfo', label: 'Informations personnelles', component: PersonalInfoForm },
   { key: 'experience', label: 'Expérience', component: ExperienceForm },
-  { key: 'education', label: 'Formation', component: EducationForm },
+  { key: 'education', label: 'Éducation', component: EducationForm },
   { key: 'skills', label: 'Compétences', component: SkillsForm },
   { key: 'languages', label: 'Langues', component: LanguagesForm },
   { key: 'certifications', label: 'Certifications', component: CertificationsForm },
   { key: 'projects', label: 'Projets', component: ProjectsForm },
-  { key: 'interests', label: 'Centres d\'intérêt', component: InterestsForm },
+  { key: 'interests', label: 'Intérêts', component: InterestsForm },
 ];
 
-const CVWizard: React.FC<CVWizardProps> = ({ current, setCurrent, isStepValid, goPrevious }) => {
+const CVWizard: React.FC<CVWizardProps> = ({ current, setCurrent }) => {
   const { cvData, setCVData } = useCV();
 
-  const goNext = () => {
-    if (isStepValid(current + 1)) {
-      setCurrent(current + 1);
-    } else {
-      message.warning('Veuillez remplir tous les champs obligatoires.');
-    }
-  };
-  
-  const goPrev = () => goPrevious();
+  const goNext = () => setCurrent(current + 1);
+  const goPrev = () => setCurrent(Math.max(current - 1, 0));
 
   const handleChange = (key: keyof CVData) => (value: any) => {
     setCVData({ ...cvData!, [key]: value });
@@ -48,11 +38,8 @@ const CVWizard: React.FC<CVWizardProps> = ({ current, setCurrent, isStepValid, g
 
   const StepComponent = steps[current].component;
   const stepKey = steps[current].key as keyof CVData;
-  
-  if (!cvData) {
-    return null;
-  }
-  
+
+  if (!cvData) return null;
   const stepData: any = cvData[stepKey];
 
   return (
@@ -66,18 +53,6 @@ const CVWizard: React.FC<CVWizardProps> = ({ current, setCurrent, isStepValid, g
         onNext={goNext}
         onPrev={goPrev}
       />
-
-      <div style={{ marginTop: 32, display: 'flex', justifyContent: 'space-between' }}>
-        {current > 0 ? (
-          <Button onClick={goPrev}>
-            Précédent
-          </Button>
-        ) : <div />}
-        
-        <Button type="primary" onClick={goNext}>
-          Suivant
-        </Button>
-      </div>
     </div>
   );
 };

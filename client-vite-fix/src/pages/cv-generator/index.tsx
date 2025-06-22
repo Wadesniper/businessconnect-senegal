@@ -131,14 +131,6 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
     }
   };
 
-  const handleNext = () => {
-    if (isStepValid(currentStep)) {
-      setCurrentStep(Math.min(currentStep + 1, steps.length - 1));
-    } else {
-      message.warning('Veuillez remplir tous les champs obligatoires de cette étape.');
-    }
-  };
-
   const handlePrev = () => setCurrentStep(currentStep - 1);
 
   const handleExport = async (format: 'pdf' | 'docx') => {
@@ -176,15 +168,12 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
       );
     }
     if (currentStep > 0 && currentStep < steps.length - 1) {
-      // Étapes du wizard multi-pages
+      // Le Wizard gère maintenant sa propre logique interne.
+      // On lui passe juste l'étape actuelle et la fonction pour la changer.
       return (
         <CVWizard
-          initialData={cvData || emptyCVData}
-          onSubmit={setCVData}
           current={currentStep - 1}
           setCurrent={step => setCurrentStep(step + 1)}
-          isStepValid={isStepValid}
-          goPrevious={handlePrev}
         />
       );
     }
@@ -250,12 +239,6 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
               </div>
             )}
             {renderStepContent()}
-            {/* Les boutons de navigation sont maintenant dans CVWizard, sauf pour la dernière étape */}
-            {(currentStep === steps.length - 1) && (
-              <div style={{ marginTop: 32, display: 'flex', gap: 16 }}>
-                {currentStep > 0 && <Button onClick={handlePrev}>Précédent</Button>}
-              </div>
-            )}
           </Col>
         </Row>
       )}

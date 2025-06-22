@@ -87,7 +87,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ data, onChange, onN
       <Form.Item name="address" label="Adresse"> <Input /> </Form.Item>
       <Form.Item name="summary" label="Résumé professionnel" rules={[{ required: true }]}> <TextArea rows={4} /> </Form.Item>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 32 }}>
-        {onPrev && <Button onClick={onPrev}>Précédent</Button>}
+        <Button onClick={onPrev} disabled={!onPrev}>Précédent</Button>
         <Button type="primary" htmlType="submit">Suivant</Button>
       </div>
     </Form>
