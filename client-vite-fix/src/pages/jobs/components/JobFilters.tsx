@@ -16,8 +16,8 @@ interface JobFiltersProps {
   onExperienceLevelChange: (level: string | null) => void;
   workLocation: string | null;
   onWorkLocationChange: (location: string | null) => void;
-  searchQuery?: string;
-  onSearchChange?: (query: string) => void;
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
   renderAction?: React.ReactNode;
 }
 
@@ -31,7 +31,7 @@ const JobFilters: React.FC<JobFiltersProps> = ({
   onLocationChange,
   workLocation,
   onWorkLocationChange,
-  searchQuery = '',
+  searchQuery,
   onSearchChange,
   renderAction
 }) => {
@@ -57,7 +57,7 @@ const JobFilters: React.FC<JobFiltersProps> = ({
         <Input
           placeholder="Rechercher par titre, compétence..."
           value={searchQuery}
-          onChange={e => onSearchChange && onSearchChange(e.target.value)}
+          onChange={e => onSearchChange(e.target.value)}
           prefix={<SearchOutlined style={{ color: 'rgba(0,0,0,.25)' }} />}
           style={{ minWidth: 200, flex: 1 }}
           allowClear

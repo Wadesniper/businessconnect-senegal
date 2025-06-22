@@ -5,11 +5,49 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 class JobController {
   async getAllJobs(req: Request, res: Response) {
+    const { 
+      page = '1', 
+      limit = '10', 
+      search = '', 
+      sector, 
+      type, 
+      location 
+    } = req.query as { [key: string]: string };
+
+    const pageNum = parseInt(page, 10);
+    const limitNum = parseInt(limit, 10);
+    const skip = (pageNum - 1) * limitNum;
+
     try {
+      const where: any = {};
+      const filters = [];
+
+      if (search) {
+        filters.push({
+          OR: [
+            { title: { contains: search, mode: 'insensitive' } },
+            { description: { contains: search, mode: 'insensitive' } },
+          ]
+        });
+      }
+      if (sector) filters.push({ sector: { equals: sector } });
+      if (type) filters.push({ type: { equals: type } });
+      if (location) filters.push({ location: { contains: location, mode: 'insensitive' } });
+
+      if (filters.length > 0) {
+        where.AND = filters;
+      }
+      
       const jobs = await prisma.job.findMany({
-        orderBy: { createdAt: 'desc' }
+        where,
+        skip,
+        take: limitNum,
+        orderBy: { createdAt: 'desc' },
       });
-      res.json(jobs);
+
+      const total = await prisma.job.count({ where });
+
+      res.json({ jobs, total, page: pageNum, limit: limitNum });
     } catch (error) {
       logger.error('Erreur lors de la récupération des offres:', error);
       res.status(500).json({ error: 'Erreur lors de la récupération des offres' });

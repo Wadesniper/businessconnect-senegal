@@ -10,7 +10,7 @@ import { hasPremiumAccess } from '../../utils/premiumAccess';
 import type { JobData, JobType } from '../../types/job';
 import { useNavigate } from 'react-router-dom';
 import { JobService } from '../../services/jobService';
-// import { useDebounce } from '../../hooks/useDebounce'; // Commenté pour l'instant
+import { useDebounce } from '../../hooks/useDebounce';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -22,7 +22,8 @@ const JobsPage: React.FC = () => {
   const isPremium = hasPremiumAccess(user, hasActiveSubscription);
   const navigate = useNavigate();
 
-  const [jobs, setJobs] = useState<any[]>([]);
+  const [jobs, setJobs] = useState<JobData[]>([]);
+  const [totalJobs, setTotalJobs] = useState(0);
   const [sectors, setSectors] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -31,33 +32,30 @@ const JobsPage: React.FC = () => {
   const [selectedSector, setSelectedSector] = useState<string | null>(null);
   const [selectedType, setSelectedType] = useState<JobType | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
-  // const [searchQuery, setSearchQuery] = useState(''); // Commenté
-  // const debouncedSearchQuery = useDebounce(searchQuery, 500); // Commenté
+  const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
   useEffect(() => {
     setIsLoading(true);
-    // Supprimer les filtres de recherche de l'appel
-    JobService.getJobs()
-      .then(response => { // La réponse est maintenant JobsResponse
+    JobService.getJobs(1, 20, debouncedSearchQuery, selectedSector, selectedType, selectedLocation)
+      .then(response => {
         setJobs(response.jobs || []);
-        const uniqueSectors = Array.from(new Set((response.jobs || []).map((j: any) => j.sector).filter(Boolean)));
-        setSectors(uniqueSectors);
+        setTotalJobs(response.total || 0);
+        if (sectors.length === 0) {
+          const uniqueSectors = Array.from(new Set((response.jobs || []).map((j: any) => j.sector).filter(Boolean)));
+          setSectors(uniqueSectors);
+        }
       })
       .catch(() => setError("Erreur lors du chargement des offres d'emploi"))
       .finally(() => setIsLoading(false));
-  }, [/*debouncedSearchQuery,*/ selectedSector, selectedType, selectedLocation]); // Dépendances mises à jour
+  }, [debouncedSearchQuery, selectedSector, selectedType, selectedLocation]);
 
   const sortedJobs = React.useMemo(() => {
-    // Re-filtrer côté client en attendant la correction du backend
-    return jobs.filter(job => {
-      if (selectedSector && job.sector !== selectedSector) return false;
-      if (selectedType && job.type !== selectedType) return false;
-      if (selectedLocation && job.location && !job.location.toLowerCase().includes(selectedLocation.toLowerCase())) return false;
-      return true;
-    }).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  }, [jobs, selectedSector, selectedType, selectedLocation]);
+    return [...jobs].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }, [jobs]);
 
   const handleEdit = (jobId: string) => navigate(`/jobs/edit/${jobId}`);
+  
   const handleDelete = (jobId: string) => {
     confirm({
       title: 'Êtes-vous sûr de vouloir supprimer cette offre ?',
@@ -76,9 +74,10 @@ const JobsPage: React.FC = () => {
       },
     });
   };
+
   const handlePublish = () => navigate('/jobs/publish');
 
-  if (isLoading) {
+  if (isLoading && jobs.length === 0) {
     return <div style={{ minHeight: 420, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" /></div>;
   }
 
@@ -88,8 +87,8 @@ const JobsPage: React.FC = () => {
       <RedirectBanners />
       <div style={{ marginBottom: 16 }}>
         <JobFilters
-          // searchQuery={searchQuery}
-          // onSearchChange={setSearchQuery}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
           sectors={sectors}
           selectedSector={selectedSector}
           onSectorChange={setSelectedSector}
@@ -120,7 +119,7 @@ const JobsPage: React.FC = () => {
       ) : (
         <>
           <Text style={{ marginBottom: 16, display: 'block' }}>
-            {sortedJobs.length} offre{sortedJobs.length > 1 ? 's' : ''} trouvée{sortedJobs.length > 1 ? 's' : ''}
+            {totalJobs} offre{totalJobs > 1 ? 's' : ''} trouvée{totalJobs > 1 ? 's' : ''}
           </Text>
           <Row gutter={[24, 24]}>
             {sortedJobs.length > 0 ? (

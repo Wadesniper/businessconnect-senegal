@@ -1458,3 +1458,13 @@ Cette approche a résolu de manière définitive les problèmes de validation, d
     - **Statut :** ✅ **COHÉRENCE TOTALE.** Le champ salaire est maintenant géré de manière uniforme et correcte sur toute la pile technique.
 
 - **Statut :** ✅ **FLUX EMPLOYEUR COMPLET.** Les employeurs peuvent maintenant publier, voir, modifier et supprimer leurs offres de manière fluide et sécurisée.
+
+### 🐛 **CORRECTION CRITIQUE - AFFICHAGE DES OFFRES D'EMPLOI (2025-06-22)**
+
+- **Problème :** Aucune offre d'emploi ne s'affichait sur la page, le message "0 offre trouvée" apparaissait systématiquement.
+- **Cause Racine :** Une régression majeure avait désynchronisé le frontend et le backend. Une ancienne version du `jobController.ts` avait été restaurée sur le serveur, renvoyant un format de données `Job[]` (un simple tableau) au lieu de l'objet `JobsResponse` (`{ jobs: [], total: ... }`) attendu par le client. Le frontend ne trouvait donc jamais le tableau `jobs` dans la réponse.
+- **Solution Appliquée (Robuste) :**
+  - ✅ **Backend Corrigé :** La méthode `getAllJobs` dans `jobController.ts` a été restaurée dans sa version correcte, qui gère la pagination et les filtres, et renvoie bien un objet `JobsResponse`.
+  - ✅ **Frontend Nettoyé :** La page `JobsPage.tsx` a été nettoyée pour supprimer tout le filtrage côté client. Elle se fie maintenant entièrement au backend pour la recherche et le filtrage, ce qui est plus performant et plus fiable.
+  - ✅ **Recherche Réactivée :** La fonctionnalité de recherche par mots-clés, qui avait été temporairement désactivée, est maintenant de nouveau pleinement fonctionnelle.
+- **Statut :** ✅ **AFFICHAGE DES OFFRES RESTAURÉ.** La page des emplois fonctionne de nouveau correctement, avec la recherche et les filtres gérés par le backend.
