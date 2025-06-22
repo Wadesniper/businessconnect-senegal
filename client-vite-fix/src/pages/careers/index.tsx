@@ -16,275 +16,337 @@ const secteurs: Secteur[] = [
   {
     id: 'tech',
     nom: 'Technologies & Numérique',
-    description: 'Les métiers du numérique et des nouvelles technologies',
+    description: "Le secteur moteur de l'innovation au Sénégal, au cœur du Plan Sénégal Émergent. Des startups de la Fintech aux ESN structurées, les opportunités sont nombreuses.",
     icone: '💻',
     couleur: '#1890ff',
     metiers: [
       {
         id: 'dev-fullstack',
         titre: 'Développeur Full Stack',
-        description: 'Développe des applications web complètes, du backend au frontend',
+        description: "Véritable couteau suisse du web, le développeur Full Stack est capable de construire une application de A à Z. Au Sénégal, il est très recherché par les startups (Wave, InTouch), les agences digitales et les banques pour développer des solutions web et mobiles innovantes.",
         secteur: 'tech',
+        missions: [
+          "Analyser les besoins des clients et rédiger les spécifications techniques.",
+          "Développer l'architecture backend avec des technologies comme Node.js, Django ou Symfony.",
+          "Créer des interfaces utilisateur réactives et modernes avec React, Angular ou Vue.js.",
+          "Intégrer des API tierces, notamment les solutions de paiement mobile (Orange Money, Wave).",
+          "Automatiser les tests et le déploiement (CI/CD) sur des plateformes cloud (AWS, Azure, OVH)."
+        ],
         competencesRequises: [
           { nom: 'JavaScript/TypeScript', niveau: 'avancé' },
-          { nom: 'React/Angular/Vue', niveau: 'avancé' },
-          { nom: 'Node.js', niveau: 'avancé' },
-          { nom: 'SQL/NoSQL', niveau: 'intermédiaire' },
-          { nom: 'Git', niveau: 'intermédiaire' }
+          { nom: 'Framework Frontend (React/Angular)', niveau: 'avancé' },
+          { nom: 'Framework Backend (Node.js/PHP/Python)', niveau: 'avancé' },
+          { nom: 'Gestion de bases de données (PostgreSQL, MySQL, MongoDB)', niveau: 'intermédiaire' },
+          { nom: 'Maîtrise de Git et des méthodologies agiles (Scrum)', niveau: 'intermédiaire' }
         ],
         salaireMoyen: {
-          junior: { min: 400000, max: 800000 },
-          confirme: { min: 800000, max: 1500000 },
-          senior: { min: 1500000, max: 3000000 }
-        },
-        formation: [
-          'Bac+4/5 en Informatique',
-          'École d\'ingénieur',
-          'Formations certifiantes'
-        ],
-        perspectives: [
-          'Lead Developer',
-          'Architecte logiciel',
-          'CTO'
-        ],
-        environnementTravail: [
-          'Startups',
-          'ESN',
-          'Grandes entreprises'
-        ],
-        tags: ['Développement', 'Web', 'Mobile', 'Cloud']
-      },
-      {
-        id: 'data-scientist',
-        titre: 'Data Scientist',
-        description: 'Analyse et interprète les données pour en tirer des insights stratégiques',
-        secteur: 'tech',
-        competencesRequises: [
-          { nom: 'Python', niveau: 'avancé' },
-          { nom: 'Machine Learning', niveau: 'avancé' },
-          { nom: 'SQL', niveau: 'intermédiaire' },
-          { nom: 'Statistiques', niveau: 'avancé' },
-          { nom: 'Big Data', niveau: 'intermédiaire' }
-        ],
-        salaireMoyen: {
-          junior: { min: 600000, max: 1000000 },
-          confirme: { min: 1000000, max: 2000000 },
-          senior: { min: 2000000, max: 4000000 }
-        },
-        formation: [
-          'Bac+5 en Data Science',
-          'Master en Statistiques',
-          'École d\'ingénieur'
-        ],
-        perspectives: [
-          'Lead Data Scientist',
-          'Chief Data Officer',
-          'AI Research Scientist'
-        ],
-        environnementTravail: [
-          'Banques',
-          'Télécoms',
-          'Consulting'
-        ],
-        tags: ['Data', 'IA', 'Machine Learning', 'Statistiques']
-      },
-      {
-        id: 'cybersecurity-expert',
-        titre: 'Expert en Cybersécurité',
-        description: 'Protège les systèmes informatiques et les données sensibles contre les cyberattaques',
-        secteur: 'tech',
-        competencesRequises: [
-          { nom: 'Sécurité réseau', niveau: 'expert' },
-          { nom: 'Cryptographie', niveau: 'avancé' },
-          { nom: 'Ethical Hacking', niveau: 'avancé' },
-          { nom: 'Forensics', niveau: 'intermédiaire' }
-        ],
-        salaireMoyen: {
-          junior: { min: 500000, max: 900000 },
-          confirme: { min: 900000, max: 1800000 },
-          senior: { min: 1800000, max: 3500000 }
-        },
-        formation: [
-          'Master en Sécurité Informatique',
-          'Certifications (CISSP, CEH)',
-          'Formation continue'
-        ],
-        perspectives: [
-          'RSSI',
-          'Consultant en cybersécurité',
-          'Directeur sécurité'
-        ],
-        environnementTravail: [
-          'Banques',
-          'Télécoms',
-          'Cabinets de conseil'
-        ],
-        tags: ['Sécurité', 'IT', 'Cybersécurité']
-      },
-      {
-        id: 'mobile-dev',
-        titre: 'Développeur Mobile',
-        description: 'Crée des applications mobiles pour iOS et Android',
-        secteur: 'tech',
-        competencesRequises: [
-          { nom: 'Swift/Kotlin', niveau: 'expert' },
-          { nom: 'Flutter', niveau: 'avancé' },
-          { nom: 'React Native', niveau: 'avancé' },
-          { nom: 'UX Mobile', niveau: 'intermédiaire' }
-        ],
-        salaireMoyen: {
-          junior: { min: 400000, max: 800000 },
+          junior: { min: 450000, max: 800000 },
           confirme: { min: 800000, max: 1500000 },
           senior: { min: 1500000, max: 2800000 }
         },
         formation: [
-          'Licence en Informatique',
-          'École de développement',
-          'Certifications Apple/Google'
+          'Bac+3 à Bac+5 en Informatique (ESP, UVS, ISM).',
+          'Écoles privées spécialisées (Simplon, Sonatel Academy).',
+          'Auto-formation et certifications en ligne (très valorisées).'
+        ],
+        perspectives: [
+          'Lead Developer',
+          'Architecte Logiciel',
+          'Chef de Projet Technique (CTO) dans une startup.'
+        ],
+        environnementTravail: [
+          'Startups et Hubs d\'innovation (Dakar)',
+          'Entreprises de Services du Numérique (ESN)',
+          'Grandes entreprises (banques, télécoms, assurances).'
+        ],
+        tags: ['Développement', 'Web', 'Mobile', 'Fintech']
+      },
+      {
+        id: 'data-scientist',
+        titre: 'Data Scientist / Analyst',
+        description: "Le Data Scientist transforme les données brutes en informations stratégiques. Avec l'explosion de la data (télécoms, mobile money, e-commerce), ce rôle est devenu crucial pour optimiser les décisions, prédire les tendances et personnaliser les services.",
+        secteur: 'tech',
+        missions: [
+          "Collecter, nettoyer et structurer les données provenant de multiples sources.",
+          "Construire des modèles statistiques et des algorithmes de Machine Learning pour résoudre des problèmes business (ex: score de crédit, prédiction de churn).",
+          "Créer des dashboards et des visualisations de données pour la direction (Power BI, Tableau).",
+          "Présenter les résultats de manière claire et concise aux équipes non-techniques.",
+          "Assurer une veille sur les nouvelles techniques d'analyse de données et d'IA."
+        ],
+        competencesRequises: [
+          { nom: 'Python (Pandas, Scikit-learn, TensorFlow)', niveau: 'avancé' },
+          { nom: 'Maîtrise des statistiques et des probabilités', niveau: 'avancé' },
+          { nom: 'SQL et manipulation de bases de données', niveau: 'avancé' },
+          { nom: 'Outils de Business Intelligence (Power BI, Tableau)', niveau: 'intermédiaire' },
+          { nom: 'Compréhension business et communication', niveau: 'expert' }
+        ],
+        salaireMoyen: {
+          junior: { min: 600000, max: 1000000 },
+          confirme: { min: 1000000, max: 1800000 },
+          senior: { min: 1800000, max: 3500000 }
+        },
+        formation: [
+          'Master en Statistique, Économétrie ou Informatique (UCAD, ESP, AIMS).',
+          'École d\'ingénieur avec spécialisation Big Data/IA.',
+          'Doctorat dans un domaine quantitatif (un plus pour la R&D).'
+        ],
+        perspectives: [
+          'Lead Data Scientist',
+          'ML Engineer (Ingénieur Machine Learning)',
+          'Chief Data Officer (CDO).'
+        ],
+        environnementTravail: [
+          'Opérateurs Télécoms (Sonatel, Free)',
+          'Banques et institutions financières',
+          'Cabinets de conseil et agences spécialisées en data.'
+        ],
+        tags: ['Data', 'IA', 'Business Intelligence', 'Statistiques']
+      },
+      {
+        id: 'cybersecurity-expert',
+        titre: 'Expert en Cybersécurité',
+        description: "Le protecteur des actifs numériques de l'entreprise. Face à la professionnalisation des cyberattaques, il est indispensable pour sécuriser les systèmes d'information, surtout dans des secteurs critiques comme la banque et les services publics.",
+        secteur: 'tech',
+        missions: [
+          "Effectuer des audits de sécurité et des tests d'intrusion (pentesting).",
+          "Mettre en place et gérer les outils de sécurité (Firewall, SIEM, EDR).",
+          "Définir la politique de sécurité et veiller à son application.",
+          "Répondre aux incidents de sécurité et mener les investigations (forensics).",
+          "Former et sensibiliser les collaborateurs aux risques cyber."
+        ],
+        competencesRequises: [
+          { nom: 'Sécurité des réseaux et systèmes', niveau: 'expert' },
+          { nom: 'Analyse de vulnérabilités et techniques d\'attaque', niveau: 'avancé' },
+          { nom: 'Connaissance des normes (ISO 27001) et réglementations (Loi sur la protection des données personnelles)', niveau: 'avancé' },
+          { nom: 'Gestion de crise et sang-froid', niveau: 'expert' },
+          { nom: 'Veille constante sur les menaces', niveau: 'expert' }
+        ],
+        salaireMoyen: {
+          junior: { min: 700000, max: 1200000 },
+          confirme: { min: 1200000, max: 2200000 },
+          senior: { min: 2200000, max: 4000000 }
+        },
+        formation: [
+          'Master en Cybersécurité ou Sécurité des SI.',
+          'Certifications professionnelles reconnues (CEH, OSCP, CISSP).',
+          'École d\'ingénieur avec une forte spécialisation en sécurité informatique.'
+        ],
+        perspectives: [
+          'Responsable de la Sécurité des Systèmes d\'Information (RSSI)',
+          'Architecte Sécurité',
+          'Consultant en cybersécurité pour les grands comptes.'
+        ],
+        environnementTravail: [
+          'Banques, assurances et institutions financières',
+          'Administrations publiques et agences gouvernementales (CSI, ANSSI-SN)',
+          'Opérateurs d\'Importance Vitale (OIV) comme Senelec, SDE.'
+        ],
+        tags: ['Sécurité', 'Réseau', 'Pentesting', 'Gouvernance']
+      },
+      {
+        id: 'mobile-dev',
+        titre: 'Développeur Mobile (Android/iOS)',
+        description: "Spécialiste de la création d'applications pour smartphones et tablettes. Au Sénégal, avec la pénétration massive du mobile, ce rôle est clé pour les services financiers (Wave), les plateformes de livraison et les médias.",
+        secteur: 'tech',
+        missions: [
+          "Développer des applications natives (Kotlin/Java pour Android, Swift pour iOS) ou cross-platform (React Native, Flutter).",
+          "Optimiser les applications pour une performance et une consommation de batterie maximales.",
+          "Assurer une expérience utilisateur (UX) fluide et intuitive, adaptée aux spécificités du mobile.",
+          "Gérer la publication et les mises à jour sur le Google Play Store et l'Apple App Store.",
+          "Intégrer des notifications push et des services de géolocalisation."
+        ],
+        competencesRequises: [
+          { nom: 'Kotlin/Java (Android) ou Swift (iOS)', niveau: 'expert' },
+          { nom: 'Flutter ou React Native', niveau: 'avancé' },
+          { nom: 'API REST et gestion des données hors-ligne', niveau: 'avancé' },
+          { nom: 'Principes de design mobile (Material Design, Human Interface Guidelines)', niveau: 'intermédiaire' },
+          { nom: 'Git', niveau: 'intermédiaire' }
+        ],
+        salaireMoyen: {
+          junior: { min: 400000, max: 750000 },
+          confirme: { min: 750000, max: 1400000 },
+          senior: { min: 1400000, max: 2600000 }
+        },
+        formation: [
+          'Bac+3 à Bac+5 en Informatique.',
+          'Formations en ligne et certifications spécifiques (Google, Apple).',
+          'Portfolio de projets personnels ou professionnels (très important).'
         ],
         perspectives: [
           'Lead Mobile Developer',
           'Architecte Mobile',
-          'Chef de projet mobile'
+          'Chef de projet mobile.'
         ],
         environnementTravail: [
-          'Startups',
-          'Agences de dev',
-          'Éditeurs de logiciels'
+          'Startups et Fintech',
+          'Agences de développement mobile',
+          'Grandes entreprises avec une stratégie "mobile-first".'
         ],
-        tags: ['Mobile', 'iOS', 'Android', 'Apps']
+        tags: ['Mobile', 'Android', 'iOS', 'Flutter', 'React Native']
       },
       {
         id: 'cloud-architect',
         titre: 'Architecte Cloud',
-        description: 'Conçoit et met en place les infrastructures cloud des entreprises',
+        description: "Responsable de la stratégie et de l'infrastructure cloud d'une entreprise. Il conçoit des architectures robustes, scalables et sécurisées sur des plateformes comme AWS, Azure ou Google Cloud pour héberger les applications et services.",
         secteur: 'tech',
+        missions: [
+          "Concevoir et déployer des architectures cloud en fonction des besoins métiers.",
+          "Gérer la migration d'infrastructures existantes (on-premise) vers le cloud.",
+          "Optimiser les coûts liés à l'utilisation des services cloud (FinOps).",
+          "Mettre en place les politiques de sécurité et de conformité dans le cloud.",
+          "Collaborer avec les équipes DevOps pour automatiser le déploiement et la gestion de l'infrastructure."
+        ],
         competencesRequises: [
-          { nom: 'AWS/Azure/GCP', niveau: 'expert' },
-          { nom: 'DevOps', niveau: 'avancé' },
-          { nom: 'Sécurité Cloud', niveau: 'expert' },
-          { nom: 'Architecture système', niveau: 'expert' }
-        ],
-        salaireMoyen: {
-          junior: { min: 700000, max: 1400000 },
-          confirme: { min: 1400000, max: 2800000 },
-          senior: { min: 2800000, max: 4500000 }
-        },
-        formation: [
-          'Ingénieur informatique',
-          'Certifications Cloud',
-          'Formation continue'
-        ],
-        perspectives: [
-          'Chief Cloud Officer',
-          'Architecte solutions',
-          'Consultant Cloud'
-        ],
-        environnementTravail: [
-          'ESN',
-          'Grandes entreprises',
-          'Startups'
-        ],
-        tags: ['Cloud', 'DevOps', 'Architecture']
-      },
-      {
-        id: 'ia-engineer',
-        titre: 'Ingénieur IA',
-        description: 'Développe des solutions d\'intelligence artificielle',
-        secteur: 'tech',
-        competencesRequises: [
-          { nom: 'Deep Learning', niveau: 'expert' },
-          { nom: 'Python/TensorFlow', niveau: 'expert' },
-          { nom: 'Big Data', niveau: 'avancé' },
-          { nom: 'MLOps', niveau: 'avancé' }
+          { nom: 'Plateformes Cloud (AWS, Azure, GCP)', niveau: 'expert' },
+          { nom: 'Infrastructure as Code (Terraform, CloudFormation)', niveau: 'avancé' },
+          { nom: 'Conteneurisation (Docker, Kubernetes)', niveau: 'avancé' },
+          { nom: 'Sécurité Cloud et gestion des identités (IAM)', niveau: 'expert' },
+          { nom: 'Réseaux et architectures distribuées', niveau: 'expert' }
         ],
         salaireMoyen: {
           junior: { min: 800000, max: 1500000 },
-          confirme: { min: 1500000, max: 3000000 },
-          senior: { min: 3000000, max: 5000000 }
+          confirme: { min: 1500000, max: 2800000 },
+          senior: { min: 2800000, max: 4500000 }
         },
         formation: [
-          'Master IA',
-          'Doctorat',
-          'Certifications IA'
+          'Ingénieur en informatique ou systèmes et réseaux.',
+          'Certifications professionnelles des fournisseurs cloud (ex: AWS Certified Solutions Architect).',
+          'Forte expérience en administration système ou DevOps.'
+        ],
+        perspectives: [
+          'Chief Technology Officer (CTO)',
+          'Consultant Cloud senior',
+          'Architecte d\'entreprise.'
+        ],
+        environnementTravail: [
+          'Grandes entreprises en transformation digitale',
+          'ESN et cabinets de conseil spécialisés',
+          'Acteurs majeurs du web et de la tech.'
+        ],
+        tags: ['Cloud', 'Architecture', 'AWS', 'Azure', 'DevOps']
+      },
+      {
+        id: 'ia-engineer',
+        titre: 'Ingénieur IA / Machine Learning',
+        description: "L'ingénieur IA construit et déploie des modèles d'intelligence artificielle pour résoudre des problèmes concrets. Il va au-delà de l'analyse du Data Scientist pour créer des produits et services intelligents (reconnaissance d'image, NLP, etc.).",
+        secteur: 'tech',
+        missions: [
+          "Industrialiser et mettre en production les modèles de Machine Learning (MLOps).",
+          "Développer des APIs pour exposer les modèles d'IA à d'autres applications.",
+          "Optimiser les algorithmes pour la performance et le passage à l'échelle (scalability).",
+          "Travailler sur des problématiques complexes comme le traitement du langage naturel (NLP) ou la vision par ordinateur.",
+          "Assurer la maintenance et la surveillance des modèles en production."
+        ],
+        competencesRequises: [
+          { nom: 'Frameworks de Deep Learning (TensorFlow, PyTorch)', niveau: 'expert' },
+          { nom: 'Langages de programmation (Python, C++)', niveau: 'expert' },
+          { nom: 'Plateformes Cloud pour l\'IA (SageMaker, Azure ML)', niveau: 'avancé' },
+          { nom: 'MLOps (outils comme MLflow, Kubeflow)', niveau: 'avancé' },
+          { nom: 'Bases de données et ingénierie des données', niveau: 'intermédiaire' }
+        ],
+        salaireMoyen: {
+          junior: { min: 700000, max: 1300000 },
+          confirme: { min: 1300000, max: 2500000 },
+          senior: { min: 2500000, max: 4500000 }
+        },
+        formation: [
+          'Master ou diplôme d\'ingénieur en Informatique avec spécialisation IA.',
+          'Doctorat en IA, Machine Learning ou domaines connexes.',
+          'Expérience solide en développement logiciel.'
         ],
         perspectives: [
           'Lead AI Engineer',
-          'Directeur R&D',
-          'Entrepreneur IA'
+          'Architecte IA',
+          'Chercheur en IA appliquée.'
         ],
         environnementTravail: [
-          'Startups IA',
-          'Centres R&D',
-          'Grands groupes'
+          'Centres de R&D de grands groupes',
+          'Startups spécialisées en IA',
+          'Géants de la technologie.'
         ],
-        tags: ['IA', 'Machine Learning', 'Innovation']
+        tags: ['IA', 'Machine Learning', 'Deep Learning', 'MLOps']
       },
       {
         id: 'devops-engineer',
         titre: 'Ingénieur DevOps',
-        description: 'Automatise et optimise les processus de développement et de déploiement',
+        description: "L'ingénieur DevOps est un pont entre le développement (Dev) et l'exploitation (Ops). Son but est d'automatiser et de fluidifier le cycle de vie des applications, de l'écriture du code jusqu'à la mise en production et la surveillance.",
         secteur: 'tech',
+        missions: [
+          "Mettre en place et gérer des pipelines d'intégration et de déploiement continus (CI/CD).",
+          "Gérer l'infrastructure en tant que code (IaC) avec des outils comme Terraform ou Ansible.",
+          "Administrer les plateformes de conteneurisation (Docker, Kubernetes).",
+          "Mettre en place des outils de monitoring, de logging et d'alerting (Prometheus, Grafana, ELK).",
+          "Promouvoir la culture DevOps et collaborer étroitement avec les développeurs et les administrateurs système."
+        ],
         competencesRequises: [
-          { nom: 'CI/CD', niveau: 'expert' },
-          { nom: 'Docker/Kubernetes', niveau: 'expert' },
-          { nom: 'Cloud (AWS/Azure)', niveau: 'avancé' },
-          { nom: 'Scripting', niveau: 'expert' }
+          { nom: 'Outils CI/CD (Jenkins, GitLab CI, GitHub Actions)', niveau: 'expert' },
+          { nom: 'Docker et Kubernetes', niveau: 'expert' },
+          { nom: 'Fournisseurs Cloud (AWS, Azure, GCP)', niveau: 'avancé' },
+          { nom: 'Scripting (Bash, Python, Go)', niveau: 'expert' },
+          { nom: 'Monitoring et observabilité', niveau: 'avancé' }
         ],
         salaireMoyen: {
-          junior: { min: 600000, max: 1200000 },
-          confirme: { min: 1200000, max: 2400000 },
-          senior: { min: 2400000, max: 4000000 }
+          junior: { min: 600000, max: 1100000 },
+          confirme: { min: 1100000, max: 2200000 },
+          senior: { min: 2200000, max: 3800000 }
         },
         formation: [
-          'Ingénieur informatique',
-          'Certifications DevOps',
-          'Certifications Cloud'
+          'Diplôme d\'ingénieur ou Master en informatique.',
+          'Forte expérience en développement ou en administration système.',
+          'Certifications (ex: Certified Kubernetes Administrator, AWS DevOps Engineer).'
         ],
         perspectives: [
           'Lead DevOps',
-          'Architecte Cloud',
-          'SRE Manager'
+          'Architecte Cloud/Infrastructure',
+          'Site Reliability Engineer (SRE).'
         ],
         environnementTravail: [
-          'Startups',
-          'ESN',
-          'Grands groupes'
+          'Startups et Scale-ups (essentiel pour leur croissance)',
+          'ESN accompagnant la transformation des clients',
+          'Grandes entreprises modernisant leur SI.'
         ],
-        tags: ['DevOps', 'Cloud', 'Automatisation']
+        tags: ['DevOps', 'CI/CD', 'Kubernetes', 'Automatisation', 'Cloud']
       },
       {
         id: 'sre-engineer',
-        titre: 'Site Reliability Engineer',
-        description: 'Assure la fiabilité et la performance des systèmes',
+        titre: 'Ingénieur SRE (Site Reliability Engineering)',
+        description: "L'ingénieur SRE applique les principes du génie logiciel aux problématiques d'infrastructure et d'opérations. Son objectif principal est de créer des systèmes ultra-fiables et scalables, en automatisant au maximum les tâches manuelles.",
         secteur: 'tech',
+        missions: [
+          "Définir des objectifs de niveau de service (SLO) et des budgets d'erreur (error budgets).",
+          "Développer des solutions d'automatisation pour réduire la charge opérationnelle (toil).",
+          "Mener des post-mortems d'incidents sans blâme pour en tirer des leçons.",
+          "Améliorer le monitoring et l'observabilité pour détecter les problèmes de manière proactive.",
+          "Participer à la conception de nouvelles fonctionnalités pour s'assurer de leur fiabilité dès le départ."
+        ],
         competencesRequises: [
-          { nom: 'SRE', niveau: 'expert' },
-          { nom: 'Monitoring', niveau: 'expert' },
-          { nom: 'Performance', niveau: 'avancé' },
-          { nom: 'Automation', niveau: 'expert' }
+          { nom: 'Compétences solides en développement (Go, Python, Java)', niveau: 'expert' },
+          { nom: 'Connaissance approfondie des systèmes distribués', niveau: 'expert' },
+          { nom: 'Monitoring, logging, et tracing', niveau: 'expert' },
+          { nom: 'Automatisation d\'infrastructure (IaC)', niveau: 'avancé' },
+          { nom: 'Gestion de la performance et des incidents', niveau: 'expert' }
         ],
         salaireMoyen: {
-          junior: { min: 700000, max: 1400000 },
-          confirme: { min: 1400000, max: 2800000 },
-          senior: { min: 2800000, max: 4500000 }
+          junior: { min: 700000, max: 1300000 },
+          confirme: { min: 1300000, max: 2600000 },
+          senior: { min: 2600000, max: 4500000 }
         },
         formation: [
-          'Ingénieur système',
-          'Certifications SRE',
-          'Formation DevOps'
+          'Profils de développeurs expérimentés évoluant vers l\'infrastructure.',
+          'Ingénieur en systèmes et réseaux avec de fortes compétences en programmation.',
+          'Le SRE est souvent une évolution de carrière pour des profils DevOps seniors.'
         ],
         perspectives: [
-          'SRE Manager',
-          'Architecte système',
-          'DevOps Leader'
+          'Lead SRE / SRE Manager',
+          'Architecte de systèmes distribués',
+          'Principal Engineer.'
         ],
         environnementTravail: [
-          'Grandes entreprises',
-          'Startups scale-up',
-          'Plateformes cloud'
+          'Grandes entreprises du web (GAFAM, etc.)',
+          'Plateformes à très fort trafic (Fintech, E-commerce)',
+          'Entreprises avec des enjeux critiques de disponibilité.'
         ],
-        tags: ['SRE', 'DevOps', 'Performance']
+        tags: ['SRE', 'Fiabilité', 'Scalabilité', 'Automatisation', 'DevOps']
       }
     ]
   },

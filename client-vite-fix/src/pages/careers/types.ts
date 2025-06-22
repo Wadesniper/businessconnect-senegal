@@ -24,6 +24,7 @@ export interface FicheMetier {
   titre: string;
   description: string;
   secteur: string;
+  missions?: string[];
   competencesRequises: Competence[];
   salaireMoyen: PlagesSalariales;
   formation: string[];
