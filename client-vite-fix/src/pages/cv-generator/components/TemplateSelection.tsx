@@ -1,11 +1,11 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Card, Typography, Row, Col, Select, Input, Empty, Tag, Button, Modal, Spin } from 'antd';
 import { StarOutlined, EyeOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 import type { Template } from '../../../types/cv';
 import { CV_TEMPLATES } from '../components/data/templates';
 import { DEMO_PROFILES } from '../CVPreviewGallery';
 import { useAuth } from '../../../context/AuthContext';
-import { hasPremiumAccess } from '../../../utils/premiumAccess';
 import CVPreview from './CVPreview';
 import { defaultCustomization } from '../context/CVContext';
 
@@ -29,8 +29,10 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [previewTemplate, setPreviewTemplate] = useState<Template | null>(null);
+  const [isSubscriptionModalVisible, setIsSubscriptionModalVisible] = useState(false);
   const modalContentRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (previewTemplate && modalContentRef.current) {
@@ -53,8 +55,19 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
     });
   }, [searchTerm, selectedCategory]);
 
+  const handleUseTemplate = (template: Template) => {
+    // Logique simplifiée : tous les modèles sont premium.
+    const canUse = isPremium || user?.role === 'admin';
+    
+    if (canUse) {
+      onSelect(template);
+      if (onContinue) onContinue();
+    } else {
+      setIsSubscriptionModalVisible(true);
+    }
+  };
+
   const renderCard = (template: Template) => {
-    const canSelect = user?.role === 'admin' || hasPremiumAccess(user) || !template.premium;
     const isSelected = selected?.id === template.id;
 
     return (
@@ -66,7 +79,8 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
           border: isSelected ? '2px solid #1890ff' : '1px solid #e8e8e8',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'space-between'
+          justifyContent: 'space-between',
+          height: '100%'
         }}
         bodyStyle={{ flexGrow: 1, display: 'flex', flexDirection: 'column', padding: '16px' }}
         cover={
@@ -101,11 +115,10 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                 Aperçu
               </Button>
             </div>
-            {template.premium && (
-              <Tag icon={<StarOutlined />} color="gold" style={{ position: 'absolute', top: 8, right: 8 }}>
-                Premium
-              </Tag>
-            )}
+            {/* Le tag Premium est toujours affiché car tous les modèles le sont */}
+            <Tag icon={<StarOutlined />} color="gold" style={{ position: 'absolute', top: 8, right: 8 }}>
+              Premium
+            </Tag>
           </div>
         }
       >
@@ -118,11 +131,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
         <Button
           type="primary"
           block
-          disabled={!canSelect}
-          onClick={() => {
-            onSelect(template);
-            if (onContinue) onContinue();
-          }}
+          onClick={() => handleUseTemplate(template)}
           style={{ marginTop: '16px' }}
         >
           Utiliser ce modèle
@@ -168,7 +177,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
       ) : (
         <Row gutter={[24, 24]}>
           {filteredTemplates.map((template) => (
-            <Col xs={24} sm={12} md={8} lg={6} key={template.id}>
+            <Col xs={24} sm={12} md={8} lg={6} key={template.id} style={{ display: 'flex' }}>
               {renderCard(template)}
             </Col>
           ))}
@@ -194,6 +203,23 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
             />
           </div>
         )}
+      </Modal>
+
+      <Modal
+        title="Accès Premium Requis"
+        open={isSubscriptionModalVisible}
+        onCancel={() => setIsSubscriptionModalVisible(false)}
+        footer={[
+          <Button key="back" onClick={() => setIsSubscriptionModalVisible(false)}>
+            Retour
+          </Button>,
+          <Button key="submit" type="primary" onClick={() => navigate('/pricing')}>
+            Voir les abonnements
+          </Button>,
+        ]}
+      >
+        <p>Ce modèle de CV fait partie de nos offres Premium.</p>
+        <p>Pour utiliser ce modèle et accéder à toutes nos fonctionnalités avancées, veuillez souscrire à un abonnement.</p>
       </Modal>
     </div>
   );
