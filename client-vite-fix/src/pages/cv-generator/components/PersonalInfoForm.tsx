@@ -1,4 +1,4 @@
-import React, { useImperativeHandle, forwardRef } from 'react';
+import React from 'react';
 import { Form, Input, Button, Upload, Space, Typography } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import type { RcFile } from 'antd/es/upload';
@@ -10,21 +10,18 @@ const { TextArea } = Input;
 interface PersonalInfoFormProps {
   data: CVData['personalInfo'];
   onChange: (data: CVData['personalInfo']) => void;
-  onNext: () => void;
 }
 
-const PersonalInfoForm = forwardRef<any, PersonalInfoFormProps>(({ data, onChange, onNext }, ref) => {
+const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ data, onChange }) => {
   const [form] = Form.useForm();
   const [uploadLoading, setUploadLoading] = React.useState(false);
 
   const handleImageUpload = async (file: RcFile) => {
     setUploadLoading(true);
-    // Vérification de la taille
     if (file.size > 5 * 1024 * 1024) {
       setUploadLoading(false);
       return Upload.LIST_IGNORE;
     }
-    // Vérification du type
     if (!['image/jpeg', 'image/png'].includes(file.type)) {
       setUploadLoading(false);
       return Upload.LIST_IGNORE;
@@ -32,22 +29,15 @@ const PersonalInfoForm = forwardRef<any, PersonalInfoFormProps>(({ data, onChang
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
-      form.setFieldValue('photo', reader.result);
+      form.setFieldsValue({ photo: reader.result });
       onChange({ ...form.getFieldsValue(), photo: reader.result });
     };
     setUploadLoading(false);
     return false;
   };
 
-  useImperativeHandle(ref, () => ({
-    submit: () => {
-      form.submit();
-    },
-  }));
-
-  const onFinish = (values: CVData['personalInfo']) => {
-    onChange(values);
-    onNext();
+  const handleValuesChange = (changedValues: any, allValues: any) => {
+    onChange(allValues);
   };
 
   React.useEffect(() => {
@@ -58,8 +48,9 @@ const PersonalInfoForm = forwardRef<any, PersonalInfoFormProps>(({ data, onChang
     <Form
       form={form}
       layout="vertical"
-      onFinish={onFinish}
       initialValues={data}
+      onValuesChange={handleValuesChange}
+      style={{ maxWidth: 600, margin: '0 auto' }}
     >
       <Title level={3}>Informations personnelles</Title>
       <Form.Item name="photo" label="Photo de profil">
@@ -76,22 +67,30 @@ const PersonalInfoForm = forwardRef<any, PersonalInfoFormProps>(({ data, onChang
         </Upload>
       </Form.Item>
       <Space direction="horizontal" size={16} style={{ display: 'flex' }}>
-        <Form.Item name="firstName" label="Prénom" rules={[{ required: true }]}
-          style={{ flex: 1 }}>
+        <Form.Item name="firstName" label="Prénom" rules={[{ required: true, message: 'Le prénom est requis' }]} style={{ flex: 1 }}>
           <Input />
         </Form.Item>
-        <Form.Item name="lastName" label="Nom" rules={[{ required: true }]}
-          style={{ flex: 1 }}>
+        <Form.Item name="lastName" label="Nom" rules={[{ required: true, message: 'Le nom est requis' }]} style={{ flex: 1 }}>
           <Input />
         </Form.Item>
       </Space>
-      <Form.Item name="title" label="Titre professionnel" rules={[{ required: true }]}> <Input /> </Form.Item>
-      <Form.Item name="email" label="Email" rules={[{ required: true, type: 'email' }]}> <Input /> </Form.Item>
-      <Form.Item name="phone" label="Téléphone" rules={[{ required: true }]}> <Input /> </Form.Item>
-      <Form.Item name="address" label="Adresse"> <Input /> </Form.Item>
-      <Form.Item name="summary" label="Résumé professionnel" rules={[{ required: true }]}> <TextArea rows={4} /> </Form.Item>
+      <Form.Item name="title" label="Titre professionnel" rules={[{ required: true, message: 'Le titre est requis' }]}>
+        <Input />
+      </Form.Item>
+      <Form.Item name="email" label="Email" rules={[{ required: true, type: 'email', message: 'Un email valide est requis' }]}>
+        <Input />
+      </Form.Item>
+      <Form.Item name="phone" label="Téléphone" rules={[{ required: true, message: 'Le téléphone est requis' }]}>
+        <Input />
+      </Form.Item>
+      <Form.Item name="address" label="Adresse">
+        <Input />
+      </Form.Item>
+      <Form.Item name="summary" label="Résumé professionnel" rules={[{ required: true, message: 'Le résumé est requis' }]}>
+        <TextArea rows={4} />
+      </Form.Item>
     </Form>
   );
-});
+};
 
 export default PersonalInfoForm; 

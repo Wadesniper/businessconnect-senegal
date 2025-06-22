@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import type { CVData } from '../../../types/cv';
 import ExperienceForm from './ExperienceForm';
 import EducationForm from './EducationForm';
@@ -28,14 +28,13 @@ const steps = [
 ];
 
 const CVWizard: React.FC<CVWizardProps> = ({ current, setCurrent }) => {
-  const { cvData, setCVData } = useCV();
-  const formRef = useRef<any>(null);
+  const { cvData, setCVData, isStepValid } = useCV();
 
   const goNext = () => {
-    if (formRef.current && typeof formRef.current.submit === 'function') {
-      formRef.current.submit();
-    } else {
+    if (isStepValid(current + 1)) {
       setCurrent(current + 1);
+    } else {
+      message.error('Veuillez remplir tous les champs obligatoires.');
     }
   };
   
@@ -51,19 +50,12 @@ const CVWizard: React.FC<CVWizardProps> = ({ current, setCurrent }) => {
   if (!cvData) return null;
   const stepData: any = cvData[stepKey];
 
-  const isPersonalInfoForm = steps[current].key === 'personalInfo';
-  const formProps: any = {
+  const formProps = {
     data: stepData,
     onChange: handleChange(stepKey),
+    onNext: goNext,
+    onPrev: goPrev,
   };
-
-  if (isPersonalInfoForm) {
-    formProps.ref = formRef;
-    formProps.onNext = () => setCurrent(current + 1);
-  } else {
-    formProps.onNext = () => setCurrent(current + 1);
-    formProps.onPrev = goPrev;
-  }
 
   return (
     <div style={{ maxWidth: 800, margin: '0 auto', background: '#fff', borderRadius: 16, boxShadow: '0 2px 16px #eee', padding: 32 }}>
