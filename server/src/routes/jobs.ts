@@ -81,6 +81,11 @@ router.post('/:id/apply', authenticate, (req: Request, res: Response, next: Next
   jobController.applyForJob(req as AuthRequest, res).catch(next);
 });
 
+// Route pour récupérer les offres de l'utilisateur connecté
+router.get('/my-jobs', authenticate, (req: Request, res: Response, next: NextFunction) => {
+  jobController.getMyJobs(req, res).catch(next);
+});
+
 // IMPORTANT : La route la plus générique avec un paramètre (:id) doit être à la fin
 // pour ne pas intercepter les routes plus spécifiques comme '/meta/categories' ou '/search/all'.
 router.get('/:id', (req: Request, res: Response, next: NextFunction) => {

@@ -3,10 +3,17 @@ import { api } from './api';
 
 // Ce service ne gère plus de cache, la gestion des données est déléguée à React Query ou des hooks similaires.
 export class JobService {
-  static async getJobs(page: number = 1, limit: number = 10, search: string = ''): Promise<JobsResponse> {
+  static async getJobs(
+    page: number = 1, 
+    limit: number = 10, 
+    search: string = '',
+    sector: string | null = null,
+    type: string | null = null,
+    location: string | null = null,
+  ): Promise<JobsResponse> {
     try {
       const response = await api.get<JobsResponse>('/api/jobs', {
-        params: { page, limit, search }
+        params: { page, limit, search, sector, type, location }
       });
       return response.data;
     } catch (error: any) {
@@ -70,6 +77,16 @@ export class JobService {
       return response.data;
     } catch (error: any) {
       console.error('Erreur lors de la récupération de mes candidatures:', error.response?.data?.message || error.message);
+      return [];
+    }
+  }
+
+  static async getMyJobs(): Promise<JobData[]> {
+    try {
+      const response = await api.get<JobData[]>('/api/jobs/my-jobs');
+      return response.data;
+    } catch (error: any) {
+      console.error('Erreur lors de la récupération de mes offres:', error.response?.data?.message || error.message);
       return [];
     }
   }

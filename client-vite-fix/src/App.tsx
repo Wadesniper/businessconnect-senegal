@@ -32,6 +32,8 @@ const NotFoundPage = lazy(() => import('./pages/404'));
 const CVGenerator = lazy(() => import('./pages/cv-generator'));
 import JobDetailsPage from './pages/jobs/JobDetailsPage';
 import JobApplyPage from './pages/jobs/JobApplyPage';
+import PublishJobPage from './pages/jobs/PublishJobPage';
+import EditJobPage from './pages/jobs/EditJobPage';
 const FAQ = lazy(() => import('./pages/help/FAQ'));
 const CareersPage = lazy(() => import('./pages/careers'));
 import AuthPage from './pages/auth/AuthPage';
@@ -80,6 +82,24 @@ const App: React.FC = () => {
             <Route path="/jobs" element={<JobsPage />} />
             <Route path="/jobs/:id" element={<JobDetailsPage />} />
             <Route path="/jobs/:id/postuler" element={<JobApplyPage />} />
+            <Route 
+              path="/jobs/publish" 
+              element={
+                <ProtectedRoute 
+                  element={<PublishJobPage />} 
+                  allowedRoles={['admin', 'employeur']} 
+                />
+              } 
+            />
+            <Route 
+              path="/jobs/edit/:id" 
+              element={
+                <ProtectedRoute 
+                  element={<EditJobPage />} 
+                  allowedRoles={['admin', 'employeur']} 
+                />
+              } 
+            />
             <Route path="/marketplace" element={<MarketplacePage />} />
             <Route path="/marketplace/:id" element={<MarketplaceItemPage />} />
             <Route path="/marketplace/create" element={<MarketplacePage />} />

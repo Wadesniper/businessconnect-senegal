@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Typography, Button, Space, Avatar, Row, Col, Tag, Spin } from 'antd';
+import { Card, Typography, Button, Space, Avatar, Row, Col, Tag, Spin, List, message, Modal } from 'antd';
 import {
   UserOutlined,
   FileTextOutlined,
@@ -14,9 +14,10 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { JobService } from '../services/jobService';
 import { useNavigate } from 'react-router-dom';
-import type { Job } from '../types/job';
+import type { JobData } from '../types/job';
 
 const { Title, Text, Paragraph } = Typography;
+const { confirm } = Modal;
 
 const quickAccessItems = [
   {
@@ -59,15 +60,42 @@ const quickAccessItems = [
 const Dashboard: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [jobs, setJobs] = React.useState<Job[]>([]);
+  const [jobs, setJobs] = React.useState<JobData[]>([]);
+  const [myJobs, setMyJobs] = React.useState<JobData[]>([]);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    JobService.getJobs().then(jobs => {
-      setJobs(jobs || []);
-      setLoading(false);
+    JobService.getJobs().then(response => {
+      setJobs(response.jobs || []);
     });
-  }, []);
+
+    if (user?.role === 'employeur') {
+      JobService.getMyJobs().then(jobs => {
+        setMyJobs(jobs || []);
+        setLoading(false);
+      });
+    } else {
+      setLoading(false);
+    }
+  }, [user]);
+
+  const handleDelete = (jobId: string) => {
+    confirm({
+      title: 'Êtes-vous sûr ?',
+      content: 'Cette action est irréversible.',
+      okText: 'Oui, supprimer',
+      okType: 'danger',
+      onOk: async () => {
+        try {
+          await JobService.deleteJob(jobId);
+          setMyJobs(prev => prev.filter(j => j.id !== jobId));
+          message.success('Offre supprimée.');
+        } catch {
+          message.error('Erreur lors de la suppression.');
+        }
+      }
+    });
+  };
 
   if (!user) return null;
 
@@ -140,6 +168,34 @@ const Dashboard: React.FC = () => {
             `}</style>
           </Card>
         </Col>
+        {/* Section Employeur */}
+        {user.role === 'employeur' && (
+          <Col span={24}>
+            <Card title="Mes offres publiées">
+              <Button type="primary" onClick={() => navigate('/jobs/publish')} style={{marginBottom: 16}}>
+                Publier une nouvelle offre
+              </Button>
+              <List
+                loading={loading}
+                itemLayout="horizontal"
+                dataSource={myJobs}
+                renderItem={item => (
+                  <List.Item
+                    actions={[
+                      <Button type="link" onClick={() => navigate(`/jobs/edit/${item.id}`)}>Modifier</Button>,
+                      <Button type="link" danger onClick={() => handleDelete(item.id)}>Supprimer</Button>,
+                    ]}
+                  >
+                    <List.Item.Meta
+                      title={<a onClick={() => navigate(`/jobs/${item.id}`)}>{item.title}</a>}
+                      description={`${item.location} - ${item.type}`}
+                    />
+                  </List.Item>
+                )}
+              />
+            </Card>
+          </Col>
+        )}
         {/* Section Admin */}
         {user.role === 'admin' && (
           <Col span={24}>

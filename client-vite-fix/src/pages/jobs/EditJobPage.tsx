@@ -1,22 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Typography, Box, TextField, Button, MenuItem, Alert, CircularProgress } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { JobService } from '../../services/jobService';
 import { useAuth } from '../../context/AuthContext';
+import type { JobType } from '../../types/job';
 
 const sectors = [
   'Informatique', 'Finance', 'Santé', 'Éducation', 'Marketing', 'Industrie', 'Services', 'Agriculture', 'Tourisme', 'Communication'
 ];
-const types = ['CDI', 'CDD', 'Stage', 'Freelance', 'Alternance', 'Temps partiel'];
+const types: JobType[] = ['CDI', 'CDD', 'Stage', 'Freelance', 'Alternance', 'Temps partiel'];
 
-const PublishJobPage: React.FC = () => {
+const EditJobPage: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({
     title: '',
     description: '',
     sector: '',
-    type: '',
+    type: null as JobType | null,
     location: '',
     company: '',
     salary_min: '',
@@ -25,37 +27,76 @@ const PublishJobPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  if (!user || (user.role !== 'admin' && user.role !== 'employeur')) {
-    return <Container><Alert severity="error">Accès réservé aux employeurs et admins.</Alert></Container>;
-  }
+  useEffect(() => {
+    if (id) {
+      setLoading(true);
+      JobService.getJobById(id)
+        .then(job => {
+          if (job) {
+            // Vérifier si l'utilisateur est le propriétaire ou un admin
+            if (user?.id === job.employerId || user?.role === 'admin') {
+              setForm({
+                title: job.title || '',
+                description: job.description || '',
+                sector: job.sector || '',
+                type: job.type || null,
+                location: job.location || '',
+                company: job.company || '',
+                salary_min: job.salary_min?.toString() || '',
+              });
+            } else {
+              setError('Vous n\'êtes pas autorisé à modifier cette offre.');
+            }
+          } else {
+            setError('Offre non trouvée.');
+          }
+        })
+        .catch(() => setError('Erreur lors du chargement de l\'offre.'))
+        .finally(() => setLoading(false));
+    }
+  }, [id, user]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
+    setForm({ ...form, [e.target.name as string]: e.target.value });
   };
+
+  const handleTypeChange = (value: JobType | null) => {
+    setForm({ ...form, type: value });
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!id || !form.type) return;
     setLoading(true);
     setError(null);
     setSuccess(false);
     try {
-      await JobService.createJob({ 
-        ...form, 
+      const dataToUpdate = {
+        ...form,
+        type: form.type,
         salary_min: form.salary_min ? Number(form.salary_min) : undefined,
-        createdBy: user.id 
-      });
+      };
+      await JobService.updateJob(id, dataToUpdate);
       setSuccess(true);
       setTimeout(() => navigate('/jobs'), 1200);
     } catch (err: any) {
-      setError('Erreur lors de la publication de l\'offre.');
+      setError('Erreur lors de la mise à jour de l\'offre.');
     } finally {
       setLoading(false);
     }
   };
 
+  if (loading && !form.title) {
+      return <Container sx={{py: 4, textAlign: 'center'}}><CircularProgress /></Container>
+  }
+  
+  if (error) {
+    return <Container><Alert severity="error">{error}</Alert></Container>;
+  }
+
   return (
     <Container maxWidth="sm" sx={{ py: 4 }}>
-      <Typography variant="h4" fontWeight={700} mb={3}>Publier une offre d'emploi</Typography>
+      <Typography variant="h4" fontWeight={700} mb={3}>Modifier l'offre d'emploi</Typography>
       <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 3, bgcolor: '#fff', p: 4, borderRadius: 3, boxShadow: 2 }}>
         <TextField label="Titre du poste" name="title" value={form.title} onChange={handleChange} required fullWidth />
         <TextField label="Entreprise" name="company" value={form.company} onChange={handleChange} required fullWidth />
@@ -63,7 +104,7 @@ const PublishJobPage: React.FC = () => {
         <TextField label="Secteur" name="sector" value={form.sector} onChange={handleChange} required select fullWidth>
           {sectors.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
         </TextField>
-        <TextField label="Type de contrat" name="type" value={form.type} onChange={handleChange} required select fullWidth>
+        <TextField label="Type de contrat" name="type" value={form.type || ''} onChange={(e) => handleTypeChange(e.target.value as JobType)} required select fullWidth>
           {types.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
         </TextField>
         <TextField label="Localisation" name="location" value={form.location} onChange={handleChange} required fullWidth />
@@ -75,10 +116,9 @@ const PublishJobPage: React.FC = () => {
           type="number" 
           fullWidth 
         />
-        {error && <Alert severity="error">{error}</Alert>}
-        {success && <Alert severity="success">Offre publiée avec succès !</Alert>}
+        {success && <Alert severity="success">Offre mise à jour avec succès !</Alert>}
         <Button type="submit" variant="contained" color="primary" size="large" disabled={loading} sx={{ fontWeight: 700, borderRadius: 2 }}>
-          {loading ? <CircularProgress size={24} color="inherit" /> : 'Publier'}
+          {loading ? <CircularProgress size={24} color="inherit" /> : 'Mettre à jour'}
         </Button>
         <Button variant="outlined" color="secondary" onClick={() => navigate('/jobs')} sx={{ borderRadius: 2 }}>
           Annuler
@@ -88,4 +128,4 @@ const PublishJobPage: React.FC = () => {
   );
 };
 
-export default PublishJobPage; 
+export default EditJobPage; 

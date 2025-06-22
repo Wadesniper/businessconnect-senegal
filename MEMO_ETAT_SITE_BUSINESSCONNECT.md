@@ -1422,3 +1422,39 @@ Cette approche a résolu de manière définitive les problèmes de validation, d
 - **Impact :** Le service est maintenant propre, robuste et fiable. Le problème de chargement est définitivement résolu car toutes les requêtes sont correctement authentifiées. Le code est plus maintenable et aligné avec les bonnes pratiques du reste de l'application.
 - **Fichiers modifiés :** `client-vite-fix/src/services/jobService.ts`.
 - **Statut :** ✅ **FLUX DE DONNÉES EMPLOI TOTALEMENT FIABILISÉ.**
+
+### ✨ **AMÉLIORATION FONCTIONNELLE - GESTION DES OFFRES (2025-06-22)**
+
+- **Contexte :** La gestion des offres d'emploi pour les employeurs était incomplète et plusieurs boutons ne fonctionnaient pas.
+
+- **Solutions Appliquées :**
+  - ✅ **Bouton "Publier une offre" Corrigé :**
+    - **Problème :** Le bouton ne menait nulle part.
+    - **Solution :** Ajout de la route `/jobs/publish` dans `App.tsx` et création du composant `PublishJobPage.tsx`. La route est maintenant protégée pour n'être accessible qu'aux `admin` et `employeur`.
+
+  - ✅ **Boutons "Modifier" et "Supprimer" Fonctionnels :**
+    - **Problème :** Les boutons n'avaient aucune action ou naviguaient vers des routes inexistantes.
+    - **Solution (Modifier) :** Création de la page `EditJobPage.tsx` qui pré-remplit un formulaire avec les données de l'offre. Ajout de la route sécurisée `/jobs/edit/:id`.
+    - **Solution (Supprimer) :** Implémentation d'une modale de confirmation dans `JobsPage.tsx` qui appelle le service de suppression et met à jour l'interface dynamiquement.
+
+  - ✅ **Tableau de Bord Employeur Amélioré :**
+    - **Problème :** Les employeurs ne voyaient pas la liste de leurs propres offres.
+    - **Solution :**
+      - Ajout d'un endpoint backend `/api/jobs/my-jobs` pour récupérer les offres d'un utilisateur.
+      - Ajout d'une méthode `getMyJobs` au `jobService`.
+      - Intégration d'une nouvelle section "Mes offres publiées" dans `Dashboard.tsx`, visible uniquement par les `employeur`, avec des boutons d'action fonctionnels.
+
+  - ✅ **Recherche par Mots-clés (Temporairement Désactivée) :**
+    - Une fonctionnalité de recherche a été ajoutée au front-end et au back-end, mais a été temporairement désactivée en raison de problèmes de build persistants liés à l'environnement Prisma. Le code est présent mais commenté pour ne pas bloquer les autres fonctionnalités.
+
+- **Statut :** ✅ **FLUX EMPLOYEUR COMPLET.** Les employeurs peuvent maintenant publier, voir, modifier et supprimer leurs offres de manière fluide et sécurisée.
+
+  - ✅ **Cohérence des Données "Salaire" Assurée :**
+    - **Problème :** Le champ `salary` était géré de manière incohérente (parfois un objet, parfois un nombre), ce qui ne correspondait pas au schéma de la base de données (`salary_min: Float?`, `salary_max: Float?`).
+    - **Solution :**
+      - Le type `JobData` (frontend) a été synchronisé avec le modèle `Job` (backend).
+      - Les formulaires de création/édition ont été mis à jour pour n'utiliser qu'un champ `salary_min` de type `number`.
+      - Le `jobController` a été corrigé pour gérer `salary_min` et `salary_max` comme des `Float`, conformément au schéma.
+    - **Statut :** ✅ **COHÉRENCE TOTALE.** Le champ salaire est maintenant géré de manière uniforme et correcte sur toute la pile technique.
+
+- **Statut :** ✅ **FLUX EMPLOYEUR COMPLET.** Les employeurs peuvent maintenant publier, voir, modifier et supprimer leurs offres de manière fluide et sécurisée.

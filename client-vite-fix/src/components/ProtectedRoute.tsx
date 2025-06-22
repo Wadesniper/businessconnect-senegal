@@ -8,9 +8,10 @@ interface ProtectedRouteProps {
   element: React.ReactElement;
   requiresSubscription?: boolean;
   requiresAdmin?: boolean;
+  allowedRoles?: string[];
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element, requiresSubscription = false, requiresAdmin = false }) => {
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element, requiresSubscription = false, requiresAdmin = false, allowedRoles = [] }) => {
   const { user, loading } = useAuth();
   const { hasActiveSubscription, loading: loadingSub } = useSubscription();
 
@@ -23,6 +24,10 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element, requiresSubscr
   }
 
   if (requiresAdmin && user.role !== 'admin') {
+    return <Navigate to="/" replace />;
+  }
+
+  if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
     return <Navigate to="/" replace />;
   }
 

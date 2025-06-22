@@ -51,9 +51,12 @@ class JobController {
 
   async createJob(req: Request, res: Response) {
     try {
+      const { salary_min, salary_max, ...restOfBody } = req.body;
       const job = await prisma.job.create({
         data: {
-          ...req.body,
+          ...restOfBody,
+          salary_min: salary_min ? parseFloat(salary_min) : undefined,
+          salary_max: salary_max ? parseFloat(salary_max) : undefined,
           postedById: req.user?.id
         }
       });
@@ -66,12 +69,17 @@ class JobController {
 
   async updateJob(req: Request, res: Response) {
     try {
+      const { salary_min, salary_max, ...restOfBody } = req.body;
       const job = await prisma.job.update({
         where: {
           id: req.params.id,
           postedById: req.user?.id
         },
-        data: req.body
+        data: {
+          ...restOfBody,
+          salary_min: salary_min ? parseFloat(salary_min) : undefined,
+          salary_max: salary_max ? parseFloat(salary_max) : undefined,
+        }
       });
       res.json(job);
     } catch (error) {
@@ -219,6 +227,26 @@ class JobController {
     } catch (error) {
       logger.error('Erreur lors de la mise à jour du statut:', error);
       res.status(500).json({ error: 'Erreur lors de la mise à jour du statut' });
+    }
+  }
+
+  async getMyJobs(req: Request, res: Response) {
+    try {
+      if (!req.user?.id) {
+        return res.status(401).json({ error: 'Utilisateur non authentifié' });
+      }
+
+      const jobs = await prisma.job.findMany({
+        where: {
+          postedById: req.user.id
+        },
+        orderBy: { createdAt: 'desc' }
+      });
+
+      res.json(jobs);
+    } catch (error) {
+      logger.error('Erreur lors de la récupération de mes offres:', error);
+      res.status(500).json({ error: 'Erreur serveur' });
     }
   }
 }

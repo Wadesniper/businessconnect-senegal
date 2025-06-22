@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Layout, Row, Col, Typography, Spin, Button } from 'antd';
+import { Layout, Row, Col, Typography, Spin, Button, Input, Modal, message } from 'antd';
 import JobAdviceBanner from './components/JobAdviceBanner';
 import RedirectBanners from './components/RedirectBanners';
 import JobFilters from './components/JobFilters';
@@ -10,9 +10,11 @@ import { hasPremiumAccess } from '../../utils/premiumAccess';
 import type { JobData, JobType } from '../../types/job';
 import { useNavigate } from 'react-router-dom';
 import { JobService } from '../../services/jobService';
+// import { useDebounce } from '../../hooks/useDebounce'; // Commenté pour l'instant
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
+const { confirm } = Modal;
 
 const JobsPage: React.FC = () => {
   const { user } = useAuth();
@@ -29,34 +31,51 @@ const JobsPage: React.FC = () => {
   const [selectedSector, setSelectedSector] = useState<string | null>(null);
   const [selectedType, setSelectedType] = useState<JobType | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
+  // const [searchQuery, setSearchQuery] = useState(''); // Commenté
+  // const debouncedSearchQuery = useDebounce(searchQuery, 500); // Commenté
 
   useEffect(() => {
     setIsLoading(true);
+    // Supprimer les filtres de recherche de l'appel
     JobService.getJobs()
-      .then(fetchedJobs => {
-        setJobs(fetchedJobs || []);
-        const uniqueSectors = Array.from(new Set((fetchedJobs || []).map((j: any) => j.sector).filter(Boolean)));
+      .then(response => { // La réponse est maintenant JobsResponse
+        setJobs(response.jobs || []);
+        const uniqueSectors = Array.from(new Set((response.jobs || []).map((j: any) => j.sector).filter(Boolean)));
         setSectors(uniqueSectors);
       })
       .catch(() => setError("Erreur lors du chargement des offres d'emploi"))
       .finally(() => setIsLoading(false));
-  }, []);
+  }, [/*debouncedSearchQuery,*/ selectedSector, selectedType, selectedLocation]); // Dépendances mises à jour
 
-  const filteredJobs = React.useMemo(() => {
+  const sortedJobs = React.useMemo(() => {
+    // Re-filtrer côté client en attendant la correction du backend
     return jobs.filter(job => {
       if (selectedSector && job.sector !== selectedSector) return false;
       if (selectedType && job.type !== selectedType) return false;
       if (selectedLocation && job.location && !job.location.toLowerCase().includes(selectedLocation.toLowerCase())) return false;
       return true;
-    });
+    }).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }, [jobs, selectedSector, selectedType, selectedLocation]);
 
-  const sortedJobs = React.useMemo(() => {
-    return [...filteredJobs].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  }, [filteredJobs]);
-
   const handleEdit = (jobId: string) => navigate(`/jobs/edit/${jobId}`);
-  const handleDelete = (jobId: string) => console.log(`Supprimer le job ${jobId}`);
+  const handleDelete = (jobId: string) => {
+    confirm({
+      title: 'Êtes-vous sûr de vouloir supprimer cette offre ?',
+      content: 'Cette action est irréversible.',
+      okText: 'Oui, supprimer',
+      okType: 'danger',
+      cancelText: 'Annuler',
+      onOk: async () => {
+        try {
+          await JobService.deleteJob(jobId);
+          setJobs(prevJobs => prevJobs.filter(job => job.id !== jobId));
+          message.success('Offre supprimée avec succès !');
+        } catch (error) {
+          message.error('Erreur lors de la suppression de l\'offre.');
+        }
+      },
+    });
+  };
   const handlePublish = () => navigate('/jobs/publish');
 
   if (isLoading) {
@@ -69,6 +88,8 @@ const JobsPage: React.FC = () => {
       <RedirectBanners />
       <div style={{ marginBottom: 16 }}>
         <JobFilters
+          // searchQuery={searchQuery}
+          // onSearchChange={setSearchQuery}
           sectors={sectors}
           selectedSector={selectedSector}
           onSectorChange={setSelectedSector}

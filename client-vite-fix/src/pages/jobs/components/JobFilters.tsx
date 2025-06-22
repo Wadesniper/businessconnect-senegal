@@ -1,4 +1,6 @@
 import React from 'react';
+import { Input } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 
 interface JobFiltersProps {
   sectors: string[];
@@ -14,6 +16,8 @@ interface JobFiltersProps {
   onExperienceLevelChange: (level: string | null) => void;
   workLocation: string | null;
   onWorkLocationChange: (location: string | null) => void;
+  searchQuery?: string;
+  onSearchChange?: (query: string) => void;
   renderAction?: React.ReactNode;
 }
 
@@ -27,6 +31,8 @@ const JobFilters: React.FC<JobFiltersProps> = ({
   onLocationChange,
   workLocation,
   onWorkLocationChange,
+  searchQuery = '',
+  onSearchChange,
   renderAction
 }) => {
   return (
@@ -48,6 +54,14 @@ const JobFilters: React.FC<JobFiltersProps> = ({
           flex: 1,
         }}
       >
+        <Input
+          placeholder="Rechercher par titre, compétence..."
+          value={searchQuery}
+          onChange={e => onSearchChange && onSearchChange(e.target.value)}
+          prefix={<SearchOutlined style={{ color: 'rgba(0,0,0,.25)' }} />}
+          style={{ minWidth: 200, flex: 1 }}
+          allowClear
+        />
         <label style={{ minWidth: 180, maxWidth: 260 }}>
           <span style={{ fontWeight: 600 }}>Secteur</span>
           <select

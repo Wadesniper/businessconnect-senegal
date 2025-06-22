@@ -9,11 +9,9 @@ export interface JobData {
   description: string;
   requirements: string[];
   responsibilities?: string[];
-  salary?: {
-    min: number;
-    max: number;
-    currency: string;
-  };
+  salary_min?: number;
+  salary_max?: number;
+  salary_currency?: string;
   benefits?: string[];
   skills?: string[];
   status?: 'active' | 'inactive';
@@ -30,6 +28,9 @@ export interface JobData {
   employerId?: string;
   isActive?: boolean;
   category?: string;
+  keywords?: string[];
+  postedById?: string;
+  _id?: string;
 }
 
 export interface Job {
