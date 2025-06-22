@@ -50,6 +50,21 @@ router.get('/search/all', (req: Request, res: Response, next: NextFunction) => {
 // Ces routes nécessitent que l'utilisateur soit authentifié.
 // Le middleware 'authenticate' s'en charge et ajoute 'req.user'.
 
+// Exemple pour récupérer les candidatures de l'utilisateur connecté
+router.get('/my/applications', authenticate, (req: Request, res: Response, next: NextFunction) => {
+    jobController.getMyApplications(req as AuthRequest, res).catch(next);
+});
+
+// Exemple pour récupérer les candidatures pour une offre spécifique (pour l'employeur)
+router.get('/:id/applications', authenticate, (req: Request, res: Response, next: NextFunction) => {
+    jobController.getJobApplications(req as AuthRequest, res).catch(next);
+});
+
+// Exemple pour mettre à jour le statut d'une candidature (pour l'employeur)
+router.put('/:id/applications/:applicationId', authenticate, (req: Request, res: Response, next: NextFunction) => {
+    jobController.updateApplicationStatus(req as AuthRequest, res).catch(next);
+});
+
 router.post('/', authenticate, (req: Request, res: Response, next: NextFunction) => {
   jobController.createJob(req as AuthRequest, res).catch(next);
 });
@@ -66,19 +81,10 @@ router.post('/:id/apply', authenticate, (req: Request, res: Response, next: Next
   jobController.applyForJob(req as AuthRequest, res).catch(next);
 });
 
-// Exemple pour récupérer les candidatures de l'utilisateur connecté
-router.get('/my/applications', authenticate, (req: Request, res: Response, next: NextFunction) => {
-    jobController.getMyApplications(req as AuthRequest, res).catch(next);
-});
-
-// Exemple pour récupérer les candidatures pour une offre spécifique (pour l'employeur)
-router.get('/:id/applications', authenticate, (req: Request, res: Response, next: NextFunction) => {
-    jobController.getJobApplications(req as AuthRequest, res).catch(next);
-});
-
-// Exemple pour mettre à jour le statut d'une candidature (pour l'employeur)
-router.put('/:id/applications/:applicationId', authenticate, (req: Request, res: Response, next: NextFunction) => {
-    jobController.updateApplicationStatus(req as AuthRequest, res).catch(next);
+// IMPORTANT : La route la plus générique avec un paramètre (:id) doit être à la fin
+// pour ne pas intercepter les routes plus spécifiques comme '/meta/categories' ou '/search/all'.
+router.get('/:id', (req: Request, res: Response, next: NextFunction) => {
+  jobController.getJobById(req, res).catch(next); 
 });
 
 // Les autres routes (protégées) peuvent être ajoutées ici si besoin

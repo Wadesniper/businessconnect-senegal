@@ -1398,3 +1398,14 @@ Cette approche a résolu de manière définitive les problèmes de validation, d
 - **Impact :** La condition de course est éliminée. Les administrateurs peuvent maintenant accéder aux détails des offres d'emploi sans être redirigés, restaurant la fonctionnalité attendue sans perturber l'expérience des autres utilisateurs.
 - **Fichiers modifiés :** `client-vite-fix/src/hooks/useSubscription.ts`.
 - **Statut :** ✅ **ACCÈS ADMIN RESTAURÉ.** Le flux est de nouveau fonctionnel pour tous les rôles.
+
+### 🐛 **CORRECTION CRITIQUE - ROUTAGE BACKEND DES OFFRES D'EMPLOI (2025-06-21)**
+
+- **Problème :** Cliquer sur "Voir détails" d'une offre d'emploi retournait une erreur `JSON.parse` dans la console et la page ne chargeait pas.
+- **Cause Racine :** Un problème d'ordre dans la définition des routes Express sur le backend (`server/src/routes/jobs.ts`). La route générique `/:id` était définie *avant* des routes plus spécifiques (comme `/search/all` ou `/meta/categories`). Par conséquent, toute requête correspondant à ce chemin était interprétée à tort comme une demande de détail d'offre, entraînant l'appel du mauvais contrôleur et une réponse non-JSON.
+- **Solution Appliquée (Structurelle) :**
+  - ✅ **Réorganisation des routes :** La route la plus générique `router.get('/:id', ...)` a été déplacée à la toute fin du fichier de routes.
+  - Cela garantit que toutes les routes spécifiques sont évaluées en premier, et que seule une véritable requête pour un détail d'offre par ID est capturée par le bon contrôleur.
+- **Impact :** Le routage backend est maintenant correct et robuste. Les bonnes routes sont appelées, les bonnes données sont retournées, et l'erreur `JSON.parse` côté client est éliminée. La page de détails des offres est de nouveau fonctionnelle pour tous les utilisateurs.
+- **Fichiers modifiés :** `server/src/routes/jobs.ts`.
+- **Statut :** ✅ **API OFFRES D'EMPLOI STABILISÉE.**
