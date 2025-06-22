@@ -85,6 +85,13 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
   const isPremium = !!hasPremiumAccess(user, hasActiveSubscription);
   const location = useLocation();
 
+  // Navigation automatique après sélection du modèle
+  React.useEffect(() => {
+    if (selectedTemplate && currentStep === 0) {
+      setCurrentStep(1);
+    }
+  }, [selectedTemplate]);
+
   // Lecture du paramètre template dans l'URL
   React.useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -165,7 +172,6 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
           selected={selectedTemplate}
           onSelect={handleSelectTemplate}
           isPremium={isPremium}
-          onContinue={handleNext}
         />
       );
     }
@@ -177,6 +183,8 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
           onSubmit={setCVData}
           current={currentStep - 1}
           setCurrent={step => setCurrentStep(step + 1)}
+          isStepValid={isStepValid}
+          goPrevious={handlePrev}
         />
       );
     }
@@ -245,7 +253,6 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
             {(currentStep === steps.length - 1) && (
               <div style={{ marginTop: 32, display: 'flex', gap: 16 }}>
                 {currentStep > 0 && <Button onClick={handlePrev}>Précédent</Button>}
-                {currentStep < steps.length - 1 && <Button type="primary" onClick={handleNext}>Suivant</Button>}
               </div>
             )}
           </Col>

@@ -8,12 +8,15 @@ import CertificationsForm from './CertificationsForm';
 import ProjectsForm from './ProjectsForm';
 import InterestsForm from './InterestsForm';
 import PersonalInfoForm from './PersonalInfoForm';
+import { Button, message } from 'antd';
 
 interface CVWizardProps {
   initialData: CVData;
   onSubmit: (data: CVData) => void;
   current: number;
   setCurrent: (step: number) => void;
+  isStepValid: (step: number) => boolean;
+  goPrevious: () => void;
 }
 
 const steps = [
@@ -27,11 +30,18 @@ const steps = [
   { key: 'interests', label: 'Centres d\'intérêt', component: InterestsForm },
 ];
 
-const CVWizard: React.FC<CVWizardProps> = ({ initialData, onSubmit, current, setCurrent }) => {
+const CVWizard: React.FC<CVWizardProps> = ({ initialData, onSubmit, current, setCurrent, isStepValid, goPrevious }) => {
   const [data, setData] = useState<CVData>(initialData);
 
-  const goNext = () => setCurrent(current + 1);
-  const goPrev = () => setCurrent(Math.max(current - 1, 0));
+  const goNext = () => {
+    if (isStepValid(current + 1)) {
+      setCurrent(current + 1);
+    } else {
+      message.warning('Veuillez remplir tous les champs obligatoires.');
+    }
+  };
+  
+  const goPrev = () => goPrevious();
 
   const handleChange = (key: keyof CVData) => (value: any) => {
     setData((prev) => {
@@ -54,7 +64,6 @@ const CVWizard: React.FC<CVWizardProps> = ({ initialData, onSubmit, current, set
     else if (stepKey === 'personalInfo') stepData = { firstName: '', lastName: '', title: '', email: '', phone: '' };
     else stepData = '';
   }
-  const handlePrev = () => { if (current > 0) goPrev(); };
 
   return (
     <div style={{ maxWidth: 800, margin: '0 auto', background: '#fff', borderRadius: 16, boxShadow: '0 2px 16px #eee', padding: 32 }}>
@@ -65,8 +74,20 @@ const CVWizard: React.FC<CVWizardProps> = ({ initialData, onSubmit, current, set
         data={stepData}
         onChange={handleChange(stepKey)}
         onNext={goNext}
-        onPrev={handlePrev}
+        onPrev={goPrev}
       />
+
+      <div style={{ marginTop: 32, display: 'flex', justifyContent: 'space-between' }}>
+        {current > 0 ? (
+          <Button onClick={goPrev}>
+            Précédent
+          </Button>
+        ) : <div />}
+        
+        <Button type="primary" onClick={goNext}>
+          Suivant
+        </Button>
+      </div>
     </div>
   );
 };

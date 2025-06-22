@@ -1300,3 +1300,15 @@ Dernière mise à jour : migration complète réalisée, site prêt pour la prod
 
 ## [Correction Critique - Crash Page d'Accueil] (date : voir commit)
 ... existant ...
+
+### 🏗️ **REFONTE VALIDATION CV (2025-06-21)**
+
+- **Problème :** La logique de validation précédente était défaillante, provoquant des erreurs de validation prématurées et des blocages injustifiés dans les formulaires.
+- **Cause Racine :** La gestion de l'état et de la navigation était mal répartie entre les composants parents et enfants, créant des conflits.
+- **Solution (Refonte Structurelle) :**
+  - ✅ **Centralisation de la navigation :** La logique des boutons "Précédent" / "Suivant" et la validation par étape ont été déplacées entièrement *à l'intérieur* du composant `CVWizard`.
+  - ✅ **Découplage de la sélection :** La sélection d'un modèle dans la galerie ne déclenche plus de validation. Un `useEffect` gère la transition automatique vers l'étape suivante, assurant une expérience fluide.
+- **Impact :** L'architecture du générateur de CV est maintenant **plus saine et plus robuste**. Les responsabilités des composants sont claires, ce qui élimine les bugs de validation et garantit la stabilité pour les futures évolutions.
+
+## [Correction Critique - Crash Page d'Accueil] (date : voir commit)
+... existant ...
