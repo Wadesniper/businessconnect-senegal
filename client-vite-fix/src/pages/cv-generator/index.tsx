@@ -22,7 +22,8 @@ import {
   ProjectOutlined,
   HeartOutlined,
   EyeOutlined,
-  FileDoneOutlined
+  FileDoneOutlined,
+  DownloadOutlined
 } from '@ant-design/icons';
 
 const { Content } = Layout;
@@ -135,15 +136,15 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
 
   const handleExport = async (format: 'pdf' | 'docx') => {
     try {
-      if (!isFormValid() || !selectedTemplate || !previewRef.current) {
-        message.error('Veuillez remplir correctement tous les champs obligatoires avant l\'export');
+      if (!selectedTemplate || !previewRef.current) {
+        message.error("Erreur : Impossible de trouver le modèle ou la référence pour l'export.");
         return;
       }
       setIsExporting(true);
       await exportCV(previewRef.current, cvData!, selectedTemplate, customization, { format });
       message.success(`CV exporté avec succès en format ${format.toUpperCase()}`);
     } catch (error) {
-      message.error('Erreur lors de l\'export : ' + (error as Error).message);
+      message.error("Erreur lors de l'export : " + (error as Error).message);
     } finally {
       setIsExporting(false);
     }
@@ -179,18 +180,38 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
     }
     if (currentStep === steps.length - 1) {
       return (
-        <Card style={{ marginTop: 24 }}>
+        <Card style={{ marginTop: 24, position: 'relative', paddingBottom: '80px' }}>
           {selectedTemplate ? (
             <>
-              <CVPreview
-                data={cvData || emptyCVData}
-                template={selectedTemplate}
-                customization={customization}
-                isPremium={isPremium}
-              />
-              <div style={{ marginTop: 24, display: 'flex', gap: 16 }}>
-                <Button type="primary" onClick={() => handleExport('pdf')}>Exporter en PDF</Button>
-                <Button onClick={() => handleExport('docx')}>Exporter en Word</Button>
+              <div ref={previewRef}>
+                <CVPreview
+                  data={cvData || emptyCVData}
+                  template={selectedTemplate}
+                  customization={customization}
+                  isPremium={isPremium}
+                />
+              </div>
+              <div style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                padding: '16px 24px',
+                background: 'rgba(255, 255, 255, 0.8)',
+                backdropFilter: 'blur(4px)',
+                borderTop: '1px solid #f0f0f0',
+                display: 'flex',
+                justifyContent: 'flex-end',
+                gap: 16,
+                borderRadius: '0 0 8px 8px',
+              }}>
+                <Button onClick={handlePrev}>Précédent</Button>
+                <Button type="primary" icon={<DownloadOutlined />} onClick={() => handleExport('pdf')} loading={isExporting}>
+                  Exporter en PDF
+                </Button>
+                <Button icon={<DownloadOutlined />} onClick={() => handleExport('docx')} loading={isExporting}>
+                  Exporter en Word
+                </Button>
               </div>
             </>
           ) : (
