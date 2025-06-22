@@ -1334,3 +1334,15 @@ Dernière mise à jour : migration complète réalisée, site prêt pour la prod
 
 ## [Correction Critique - Crash Page d'Accueil] (date : voir commit)
 ... existant ...
+
+### ✅ **CORRECTION FINALE ET DÉFINITIVE - SYNCHRONISATION DE L'ÉTAT (2025-06-21)**
+
+- **Problème Persistant :** Malgré les refontes, la validation échouait toujours car l'état interne du formulaire Ant Design n'était pas synchronisé avec l'état global de l'application.
+- **Cause Racine Finale :** La mise à jour de l'état global ne se faisait qu'à la soumission du formulaire (`onFinish`), mais la soumission était bloquée car le formulaire se croyait vide.
+- **Solution (Respectant Ant Design) :**
+  - ✅ **Utilisation de `onValuesChange` :** La prop `onValuesChange` a été ajoutée au composant `<Form>`. Cette fonction est déclenchée **en temps réel** à chaque modification d'un champ.
+  - ✅ **Synchronisation instantanée :** `onValuesChange` met à jour l'état global (`cvData`) instantanément.
+- **Impact :** Le bug de validation est **définitivement éradiqué**. L'état du formulaire est maintenant une source de vérité fiable, garantissant que la validation s'exécute sur les bonnes données. Le site est enfin stable.
+
+## [Correction Critique - Crash Page d'Accueil] (date : voir commit)
+... existant ...

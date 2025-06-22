@@ -41,8 +41,13 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ data, onChange, onN
   };
 
   const onFinish = (values: any) => {
-    onChange(values);
+    // onFinish est appelé par AntD seulement si les règles de validation sont passées
+    // onChange(values); // Plus nécessaire ici, car onValuesChange le fait déjà
     onNext();
+  };
+
+  const handleValuesChange = (changedValues: any, allValues: any) => {
+    onChange(allValues);
   };
 
   React.useEffect(() => {
@@ -55,6 +60,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ data, onChange, onN
       layout="vertical"
       onFinish={onFinish}
       initialValues={data}
+      onValuesChange={handleValuesChange}
       style={{ maxWidth: 600, margin: '0 auto' }}
     >
       <Title level={3}>Informations personnelles</Title>
@@ -87,7 +93,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ data, onChange, onN
       <Form.Item name="address" label="Adresse"> <Input /> </Form.Item>
       <Form.Item name="summary" label="Résumé professionnel" rules={[{ required: true }]}> <TextArea rows={4} /> </Form.Item>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 32 }}>
-        <Button onClick={onPrev} disabled={!onPrev}>Précédent</Button>
+        {onPrev && <Button onClick={onPrev}>Précédent</Button>}
         <Button type="primary" htmlType="submit">Suivant</Button>
       </div>
     </Form>
