@@ -4,7 +4,6 @@ import { StarOutlined, EyeOutlined } from '@ant-design/icons';
 import type { Template } from '../../../types/cv';
 import { CV_TEMPLATES } from '../components/data/templates';
 import { DEMO_PROFILES } from '../CVPreviewGallery';
-import styles from './TemplateSelection.module.css'; // Note: ce fichier est peu utilisé maintenant
 import { useAuth } from '../../../context/AuthContext';
 import { hasPremiumAccess } from '../../../utils/premiumAccess';
 import CVPreview from './CVPreview';
@@ -72,27 +71,16 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
         bodyStyle={{ flexGrow: 1, display: 'flex', flexDirection: 'column', padding: '16px' }}
         cover={
           <div style={{
-            height: '350px', // Hauteur fixe pour l'aperçu
+            height: 'auto',
             overflow: 'hidden',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
             position: 'relative',
             background: '#f5f5f5'
           }}>
-            <div style={{
-              transform: 'scale(0.3)', // Réduit la taille de l'aperçu
-              transformOrigin: 'top center',
-              width: '100%',
-              height: '100%'
-            }}>
-              <CVPreview
-                data={DEMO_PROFILES[template.id] || { personalInfo: { firstName: 'John', lastName: 'Doe' }, experience: [], education: [], skills: [], languages: [], certifications: [], projects: [], interests: [] }}
-                template={template}
-                customization={defaultCustomization}
-                isPremium={true}
-              />
-            </div>
+            <img 
+              src={template.previewImage} 
+              alt={`Aperçu du CV ${template.name}`} 
+              style={{ width: '100%', height: 'auto', display: 'block' }}
+            />
             <div style={{
               position: 'absolute',
               top: 0,
