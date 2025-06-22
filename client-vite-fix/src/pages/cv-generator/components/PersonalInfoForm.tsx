@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useImperativeHandle, forwardRef } from 'react';
 import { Form, Input, Button, Upload, Space, Typography } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import type { RcFile } from 'antd/es/upload';
@@ -10,9 +10,10 @@ const { TextArea } = Input;
 interface PersonalInfoFormProps {
   data: CVData['personalInfo'];
   onChange: (data: CVData['personalInfo']) => void;
+  onNext: () => void;
 }
 
-const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ data, onChange }) => {
+const PersonalInfoForm = forwardRef<any, PersonalInfoFormProps>(({ data, onChange, onNext }, ref) => {
   const [form] = Form.useForm();
   const [uploadLoading, setUploadLoading] = React.useState(false);
 
@@ -38,8 +39,15 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ data, onChange }) =
     return false;
   };
 
-  const handleValuesChange = (changedValues: any, allValues: any) => {
-    onChange(allValues);
+  useImperativeHandle(ref, () => ({
+    submit: () => {
+      form.submit();
+    },
+  }));
+
+  const onFinish = (values: CVData['personalInfo']) => {
+    onChange(values);
+    onNext();
   };
 
   React.useEffect(() => {
@@ -50,9 +58,8 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ data, onChange }) =
     <Form
       form={form}
       layout="vertical"
+      onFinish={onFinish}
       initialValues={data}
-      onValuesChange={handleValuesChange}
-      style={{ maxWidth: 600, margin: '0 auto' }}
     >
       <Title level={3}>Informations personnelles</Title>
       <Form.Item name="photo" label="Photo de profil">
@@ -85,6 +92,6 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ data, onChange }) =
       <Form.Item name="summary" label="Résumé professionnel" rules={[{ required: true }]}> <TextArea rows={4} /> </Form.Item>
     </Form>
   );
-};
+});
 
 export default PersonalInfoForm; 

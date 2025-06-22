@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import type { CVData } from '../../../types/cv';
 import ExperienceForm from './ExperienceForm';
 import EducationForm from './EducationForm';
@@ -28,13 +28,14 @@ const steps = [
 ];
 
 const CVWizard: React.FC<CVWizardProps> = ({ current, setCurrent }) => {
-  const { cvData, setCVData, isStepValid } = useCV();
+  const { cvData, setCVData } = useCV();
+  const formRef = useRef<any>(null);
 
   const goNext = () => {
-    if (isStepValid(current + 1)) {
-      setCurrent(current + 1);
+    if (formRef.current && typeof formRef.current.submit === 'function') {
+      formRef.current.submit();
     } else {
-      message.error('Veuillez remplir tous les champs obligatoires.');
+      setCurrent(current + 1);
     }
   };
   
@@ -50,15 +51,26 @@ const CVWizard: React.FC<CVWizardProps> = ({ current, setCurrent }) => {
   if (!cvData) return null;
   const stepData: any = cvData[stepKey];
 
+  const isPersonalInfoForm = steps[current].key === 'personalInfo';
+  const formProps: any = {
+    data: stepData,
+    onChange: handleChange(stepKey),
+  };
+
+  if (isPersonalInfoForm) {
+    formProps.ref = formRef;
+    formProps.onNext = () => setCurrent(current + 1);
+  } else {
+    formProps.onNext = () => setCurrent(current + 1);
+    formProps.onPrev = goPrev;
+  }
+
   return (
     <div style={{ maxWidth: 800, margin: '0 auto', background: '#fff', borderRadius: 16, boxShadow: '0 2px 16px #eee', padding: 32 }}>
       <div style={{ marginBottom: 32, textAlign: 'center' }}>
         <h2>Étape {current + 1} / {steps.length} : {steps[current].label}</h2>
       </div>
-      <StepComponent
-        data={stepData}
-        onChange={handleChange(stepKey)}
-      />
+      <StepComponent {...formProps} />
       <div style={{ marginTop: 32, display: 'flex', justifyContent: 'space-between' }}>
         <Button onClick={goPrev} disabled={current === 0}>
           Précédent

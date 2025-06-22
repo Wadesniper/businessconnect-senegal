@@ -37,7 +37,8 @@ export const CVProvider = ({ children }: { children: ReactNode }) => {
 
     switch (step) {
       case 1: // Informations personnelles
-        return !!(cvData.personalInfo?.firstName && cvData.personalInfo?.lastName && cvData.personalInfo?.title);
+        const { firstName, lastName, title, email, phone, summary } = cvData.personalInfo || {};
+        return !!(firstName && lastName && title && email && phone && summary);
       case 2: // Expérience
         return cvData.experience.length > 0 && cvData.experience.every(e => e.title && e.company && e.startDate);
       case 3: // Formation
