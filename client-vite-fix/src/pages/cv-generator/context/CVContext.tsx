@@ -51,7 +51,9 @@ export const CVProvider = ({ children }: { children: ReactNode }) => {
 
   // Validation globale pour l'export
   const isFormValid = () => {
-    return isStepValid(1) && isStepValid(2) && isStepValid(3);
+    // On ne valide que l'étape 1 (informations personnelles) pour l'export.
+    // Les autres sections sont optionnelles.
+    return isStepValid(1);
   };
 
   return (
