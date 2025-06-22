@@ -247,6 +247,8 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
   );
 
   function renderCard(template: Template, idx?: number) {
+    const canSelect = user?.role === 'admin' || hasPremiumAccess(user) || !template.premium;
+
     return (
       <Card
         hoverable
@@ -384,22 +386,55 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
         </div>
         <div style={{
           marginTop: 'auto',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          gap: 8,
           paddingTop: 8,
           borderTop: '1px solid #f0f0f0'
         }}>
-          <Button
-            size="small"
-            onClick={(e) => {
-              e.stopPropagation();
-              setPreviewTemplate(template);
-            }}
-          >
-            Aperçu
-          </Button>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: 8,
+          }}>
+            {canSelect ? (
+              <Button
+                type="primary"
+                size="small"
+                onClick={() => {
+                  onSelect(template);
+                  if (onContinue) onContinue();
+                }}
+                style={{ flexGrow: 1 }}
+              >
+                Sélectionner
+              </Button>
+            ) : (
+              <Tooltip title="Nécessite un abonnement Premium">
+                <Button
+                  icon={<LockOutlined />}
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setPreviewTemplate(template);
+                  }}
+                  style={{ flexGrow: 1 }}
+                >
+                  Aperçu
+                </Button>
+              </Tooltip>
+            )}
+            {canSelect && (
+              <Button
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setPreviewTemplate(template);
+                }}
+                style={{ flexGrow: 1 }}
+              >
+                Aperçu
+              </Button>
+            )}
+          </div>
         </div>
       </Card>
     );

@@ -1268,3 +1268,15 @@ Dernière mise à jour : migration complète réalisée, site prêt pour la prod
 
 - **Action :** Suppression d'un modèle de CV ("Window") qui était un doublon du modèle "Art".
 - **Impact :** La galerie de modèles est plus propre et ne présente plus de redondance. La maintenance est simplifiée.
+
+### 🐛 **CORRECTION ACCÈS ADMIN (2025-06-21)**
+
+- **Problème :** Un utilisateur connecté en tant qu'administrateur ne pouvait pas sélectionner les modèles de CV premium et ne voyait que le bouton "Aperçu".
+- **Cause Racine :** La logique de vérification des droits (`canSelect`) dans le composant `TemplateSelection.tsx` ne prenait pas en compte le rôle "admin" et se basait uniquement sur le statut de l'abonnement via la fonction `hasPremiumAccess`.
+- **Solution Appliquée :**
+  - ✅ **Modification de la condition `canSelect`** : La vérification `user?.role === 'admin'` a été ajoutée en priorité dans la condition.
+  - La logique est maintenant : `user?.role === 'admin' || hasPremiumAccess(user) || !template.premium`.
+- **Impact :** Les administrateurs ont maintenant un accès complet à la sélection de tous les modèles de CV, restaurant ainsi la fonctionnalité attendue.
+
+## [Correction Critique - Crash Page d'Accueil] (date : voir commit)
+... existant ...
