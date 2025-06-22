@@ -1280,3 +1280,23 @@ Dernière mise à jour : migration complète réalisée, site prêt pour la prod
 
 ## [Correction Critique - Crash Page d'Accueil] (date : voir commit)
 ... existant ...
+
+### 🚀 **CORRECTION MAJEURE - FLUX GÉNÉRATEUR CV (2025-06-21)**
+
+- **Problème 1 : Données d'aperçu incorrectes**
+  - **Symptôme :** L'aperçu final du CV affichait les données de démonstration du modèle au lieu des données saisies par l'utilisateur.
+  - **Cause :** La fonction `handleSelectTemplate` écrasait l'état du CV avec le `sampleData` du modèle.
+  - **Solution :** Suppression du pré-remplissage avec `sampleData`. Le formulaire est maintenant vierge et conserve les données de l'utilisateur.
+
+- **Problème 2 : Validation défaillante et mal placée**
+  - **Symptôme :** Le bouton "Exporter" affichait une erreur de validation même lorsque le formulaire était complet, et il n'y avait aucune validation entre les étapes.
+  - **Cause :** La logique de validation était une simple variable globale (`isValid`) et n'était pas vérifiée lors du passage entre les étapes.
+  - **Solution (Structurelle) :**
+    - ✅ **Validation par étape :** Une fonction `isStepValid` a été créée dans `CVContext` pour valider les champs obligatoires de l'étape en cours.
+    - ✅ **Blocage à chaque étape :** Le bouton "Suivant" (`handleNext`) utilise maintenant `isStepValid` et empêche l'utilisateur de continuer si l'étape est incomplète.
+    - ✅ **Validation d'export fiable :** Le bouton "Exporter" utilise une nouvelle fonction `isFormValid` qui vérifie de manière fiable que toutes les étapes obligatoires sont valides.
+
+- **Impact global :** Le générateur de CV est maintenant **robuste, fiable et logique**. L'utilisateur est guidé correctement, ses données sont préservées, et l'export est sécurisé.
+
+## [Correction Critique - Crash Page d'Accueil] (date : voir commit)
+... existant ...

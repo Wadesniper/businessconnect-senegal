@@ -11,7 +11,8 @@ interface CVContextType {
   setCustomization: (options: CustomizationOptions) => void;
   currentStep: number;
   setCurrentStep: (step: number) => void;
-  isValid: boolean;
+  isStepValid: (step: number) => boolean;
+  isFormValid: () => boolean;
 }
 
 export const defaultCustomization: CustomizationOptions = {
@@ -30,16 +31,27 @@ export const CVProvider = ({ children }: { children: ReactNode }) => {
   const [customization, setCustomization] = useState<CustomizationOptions>(defaultCustomization);
   const [currentStep, setCurrentStep] = useState(0);
 
-  // Validation simple : toutes les sections obligatoires doivent être remplies
-  const isValid = Boolean(
-    cvData &&
-    cvData.personalInfo &&
-    cvData.personalInfo.firstName &&
-    cvData.personalInfo.lastName &&
-    cvData.personalInfo.title &&
-    cvData.experience && cvData.experience.length > 0 &&
-    cvData.education && cvData.education.length > 0
-  );
+  // Validation granulaire par étape
+  const isStepValid = (step: number): boolean => {
+    if (!cvData) return false;
+
+    switch (step) {
+      case 1: // Informations personnelles
+        return !!(cvData.personalInfo?.firstName && cvData.personalInfo?.lastName && cvData.personalInfo?.title);
+      case 2: // Expérience
+        return cvData.experience.length > 0 && cvData.experience.every(e => e.title && e.company && e.startDate);
+      case 3: // Formation
+        return cvData.education.length > 0 && cvData.education.every(e => e.degree && e.institution && e.startDate);
+      // Les autres étapes sont considérées comme facultatives pour la validation de base
+      default:
+        return true;
+    }
+  };
+
+  // Validation globale pour l'export
+  const isFormValid = () => {
+    return isStepValid(1) && isStepValid(2) && isStepValid(3);
+  };
 
   return (
     <CVContext.Provider
@@ -52,7 +64,8 @@ export const CVProvider = ({ children }: { children: ReactNode }) => {
         setCustomization,
         currentStep,
         setCurrentStep,
-        isValid,
+        isStepValid,
+        isFormValid,
       }}
     >
       {children}

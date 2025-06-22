@@ -74,7 +74,8 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
     setCustomization,
     currentStep,
     setCurrentStep,
-    isValid
+    isStepValid,
+    isFormValid
   } = useCV();
 
   const previewRef = React.useRef<HTMLDivElement>(null);
@@ -109,25 +110,33 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
           email: '',
           phone: '',
           address: '',
-          // autres champs éventuels (photo, linkedin...)
+          photo: '',
+          summary: '',
         },
         experience: [],
         education: [],
         skills: [],
         languages: [],
+        certifications: [],
+        projects: [],
         interests: [],
-        summary: '',
-        ...template.sampleData // si le template fournit des données par défaut
       });
     }
   };
 
-  const handleNext = () => setCurrentStep(Math.min(currentStep + 1, steps.length - 1));
+  const handleNext = () => {
+    if (isStepValid(currentStep)) {
+      setCurrentStep(Math.min(currentStep + 1, steps.length - 1));
+    } else {
+      message.warning('Veuillez remplir tous les champs obligatoires de cette étape.');
+    }
+  };
+
   const handlePrev = () => setCurrentStep(currentStep - 1);
 
   const handleExport = async (format: 'pdf' | 'docx') => {
     try {
-      if (!isValid || !selectedTemplate || !previewRef.current) {
+      if (!isFormValid() || !selectedTemplate || !previewRef.current) {
         message.error('Veuillez remplir correctement tous les champs obligatoires avant l\'export');
         return;
       }
