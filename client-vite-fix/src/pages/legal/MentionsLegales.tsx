@@ -1,12 +1,13 @@
 import React from 'react';
 import { Typography, Card, Space, Divider } from 'antd';
+import './LegalPage.css';
 
 const { Title, Paragraph, Text } = Typography;
 
 const MentionsLegales: React.FC = () => {
   return (
-    <div style={{ width: '100%', margin: 0, padding: '40px 32px', textAlign: 'left' }}>
-      <Card style={{ maxWidth: 900, margin: '0 auto' }}>
+    <div className="legal-page-container">
+      <Card className="legal-page-card">
         <Typography>
           <Title level={1}>Mentions Légales</Title>
           

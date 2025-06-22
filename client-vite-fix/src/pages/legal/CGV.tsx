@@ -1,86 +1,59 @@
 import React from 'react';
 import { Typography, Card, Space, Divider } from 'antd';
+import { Link } from 'react-router-dom';
+import './LegalPage.css';
 
 const { Title, Paragraph, Text } = Typography;
 
 const CGV: React.FC = () => {
   return (
-    <div style={{ width: '100%', margin: 0, padding: '40px 32px', textAlign: 'left' }}>
-      <Card style={{ maxWidth: 900, margin: '0 auto' }}>
+    <div className="legal-page-container">
+      <Card className="legal-page-card">
         <Typography>
           <Title level={1}>Conditions Générales de Vente</Title>
           
-          <Title level={2}>Article 1 : Objet</Title>
+          <Title level={2}>Article 1 : Objet et Champ d'Application</Title>
           <Paragraph>
-            Les présentes conditions générales de vente régissent les relations contractuelles entre KHALIFA BUSINESS GROUP SARL, ci-après dénommée "BusinessConnect Sénégal" et les utilisateurs des services proposés sur la plateforme BusinessConnect Sénégal.
+            Les présentes Conditions Générales de Vente (CGV) régissent la souscription aux services payants proposés sur la plateforme BusinessConnect Sénégal, éditée par la société KHALIFA BUSINESS GROUP SARL. Elles complètent nos <Link to="/legal/cgu">Conditions Générales d'Utilisation (CGU)</Link>.
           </Paragraph>
 
-          <Title level={2}>Article 2 : Services proposés</Title>
+          <Title level={2}>Article 2 : Description des Services Payants</Title>
           <Paragraph>
-            BusinessConnect Sénégal propose les services suivants :
+            BusinessConnect Sénégal propose des abonnements premium donnant accès à des fonctionnalités avancées. Les détails, les avantages et les tarifs de chaque type d'abonnement (ex: "Candidat Premium", "Recruteur Pro") sont décrits sur notre page "Tarifs" et sont susceptibles d'évoluer.
           </Paragraph>
-          <Space direction="vertical">
-            <Text>• Publication d'offres d'emploi</Text>
-            <Text>• Accès à la CVthèque</Text>
-            <Text>• Services de recrutement</Text>
-            <Text>• Formation professionnelle</Text>
-            <Text>• Marketplace B2B</Text>
-            <Text>• Forum professionnel</Text>
-          </Space>
-
-          <Divider />
-
-          <Title level={2}>Article 3 : Prix et modalités de paiement</Title>
-          <Paragraph>
-            Les prix des services sont indiqués en Francs CFA (FCFA) toutes taxes comprises. Le paiement s'effectue selon les modalités suivantes :
-          </Paragraph>
-          <Space direction="vertical">
-            <Text>• Paiement en ligne sécurisé</Text>
-            <Text>• Virement bancaire</Text>
-            <Text>• Mobile Money</Text>
-          </Space>
-
-          <Title level={2}>Article 4 : Abonnements</Title>
-          <Paragraph>
-            BusinessConnect Sénégal propose trois types d'abonnements :
-          </Paragraph>
-          <Space direction="vertical">
-            <Text>• Étudiant/Chercheur d'emploi : 1000 FCFA/mois - Accès aux offres d'emploi, espace CV, forum, fiches métiers et formations</Text>
-            <Text>• Annonceur : 5000 FCFA/mois - Publication d'offres, visibilité plateforme, statistiques et outils de promotion</Text>
-            <Text>• Recruteur : 9000 FCFA/mois - Accès CVthèque, contact direct candidats, publications illimitées et outils avancés</Text>
-          </Space>
-          <Paragraph>
-            Les abonnements sont souscrits pour une durée déterminée. Le renouvellement n'est pas automatique et nécessite une action explicite de l'utilisateur. Les tarifs peuvent être modifiés à tout moment, mais les modifications ne s'appliquent pas aux abonnements en cours.
+           <Paragraph>
+            La souscription à un abonnement est personnelle et ne peut être cédée.
           </Paragraph>
 
-          <Title level={2}>Article 5 : Responsabilité</Title>
+          <Title level={2}>Article 3 : Processus de Commande et Paiement</Title>
           <Paragraph>
-            BusinessConnect Sénégal ne peut être tenu responsable des contenus publiés par les utilisateurs. Nous nous réservons le droit de supprimer tout contenu inapproprié ou ne respectant pas nos conditions d'utilisation.
+            La souscription s'effectue en ligne depuis la page "Tarifs". L'utilisateur sélectionne l'offre de son choix, la durée, et procède au paiement via nos prestataires sécurisés (Mobile Money, Carte bancaire). Les prix sont indiqués en Francs CFA (XOF) et incluent toutes les taxes. La validation du paiement confirme la commande et déclenche l'activation immédiate des services.
           </Paragraph>
 
-          <Title level={2}>Article 6 : Résiliation</Title>
+          <Title level={2}>Article 4 : Durée, Renouvellement et Résiliation</Title>
           <Paragraph>
-            L'abonnement peut être résilié à tout moment par l'utilisateur. Aucun remboursement ne sera effectué pour la période restante de l'abonnement en cours.
+            Les abonnements sont souscrits pour une durée déterminée (mensuelle ou annuelle) et sont payables en une seule fois au début de la période.
+          </Paragraph>
+          <Paragraph>
+            Le renouvellement n'est pas automatique. À l'échéance de votre abonnement, vous serez invité à le renouveler pour continuer à bénéficier des services premium. Vous pouvez choisir de ne pas renouveler sans aucune pénalité.
+          </Paragraph>
+           <Paragraph>
+            L'utilisateur peut décider de ne plus utiliser son abonnement à tout moment, mais cela n'ouvre droit à aucun remboursement pour la période restante, que l'abonnement ait été utilisé ou non.
           </Paragraph>
 
-          <Title level={2}>Article 7 : Protection des données</Title>
+          <Title level={2}>Article 5 : Absence de Droit de Rétractation</Title>
           <Paragraph>
-            Les données personnelles collectées sont traitées conformément à notre politique de confidentialité et à la loi sénégalaise sur la protection des données personnelles.
+            Conformément à la législation en vigueur sur les services numériques, en validant votre commande, vous acceptez l'exécution immédiate de la prestation et renoncez expressément à votre droit de rétractation.
           </Paragraph>
 
-          <Title level={2}>Article 8 : Propriété intellectuelle</Title>
+          <Title level={2}>Article 6 : Responsabilité et Données Personnelles</Title>
           <Paragraph>
-            Tout le contenu du site est protégé par les lois sur la propriété intellectuelle. La reproduction ou l'utilisation sans autorisation est strictement interdite.
+            Les limitations de responsabilité et nos engagements en matière de protection des données personnelles sont décrits en détail dans nos <Link to="/legal/cgu">CGU</Link> et notre <Link to="/legal/privacy">Politique de Confidentialité</Link>, qui font partie intégrante du présent contrat.
           </Paragraph>
 
-          <Title level={2}>Article 9 : Litiges</Title>
+          <Title level={2}>Article 7 : Droit Applicable et Litiges</Title>
           <Paragraph>
-            En cas de litige, une solution amiable sera recherchée en priorité. À défaut, les tribunaux de Dakar seront seuls compétents.
-          </Paragraph>
-
-          <Title level={2}>Article 10 : Modification des CGV</Title>
-          <Paragraph>
-            BusinessConnect Sénégal se réserve le droit de modifier les présentes CGV à tout moment. Les utilisateurs seront informés des modifications par email.
+            Les présentes CGV sont soumises au droit sénégalais. En cas de litige, une solution amiable sera recherchée. À défaut, les tribunaux compétents de Dakar seront seuls saisis.
           </Paragraph>
 
           <Divider />

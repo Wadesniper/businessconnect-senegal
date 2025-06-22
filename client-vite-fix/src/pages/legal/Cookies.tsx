@@ -1,5 +1,6 @@
 import React from 'react';
 import { Typography, Card, Space, Divider, Table } from 'antd';
+import './LegalPage.css';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -59,10 +60,10 @@ const Cookies: React.FC = () => {
   ];
 
   return (
-    <div style={{ width: '100%', margin: 0, padding: '40px 32px', textAlign: 'left' }}>
-      <Card style={{ maxWidth: 900, margin: '0 auto' }}>
+    <div className="legal-page-container">
+      <Card className="legal-page-card">
         <Typography>
-          <Title level={1}>Politique des Cookies</Title>
+          <Title level={1}>Politique de Cookies</Title>
           
           <Paragraph>
             Cette politique explique comment BusinessConnect Sénégal utilise les cookies et technologies similaires pour vous fournir la meilleure expérience possible sur notre plateforme.

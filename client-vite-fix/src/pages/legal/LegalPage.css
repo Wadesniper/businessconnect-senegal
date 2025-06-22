@@ -1,0 +1,39 @@
+/* client-vite-fix/src/pages/legal/LegalPage.css */
+
+.legal-page-container {
+  width: 100%;
+  margin: 0;
+  padding: 40px 32px;
+  text-align: left;
+  background-color: #f0f2f5; /* Un fond léger pour distinguer la page */
+}
+
+.legal-page-card {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* --- Responsive --- */
+
+/* Pour les tablettes */
+@media (max-width: 768px) {
+  .legal-page-container {
+    padding: 24px 16px;
+  }
+
+  .legal-page-card {
+    padding: 16px;
+  }
+}
+
+/* Pour les mobiles */
+@media (max-width: 480px) {
+  .legal-page-container {
+    padding: 16px 8px;
+  }
+
+  .legal-page-card {
+    padding: 12px;
+  }
+} 
