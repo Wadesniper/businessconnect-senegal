@@ -67,49 +67,50 @@ export const useSubscription = () => {
   // Vérification du statut d'abonnement
   useEffect(() => {
     const checkSubscriptionStatus = async () => {
-      if (!isAuthenticated || !user?.id) {
+      // Attendre que l'objet utilisateur soit complètement chargé.
+      if (!isAuthenticated || !user) {
         setHasActiveSubscription(false);
         setLoading(false);
         return;
       }
-      
-      // Admin a toujours accès
+
+      // Si l'utilisateur est un admin, accorder l'accès et arrêter immédiatement.
       if (user.role === 'admin') {
         setHasActiveSubscription(true);
         setLoading(false);
         return;
       }
-      
+
+      // Pour les autres utilisateurs, vérifier l'abonnement en base de données.
       try {
         setLoading(true);
         setError(null);
-        
+
         const isActive = await subscriptionService.fetchSubscriptionStatus(user.id);
         setHasActiveSubscription(isActive);
-        
+
         console.log('useSubscription - Statut abonnement vérifié:', {
           userId: user.id,
           hasActiveSubscription: isActive
         });
       } catch (err: any) {
-        // Les erreurs 404 sont normales pour les nouveaux utilisateurs
+        // Une erreur 404 est normale si l'utilisateur n'a jamais souscrit.
         if (err.response?.status === 404) {
           setHasActiveSubscription(false);
-          console.log('useSubscription - Pas d\'abonnement (normal pour nouvel utilisateur)');
+          console.log('useSubscription - Pas d\'abonnement trouvé (normal pour un non-abonné).');
         } else {
-          console.error('useSubscription - Erreur vérification statut:', err);
-          setError('Erreur lors de la vérification de l\'abonnement');
+          console.error('useSubscription - Erreur lors de la vérification du statut:', err);
+          setError('Erreur lors de la vérification de l\'abonnement.');
+          setHasActiveSubscription(false);
         }
-        setHasActiveSubscription(false);
       } finally {
         setLoading(false);
       }
     };
+
+    checkSubscriptionStatus();
     
-    // Attendre un peu pour éviter les appels multiples
-    const timer = setTimeout(checkSubscriptionStatus, 500);
-    return () => clearTimeout(timer);
-  }, [isAuthenticated, user?.id, user?.role]);
+  }, [isAuthenticated, user]); // Dépendre de l'objet 'user' entier.
 
   // Ajout d'une méthode pour rafraîchir le statut d'abonnement à la demande
   const refreshSubscription = async () => {

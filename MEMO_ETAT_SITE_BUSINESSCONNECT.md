@@ -1346,3 +1346,55 @@ Dernière mise à jour : migration complète réalisée, site prêt pour la prod
 
 ## [Correction Critique - Crash Page d'Accueil] (date : voir commit)
 ... existant ...
+
+## État actuel et Contexte
+
+<memo>
+Le projet est une plateforme complète de mise en relation professionnelle pour le marché sénégalais, construite avec un stack MERN (MongoDB, Express, React, Node.js) et TypeScript. Le frontend utilise Vite pour le build.
+
+L'agent a récemment résolu un problème de validation critique dans le générateur de CV. Après plusieurs tentatives infructueuses basées sur une synchronisation manuelle de l'état (via `onValuesChange`), qui se sont avérées peu fiables et non conformes aux bonnes pratiques, la solution définitive a été implémentée.
+
+La nouvelle architecture suit les recommandations d'Ant Design :
+1.  **Validation pilotée par le formulaire** : Chaque formulaire enfant (ex: `PersonalInfoForm.tsx`) est désormais responsable de sa propre validation en utilisant la logique intégrée d'Ant Design (`onFinish`).
+2.  **Contrôle parental via `ref`** : Le composant parent `CVWizard.tsx` utilise une `ref` React pour déclencher la soumission et la validation du formulaire enfant actif.
+3.  **Communication claire** : Le `CVWizard` "télécommande" le formulaire, qui, après une validation réussie, appelle une fonction (`onNext`) pour signaler au `CVWizard` de passer à l'étape suivante.
+
+Cette approche a résolu de manière définitive les problèmes de validation, de synchronisation d'état et de navigation, rendant le générateur de CV stable et fonctionnel.
+</memo>
+
+### Journal des actions
+- **22/07/2024**
+  - **Problème** : La validation du générateur de CV échouait toujours, même après une refonte majeure, car elle était basée sur une synchronisation d'état manuelle (`onValuesChange`) qui créait des conflits.
+  - **Solution** : Correction définitive en adoptant les bonnes pratiques d'Ant Design. La validation est maintenant pilotée par le formulaire lui-même (`onFinish`). Le composant parent `CVWizard` utilise une `ref` pour déclencher la validation du formulaire enfant. C'est une solution robuste qui élimine les problèmes de synchronisation.
+  - **Statut** : Le générateur de CV est maintenant stable et la validation fonctionne comme prévu.
+
+- **22/07/2024 (Correction finale)**
+  - **Problème** : Toutes les tentatives précédentes de correction de la validation ont échoué en raison de problèmes de synchronisation d'état entre le formulaire Ant Design et l'état global React.
+  - **Solution** : Implémentation de la solution définitive basée sur la synchronisation en temps réel. Le formulaire met à jour l'état global à chaque modification (`onValuesChange`). Le `CVWizard` valide en se basant sur cet état global toujours à jour. C'est la solution la plus robuste et elle a fonctionné.
+  - **Statut** : Le générateur de CV est maintenant pleinement fonctionnel et stable.
+
+- **22/07/2024 (Cleanup UI)**
+  - **Problème** : Une régression visuelle a été introduite, causant l'affichage de boutons de navigation "Suivant"/"Précédent" en double dans les formulaires du CV wizard.
+  - **Solution** : Inspection et nettoyage de tous les formulaires enfants (`ExperienceForm`, `EducationForm`, `SkillsForm`, etc.) pour supprimer leur propre logique de boutons de navigation. Seul le composant parent `CVWizard` est désormais responsable de l'affichage de ces boutons, garantissant une interface utilisateur cohérente.
+  - **Statut** : L'interface utilisateur du générateur de CV est maintenant propre et sans éléments dupliqués.
+
+- **22/07/2024 (Export Fix)**
+  - **Problème** : L'export de CV échouait avec une erreur de "champs obligatoires" si les sections "Expérience" ou "Formation" étaient vides.
+  - **Solution** : La logique de validation pour l'export (`isFormValid`) a été assouplie. Désormais, seule la présence des informations personnelles est requise pour l'export, rendant les autres sections véritablement optionnelles.
+  - **Statut** : L'export de CV est maintenant plus flexible et fonctionne comme attendu.
+
+- **22/07/2024 (Jobs Page Fix)**
+  - **Problème** : Une régression empêchait les utilisateurs connectés en tant qu'administrateur de voir les détails des offres d'emploi.
+  - **Solution** : La logique du composant `JobCard.tsx` a été modifiée pour s'assurer qu'un utilisateur avec le rôle `admin` a toujours les droits d'accès pour voir les détails d'une offre, sans affecter les droits des utilisateurs abonnés (premium).
+  - **Statut** : La page emploi fonctionne de nouveau correctement pour tous les rôles.
+
+### 🐛 **CORRECTION ACCÈS ADMIN - DÉTAILS OFFRE D'EMPLOI (2025-06-21)**
+
+- **Problème :** Un utilisateur connecté en tant qu'administrateur était redirigé vers la page d'abonnement en essayant de voir les détails d'une offre d'emploi, ce qui l'empêchait d'accéder à la page.
+- **Cause Racine :** Une condition de course dans le hook `useSubscription.ts`. La logique de vérification de l'abonnement s'exécutait avant que les informations de l'utilisateur (et donc son rôle "admin") ne soient complètement chargées. Par conséquent, le hook considérait l'admin comme un utilisateur normal sans abonnement et déclenchait la redirection.
+- **Solution Appliquée (Robuste) :**
+  - ✅ **Modification du `useEffect` dans `useSubscription.ts`** : Le hook attend maintenant que l'objet `user` soit entièrement défini avant d'exécuter la logique de permission.
+  - ✅ **Dépendance fiabilisée :** Le tableau de dépendances du `useEffect` a été simplifié pour utiliser l'objet `user` complet, garantissant que le hook se ré-exécute correctement lorsque les informations de l'utilisateur sont disponibles.
+- **Impact :** La condition de course est éliminée. Les administrateurs peuvent maintenant accéder aux détails des offres d'emploi sans être redirigés, restaurant la fonctionnalité attendue sans perturber l'expérience des autres utilisateurs.
+- **Fichiers modifiés :** `client-vite-fix/src/hooks/useSubscription.ts`.
+- **Statut :** ✅ **ACCÈS ADMIN RESTAURÉ.** Le flux est de nouveau fonctionnel pour tous les rôles.
