@@ -213,7 +213,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
           <Button key="back" onClick={() => setIsSubscriptionModalVisible(false)}>
             Retour
           </Button>,
-          <Button key="submit" type="primary" onClick={() => navigate('/pricing')}>
+          <Button key="submit" type="primary" onClick={() => navigate('/subscription')}>
             Voir les abonnements
           </Button>,
         ]}
