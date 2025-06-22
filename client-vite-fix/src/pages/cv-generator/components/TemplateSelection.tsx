@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { Card, Typography, Row, Col, Select, Input, Empty, Tag, Tooltip, Button, Modal, Spin, Carousel } from 'antd';
+import { Card, Typography, Row, Col, Select, Input, Empty, Tag, Tooltip, Button, Modal, Spin } from 'antd';
 import { LockOutlined, StarOutlined, EyeOutlined } from '@ant-design/icons';
 import type { Template } from '../../../types/cv';
 import { CV_TEMPLATES } from '../components/data/templates';
@@ -19,7 +19,6 @@ interface TemplateSelectionProps {
   selected: Template | null;
   onSelect: (template: Template | null) => void;
   onContinue?: () => void;
-  isSubscribed?: boolean;
   isPremium: boolean;
 }
 
@@ -27,27 +26,14 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
   selected,
   onSelect,
   onContinue,
-  isSubscribed = false,
   isPremium
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [showPremiumOnly, setShowPremiumOnly] = useState(false);
-  const navigate = useNavigate();
   const { user } = useAuth();
   const [previewTemplate, setPreviewTemplate] = useState<Template | null>(null);
   const modalContentRef = useRef<HTMLDivElement>(null);
-  const [loading, setLoading] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   useEffect(() => {
     if (previewTemplate && modalContentRef.current) {
@@ -55,22 +41,18 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
     }
   }, [previewTemplate]);
 
-  // Extraction des catégories uniques
   const categories = useMemo(() => {
     const cats = new Set(CV_TEMPLATES.map(t => t.category));
     return ['all', ...Array.from(cats)] as string[];
   }, []);
 
-  // Filtrage des templates
   const filteredTemplates = useMemo(() => {
     return CV_TEMPLATES.filter(template => {
       const matchesSearch = template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         template.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
         template.category.toLowerCase().includes(searchTerm.toLowerCase());
-
       const matchesCategory = selectedCategory === 'all' || template.category === selectedCategory;
       const matchesPremium = !showPremiumOnly || template.premium;
-
       return matchesSearch && matchesCategory && matchesPremium;
     });
   }, [searchTerm, selectedCategory, showPremiumOnly]);
@@ -146,7 +128,6 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
 
   return (
     <div style={{ padding: '0 8px', width: '100%', overflow: 'hidden', boxSizing: 'border-box' }}>
-      {/* Header premium modernisé */}
       <div style={{ textAlign: 'center', marginBottom: 18, marginTop: 0 }}>
         <span style={{ fontWeight: 600, color: '#1890ff', fontSize: 'clamp(18px, 4vw, 20px)', letterSpacing: 1 }}>
           Galerie de modèles de CV
@@ -156,7 +137,6 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
         </div>
       </div>
       
-      {/* Filtres - Responsive amélioré */}
       <div style={{ 
         marginTop: 8,
         marginBottom: 24,
@@ -168,70 +148,32 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
       }}>
         <Search
           placeholder="Rechercher un modèle..."
-          style={{ 
-            flex: '2 1 250px',
-            maxWidth: '100%'
-          }}
+          style={{ flex: '2 1 250px', maxWidth: '100%' }}
           onChange={e => setSearchTerm(e.target.value)}
         />
         <Select
           value={selectedCategory}
           onChange={setSelectedCategory}
-          style={{ 
-            flex: '1 1 180px',
-            maxWidth: '100%'
-          }}
+          style={{ flex: '1 1 180px', maxWidth: '100%' }}
         >
           {categories.map(cat => (
-            <Option key={cat} value={cat}>
-              {cat === 'all' ? 'Tous les secteurs' : cat}
-            </Option>
+            <Option key={cat} value={cat}>{cat === 'all' ? 'Tous les secteurs' : cat}</Option>
           ))}
         </Select>
       </div>
       
-      {/* Galerie de modèles */}
       {filteredTemplates.length === 0 ? (
-        <Empty
-          description="Aucun modèle ne correspond à vos critères"
-          style={{ margin: '40px 0' }}
-        />
+        <Empty description="Aucun modèle ne correspond à vos critères" style={{ margin: '40px 0' }} />
       ) : (
-        isMobile ? (
-          <Carousel
-            arrows
-            dots={false}
-            slidesToShow={1.2}
-            slidesToScroll={1}
-            infinite={false}
-            style={{ padding: '0 20px' }}
-            responsive={[
-              {
-                breakpoint: 480,
-                settings: {
-                  slidesToShow: 1.1,
-                },
-              },
-            ]}
-          >
-            {filteredTemplates.map((template) => (
-              <div key={template.id} style={{ padding: '0 8px' }}>
-                {renderCard(template)}
-              </div>
-            ))}
-          </Carousel>
-        ) : (
-        <Row gutter={[12, 20]} style={{ margin: 0 }}>
+        <Row gutter={[24, 24]} style={{ margin: 0 }}>
           {filteredTemplates.map((template) => (
             <Col xs={24} sm={12} md={8} lg={6} key={template.id} style={{ display: 'flex', alignItems: 'stretch' }}>
               {renderCard(template)}
             </Col>
           ))}
         </Row>
-        )
       )}
       
-      {/* Modal de prévisualisation - Responsive */}
       <Modal
         open={!!previewTemplate}
         onCancel={() => setPreviewTemplate(null)}
@@ -266,38 +208,12 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
               <img
                 src={previewTemplate.previewImage}
                 alt={previewTemplate.name + ' preview'}
-                style={{ 
-                  width: '100%', 
-                  height: 'auto',
-                  maxHeight: '80vh',
-                  objectFit: 'contain', 
-                  objectPosition: 'top', 
-                  borderRadius: 12, 
-                  display: 'block', 
-                  background: '#fff' 
-                }}
+                style={{ width: '100%', height: 'auto', maxHeight: '80vh', objectFit: 'contain', objectPosition: 'top', borderRadius: 12, display: 'block', background: '#fff' }}
               />
             ) : (
-              <div style={{
-                width: '100%',
-                height: 'auto',
-                maxHeight: '80vh',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                overflow: 'hidden'
-              }}>
+              <div style={{ width: '100%', height: 'auto', maxHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                 <CVPreview
-                  data={DEMO_PROFILES[previewTemplate.id] || {
-                    personalInfo: { firstName: '', lastName: '', title: '', email: '', phone: '', address: '', photo: '', summary: '' },
-                    experience: [],
-                    education: [],
-                    skills: [],
-                    languages: [],
-                    certifications: [],
-                    projects: [],
-                    interests: [],
-                  }}
+                  data={DEMO_PROFILES[previewTemplate.id] || { personalInfo: { firstName: '', lastName: '', title: '', email: '', phone: '', address: '', photo: '', summary: '' }, experience: [], education: [], skills: [], languages: [], certifications: [], projects: [], interests: [] }}
                   template={previewTemplate}
                   customization={defaultCustomization}
                   isPremium={true}
@@ -312,4 +228,4 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
   );
 };
 
-export default TemplateSelection; 
+export default TemplateSelection;
