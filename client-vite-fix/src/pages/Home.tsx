@@ -214,14 +214,24 @@ const Home: React.FC = () => {
     const fetchAllData = async () => {
       setIsLoading(true);
       try {
-        const [jobsData, itemsData] = await Promise.all([
+        const [jobsResponse, itemsData] = await Promise.all([
           JobService.getJobs(),
           marketplaceService.getItems()
         ]);
-        setJobs(jobsData || []);
-        setMarketplaceItems(itemsData || []);
+
+        // On s'assure que jobsResponse et jobsResponse.jobs existent et que c'est bien un tableau
+        const validJobs = (jobsResponse && Array.isArray(jobsResponse.jobs)) ? jobsResponse.jobs : [];
+        setJobs(validJobs);
+        
+        // On s'assure que itemsData est bien un tableau
+        const validItems = Array.isArray(itemsData) ? itemsData : [];
+        setMarketplaceItems(validItems);
+
       } catch (error) {
         console.error("Erreur lors de la récupération des données:", error);
+        // En cas d'erreur, on initialise avec des tableaux vides pour éviter un crash
+        setJobs([]);
+        setMarketplaceItems([]);
       } finally {
         setIsLoading(false);
       }

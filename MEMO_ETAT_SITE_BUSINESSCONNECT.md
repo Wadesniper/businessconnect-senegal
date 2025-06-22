@@ -2,13 +2,27 @@
 
 ## Dernière mise à jour : 2025-06-22
 
+### 🚨 **CORRECTION CRITIQUE - PLANTAGE PAGE D'ACCUEIL (2025-06-22)**
+
+- **Problème :** Le site affichait une page d'erreur "Something went wrong" avec une erreur `s.filter is not a function` dans la console, rendant la page d'accueil inutilisable.
+- **Cause Racine :** Une régression dans la gestion des données sur la page d'accueil (`Home.tsx`). Le code ne vérifiait pas de manière assez robuste que les données reçues des services (`JobService`, `marketplaceService`) étaient bien des tableaux avant de tenter d'utiliser la méthode `.filter()` ou d'autres méthodes de tableau. Si l'API retournait une structure inattendue (un objet au lieu d'un tableau, ou `null`), l'application plantait.
+- **Solution Appliquée (Robuste) :**
+  - ✅ **Blindage de la récupération des données :** Dans le `useEffect` de `Home.tsx`, des vérifications explicites ont été ajoutées pour garantir que les données sont bien des tableaux avant de les passer à l'état local.
+    - Pour les offres (`jobs`), le code vérifie maintenant que `jobsResponse.jobs` est un tableau.
+    - Pour les articles (`marketplaceItems`), le code vérifie que `itemsData` est un tableau.
+  - ✅ **Gestion des erreurs :** Un bloc `catch` a été renforcé pour initialiser les états avec des tableaux vides en cas d'échec de l'appel API, empêchant ainsi tout plantage en aval.
+- **Impact :** La page d'accueil est de nouveau stable et fonctionnelle. Elle est maintenant résiliente aux réponses inattendues de l'API, ce qui prévient ce type de crash à l'avenir.
+
 ### ✨ **CORRECTION MAJEURE - FLUX ET EXPORT CV (2025-06-22)**
 
 - **Contexte :** Le générateur de CV présentait des régressions dans son flux de sélection et des problèmes critiques dans la qualité de l'export PDF.
 - **Solutions Appliquées :**
-  1. ✅ **Restauration du flux de sélection :**
-     - **Problème :** Le clic sur un modèle de CV entraînait une navigation automatique, ce qui n'était pas intuitif.
-     - **Solution :** La navigation automatique a été supprimée. Un bouton "Commencer avec ce modèle" apparaît désormais en bas de l'écran uniquement après la sélection d'un modèle, rendant l'action de l'utilisateur explicite et volontaire.
+  1. ✅ **Amélioration du flux de sélection de modèle :**
+     - **Problème :** Le flux de sélection d'un modèle de CV nécessitait deux clics (sélectionner, puis utiliser), ce qui n'était pas intuitif.
+     - **Solution :** La logique a été simplifiée pour être plus directe. Chaque carte possède maintenant deux boutons clairs :
+        - Un bouton **"Aperçu"** pour visualiser le modèle sans engagement.
+        - Un bouton principal **"Utiliser ce modèle"**. Un seul clic sur ce bouton sélectionne le modèle et redirige immédiatement l'utilisateur vers le formulaire de création, éliminant l'étape de sélection intermédiaire.
+     - **Impact :** Le flux est plus rapide et plus intuitif, réduisant le nombre de clics nécessaires pour commencer à créer un CV.
 
   2. ✅ **Correction de l'export PDF :**
      - **Problème 1 :** L'export incluait des éléments d'interface (un bandeau d'information bleu) en plus du CV lui-même.
@@ -19,11 +33,12 @@
   3. ✅ **Nettoyage de l'interface :**
      - Le bouton "Exporter en Word", qui n'était pas fonctionnel, a été supprimé pour ne conserver que l'option d'export PDF.
 
-- **Impact :** Le générateur de CV est maintenant plus intuitif, et produit des documents PDF propres et professionnels. La qualité et la fiabilité de cette fonctionnalité clé sont restaurées.
+- **Impact :** Le générateur de CV est maintenant plus intuitif et robuste. Il produit des documents PDF propres et professionnels, et son interface de sélection est plus claire.
 - **Fichiers modifiés :**
   - `client-vite-fix/src/pages/cv-generator/index.tsx`
   - `client-vite-fix/src/pages/cv-generator/components/CVPreview.tsx`
   - `client-vite-fix/src/pages/cv-generator/services/documentExport.ts`
+  - `client-vite-fix/src/pages/cv-generator/components/TemplateSelection.tsx`
 
 ### ✨ **CORRECTION DÉFINITIVE DU GÉNÉRATEUR DE CV (2025-06-21)**
 

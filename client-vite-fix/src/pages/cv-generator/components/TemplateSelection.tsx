@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Card, Typography, Row, Col, Select, Input, Empty, Tag, Tooltip, Button, Modal, Spin, Carousel } from 'antd';
-import { LockOutlined, StarOutlined } from '@ant-design/icons';
+import { LockOutlined, StarOutlined, EyeOutlined } from '@ant-design/icons';
 import type { Template } from '../../../types/cv';
 import { CV_TEMPLATES } from '../components/data/templates';
 import { useNavigate } from 'react-router-dom';
@@ -74,6 +74,71 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
       return matchesSearch && matchesCategory && matchesPremium;
     });
   }, [searchTerm, selectedCategory, showPremiumOnly]);
+
+  const renderCard = (template: Template) => {
+    const canSelect = user?.role === 'admin' || hasPremiumAccess(user) || !template.premium;
+    const isSelected = selected?.id === template.id;
+
+    return (
+      <Card
+        key={template.id}
+        className={`${styles.templateCard} ${isSelected ? styles.selected : ''}`}
+        style={{
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          border: isSelected ? '2px solid #1890ff' : '1px solid #e8e8e8'
+        }}
+        cover={
+          <div className={styles.cardCover}>
+            {template.previewImage ? (
+              <img src={template.previewImage} alt={template.name} className={styles.previewImage} />
+            ) : (
+              <div className={styles.cvPreviewContainer}>
+                <CVPreview
+                  data={DEMO_PROFILES[template.id] || { personalInfo: { firstName: '', lastName: '', title: '', email: '', phone: '', address: '', photo: '', summary: '' }, experience: [], education: [], skills: [], languages: [], certifications: [], projects: [], interests: [] }}
+                  template={template}
+                  customization={defaultCustomization}
+                  isPremium={true}
+                  isMiniature={true}
+                />
+              </div>
+            )}
+            <div className={styles.overlay}>
+              <Button icon={<EyeOutlined />} onClick={() => setPreviewTemplate(template)}>Aperçu</Button>
+            </div>
+            {template.premium && <Tag icon={<StarOutlined />} color="gold" className={styles.premiumTag}>Premium</Tag>}
+          </div>
+        }
+      >
+        <Card.Meta
+          title={<span className={styles.cardTitle}>{template.name}</span>}
+          description={
+            <>
+              <Text type="secondary">Secteur : {template.category}</Text>
+              <p className={styles.cardDescription}>{template.description}</p>
+            </>
+          }
+        />
+        <div style={{ marginTop: 'auto', paddingTop: '16px' }}>
+          <Button
+            type="primary"
+            block
+            disabled={!canSelect}
+            onClick={() => {
+              onSelect(template);
+              if (onContinue) {
+                onContinue();
+              }
+            }}
+          >
+            Utiliser ce modèle
+          </Button>
+        </div>
+      </Card>
+    );
+  };
 
   if (!CV_TEMPLATES || CV_TEMPLATES.length === 0) {
     return <div style={{ minHeight: 420, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement de la galerie..." /></div>;
@@ -157,9 +222,9 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
           </Carousel>
         ) : (
         <Row gutter={[12, 20]} style={{ margin: 0 }}>
-          {filteredTemplates.map((template, idx) => (
+          {filteredTemplates.map((template) => (
             <Col xs={24} sm={12} md={8} lg={6} key={template.id} style={{ display: 'flex', alignItems: 'stretch' }}>
-              {renderCard(template, idx)}
+              {renderCard(template)}
             </Col>
           ))}
         </Row>
@@ -245,200 +310,6 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
       </Modal>
     </div>
   );
-
-  function renderCard(template: Template, idx?: number) {
-    const canSelect = user?.role === 'admin' || hasPremiumAccess(user) || !template.premium;
-
-    return (
-      <Card
-        hoverable
-        cover={
-          <div
-            style={{
-              position: 'relative',
-              background: '#fff',
-              width: '100%',
-              height: 'clamp(280px, 40vw, 340px)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: 12,
-              boxShadow: '0 4px 16px #0001',
-              margin: '0 auto',
-              overflow: 'hidden',
-              padding: 6,
-            }}
-            className={`${styles.cvMiniature} appear`}
-          >
-            {template.previewImage ? (
-              <img
-                src={template.previewImage}
-                alt={template.name + ' preview'}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  objectPosition: 'top',
-                  borderRadius: 6,
-                  display: 'block',
-                  background: '#fff',
-                  margin: '0 auto',
-                }}
-              />
-            ) : (
-              <div style={{
-                width: '100%',
-                height: '100%',
-                overflow: 'hidden',
-                position: 'relative',
-                background: '#f0f2f5',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <CVPreview
-                  data={DEMO_PROFILES[template.id] || {
-                    personalInfo: { firstName: '', lastName: '', title: '', email: '', phone: '', address: '', photo: '', summary: '' },
-                    experience: [],
-                    education: [],
-                    skills: [],
-                    languages: [],
-                    certifications: [],
-                    projects: [],
-                    interests: [],
-                  }}
-                  template={template}
-                  customization={defaultCustomization}
-                  isPremium={true}
-                  isMiniature={true}
-                />
-              </div>
-            )}
-          </div>
-        }
-        onClick={() => {
-          if (!isPremium) {
-            Modal.info({
-              title: 'Fonctionnalité réservée',
-              content: 'Cette fonctionnalité est réservée aux abonnés. Abonnez-vous pour utiliser le générateur de CV.',
-              onOk: () => navigate('/subscription')
-            });
-            return;
-          }
-          onSelect(template);
-        }}
-        style={{
-          border: selected?.id === template.id ? '3px solid #1890ff' : '1px solid #eee',
-          boxShadow: selected?.id === template.id ? '0 0 0 2px #1890ff33, 0 8px 32px #1890ff11' : '0 4px 18px #1890ff11',
-          cursor: isPremium ? 'pointer' : 'not-allowed',
-          borderRadius: 16,
-          transition: 'box-shadow 0.22s cubic-bezier(.4,2,.3,1), border 0.22s',
-          overflow: 'hidden',
-          background: '#fff',
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100%'
-        }}
-        bodyStyle={{
-          padding: '12px',
-          display: 'flex',
-          flexDirection: 'column',
-          flex: 1
-        }}
-      >
-        <div style={{ flex: 1, minHeight: 0, overflow: 'hidden', marginBottom: 12 }}>
-          <Card.Meta
-            title={
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                fontWeight: 600,
-                fontSize: 'clamp(14px, 3vw, 16px)',
-                whiteSpace: 'normal',
-                lineHeight: '1.2',
-                wordBreak: 'break-word'
-              }}>
-                {template.name}
-                {template.premium && (
-                  <Tooltip title="Template Premium">
-                    <StarOutlined style={{ color: '#ffd700', flexShrink: 0 }} />
-                  </Tooltip>
-                )}
-              </div>
-            }
-            description={
-              <>
-                <div style={{ fontSize: 'clamp(12px, 2.5vw, 14px)' }}><b>Secteur :</b> {template.category}</div>
-                <div style={{
-                  marginTop: 6,
-                  fontSize: 'clamp(11px, 2.2vw, 13px)',
-                  color: '#777',
-                  whiteSpace: 'normal',
-                  lineHeight: '1.4'
-                }}>
-                  {template.description}
-                </div>
-              </>
-            }
-          />
-        </div>
-        <div style={{
-          marginTop: 'auto',
-          paddingTop: 8,
-          borderTop: '1px solid #f0f0f0'
-        }}>
-          <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: 8,
-          }}>
-            {canSelect ? (
-              <Button
-                type="primary"
-                size="small"
-                onClick={() => {
-                  onSelect(template);
-                  if (onContinue) onContinue();
-                }}
-                style={{ flexGrow: 1 }}
-              >
-                Sélectionner
-              </Button>
-            ) : (
-              <Tooltip title="Nécessite un abonnement Premium">
-                <Button
-                  icon={<LockOutlined />}
-                  size="small"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setPreviewTemplate(template);
-                  }}
-                  style={{ flexGrow: 1 }}
-                >
-                  Aperçu
-                </Button>
-              </Tooltip>
-            )}
-            {canSelect && (
-              <Button
-                size="small"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setPreviewTemplate(template);
-                }}
-                style={{ flexGrow: 1 }}
-              >
-                Aperçu
-              </Button>
-            )}
-          </div>
-        </div>
-      </Card>
-    );
-  }
 };
 
 export default TemplateSelection; 

@@ -163,24 +163,12 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
     }
     if (currentStep === 0) {
       return (
-        <>
-          <TemplateSelection
-            selected={selectedTemplate}
-            onSelect={handleSelectTemplate}
-            isPremium={isPremium}
-          />
-          {selectedTemplate && (
-            <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: 'rgba(255,255,255,0.9)', padding: '16px', display: 'flex', justifyContent: 'center', boxShadow: '0 -2px 10px rgba(0,0,0,0.1)', zIndex: 100 }}>
-              <Button
-                type="primary"
-                size="large"
-                onClick={() => setCurrentStep(1)}
-              >
-                Commencer avec le modèle "{selectedTemplate.name}"
-              </Button>
-            </div>
-          )}
-        </>
+        <TemplateSelection
+          selected={selectedTemplate}
+          onSelect={handleSelectTemplate}
+          onContinue={() => setCurrentStep(1)}
+          isPremium={isPremium}
+        />
       );
     }
     if (currentStep > 0 && currentStep < steps.length - 1) {
