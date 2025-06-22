@@ -1,6 +1,29 @@
 # État du Site BusinessConnect
 
-## Dernière mise à jour : 2025-06-21
+## Dernière mise à jour : 2025-06-22
+
+### ✨ **CORRECTION MAJEURE - FLUX ET EXPORT CV (2025-06-22)**
+
+- **Contexte :** Le générateur de CV présentait des régressions dans son flux de sélection et des problèmes critiques dans la qualité de l'export PDF.
+- **Solutions Appliquées :**
+  1. ✅ **Restauration du flux de sélection :**
+     - **Problème :** Le clic sur un modèle de CV entraînait une navigation automatique, ce qui n'était pas intuitif.
+     - **Solution :** La navigation automatique a été supprimée. Un bouton "Commencer avec ce modèle" apparaît désormais en bas de l'écran uniquement après la sélection d'un modèle, rendant l'action de l'utilisateur explicite et volontaire.
+
+  2. ✅ **Correction de l'export PDF :**
+     - **Problème 1 :** L'export incluait des éléments d'interface (un bandeau d'information bleu) en plus du CV lui-même.
+     - **Solution 1 :** Le système de `ref` a été refactorisé avec `React.forwardRef` pour isoler et capturer **uniquement** le composant du CV, en excluant tout autre élément de l'interface.
+     - **Problème 2 :** Le CV exporté n'utilisait pas tout l'espace de la page PDF, laissant de grandes marges blanches.
+     - **Solution 2 :** La configuration de `html2canvas` (le service d'export) a été modifiée pour forcer la capture à la taille réelle de l'élément (`offsetWidth`/`offsetHeight`), garantissant ainsi que l'image du CV s'adapte correctement à la largeur de la page A4.
+
+  3. ✅ **Nettoyage de l'interface :**
+     - Le bouton "Exporter en Word", qui n'était pas fonctionnel, a été supprimé pour ne conserver que l'option d'export PDF.
+
+- **Impact :** Le générateur de CV est maintenant plus intuitif, et produit des documents PDF propres et professionnels. La qualité et la fiabilité de cette fonctionnalité clé sont restaurées.
+- **Fichiers modifiés :**
+  - `client-vite-fix/src/pages/cv-generator/index.tsx`
+  - `client-vite-fix/src/pages/cv-generator/components/CVPreview.tsx`
+  - `client-vite-fix/src/pages/cv-generator/services/documentExport.ts`
 
 ### ✨ **CORRECTION DÉFINITIVE DU GÉNÉRATEUR DE CV (2025-06-21)**
 

@@ -62,8 +62,10 @@ export const exportToPDF = async (
       allowTaint: true,
       logging: false,
       backgroundColor: '#ffffff',
-      windowWidth: element.scrollWidth * quality,
-      windowHeight: element.scrollHeight * quality
+      width: element.offsetWidth,
+      height: element.offsetHeight,
+      windowWidth: element.scrollWidth,
+      windowHeight: element.scrollHeight,
     });
 
     if (format === 'pdf') {

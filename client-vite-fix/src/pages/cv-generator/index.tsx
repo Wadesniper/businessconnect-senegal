@@ -86,12 +86,14 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
   const isPremium = !!hasPremiumAccess(user, hasActiveSubscription);
   const location = useLocation();
 
-  // Navigation automatique après sélection du modèle
+  // Navigation automatique après sélection du modèle - SUPPRIMÉ car le comportement est maintenant manuel via un bouton
+  /*
   React.useEffect(() => {
     if (selectedTemplate && currentStep === 0) {
       setCurrentStep(1);
     }
   }, [selectedTemplate]);
+  */
 
   // Lecture du paramètre template dans l'URL
   React.useEffect(() => {
@@ -161,11 +163,24 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
     }
     if (currentStep === 0) {
       return (
-        <TemplateSelection
-          selected={selectedTemplate}
-          onSelect={handleSelectTemplate}
-          isPremium={isPremium}
-        />
+        <>
+          <TemplateSelection
+            selected={selectedTemplate}
+            onSelect={handleSelectTemplate}
+            isPremium={isPremium}
+          />
+          {selectedTemplate && (
+            <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: 'rgba(255,255,255,0.9)', padding: '16px', display: 'flex', justifyContent: 'center', boxShadow: '0 -2px 10px rgba(0,0,0,0.1)', zIndex: 100 }}>
+              <Button
+                type="primary"
+                size="large"
+                onClick={() => setCurrentStep(1)}
+              >
+                Commencer avec le modèle "{selectedTemplate.name}"
+              </Button>
+            </div>
+          )}
+        </>
       );
     }
     if (currentStep > 0 && currentStep < steps.length - 1) {
@@ -183,14 +198,13 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
         <Card style={{ marginTop: 24, position: 'relative', paddingBottom: '80px' }}>
           {selectedTemplate ? (
             <>
-              <div ref={previewRef}>
-                <CVPreview
-                  data={cvData || emptyCVData}
-                  template={selectedTemplate}
-                  customization={customization}
-                  isPremium={isPremium}
-                />
-              </div>
+              <CVPreview
+                ref={previewRef}
+                data={cvData || emptyCVData}
+                template={selectedTemplate}
+                customization={customization}
+                isPremium={isPremium}
+              />
               <div style={{
                 position: 'absolute',
                 bottom: 0,
@@ -208,9 +222,6 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
                 <Button onClick={handlePrev}>Précédent</Button>
                 <Button type="primary" icon={<DownloadOutlined />} onClick={() => handleExport('pdf')} loading={isExporting}>
                   Exporter en PDF
-                </Button>
-                <Button icon={<DownloadOutlined />} onClick={() => handleExport('docx')} loading={isExporting}>
-                  Exporter en Word
                 </Button>
               </div>
             </>
