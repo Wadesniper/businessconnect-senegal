@@ -1468,3 +1468,12 @@ Cette approche a résolu de manière définitive les problèmes de validation, d
   - ✅ **Frontend Nettoyé :** La page `JobsPage.tsx` a été nettoyée pour supprimer tout le filtrage côté client. Elle se fie maintenant entièrement au backend pour la recherche et le filtrage, ce qui est plus performant et plus fiable.
   - ✅ **Recherche Réactivée :** La fonctionnalité de recherche par mots-clés, qui avait été temporairement désactivée, est maintenant de nouveau pleinement fonctionnelle.
 - **Statut :** ✅ **AFFICHAGE DES OFFRES RESTAURÉ.** La page des emplois fonctionne de nouveau correctement, avec la recherche et les filtres gérés par le backend.
+
+### ✨ **AMÉLIORATION UX - PAGINATION DES OFFRES (2025-06-22)**
+
+- **Problème :** Seul le premier lot d'offres d'emploi était visible, sans aucun moyen de charger les suivantes, bien que la pagination existait côté backend.
+- **Solution Appliquée :**
+  - ✅ **Ajout d'un bouton "Charger plus"** sur la page `JobsPage.tsx`.
+  - ✅ **Logique de chargement progressif :** La page gère maintenant un état de `currentPage`. Le bouton "Charger plus" incrémente cette page et ajoute les nouvelles offres à la liste existante sans recharger la page.
+  - ✅ **Réinitialisation sur filtre :** Le changement de n'importe quel filtre (recherche, secteur, etc.) réinitialise la pagination à la première page pour garantir la cohérence des résultats.
+- **Statut :** ✅ **NAVIGATION COMPLÈTE.** Toutes les offres d'emploi sont maintenant accessibles à l'utilisateur.

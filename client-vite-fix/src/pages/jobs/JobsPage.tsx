@@ -35,20 +35,41 @@ const JobsPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+  const handleFilterChange = (setter: Function, value: any) => {
+    setCurrentPage(1);
+    setter(value);
+  }
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  }
+
   useEffect(() => {
-    setIsLoading(true);
-    JobService.getJobs(1, 20, debouncedSearchQuery, selectedSector, selectedType, selectedLocation)
+    if (currentPage === 1) {
+      setIsLoading(true);
+    } else {
+      setIsLoadingMore(true);
+    }
+    
+    JobService.getJobs(currentPage, 12, debouncedSearchQuery, selectedSector, selectedType, selectedLocation)
       .then(response => {
-        setJobs(response.jobs || []);
+        setJobs(prev => currentPage === 1 ? (response.jobs || []) : [...prev, ...(response.jobs || [])]);
         setTotalJobs(response.total || 0);
-        if (sectors.length === 0) {
+        if (sectors.length === 0 && currentPage === 1) {
           const uniqueSectors = Array.from(new Set((response.jobs || []).map((j: any) => j.sector).filter(Boolean)));
           setSectors(uniqueSectors);
         }
       })
       .catch(() => setError("Erreur lors du chargement des offres d'emploi"))
-      .finally(() => setIsLoading(false));
-  }, [debouncedSearchQuery, selectedSector, selectedType, selectedLocation]);
+      .finally(() => {
+        setIsLoading(false);
+        setIsLoadingMore(false);
+      });
+  }, [currentPage, debouncedSearchQuery, selectedSector, selectedType, selectedLocation]);
 
   const sortedJobs = React.useMemo(() => {
     return [...jobs].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
@@ -77,6 +98,10 @@ const JobsPage: React.FC = () => {
 
   const handlePublish = () => navigate('/jobs/publish');
 
+  const handleLoadMore = () => {
+    setCurrentPage(prev => prev + 1);
+  }
+
   if (isLoading && jobs.length === 0) {
     return <div style={{ minHeight: 420, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" /></div>;
   }
@@ -88,14 +113,14 @@ const JobsPage: React.FC = () => {
       <div style={{ marginBottom: 16 }}>
         <JobFilters
           searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
+          onSearchChange={handleSearchChange}
           sectors={sectors}
           selectedSector={selectedSector}
-          onSectorChange={setSelectedSector}
+          onSectorChange={(val) => handleFilterChange(setSelectedSector, val)}
           selectedType={selectedType}
-          onTypeChange={setSelectedType}
+          onTypeChange={(val) => handleFilterChange(setSelectedType, val)}
           selectedLocation={selectedLocation}
-          onLocationChange={setSelectedLocation}
+          onLocationChange={(val) => handleFilterChange(setSelectedLocation, val)}
           salaryRange={[0,0]}
           onSalaryRangeChange={() => {}}
           experienceLevel={null}
@@ -140,6 +165,13 @@ const JobsPage: React.FC = () => {
               </Col>
             )}
           </Row>
+          {jobs.length < totalJobs && (
+            <div style={{ textAlign: 'center', marginTop: 32 }}>
+              <Button onClick={handleLoadMore} loading={isLoadingMore} size="large">
+                Charger plus d'offres
+              </Button>
+            </div>
+          )}
         </>
       )}
     </Content>

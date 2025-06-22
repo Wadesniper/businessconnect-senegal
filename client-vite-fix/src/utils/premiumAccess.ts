@@ -1,4 +1,4 @@
-import { User } from '../types/user';
+import type { User } from '../types/user';
 
 export const hasAdminAccess = (user: User | null): boolean => {
   if (!user) return false;
