@@ -10,11 +10,9 @@ const { TextArea } = Input;
 interface PersonalInfoFormProps {
   data: CVData['personalInfo'];
   onChange: (data: CVData['personalInfo']) => void;
-  onNext: () => void;
-  onPrev?: () => void;
 }
 
-const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ data, onChange, onNext, onPrev }) => {
+const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ data, onChange }) => {
   const [form] = Form.useForm();
   const [uploadLoading, setUploadLoading] = React.useState(false);
 
@@ -40,12 +38,6 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ data, onChange, onN
     return false;
   };
 
-  const onFinish = (values: any) => {
-    // onFinish est appelé par AntD seulement si les règles de validation sont passées
-    // onChange(values); // Plus nécessaire ici, car onValuesChange le fait déjà
-    onNext();
-  };
-
   const handleValuesChange = (changedValues: any, allValues: any) => {
     onChange(allValues);
   };
@@ -58,7 +50,6 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ data, onChange, onN
     <Form
       form={form}
       layout="vertical"
-      onFinish={onFinish}
       initialValues={data}
       onValuesChange={handleValuesChange}
       style={{ maxWidth: 600, margin: '0 auto' }}
@@ -92,10 +83,6 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ data, onChange, onN
       <Form.Item name="phone" label="Téléphone" rules={[{ required: true }]}> <Input /> </Form.Item>
       <Form.Item name="address" label="Adresse"> <Input /> </Form.Item>
       <Form.Item name="summary" label="Résumé professionnel" rules={[{ required: true }]}> <TextArea rows={4} /> </Form.Item>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 32 }}>
-        {onPrev && <Button onClick={onPrev}>Précédent</Button>}
-        <Button type="primary" htmlType="submit">Suivant</Button>
-      </div>
     </Form>
   );
 };

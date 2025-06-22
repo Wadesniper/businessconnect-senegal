@@ -9,6 +9,7 @@ import ProjectsForm from './ProjectsForm';
 import InterestsForm from './InterestsForm';
 import PersonalInfoForm from './PersonalInfoForm';
 import { useCV } from '../context/CVContext';
+import { Button, message } from 'antd';
 
 interface CVWizardProps {
   current: number;
@@ -27,9 +28,16 @@ const steps = [
 ];
 
 const CVWizard: React.FC<CVWizardProps> = ({ current, setCurrent }) => {
-  const { cvData, setCVData } = useCV();
+  const { cvData, setCVData, isStepValid } = useCV();
 
-  const goNext = () => setCurrent(current + 1);
+  const goNext = () => {
+    if (isStepValid(current + 1)) {
+      setCurrent(current + 1);
+    } else {
+      message.error('Veuillez remplir tous les champs obligatoires.');
+    }
+  };
+  
   const goPrev = () => setCurrent(Math.max(current - 1, 0));
 
   const handleChange = (key: keyof CVData) => (value: any) => {
@@ -50,9 +58,15 @@ const CVWizard: React.FC<CVWizardProps> = ({ current, setCurrent }) => {
       <StepComponent
         data={stepData}
         onChange={handleChange(stepKey)}
-        onNext={goNext}
-        onPrev={goPrev}
       />
+      <div style={{ marginTop: 32, display: 'flex', justifyContent: 'space-between' }}>
+        <Button onClick={goPrev} disabled={current === 0}>
+          Précédent
+        </Button>
+        <Button type="primary" onClick={goNext}>
+          Suivant
+        </Button>
+      </div>
     </div>
   );
 };
