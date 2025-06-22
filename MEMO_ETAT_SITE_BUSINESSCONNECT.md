@@ -1409,3 +1409,16 @@ Cette approche a résolu de manière définitive les problèmes de validation, d
 - **Impact :** Le routage backend est maintenant correct et robuste. Les bonnes routes sont appelées, les bonnes données sont retournées, et l'erreur `JSON.parse` côté client est éliminée. La page de détails des offres est de nouveau fonctionnelle pour tous les utilisateurs.
 - **Fichiers modifiés :** `server/src/routes/jobs.ts`.
 - **Statut :** ✅ **API OFFRES D'EMPLOI STABILISÉE.**
+
+### 🐛 **CORRECTION DÉFINITIVE - COHÉRENCE API & AUTHENTIFICATION (2025-06-21)**
+
+- **Problème :** La page de détails des offres restait bloquée sur "Chargement..." malgré la correction du routage backend.
+- **Cause Racine :** Incohérence critique dans le service `jobService.ts` côté client. La méthode `getJobById` utilisait `fetch()` natif au lieu de l'instance `axios` globale (`api`). Par conséquent, la requête partait vers le backend **sans le token d'authentification JWT**, ce qui entraînait un échec silencieux de la récupération des données.
+- **Solution Appliquée (Structurelle) :**
+  - ✅ **Refactoring complet de `jobService.ts` :**
+    - **Tous les appels** `fetch` ont été remplacés par des appels à l'instance `api` (axios), garantissant que chaque requête (GET, POST, PUT, DELETE) est systématiquement authentifiée avec le token JWT.
+    - **Suppression du code obsolète :** Toute la logique de cache manuel via `IndexedDB` et `localStorage` a été retirée pour simplifier le service et éviter les conflits de données.
+    - **Harmonisation des types :** Tous les types de données (`JobData`, etc.) ont été alignés avec les définitions de `types/job.ts` pour une cohérence parfaite et pour éliminer les erreurs TypeScript.
+- **Impact :** Le service est maintenant propre, robuste et fiable. Le problème de chargement est définitivement résolu car toutes les requêtes sont correctement authentifiées. Le code est plus maintenable et aligné avec les bonnes pratiques du reste de l'application.
+- **Fichiers modifiés :** `client-vite-fix/src/services/jobService.ts`.
+- **Statut :** ✅ **FLUX DE DONNÉES EMPLOI TOTALEMENT FIABILISÉ.**
