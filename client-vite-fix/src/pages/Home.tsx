@@ -262,13 +262,13 @@ const Home: React.FC = () => {
           text: `Le marketplace de BusinessConnect est une excellente initiative. J'y ai trouvé des prestataires de services fiables pour mon entreprise et j'ai même pu y proposer mes propres services. C'est un écosystème très dynamique.`
       },
       {
-        img: womanHijab,
+          img: womanHijab,
         name: 'Fatima Sow',
         role: 'Professionnelle en reconversion',
         text: `Les fiches métiers sont une mine d'or d'informations. Elles m'ont permis de mieux comprendre les opportunités de carrière et de choisir une voie qui me correspond vraiment. Un grand merci à BusinessConnect pour cette ressource précieuse.`
       }
   ];
-
+  
   const sectors = [
     { name: 'Informatique', icon: '💻', color: '#2db7f5' },
     { name: 'Commerce', icon: '🛒', color: '#87d068' },

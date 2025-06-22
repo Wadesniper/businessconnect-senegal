@@ -77,10 +77,6 @@ const ProjectsForm: React.FC<ProjectsFormProps> = ({ data, onChange, onNext, onP
         </Space>
       ))}
       <Button type="dashed" onClick={addProject} style={{ width: '100%', marginBottom: 24 }}>+ Ajouter un projet</Button>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 32 }}>
-        <Button onClick={onPrev}>Précédent</Button>
-        <Button type="primary" htmlType="submit">Suivant</Button>
-      </div>
     </Form>
   );
 };

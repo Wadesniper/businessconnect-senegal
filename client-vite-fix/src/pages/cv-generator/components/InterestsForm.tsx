@@ -57,10 +57,6 @@ const InterestsForm: React.FC<InterestsFormProps> = ({ data, onChange, onNext, o
         />
         <Button onClick={addInterest} type="dashed">Ajouter</Button>
       </Space>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 32 }}>
-        <Button onClick={onPrev}>Précédent</Button>
-        <Button type="primary" htmlType="submit">Suivant</Button>
-      </div>
     </Form>
   );
 };

@@ -69,10 +69,6 @@ const CertificationsForm: React.FC<CertificationsFormProps> = ({ data, onChange,
         </Space>
       ))}
       <Button type="dashed" onClick={addCert} style={{ width: '100%', marginBottom: 24 }}>+ Ajouter une certification</Button>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 32 }}>
-        <Button onClick={onPrev}>Précédent</Button>
-        <Button type="primary" htmlType="submit">Suivant</Button>
-      </div>
     </Form>
   );
 };

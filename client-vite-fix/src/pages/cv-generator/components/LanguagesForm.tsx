@@ -64,10 +64,6 @@ const LanguagesForm: React.FC<LanguagesFormProps> = ({ data, onChange, onNext, o
         </Select>
         <Button onClick={addLanguage} type="dashed">Ajouter</Button>
       </Space>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 32 }}>
-        <Button onClick={onPrev}>Précédent</Button>
-        <Button type="primary" htmlType="submit">Suivant</Button>
-      </div>
     </Form>
   );
 };

@@ -70,10 +70,6 @@ const ExperienceForm: React.FC<ExperienceFormProps> = ({ data, onChange, onNext,
         </Space>
       ))}
       <Button type="dashed" onClick={addExperience} style={{ width: '100%', marginBottom: 24 }}>+ Ajouter une expérience</Button>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 32 }}>
-        <Button onClick={onPrev}>Précédent</Button>
-        <Button type="primary" htmlType="submit">Suivant</Button>
-      </div>
     </Form>
   );
 };

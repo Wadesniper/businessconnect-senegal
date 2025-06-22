@@ -57,10 +57,6 @@ const SkillsForm: React.FC<SkillsFormProps> = ({ data, onChange, onNext, onPrev 
         />
         <Button onClick={addSkill} type="dashed">Ajouter</Button>
       </Space>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 32 }}>
-        <Button onClick={onPrev}>Précédent</Button>
-        <Button type="primary" htmlType="submit">Suivant</Button>
-      </div>
     </Form>
   );
 };

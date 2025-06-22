@@ -70,10 +70,6 @@ const EducationForm: React.FC<EducationFormProps> = ({ data, onChange, onNext, o
         </Space>
       ))}
       <Button type="dashed" onClick={addEducation} style={{ width: '100%', marginBottom: 24 }}>+ Ajouter une formation</Button>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 32 }}>
-        <Button onClick={onPrev}>Précédent</Button>
-        <Button type="primary" htmlType="submit">Suivant</Button>
-      </div>
     </Form>
   );
 };
