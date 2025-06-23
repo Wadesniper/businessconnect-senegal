@@ -786,76 +786,134 @@ const secteurs: Secteur[] = [
   {
     id: 'marketing',
     nom: 'Marketing & Communication',
-    description: 'Les métiers du marketing, de la communication et de la publicité',
+    description: "Dans un marché sénégalais de plus en plus concurrentiel et digitalisé, les métiers du marketing et de la communication sont stratégiques. Les entreprises, des PME aux multinationales, investissent pour construire leur image de marque, acquérir et fidéliser leurs clients.",
     icone: '📢',
     couleur: '#722ed1',
     metiers: [
       {
         id: 'digital-marketer',
         titre: 'Digital Marketing Manager',
-        description: 'Élabore et met en œuvre la stratégie marketing digital de l\'entreprise',
+        description: "Orchestrateur de la stratégie digitale, le Digital Marketing Manager utilise tous les leviers numériques (SEO, SEA, Social Media, Emailing) pour atteindre les objectifs de notoriété, d'acquisition et de conversion de l'entreprise.",
         secteur: 'marketing',
+        missions: [
+          "Définir la stratégie de marketing digital et allouer les budgets.",
+          "Piloter les campagnes d'acquisition de trafic payant (Google Ads, Social Ads).",
+          "Optimiser le référencement naturel (SEO) du site web.",
+          "Superviser la stratégie de contenu et le community management.",
+          "Analyser la performance des actions via des outils comme Google Analytics et rapporter au management."
+        ],
         competencesRequises: [
-          { nom: 'Marketing Digital', niveau: 'expert' },
-          { nom: 'Google Analytics', niveau: 'avancé' },
-          { nom: 'SEO/SEA', niveau: 'avancé' },
-          { nom: 'Réseaux sociaux', niveau: 'expert' },
-          { nom: 'Content Marketing', niveau: 'avancé' }
+          { nom: 'Stratégie Marketing Digital 360°', niveau: 'expert' },
+          { nom: 'Google Ads & Social Ads (Facebook, Instagram, LinkedIn)', niveau: 'expert' },
+          { nom: 'SEO technique et de contenu', niveau: 'avancé' },
+          { nom: 'Google Analytics et Data Studio', niveau: 'avancé' },
+          { nom: 'Marketing Automation (ex: Mailchimp, Sendinblue)', niveau: 'intermédiaire' }
         ],
         salaireMoyen: {
-          junior: { min: 350000, max: 700000 },
-          confirme: { min: 700000, max: 1400000 },
-          senior: { min: 1400000, max: 2500000 }
+          junior: { min: 400000, max: 700000 },
+          confirme: { min: 700000, max: 1500000 },
+          senior: { min: 1500000, max: 3000000 }
         },
         formation: [
-          'Master en Marketing Digital',
-          'École de commerce',
-          'Certifications Google'
+          "Master en Marketing Digital, Communication ou E-commerce.",
+          "École de commerce avec une spécialisation digitale.",
+          "Les certifications (Google Ads, HubSpot, etc.) sont très valorisées."
         ],
         perspectives: [
-          'Directeur Marketing',
-          'Chef de projet digital',
-          'Consultant Marketing'
+          "Directeur Marketing (CMO)",
+          "Head of Acquisition",
+          "Consultant en stratégie digitale",
+          "Lancer sa propre agence digitale."
         ],
         environnementTravail: [
-          'Agences digitales',
-          'Startups',
-          'Grandes entreprises'
+          "Agences de communication et digitales",
+          "Annonceurs (grandes entreprises, PME)",
+          "Startups et entreprises e-commerce",
+          "Freelance."
         ],
-        tags: ['Digital', 'Marketing', 'Communication', 'Web']
+        tags: ['Digital', 'Marketing', 'Communication', 'Web', 'Stratégie']
       },
       {
         id: 'community-manager',
         titre: 'Community Manager',
-        description: 'Gère et anime les communautés sur les réseaux sociaux',
+        description: "Ambassadeur de la marque sur les réseaux sociaux, le Community Manager crée et anime une communauté engagée. Il est la voix de l'entreprise sur des plateformes comme Facebook, Instagram, Twitter, LinkedIn et même TikTok, très populaires au Sénégal.",
         secteur: 'marketing',
+        missions: [
+          "Élaborer le calendrier éditorial pour les différents réseaux sociaux.",
+          "Créer et publier du contenu attractif (visuels, vidéos, stories, textes).",
+          "Animer la communauté : répondre aux commentaires, messages privés, organiser des jeux-concours.",
+          "Assurer la modération des commentaires et gérer les avis négatifs (e-réputation).",
+          "Suivre les indicateurs de performance (engagement, portée, croissance de la communauté)."
+        ],
         competencesRequises: [
-          { nom: 'Réseaux sociaux', niveau: 'expert' },
-          { nom: 'Création de contenu', niveau: 'avancé' },
-          { nom: 'Photoshop', niveau: 'intermédiaire' },
-          { nom: 'Copywriting', niveau: 'avancé' }
+          { nom: 'Excellente maîtrise des réseaux sociaux et de leurs codes', niveau: 'expert' },
+          { nom: 'Créativité et compétences en création de contenu (Canva, Photoshop, outils de montage vidéo)', niveau: 'avancé' },
+          { nom: 'Très bonnes capacités rédactionnelles (storytelling, copywriting)', niveau: 'expert' },
+          { nom: 'Gestion de crise et e-réputation', niveau: 'intermédiaire' },
+          { nom: 'Veille sur les tendances et les formats émergents', niveau: 'expert' }
         ],
         salaireMoyen: {
-          junior: { min: 200000, max: 400000 },
-          confirme: { min: 400000, max: 800000 },
-          senior: { min: 800000, max: 1500000 }
+          junior: { min: 250000, max: 450000 },
+          confirme: { min: 450000, max: 800000 },
+          senior: { min: 800000, max: 1300000 }
         },
         formation: [
-          'BTS Communication',
-          'Licence Marketing Digital',
-          'Certifications réseaux sociaux'
+          "BTS ou Licence en Communication, Marketing.",
+          "Formations spécialisées en community management.",
+          "Un portfolio de pages gérées est souvent plus important que le diplôme."
         ],
         perspectives: [
-          'Social Media Manager',
-          'Digital Brand Manager',
-          'Responsable Communication'
+          "Social Media Manager (plus stratégique)",
+          "Content Manager",
+          "Responsable de l'e-réputation."
         ],
         environnementTravail: [
-          'Agences de communication',
-          'Freelance',
-          'Entreprises'
+          "Agences de communication",
+          "Entreprises de tous secteurs",
+          "Médias et personnalités publiques",
+          "Freelance."
         ],
-        tags: ['Social Media', 'Communication', 'Content']
+        tags: ['Social Media', 'Communication', 'Content', 'Community', 'E-réputation']
+      },
+      {
+        id: 'brand-manager',
+        titre: 'Chef de Marque / Brand Manager',
+        description: "Le Brand Manager est le gardien de l'identité et de l'image d'une marque. Il s'assure de la cohérence de tous les points de contact avec le consommateur pour construire une marque forte et reconnue.",
+        secteur: 'marketing',
+        missions: [
+          "Définir le positionnement et la plateforme de marque (mission, vision, valeurs).",
+          "Développer et lancer de nouvelles offres ou produits.",
+          "Piloter le plan de communication 360° (publicité, digital, relations presse, événements).",
+          "Analyser les études de marché et la veille concurrentielle.",
+          "Garantir la cohérence de l'identité visuelle et du discours de la marque."
+        ],
+        competencesRequises: [
+          { nom: 'Gestion de marque (Branding)', niveau: 'expert' },
+          { nom: 'Gestion de projet', niveau: 'expert' },
+          { nom: 'Analyse de marché et études consommateurs', niveau: 'avancé' },
+          { nom: 'Compétences budgétaires et analytiques', niveau: 'avancé' },
+          { nom: 'Créativité et sens de l\'esthétique', niveau: 'avancé' }
+        ],
+        salaireMoyen: {
+          junior: { min: 500000, max: 900000 },
+          confirme: { min: 900000, max: 1800000 },
+          senior: { min: 1800000, max: 3500000 }
+        },
+        formation: [
+          "Master d'une école de commerce ou d'un IAE avec spécialisation Marketing.",
+          "Master en Communication, Publicité."
+        ],
+        perspectives: [
+          "Directeur Marketing",
+          "Directeur de la Communication",
+          "Prendre la responsabilité d'un portefeuille de marques."
+        ],
+        environnementTravail: [
+          "Grandes entreprises de biens de consommation (agroalimentaire, cosmétiques)",
+          "Opérateurs de services (télécoms, banques)",
+          "Agences de publicité et de branding."
+        ],
+        tags: ['Marketing', 'Branding', 'Stratégie', 'Publicité', 'Produit']
       }
     ]
   },
