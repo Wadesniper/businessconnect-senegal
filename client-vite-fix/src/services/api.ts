@@ -40,7 +40,7 @@ api.interceptors.response.use(
         // Token expiré ou invalide
         authService.clearAuthState();
         message.error('Session expirée. Veuillez vous reconnecter.');
-        window.location.href = '/auth/login';
+        window.location.href = '/auth';
       }
     }
     return Promise.reject(error);

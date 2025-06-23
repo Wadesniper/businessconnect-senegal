@@ -62,8 +62,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Initialisation au chargement
   useEffect(() => {
-    initAuth();
-  }, [initAuth]);
+    const restoreSession = async () => {
+      setLoading(true);
+      const token = authService.getToken();
+      if (!token) {
+        setUser(null);
+        setIsAuthenticated(false);
+        setLoading(false);
+        return;
+      }
+      try {
+        const serverUser = await authService.getCurrentUser();
+        if (serverUser) {
+          setUser(serverUser);
+          setIsAuthenticated(true);
+        } else {
+          authService.clearAuthState();
+          setUser(null);
+          setIsAuthenticated(false);
+        }
+      } catch (e) {
+        authService.clearAuthState();
+        setUser(null);
+        setIsAuthenticated(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+    restoreSession();
+  }, []);
 
   const login = async (phoneNumber: string, password: string) => {
     try {

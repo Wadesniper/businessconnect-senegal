@@ -2,6 +2,27 @@
 
 ## Dernière mise à jour : 2025-06-22
 
+### 🔐 **FIABILISATION DÉFINITIVE DE L'AUTHENTIFICATION (2025-06-22)**
+
+- **Problème :** Les utilisateurs étaient systématiquement déconnectés lorsqu'ils rafraîchissaient la page. La session n'était pas maintenue, forçant une reconnexion constante.
+- **Cause Racine :** La logique d'initialisation de la session dans `AuthContext.tsx` était défaillante et sujette à une "race condition". Elle ne gérait pas correctement la validation du token d'authentification stocké localement, concluant à tort que l'utilisateur n'était pas connecté avant même que la vérification avec le serveur ne soit terminée.
+- **Solution Appliquée (Structurelle et Robuste) :**
+  1. ✅ **Refonte complète de l'initialisation de session (`initAuth`) :**
+     - La logique complexe et erronée a été remplacée par un flux simple et standard :
+       - Au chargement, le token est lu depuis le `localStorage`.
+       - Si un token existe, une requête (`getCurrentUser`) est envoyée au serveur pour le valider.
+       - **Si le serveur confirme le token**, l'état de l'utilisateur est restauré et il reste connecté.
+       - **Si le serveur renvoie une erreur** (token invalide/expiré), le `localStorage` est nettoyé et l'utilisateur est proprement déconnecté.
+     - Cette nouvelle logique est encapsulée dans un `useCallback` pour garantir sa stabilité.
+  2. ✅ **Correction du `ProtectedRoute` :**
+     - La redirection pour les utilisateurs non connectés a été corrigée pour pointer vers `/auth` au lieu de `/login`, qui était incorrect.
+- **Impact :** La persistance de la session est maintenant **fiable et robuste**. Les utilisateurs restent connectés après un rafraîchissement de page, ce qui corrige un problème majeur d'expérience utilisateur. Le système est désormais résilient et se comporte comme attendu.
+- **Fichiers modifiés :**
+  - `client-vite-fix/src/context/AuthContext.tsx`
+  - `client-vite-fix/src/components/ProtectedRoute.tsx`
+
+---
+
 ### 🚨 **CORRECTION CRITIQUE - PLANTAGE PAGE D'ACCUEIL (2025-06-22)**
 
 - **Problème :** Le site affichait une page d'erreur "Something went wrong" avec une erreur `s.filter is not a function` dans la console, rendant la page d'accueil inutilisable.
@@ -1533,3 +1554,89 @@ Cette approche a résolu de manière définitive les problèmes de validation, d
   - ✅ **Logique de chargement progressif :** La page gère maintenant un état de `currentPage`. Le bouton "Charger plus" incrémente cette page et ajoute les nouvelles offres à la liste existante sans recharger la page.
   - ✅ **Réinitialisation sur filtre :** Le changement de n'importe quel filtre (recherche, secteur, etc.) réinitialise la pagination à la première page pour garantir la cohérence des résultats.
 - **Statut :** ✅ **NAVIGATION COMPLÈTE.** Toutes les offres d'emploi sont maintenant accessibles à l'utilisateur.
+
+## [MAJ 2024-xx-xx] Amélioration du filtre secteurs (Carrières)
+
+- Le filtre des secteurs en haut de la page Carrières affiche désormais tous les secteurs sur plusieurs lignes si besoin (flex-wrap), sans scroll horizontal.
+- Modification CSS appliquée dans `src/index.css` (sélecteurs `.ant-tabs-nav` et `.ant-tabs-nav-list`).
+- Build, tests et affichage validés : aucune régression, aucun impact sur le backend ou les autres pages.
+- UX améliorée : tous les secteurs sont visibles d'un coup d'œil, même sur petits écrans.
+
+---
+
+## [MAJ 2024-xx-xx] Style bouton-carte pour le filtre secteurs (Carrières)
+
+- Chaque secteur du filtre en haut de la page Carrières s'affiche désormais comme un bouton-carte moderne : fond blanc, coins arrondis, ombre, effet hover, responsive.
+- Amélioration de l'accessibilité et de la lisibilité, UX plus professionnelle.
+- Build, tests et affichage validés : aucune régression, aucun impact sur le backend ou les autres pages.
+- Modification CSS dans `src/index.css` (surcharge `.ant-tabs-tab`).
+
+---
+
+## [MAJ 2024-xx-xx] Loaders globaux (Spin) pour pages Carrières et Formations
+
+- Ajout de loaders globaux (Spin) lors du chargement initial des pages Carrières et Formations.
+- Délai optimisé de 300ms pour une UX fluide et rassurante, sans flash vide.
+- Modification des fichiers `src/pages/careers/index.tsx` et `src/pages/formations/FormationsPage.tsx`.
+- Build, tests et affichage validés : aucune régression, aucun impact sur le backend ou les autres pages.
+- UX améliorée : plus d'effet "vide" ou "bug" lors du chargement, expérience professionnelle.
+
+---
+
+## [MAJ 2024-xx-xx] Loader global (Spin) pour page CV Generator
+
+- Ajout de loader global (Spin) lors du chargement initial de la page CV Generator.
+- Délai optimisé de 300ms pour une UX fluide et rassurante, sans flash vide.
+- Modification du fichier `src/pages/cv-generator/CVGeneratorPage.tsx`.
+- Build, tests et affichage validés : aucune régression, aucun impact sur le backend ou les autres pages.
+- UX améliorée : plus d'effet "vide" ou "bug" lors du chargement, expérience professionnelle cohérente avec les pages Carrières et Formations.
+
+---
+
+## [MAJ 2024-xx-xx] Correction navigation page Carrières - Titre secteur dynamique
+
+- Ajout d'un titre dynamique du secteur dans chaque TabPane individuel de la page Carrières.
+- Correction du problème de navigation : maintenant, quand on clique sur un secteur du filtre, le titre du secteur s'affiche clairement.
+- Plus besoin de défiler pour identifier le secteur consulté.
+- Modification du fichier `src/pages/careers/index.tsx` (structure des TabPane).
+- Build, tests et affichage validés : aucune régression, navigation fluide améliorée.
+
+---
+
+## [MAJ 2024-xx-xx] Scroll automatique page Carrières - Navigation fluide mobile/desktop
+
+- Ajout d'un scroll automatique vers le contenu du secteur sélectionné quand on clique sur un secteur du filtre.
+- Résolution du problème de navigation : plus besoin de défiler manuellement vers le bas pour voir les métiers du secteur choisi.
+- Scroll fluide (smooth) avec délai de 100ms pour une expérience optimale.
+- Fonctionne sur mobile et desktop, améliore significativement l'UX.
+- Modification du fichier `src/pages/careers/index.tsx` (ajout handleTabChange et useEffect).
+- Build, tests et affichage validés : aucune régression, navigation parfaitement fluide.
+
+---
+
+## [MAJ 2024-xx-xx] Correction scroll automatique page Carrières - Comportement optimal
+
+- Correction du scroll automatique : ne se déclenche plus au chargement initial de la page.
+- Le scroll automatique ne s'active que quand l'utilisateur change activement d'onglet (clique sur un secteur).
+- Ajout d'un état `isInitialLoad` pour distinguer le chargement initial du changement d'onglet.
+- Évite le scroll non désiré vers la première section "Technologie" à l'ouverture de la page.
+- Modification du fichier `src/pages/careers/index.tsx` (logique conditionnelle du scroll).
+- Build, tests et affichage validés : comportement optimal, aucune régression.
+
+---
+
+### 🔒 Correction définitive : persistance de session après rafraîchissement (2025-06-22)
+
+- Problème : Après connexion, un simple rafraîchissement déconnectait l'utilisateur, même si le token était bien stocké.
+- Cause : La logique d'initialisation de session ne validait pas correctement le token auprès du backend avant de décider de l'état de connexion.
+- Solution :
+  - Au chargement, si un token existe, l'application attend la réponse du backend avant de décider si l'utilisateur est connecté.
+  - Si le token est valide, la session est restaurée.
+  - Si le token est invalide, la session est proprement nettoyée.
+  - La redirection 401 pointe désormais vers `/auth` (et non `/auth/login`).
+- Impact : L'utilisateur reste connecté après un refresh si son token est valide. Zéro régression sur le reste du site.
+- Fichiers modifiés :
+  - `src/context/AuthContext.tsx`
+  - `src/services/api.ts`
+
+---
