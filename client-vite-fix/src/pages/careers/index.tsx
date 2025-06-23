@@ -1337,20 +1337,116 @@ const secteurs: Secteur[] = [
   {
     id: 'transport',
     nom: 'Transport & Logistique',
-    description: 'Les métiers du transport, de la logistique et de la supply chain',
+    description: "Le secteur du transport et de la logistique au Sénégal est stratégique pour l'économie nationale. Avec le port de Dakar, l'aéroport international et les projets d'infrastructure routière, les opportunités sont nombreuses pour les professionnels qualifiés dans la supply chain, le transport international et l'optimisation logistique.",
     icone: '🚛',
     couleur: '#1890ff',
     metiers: [
       {
-        id: 'responsable-logistique',
-        titre: 'Responsable Logistique',
-        description: 'Optimise et gère la chaîne logistique de l\'entreprise',
+        id: 'directeur-supply-chain',
+        titre: 'Directeur Supply Chain / Supply Chain Manager',
+        description: "Le Directeur Supply Chain optimise et supervise l'ensemble de la chaîne logistique de l'entreprise. Il assure la coordination entre l'approvisionnement, la production, la distribution et la satisfaction client tout en optimisant les coûts et les délais.",
         secteur: 'transport',
+        missions: [
+          "Définir et mettre en œuvre la stratégie supply chain de l'entreprise.",
+          "Optimiser les flux logistiques (approvisionnement, stockage, distribution).",
+          "Gérer les relations avec les fournisseurs et prestataires logistiques.",
+          "Analyser et améliorer les indicateurs de performance logistique.",
+          "Coordonner les équipes logistiques et assurer la formation."
+        ],
         competencesRequises: [
-          { nom: 'Supply Chain', niveau: 'expert' },
-          { nom: 'Gestion des stocks', niveau: 'expert' },
-          { nom: 'Transport international', niveau: 'avancé' },
-          { nom: 'ERP', niveau: 'avancé' }
+          { nom: 'Gestion de la supply chain et logistique', niveau: 'expert' },
+          { nom: 'Planification et optimisation des flux', niveau: 'expert' },
+          { nom: 'Gestion des stocks et approvisionnements', niveau: 'expert' },
+          { nom: 'Outils ERP et systèmes logistiques', niveau: 'avancé' },
+          { nom: 'Management d\'équipe et leadership', niveau: 'avancé' }
+        ],
+        salaireMoyen: {
+          junior: { min: 600000, max: 1200000 },
+          confirme: { min: 1200000, max: 2500000 },
+          senior: { min: 2500000, max: 5000000 }
+        },
+        formation: [
+          "Master en Logistique et Supply Chain Management.",
+          "École de commerce spécialisée en logistique.",
+          "Formation continue en optimisation logistique.",
+          "Certifications en supply chain (CSCP, CLTD)."
+        ],
+        perspectives: [
+          "Directeur Logistique ou Directeur des Opérations.",
+          "Consultant en optimisation supply chain.",
+          "Directeur général d'entreprise logistique.",
+          "Expert en transformation digitale logistique."
+        ],
+        environnementTravail: [
+          "Entreprises industrielles et manufacturières.",
+          "Sociétés de transport et logistique.",
+          "Import-Export et commerce international.",
+          "Cabinets de conseil en logistique."
+        ],
+        tags: ['Supply Chain', 'Logistique', 'Management', 'Optimisation', 'ERP']
+      },
+      {
+        id: 'responsable-transport',
+        titre: 'Responsable Transport / Transport Manager',
+        description: "Le Responsable Transport supervise les opérations de transport de l'entreprise. Il optimise les routes, gère la flotte de véhicules, coordonne les chauffeurs et assure la conformité réglementaire tout en garantissant la qualité du service.",
+        secteur: 'transport',
+        missions: [
+          "Planifier et optimiser les routes de transport et livraison.",
+          "Gérer la flotte de véhicules et la maintenance préventive.",
+          "Superviser les équipes de chauffeurs et techniciens.",
+          "Assurer la conformité réglementaire et la sécurité routière.",
+          "Négocier avec les prestataires et gérer les coûts de transport."
+        ],
+        competencesRequises: [
+          { nom: 'Gestion de flotte et planification de transport', niveau: 'expert' },
+          { nom: 'Optimisation de routes et géolocalisation', niveau: 'avancé' },
+          { nom: 'Réglementation transport et sécurité routière', niveau: 'expert' },
+          { nom: 'Gestion d\'équipe et coordination opérationnelle', niveau: 'avancé' },
+          { nom: 'Outils de gestion de transport (TMS)', niveau: 'avancé' }
+        ],
+        salaireMoyen: {
+          junior: { min: 500000, max: 1000000 },
+          confirme: { min: 1000000, max: 2000000 },
+          senior: { min: 2000000, max: 4000000 }
+        },
+        formation: [
+          "Formation en transport et logistique ou management.",
+          "Certifications en gestion de flotte et sécurité routière.",
+          "Formation continue en optimisation de transport.",
+          "Certifications en systèmes de transport (TMS)."
+        ],
+        perspectives: [
+          "Directeur des Opérations Transport.",
+          "Consultant en optimisation de transport.",
+          "Directeur logistique d'entreprise.",
+          "Expert en mobilité et transport durable."
+        ],
+        environnementTravail: [
+          "Sociétés de transport et messagerie.",
+          "Entreprises avec flotte de véhicules.",
+          "Prestataires logistiques et de distribution.",
+          "Cabinets de conseil en transport."
+        ],
+        tags: ['Transport', 'Flotte', 'Routes', 'Sécurité', 'TMS']
+      },
+      {
+        id: 'analyste-logistique',
+        titre: 'Analyste Logistique / Logistics Analyst',
+        description: "L'Analyste Logistique collecte, analyse et interprète les données logistiques pour optimiser les processus. Il utilise des outils d'analyse avancés pour identifier les améliorations possibles et proposer des solutions data-driven.",
+        secteur: 'transport',
+        missions: [
+          "Collecter et analyser les données logistiques (KPI, métriques).",
+          "Créer des tableaux de bord et rapports de performance.",
+          "Identifier les opportunités d'optimisation logistique.",
+          "Modéliser des scénarios et simulations logistiques.",
+          "Présenter les recommandations aux équipes opérationnelles."
+        ],
+        competencesRequises: [
+          { nom: 'Analyse de données et business intelligence', niveau: 'expert' },
+          { nom: 'Outils d\'analyse (Excel, Power BI, Tableau)', niveau: 'avancé' },
+          { nom: 'Processus logistiques et supply chain', niveau: 'avancé' },
+          { nom: 'Statistiques et modélisation prédictive', niveau: 'intermédiaire' },
+          { nom: 'Communication et présentation de résultats', niveau: 'avancé' }
         ],
         salaireMoyen: {
           junior: { min: 400000, max: 800000 },
@@ -1358,21 +1454,24 @@ const secteurs: Secteur[] = [
           senior: { min: 1600000, max: 3000000 }
         },
         formation: [
-          'Master en Logistique',
-          'École de commerce',
-          'Certifications logistiques'
+          "Master en Logistique, Supply Chain ou Data Science.",
+          "Formation en business intelligence et analyse de données.",
+          "Certifications en outils d'analyse (Power BI, Tableau).",
+          "Formations continues en optimisation logistique."
         ],
         perspectives: [
-          'Directeur Supply Chain',
-          'Consultant logistique',
-          'Responsable des opérations'
+          "Senior Analyst ou Lead Data Analyst.",
+          "Consultant en optimisation logistique.",
+          "Manager Supply Chain Analytics.",
+          "Expert en transformation digitale logistique."
         ],
         environnementTravail: [
-          'Entreprises industrielles',
-          'Transporteurs',
-          'Import-Export'
+          "Entreprises avec supply chain complexe.",
+          "Sociétés de transport et logistique.",
+          "Cabinets de conseil en logistique.",
+          "Startups logtech et entreprises tech."
         ],
-        tags: ['Logistique', 'Supply Chain', 'Transport']
+        tags: ['Analyse', 'Data', 'KPI', 'Optimisation', 'Business Intelligence']
       }
     ]
   },
