@@ -208,6 +208,7 @@ const MarketplaceItemPage: React.FC = () => {
         <BackButton
           icon={<ArrowLeftOutlined />}
           onClick={() => navigate('/marketplace')}
+          style={{ marginTop: 32 }}
         >
           Retour au Marketplace
         </BackButton>
