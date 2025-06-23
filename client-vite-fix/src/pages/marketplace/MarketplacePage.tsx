@@ -107,7 +107,7 @@ const MarketplacePage: React.FC = () => {
 
   const handleOpenModal = () => {
     if (loadingSub) return;
-    if (!(user?.role === 'admin' || (hasActiveSubscription && userSubscription?.type === 'annonceur'))) {
+    if (!(user?.role === 'admin' || (hasActiveSubscription && user?.role === 'annonceur'))) {
       message.error('Seuls les annonceurs abonnés ou les admins peuvent publier une annonce.');
       return;
     }
