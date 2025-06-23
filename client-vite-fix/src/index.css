@@ -125,3 +125,33 @@ button:focus-visible {
     padding-right: 0 !important;
   }
 }
+
+/* Affichage multi-lignes des tabs secteurs (Carrières) */
+.ant-tabs-nav {
+  flex-wrap: wrap !important;
+  display: flex !important;
+  justify-content: flex-start !important;
+  row-gap: 8px;
+  column-gap: 8px;
+  padding-bottom: 8px;
+  min-height: 48px;
+  background: transparent;
+}
+
+/* Pour éviter l'overflow horizontal sur mobile */
+.ant-tabs-nav-list {
+  flex-wrap: wrap !important;
+  display: flex !important;
+  row-gap: 8px;
+  column-gap: 8px;
+  width: 100%;
+  background: transparent;
+}
+
+@media (max-width: 900px) {
+  .ant-tabs-nav, .ant-tabs-nav-list {
+    row-gap: 4px;
+    column-gap: 4px;
+    min-height: 40px;
+  }
+}
