@@ -1,5 +1,5 @@
-import React from 'react';
-import { Card, Typography, Button, Space, Avatar, Row, Col, Tag, Spin, List, message, Modal } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Card, Typography, Button, Space, Avatar, Row, Col, Tag, Spin, List, message, Modal, notification } from 'antd';
 import {
   UserOutlined,
   FileTextOutlined,
@@ -13,8 +13,9 @@ import {
 } from '@ant-design/icons';
 import { useAuth } from '../context/AuthContext';
 import { JobService } from '../services/jobService';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import type { JobData } from '../types/job';
+import { paymentService } from '../services/paymentService';
 
 const { Title, Text, Paragraph } = Typography;
 const { confirm } = Modal;
@@ -58,11 +59,37 @@ const quickAccessItems = [
 ];
 
 const Dashboard: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, refreshAuth } = useAuth();
   const navigate = useNavigate();
-  const [jobs, setJobs] = React.useState<JobData[]>([]);
-  const [myJobs, setMyJobs] = React.useState<JobData[]>([]);
-  const [loading, setLoading] = React.useState(true);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [jobs, setJobs] = useState<JobData[]>([]);
+  const [myJobs, setMyJobs] = useState<JobData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkPaymentStatus = async () => {
+      const paymentToken = searchParams.get('token') || searchParams.get('transaction_id');
+      if (paymentToken) {
+        try {
+          const response = await paymentService.verifyPayment({ token: paymentToken });
+          if (response.success) {
+            await refreshAuth();
+          } else {
+            console.error('La vérification du paiement a échoué:', response.message);
+          }
+        } catch (error: any) {
+          console.error('Erreur lors de la vérification du paiement:', error.message);
+        } finally {
+          // Nettoyer l'URL pour éviter de relancer la vérification
+          searchParams.delete('token');
+          searchParams.delete('transaction_id');
+          setSearchParams(searchParams, { replace: true });
+        }
+      }
+    };
+
+    checkPaymentStatus();
+  }, []); // Exécuté une seule fois
 
   React.useEffect(() => {
     JobService.getJobs().then(response => {
