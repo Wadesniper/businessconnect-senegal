@@ -2029,75 +2029,141 @@ const secteurs: Secteur[] = [
   {
     id: 'industrie',
     nom: 'Industrie & Manufacturing',
-    description: 'Les métiers de l\'industrie et de la production manufacturière',
+    description: "Le secteur industriel et manufacturier au Sénégal connaît une transformation majeure avec l'émergence de nouvelles technologies et l'optimisation des processus de production. Les opportunités sont nombreuses pour les professionnels qualifiés dans la gestion de production, la maintenance industrielle et l'innovation technologique.",
     icone: '🏭',
     couleur: '#597ef7',
     metiers: [
       {
         id: 'ingenieur-production',
         titre: 'Ingénieur de Production',
-        description: 'Optimise et supervise les processus de production industrielle',
+        description: "L'Ingénieur de Production optimise et supervise les processus de production industrielle. Il assure la gestion des ressources, l'amélioration des performances et la mise en œuvre des technologies innovantes pour maximiser l'efficacité opérationnelle.",
         secteur: 'industrie',
+        missions: [
+          "Optimiser les processus de production et les flux de travail.",
+          "Gérer les équipes de production et coordonner les activités.",
+          "Implémenter les méthodes Lean Manufacturing et Six Sigma.",
+          "Analyser les performances et proposer des améliorations.",
+          "Assurer la conformité aux normes de qualité et de sécurité."
+        ],
         competencesRequises: [
-          { nom: 'Gestion de production', niveau: 'expert' },
-          { nom: 'Lean Manufacturing', niveau: 'avancé' },
-          { nom: 'Qualité industrielle', niveau: 'avancé' },
-          { nom: 'Management équipe', niveau: 'expert' }
+          { nom: 'Gestion de production et planification', niveau: 'expert' },
+          { nom: 'Méthodes Lean Manufacturing et Six Sigma', niveau: 'expert' },
+          { nom: 'Qualité industrielle et contrôle qualité', niveau: 'avancé' },
+          { nom: 'Management d\'équipe et leadership', niveau: 'expert' },
+          { nom: 'Outils d\'analyse et de performance', niveau: 'avancé' }
         ],
         salaireMoyen: {
-          junior: { min: 600000, max: 1000000 },
-          confirme: { min: 1000000, max: 2000000 },
-          senior: { min: 2000000, max: 3500000 }
+          junior: { min: 700000, max: 1200000 },
+          confirme: { min: 1200000, max: 2500000 },
+          senior: { min: 2500000, max: 4000000 }
         },
         formation: [
-          'Ingénieur industriel',
-          'Master Production',
-          'Certifications Lean'
+          "Ingénieur industriel ou Master en génie industriel.",
+          "Certifications Lean Six Sigma (Green Belt, Black Belt).",
+          "Formations continues en nouvelles technologies.",
+          "Certifications en management de production."
         ],
         perspectives: [
-          'Directeur de production',
-          'Responsable d\'usine',
-          'Consultant industriel'
+          "Directeur de production ou Responsable d'usine.",
+          "Consultant en optimisation industrielle.",
+          "Responsable de projets d'amélioration continue.",
+          "Expert en transformation digitale industrielle."
         ],
         environnementTravail: [
-          'Usines',
-          'Sites industriels',
-          'Bureaux d\'études'
+          "Usines et sites de production industrielle.",
+          "Bureaux d'études et cabinets de conseil.",
+          "Centres de recherche et développement.",
+          "Entreprises de services industriels."
         ],
-        tags: ['Industrie', 'Production', 'Manufacturing']
+        tags: ['Industrie', 'Production', 'Lean Manufacturing', 'Optimisation', 'Management']
       },
       {
         id: 'technicien-maintenance',
         titre: 'Technicien de Maintenance Industrielle',
-        description: 'Assure la maintenance préventive et corrective des équipements industriels',
+        description: "Le Technicien de Maintenance Industrielle assure la maintenance préventive et corrective des équipements industriels. Il garantit la disponibilité et la fiabilité des installations pour optimiser la production.",
         secteur: 'industrie',
+        missions: [
+          "Effectuer la maintenance préventive des équipements.",
+          "Diagnostiquer et réparer les pannes et dysfonctionnements.",
+          "Gérer les stocks de pièces détachées et consommables.",
+          "Former les opérateurs aux bonnes pratiques d'utilisation.",
+          "Participer à l'amélioration continue des équipements."
+        ],
         competencesRequises: [
-          { nom: 'Mécanique industrielle', niveau: 'expert' },
-          { nom: 'Électrotechnique', niveau: 'avancé' },
-          { nom: 'Automatismes', niveau: 'avancé' },
-          { nom: 'GMAO', niveau: 'intermédiaire' }
+          { nom: 'Mécanique industrielle et pneumatique', niveau: 'expert' },
+          { nom: 'Électrotechnique et automatismes', niveau: 'avancé' },
+          { nom: 'GMAO et gestion de maintenance', niveau: 'avancé' },
+          { nom: 'Diagnostic et dépannage', niveau: 'expert' },
+          { nom: 'Sécurité industrielle et prévention', niveau: 'avancé' }
         ],
         salaireMoyen: {
-          junior: { min: 300000, max: 600000 },
-          confirme: { min: 600000, max: 1200000 },
-          senior: { min: 1200000, max: 2000000 }
+          junior: { min: 350000, max: 700000 },
+          confirme: { min: 700000, max: 1400000 },
+          senior: { min: 1400000, max: 2200000 }
         },
         formation: [
-          'BTS Maintenance',
-          'DUT Génie industriel',
-          'Formation continue'
+          "BTS Maintenance Industrielle ou DUT Génie industriel.",
+          "Formation continue en nouvelles technologies.",
+          "Certifications en sécurité industrielle.",
+          "Formations spécialisées par type d'équipement."
         ],
         perspectives: [
-          'Responsable maintenance',
-          'Chef d\'équipe',
-          'Technicien spécialisé'
+          "Responsable maintenance ou Chef d'équipe.",
+          "Technicien spécialisé ou Expert technique.",
+          "Formateur en maintenance industrielle.",
+          "Consultant en optimisation de maintenance."
         ],
         environnementTravail: [
-          'Industries',
-          'Usines',
-          'Services techniques'
+          "Usines et sites industriels.",
+          "Services techniques et ateliers de maintenance.",
+          "Centres de formation technique.",
+          "Entreprises de services industriels."
         ],
-        tags: ['Maintenance', 'Industrie', 'Technique']
+        tags: ['Maintenance', 'Industrie', 'Technique', 'Équipements', 'Diagnostic']
+      },
+      {
+        id: 'responsable-qualite',
+        titre: 'Responsable Qualité Industrielle',
+        description: "Le Responsable Qualité Industrielle assure la mise en place et le suivi des systèmes de management de la qualité. Il garantit la conformité aux normes et standards industriels pour optimiser la satisfaction client.",
+        secteur: 'industrie',
+        missions: [
+          "Mettre en place et maintenir le système de management qualité.",
+          "Conduire les audits qualité internes et externes.",
+          "Analyser les non-conformités et proposer des actions correctives.",
+          "Former les équipes aux procédures qualité.",
+          "Assurer la veille réglementaire et normative."
+        ],
+        competencesRequises: [
+          { nom: 'Systèmes de management qualité (ISO 9001)', niveau: 'expert' },
+          { nom: 'Audit qualité et techniques d\'audit', niveau: 'expert' },
+          { nom: 'Analyse des risques et actions correctives', niveau: 'avancé' },
+          { nom: 'Formation et sensibilisation des équipes', niveau: 'avancé' },
+          { nom: 'Réglementation et normes industrielles', niveau: 'expert' }
+        ],
+        salaireMoyen: {
+          junior: { min: 500000, max: 900000 },
+          confirme: { min: 900000, max: 1800000 },
+          senior: { min: 1800000, max: 3000000 }
+        },
+        formation: [
+          "Formation en management de la qualité industrielle.",
+          "Certifications auditeur qualité (ISO 9001).",
+          "Formation en analyse des risques et actions correctives.",
+          "Formations continues en nouvelles normes."
+        ],
+        perspectives: [
+          "Directeur qualité ou Responsable assurance qualité.",
+          "Auditeur qualité indépendant.",
+          "Consultant en management de la qualité.",
+          "Expert en certification et accréditation."
+        ],
+        environnementTravail: [
+          "Usines et sites de production.",
+          "Cabinets de conseil en qualité.",
+          "Organismes de certification.",
+          "Centres de formation technique."
+        ],
+        tags: ['Qualité', 'Industrie', 'Audit', 'ISO 9001', 'Management']
       }
     ]
   },
