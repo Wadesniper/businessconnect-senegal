@@ -528,263 +528,696 @@ const secteurs: Secteur[] = [
   {
     id: 'sante',
     nom: 'Santé & Médical',
-    description: "Le secteur de la santé au Sénégal est en pleine structuration, avec des investissements importants dans les infrastructures hospitalières et la formation. La demande pour des professionnels qualifiés est forte, tant dans le secteur public que privé, avec des enjeux majeurs de santé publique et de couverture médicale universelle (CMU).",
+    description: 'Les métiers de la santé et du secteur médical',
     icone: '⚕️',
-    couleur: '#ff4d4f',
+    couleur: '#eb2f96',
     metiers: [
       {
         id: 'medecin-generaliste',
         titre: 'Médecin Généraliste',
-        description: "En première ligne du système de santé, le médecin généraliste assure le diagnostic, le traitement des maladies courantes et le suivi à long terme des patients. Il joue un rôle essentiel dans la prévention et l'orientation vers les spécialistes.",
+        description: 'Assure les soins de santé primaires et le suivi des patients',
         secteur: 'sante',
-        missions: [
-          "Mener des consultations de médecine générale (anamnèse, examen clinique).",
-          "Prescrire des traitements médicamenteux et des examens complémentaires.",
-          "Assurer le suivi des maladies chroniques (diabète, HTA) et la vaccination.",
-          "Participer à des campagnes de santé publique et de prévention.",
-          "Gérer le dossier médical des patients."
-        ],
         competencesRequises: [
-          { nom: 'Connaissances médicales générales solides', niveau: 'expert' },
-          { nom: 'Capacité de diagnostic clinique', niveau: 'expert' },
-          { nom: 'Excellentes qualités d\'écoute et d\'empathie', niveau: 'expert' },
-          { nom: 'Gestion de l\'urgence médicale', niveau: 'avancé' },
-          { nom: 'Connaissance du système de santé sénégalais', niveau: 'avancé' }
+          { nom: 'Diagnostic clinique', niveau: 'expert' },
+          { nom: 'Relations patients', niveau: 'expert' },
+          { nom: 'Connaissances médicales', niveau: 'expert' },
+          { nom: 'Gestion cabinet', niveau: 'intermédiaire' }
         ],
         salaireMoyen: {
-          junior: { min: 700000, max: 1200000 },
-          confirme: { min: 1200000, max: 2500000 },
-          senior: { min: 2500000, max: 4500000 }
+          junior: { min: 800000, max: 1500000 },
+          confirme: { min: 1500000, max: 3000000 },
+          senior: { min: 3000000, max: 5000000 }
         },
         formation: [
-          "Doctorat d'État en Médecine, délivré par une faculté de médecine (UCAD, UGB, etc.).",
-          "Inscription à l'Ordre National des Médecins du Sénégal."
+          'Doctorat en Médecine',
+          'Internat',
+          'Formation continue'
         ],
         perspectives: [
-          "Spécialisation via l'internat ou le résidanat (cardiologie, pédiatrie, etc.).",
-          "Ouvrir son propre cabinet médical.",
-          "Carrière en santé publique ou dans l'humanitaire.",
-          "Direction d'un centre de santé ou d'un district sanitaire."
+          'Installation en cabinet',
+          'Médecin chef',
+          'Spécialisation'
         ],
         environnementTravail: [
-          "Hôpitaux publics et privés",
-          "Postes et centres de santé",
-          "Cabinets médicaux libéraux",
-          "ONG et organisations internationales."
+          'Cabinet privé',
+          'Hôpital',
+          'Clinique'
         ],
-        tags: ['Médecine', 'Soins', 'Santé publique', 'Diagnostic', 'Prévention']
+        tags: ['Médecine', 'Soins', 'Santé publique']
       },
       {
-        id: 'pharmacien',
+        id: 'pharmacien-clinicien',
         titre: 'Pharmacien Clinicien',
-        description: "Le pharmacien est le spécialiste du médicament. Au-delà de la dispensation en officine, il joue un rôle de plus en plus clinique dans les établissements de santé, assurant le bon usage des médicaments et la pharmacovigilance.",
+        description: 'Assure le suivi thérapeutique et la sécurité des traitements',
         secteur: 'sante',
-        missions: [
-          "Analyser les prescriptions médicales et délivrer les médicaments.",
-          "Conseiller les patients sur le bon usage des traitements et les effets secondaires.",
-          "Gérer les stocks de médicaments et de dispositifs médicaux.",
-          "Participer à la pharmacovigilance (déclaration des effets indésirables).",
-          "Réaliser des préparations magistrales."
-        ],
         competencesRequises: [
-          { nom: 'Pharmacologie et connaissances thérapeutiques', niveau: 'expert' },
-          { nom: 'Législation pharmaceutique sénégalaise', niveau: 'expert' },
-          { nom: 'Gestion des stocks et logistique', niveau: 'avancé' },
-          { nom: 'Bonnes pratiques de dispensation', niveau: 'expert' },
-          { nom: 'Conseil et communication patient', niveau: 'avancé' }
+          { nom: 'Pharmacologie', niveau: 'expert' },
+          { nom: 'Suivi thérapeutique', niveau: 'expert' },
+          { nom: 'Pharmacovigilance', niveau: 'avancé' },
+          { nom: 'Logiciels santé', niveau: 'intermédiaire' }
         ],
         salaireMoyen: {
-          junior: { min: 600000, max: 1000000 },
-          confirme: { min: 1000000, max: 2000000 },
-          senior: { min: 2000000, max: 3500000 }
+          junior: { min: 600000, max: 1200000 },
+          confirme: { min: 1200000, max: 2400000 },
+          senior: { min: 2400000, max: 3500000 }
         },
         formation: [
-          "Doctorat d'État en Pharmacie.",
-          "Inscription à l'Ordre National des Pharmaciens du Sénégal."
+          'Doctorat en Pharmacie',
+          'Spécialisation clinique',
+          'Formation continue'
         ],
         perspectives: [
-          "Spécialisation (biologie médicale, pharmacie hospitalière).",
-          "Devenir propriétaire d'une officine.",
-          "Carrière dans l'industrie pharmaceutique (affaires réglementaires, marketing).",
-          "Intégrer les corps de pharmaciens-inspecteurs de la santé publique."
+          'Chef de service pharmacie',
+          'Directeur pharmacie',
+          'Consultant pharmaceutique'
         ],
         environnementTravail: [
-          "Pharmacies d'officine (privées)",
-          "Pharmacies à usage intérieur (PUI) dans les hôpitaux et cliniques",
-          "Industrie pharmaceutique",
-          "Grossistes-répartiteurs."
+          'Hôpitaux',
+          'Cliniques',
+          'Centres de santé'
         ],
-        tags: ['Santé', 'Pharmacie', 'Clinique', 'Médicament', 'Conseil']
+        tags: ['Santé', 'Pharmacie', 'Clinique']
       },
       {
-        id: 'infirmier',
+        id: 'infirmier-specialise',
         titre: 'Infirmier Spécialisé',
-        description: "Pilier des équipes de soins, l'infirmier dispense les soins prescrits par le médecin, surveille l'état de santé des patients et assure leur confort. Les spécialisations (anesthésie-réanimation, bloc opératoire, pédiatrie) sont très recherchées.",
+        description: 'Prodigue des soins spécialisés et assure le suivi des patients',
         secteur: 'sante',
-        missions: [
-          "Réaliser les soins infirmiers (pansements, injections, perfusions).",
-          "Administrer les traitements et surveiller leur efficacité.",
-          "Assurer la surveillance continue des patients (constantes vitales).",
-          "Participer à l'éducation thérapeutique du patient et de sa famille.",
-          "Travailler en collaboration avec les médecins et les aides-soignants."
-        ],
         competencesRequises: [
-          { nom: 'Maîtrise des techniques de soins infirmiers', niveau: 'expert' },
-          { nom: 'Connaissance des protocoles d\'hygiène et d\'asepsie', niveau: 'expert' },
-          { nom: 'Rigueur, organisation et gestion du stress', niveau: 'expert' },
-          { nom: 'Compétences relationnelles et empathie', niveau: 'avancé' },
-          { nom: 'Utilisation des outils informatiques de suivi des soins', niveau: 'intermédiaire' }
+          { nom: 'Soins infirmiers', niveau: 'expert' },
+          { nom: 'Urgences', niveau: 'avancé' },
+          { nom: 'Gestion équipe', niveau: 'avancé' },
+          { nom: 'Protocoles médicaux', niveau: 'expert' }
         ],
         salaireMoyen: {
-          junior: { min: 250000, max: 450000 },
-          confirme: { min: 450000, max: 700000 },
-          senior: { min: 700000, max: 1200000 }
+          junior: { min: 400000, max: 800000 },
+          confirme: { min: 800000, max: 1600000 },
+          senior: { min: 1600000, max: 2500000 }
         },
         formation: [
-          "Diplôme d'État d'Infirmier.",
-          "Diplômes de spécialisation (Infirmier anesthésiste, IBODE, puériculture)."
+          'Diplôme Infirmier',
+          'Spécialisation',
+          'Formation continue'
         ],
         perspectives: [
-          "Devenir cadre de santé ou infirmier en chef.",
-          "Se spécialiser davantage ou se tourner vers la formation.",
-          "Ouvrir un cabinet de soins infirmiers libéral.",
-          "Intégrer des programmes de santé publique."
+          'Cadre de santé',
+          'Coordinateur soins',
+          'Formateur'
         ],
         environnementTravail: [
-          "Hôpitaux et cliniques (tous services)",
-          "Centres de santé",
-          "Soins à domicile",
-          "Médecine du travail, médecine scolaire."
+          'Hôpitaux',
+          'Cliniques privées',
+          'Centres spécialisés'
         ],
-        tags: ['Santé', 'Soins', 'Médical', 'Hôpital', 'Patient']
+        tags: ['Santé', 'Soins', 'Médical']
       },
       {
         id: 'chirurgien-specialiste',
         titre: 'Chirurgien Spécialiste',
-        description: "Le chirurgien réalise des interventions chirurgicales pour traiter des maladies, des blessures ou des malformations. C'est une profession qui exige une haute technicité, une grande résistance au stress et de longues années d'études.",
+        description: 'Réalise des interventions chirurgicales spécialisées',
         secteur: 'sante',
-        missions: [
-          "Poser l'indication opératoire lors de consultations pré-chirurgicales.",
-          "Réaliser l'intervention chirurgicale en respectant des protocoles stricts.",
-          "Assurer le suivi post-opératoire des patients, en collaboration avec les anesthésistes et les infirmiers.",
-          "Participer aux gardes et astreintes.",
-          "Se former continuellement aux nouvelles techniques chirurgicales."
-        ],
         competencesRequises: [
-          { nom: 'Maîtrise des techniques chirurgicales de sa spécialité', niveau: 'expert' },
-          { nom: 'Excellente connaissance de l\'anatomie et de la physiologie', niveau: 'expert' },
-          { nom: 'Grande dextérité manuelle et précision', niveau: 'expert' },
-          { nom: 'Capacité à prendre des décisions rapides sous pression', niveau: 'expert' },
-          { nom: 'Endurance physique et mentale', niveau: 'expert' }
+          { nom: 'Chirurgie', niveau: 'expert' },
+          { nom: 'Anatomie', niveau: 'expert' },
+          { nom: 'Techniques opératoires', niveau: 'expert' },
+          { nom: 'Gestion équipe bloc', niveau: 'avancé' }
         ],
         salaireMoyen: {
-          junior: { min: 1500000, max: 3000000 },
-          confirme: { min: 3000000, max: 6000000 },
-          senior: { min: 6000000, max: 10000000 }
+          junior: { min: 1200000, max: 2400000 },
+          confirme: { min: 2400000, max: 4800000 },
+          senior: { min: 4800000, max: 8000000 }
         },
         formation: [
-          "Doctorat en médecine puis spécialisation via le concours de l'internat (5 à 6 ans supplémentaires).",
-          "Spécialités : Chirurgie viscérale, orthopédique, urologie, neurochirurgie, etc."
+          'Doctorat en Médecine',
+          'Spécialisation chirurgicale',
+          'Formation continue'
         ],
         perspectives: [
-          "Devenir chef de service hospitalier.",
-          "Développer une activité libérale en clinique privée.",
-          "Carrière hospitalo-universitaire (enseignement et recherche).",
-          "Participer à des missions humanitaires."
+          'Chef de service chirurgie',
+          'Directeur médical',
+          'Professeur de médecine'
         ],
         environnementTravail: [
-          "Blocs opératoires des hôpitaux et cliniques.",
-          "Services de chirurgie.",
-          "Consultations externes."
+          'Hôpitaux',
+          'Cliniques privées',
+          'Centres chirurgicaux'
         ],
-        tags: ['Chirurgie', 'Médecine', 'Spécialisation', 'Bloc opératoire', 'Intervention']
+        tags: ['Chirurgie', 'Médecine', 'Spécialisation']
       },
       {
         id: 'radiologue',
         titre: 'Radiologue',
-        description: "Le médecin radiologue est spécialisé dans l'obtention et l'interprétation des images médicales (radiographie, échographie, scanner, IRM). Son rôle est fondamental dans le parcours de diagnostic des patients.",
+        description: 'Réalise et interprète les examens d\'imagerie médicale',
         secteur: 'sante',
-        missions: [
-          "Superviser la réalisation des examens d'imagerie.",
-          "Interpréter les images et rédiger un compte-rendu pour le médecin traitant.",
-          "Réaliser des actes de radiologie interventionnelle (biopsies, drainages guidés par l'image).",
-          "S'assurer du respect des règles de radioprotection pour le patient et le personnel.",
-          "Participer aux staffs pluridisciplinaires pour discuter des cas patients."
-        ],
         competencesRequises: [
-          { nom: 'Connaissance approfondie des différentes techniques d\'imagerie', niveau: 'expert' },
-          { nom: 'Solides compétences en sémiologie radiologique', niveau: 'expert' },
-          { nom: 'Précision et rigueur dans l\'interprétation', niveau: 'expert' },
-          { nom: 'Maîtrise des outils informatiques (PACS, RIS)', niveau: 'avancé' },
-          { nom: 'Bonne communication avec les autres spécialistes', niveau: 'avancé' }
+          { nom: 'Imagerie médicale', niveau: 'expert' },
+          { nom: 'Diagnostic', niveau: 'expert' },
+          { nom: 'Technologies médicales', niveau: 'avancé' },
+          { nom: 'IA médicale', niveau: 'intermédiaire' }
         ],
         salaireMoyen: {
-          junior: { min: 1200000, max: 2500000 },
-          confirme: { min: 2500000, max: 5000000 },
-          senior: { min: 5000000, max: 9000000 }
+          junior: { min: 1000000, max: 2000000 },
+          confirme: { min: 2000000, max: 4000000 },
+          senior: { min: 4000000, max: 7000000 }
         },
         formation: [
-          "Doctorat en médecine puis spécialisation en radiologie et imagerie médicale via l'internat."
+          'Doctorat en Médecine',
+          'Spécialisation radiologie',
+          'Formation technologies'
         ],
         perspectives: [
-          "S'installer en libéral et investir dans son propre plateau technique.",
-          "Se sur-spécialiser (neuroradiologie, imagerie de la femme, etc.).",
-          "Carrière hospitalo-universitaire.",
-          "Développer la téléradiologie."
+          'Chef service radiologie',
+          'Directeur imagerie',
+          'Expert consultant'
         ],
         environnementTravail: [
-          "Cabinets de radiologie libéraux.",
-          "Services d'imagerie médicale des hôpitaux et cliniques.",
-          "Centres de dépistage."
+          'Centres d\'imagerie',
+          'Hôpitaux',
+          'Cliniques'
         ],
-        tags: ['Radiologie', 'Imagerie', 'Diagnostic', 'Scanner', 'IRM']
+        tags: ['Radiologie', 'Imagerie', 'Diagnostic']
       },
       {
         id: 'kinesitherapeute',
         titre: 'Kinésithérapeute',
-        description: "Le kinésithérapeute (ou masseur-kinésithérapeute) est le spécialiste de la rééducation fonctionnelle. Il intervient sur prescription médicale pour aider les patients à retrouver leurs capacités motrices après une blessure, une chirurgie ou une maladie.",
+        description: 'Assure la rééducation et la réadaptation fonctionnelle',
         secteur: 'sante',
-        missions: [
-          "Établir un bilan diagnostic kinésithérapique.",
-          "Mettre en œuvre des techniques de rééducation (massages, mobilisations, renforcement musculaire).",
-          "Utiliser des techniques de physiothérapie (ultrasons, électrothérapie).",
-          "Éduquer le patient et lui apprendre des auto-exercices.",
-          "Assurer la traçabilité des soins dans le dossier du patient."
-        ],
         competencesRequises: [
-          { nom: 'Connaissances en anatomie, physiologie et biomécanique', niveau: 'expert' },
-          { nom: 'Maîtrise des techniques de masso-kinésithérapie', niveau: 'expert' },
-          { nom: 'Qualités pédagogiques et patience', niveau: 'expert' },
-          { nom: 'Bonne condition physique', niveau: 'avancé' },
-          { nom: 'Écoute et sens du contact', niveau: 'expert' }
+          { nom: 'Techniques de rééducation', niveau: 'expert' },
+          { nom: 'Anatomie', niveau: 'expert' },
+          { nom: 'Biomécanique', niveau: 'avancé' },
+          { nom: 'Sport-santé', niveau: 'avancé' }
         ],
         salaireMoyen: {
-          junior: { min: 300000, max: 500000 },
-          confirme: { min: 500000, max: 800000 },
-          senior: { min: 800000, max: 1500000 }
+          junior: { min: 400000, max: 800000 },
+          confirme: { min: 800000, max: 1600000 },
+          senior: { min: 1600000, max: 3000000 }
         },
         formation: [
-          "Diplôme d'État de Masseur-Kinésithérapeute."
+          'Diplôme Kinésithérapie',
+          'Spécialisations',
+          'Formation continue'
         ],
         perspectives: [
-          "Ouvrir son propre cabinet de kinésithérapie.",
-          "Se spécialiser (kiné du sport, respiratoire, pédiatrique, ostéopathie).",
-          "Devenir cadre de santé dans un service de rééducation.",
-          "Intervenir au sein de clubs sportifs."
+          'Cabinet privé',
+          'Coordinateur rééducation',
+          'Enseignant'
         ],
         environnementTravail: [
-          "Cabinets libéraux",
-          "Centres de rééducation fonctionnelle",
-          "Hôpitaux et cliniques",
-          "Établissements pour personnes âgées (EHPAD)",
-          "Clubs sportifs."
+          'Cabinet libéral',
+          'Centres rééducation',
+          'Clubs sportifs'
         ],
-        tags: ['Rééducation', 'Sport', 'Santé', 'Kinésithérapie', 'Mouvement']
+        tags: ['Rééducation', 'Sport', 'Santé']
       }
     ]
   },
   {
-    id: 'agro',
+    id: 'marketing',
+    nom: 'Marketing & Communication',
+    description: 'Les métiers du marketing, de la communication et de la publicité',
+    icone: '📢',
+    couleur: '#722ed1',
+    metiers: [
+      {
+        id: 'digital-marketer',
+        titre: 'Digital Marketing Manager',
+        description: 'Élabore et met en œuvre la stratégie marketing digital de l\'entreprise',
+        secteur: 'marketing',
+        competencesRequises: [
+          { nom: 'Marketing Digital', niveau: 'expert' },
+          { nom: 'Google Analytics', niveau: 'avancé' },
+          { nom: 'SEO/SEA', niveau: 'avancé' },
+          { nom: 'Réseaux sociaux', niveau: 'expert' },
+          { nom: 'Content Marketing', niveau: 'avancé' }
+        ],
+        salaireMoyen: {
+          junior: { min: 350000, max: 700000 },
+          confirme: { min: 700000, max: 1400000 },
+          senior: { min: 1400000, max: 2500000 }
+        },
+        formation: [
+          'Master en Marketing Digital',
+          'École de commerce',
+          'Certifications Google'
+        ],
+        perspectives: [
+          'Directeur Marketing',
+          'Chef de projet digital',
+          'Consultant Marketing'
+        ],
+        environnementTravail: [
+          'Agences digitales',
+          'Startups',
+          'Grandes entreprises'
+        ],
+        tags: ['Digital', 'Marketing', 'Communication', 'Web']
+      },
+      {
+        id: 'community-manager',
+        titre: 'Community Manager',
+        description: 'Gère et anime les communautés sur les réseaux sociaux',
+        secteur: 'marketing',
+        competencesRequises: [
+          { nom: 'Réseaux sociaux', niveau: 'expert' },
+          { nom: 'Création de contenu', niveau: 'avancé' },
+          { nom: 'Photoshop', niveau: 'intermédiaire' },
+          { nom: 'Copywriting', niveau: 'avancé' }
+        ],
+        salaireMoyen: {
+          junior: { min: 200000, max: 400000 },
+          confirme: { min: 400000, max: 800000 },
+          senior: { min: 800000, max: 1500000 }
+        },
+        formation: [
+          'BTS Communication',
+          'Licence Marketing Digital',
+          'Certifications réseaux sociaux'
+        ],
+        perspectives: [
+          'Social Media Manager',
+          'Digital Brand Manager',
+          'Responsable Communication'
+        ],
+        environnementTravail: [
+          'Agences de communication',
+          'Freelance',
+          'Entreprises'
+        ],
+        tags: ['Social Media', 'Communication', 'Content']
+      }
+    ]
+  },
+  {
+    id: 'education',
+    nom: 'Éducation & Formation',
+    description: 'Les métiers de l\'enseignement et de la formation professionnelle',
+    icone: '📚',
+    couleur: '#fa8c16',
+    metiers: [
+      {
+        id: 'formateur-pro',
+        titre: 'Formateur Professionnel',
+        description: 'Conçoit et anime des formations pour adultes dans divers domaines',
+        secteur: 'education',
+        competencesRequises: [
+          { nom: 'Pédagogie', niveau: 'expert' },
+          { nom: 'Conception de formation', niveau: 'avancé' },
+          { nom: 'Outils e-learning', niveau: 'intermédiaire' },
+          { nom: 'Animation de groupe', niveau: 'expert' }
+        ],
+        salaireMoyen: {
+          junior: { min: 300000, max: 600000 },
+          confirme: { min: 600000, max: 1200000 },
+          senior: { min: 1200000, max: 2000000 }
+        },
+        formation: [
+          'Master en Sciences de l\'Éducation',
+          'Certification de formateur',
+          'Expertise métier'
+        ],
+        perspectives: [
+          'Responsable pédagogique',
+          'Consultant formation',
+          'Directeur centre de formation'
+        ],
+        environnementTravail: [
+          'Centres de formation',
+          'Entreprises',
+          'Indépendant'
+        ],
+        tags: ['Formation', 'Pédagogie', 'E-learning']
+      },
+      {
+        id: 'edtech-specialist',
+        titre: 'Spécialiste EdTech',
+        description: 'Développe et met en œuvre des solutions d\'apprentissage numérique',
+        secteur: 'education',
+        competencesRequises: [
+          { nom: 'LMS', niveau: 'expert' },
+          { nom: 'Pédagogie numérique', niveau: 'expert' },
+          { nom: 'Production contenus', niveau: 'avancé' },
+          { nom: 'Analytics learning', niveau: 'avancé' }
+        ],
+        salaireMoyen: {
+          junior: { min: 400000, max: 800000 },
+          confirme: { min: 800000, max: 1600000 },
+          senior: { min: 1600000, max: 2800000 }
+        },
+        formation: [
+          'Master EdTech',
+          'Ingénierie pédagogique',
+          'Certifications e-learning'
+        ],
+        perspectives: [
+          'Directeur digital learning',
+          'Chef de projet EdTech',
+          'Consultant e-learning'
+        ],
+        environnementTravail: [
+          'Startups EdTech',
+          'Universités',
+          'Entreprises formation'
+        ],
+        tags: ['Education', 'Digital', 'E-learning']
+      },
+      {
+        id: 'conseiller-orientation',
+        titre: 'Conseiller en Orientation Numérique',
+        description: 'Guide les étudiants dans leur parcours académique et professionnel avec des outils numériques',
+        secteur: 'education',
+        competencesRequises: [
+          { nom: 'Conseil carrière', niveau: 'expert' },
+          { nom: 'Outils orientation', niveau: 'avancé' },
+          { nom: 'Psychologie', niveau: 'avancé' },
+          { nom: 'Digital coaching', niveau: 'intermédiaire' }
+        ],
+        salaireMoyen: {
+          junior: { min: 300000, max: 600000 },
+          confirme: { min: 600000, max: 1200000 },
+          senior: { min: 1200000, max: 2000000 }
+        },
+        formation: [
+          'Master Orientation',
+          'Psychologie',
+          'Certification coaching'
+        ],
+        perspectives: [
+          'Directeur orientation',
+          'Coach carrière',
+          'Consultant éducation'
+        ],
+        environnementTravail: [
+          'Établissements scolaires',
+          'Universités',
+          'Cabinets conseil'
+        ],
+        tags: ['Orientation', 'Education', 'Conseil']
+      }
+    ]
+  },
+  {
+    id: 'construction',
+    nom: 'Construction & BTP',
+    description: 'Les métiers du bâtiment et des travaux publics',
+    icone: '🏗️',
+    couleur: '#faad14',
+    metiers: [
+      {
+        id: 'ingenieur-civil',
+        titre: 'Ingénieur Génie Civil',
+        description: 'Conçoit et supervise les projets de construction et d\'infrastructure',
+        secteur: 'construction',
+        competencesRequises: [
+          { nom: 'Calcul structures', niveau: 'expert' },
+          { nom: 'AutoCAD', niveau: 'avancé' },
+          { nom: 'Gestion de projet', niveau: 'avancé' },
+          { nom: 'Normes construction', niveau: 'expert' }
+        ],
+        salaireMoyen: {
+          junior: { min: 600000, max: 1000000 },
+          confirme: { min: 1000000, max: 2000000 },
+          senior: { min: 2000000, max: 4000000 }
+        },
+        formation: [
+          'Diplôme d\'ingénieur',
+          'Master en Génie Civil',
+          'Certifications professionnelles'
+        ],
+        perspectives: [
+          'Chef de projets',
+          'Directeur technique',
+          'Expert consultant'
+        ],
+        environnementTravail: [
+          'Bureaux d\'études',
+          'Entreprises BTP',
+          'Cabinets d\'architecture'
+        ],
+        tags: ['Construction', 'Ingénierie', 'BTP']
+      },
+      {
+        id: 'architecte',
+        titre: 'Architecte',
+        description: 'Conçoit et suit la réalisation de projets architecturaux',
+        secteur: 'construction',
+        competencesRequises: [
+          { nom: 'Conception architecturale', niveau: 'expert' },
+          { nom: 'Logiciels 3D', niveau: 'avancé' },
+          { nom: 'Gestion de projet', niveau: 'avancé' },
+          { nom: 'Réglementation', niveau: 'expert' }
+        ],
+        salaireMoyen: {
+          junior: { min: 500000, max: 900000 },
+          confirme: { min: 900000, max: 1800000 },
+          senior: { min: 1800000, max: 3500000 }
+        },
+        formation: [
+          'Diplôme d\'architecte',
+          'DESA',
+          'Formations spécialisées'
+        ],
+        perspectives: [
+          'Architecte en chef',
+          'Directeur de cabinet',
+          'Urbaniste'
+        ],
+        environnementTravail: [
+          'Cabinets d\'architecture',
+          'Bureaux d\'études',
+          'Indépendant'
+        ],
+        tags: ['Architecture', 'Design', 'Construction']
+      }
+    ]
+  },
+  {
+    id: 'tourisme',
+    nom: 'Tourisme & Hôtellerie',
+    description: 'Les métiers du tourisme, de l\'hôtellerie et de la restauration',
+    icone: '🏨',
+    couleur: '#13c2c2',
+    metiers: [
+      {
+        id: 'manager-hotel',
+        titre: 'Directeur d\'Hôtel',
+        description: 'Gère et développe l\'activité d\'un établissement hôtelier',
+        secteur: 'tourisme',
+        competencesRequises: [
+          { nom: 'Gestion hôtelière', niveau: 'expert' },
+          { nom: 'Management d\'équipe', niveau: 'expert' },
+          { nom: 'Marketing hôtelier', niveau: 'avancé' },
+          { nom: 'Relation client', niveau: 'expert' }
+        ],
+        salaireMoyen: {
+          junior: { min: 800000, max: 1500000 },
+          confirme: { min: 1500000, max: 2500000 },
+          senior: { min: 2500000, max: 4500000 }
+        },
+        formation: [
+          'Master en Management Hôtelier',
+          'École hôtelière',
+          'MBA Hospitality'
+        ],
+        perspectives: [
+          'Directeur régional',
+          'Consultant hôtelier',
+          'Propriétaire d\'établissement'
+        ],
+        environnementTravail: [
+          'Hôtels',
+          'Resorts',
+          'Groupes hôteliers'
+        ],
+        tags: ['Hôtellerie', 'Management', 'Tourisme']
+      }
+    ]
+  },
+  {
+    id: 'transport',
+    nom: 'Transport & Logistique',
+    description: 'Les métiers du transport, de la logistique et de la supply chain',
+    icone: '🚛',
+    couleur: '#1890ff',
+    metiers: [
+      {
+        id: 'responsable-logistique',
+        titre: 'Responsable Logistique',
+        description: 'Optimise et gère la chaîne logistique de l\'entreprise',
+        secteur: 'transport',
+        competencesRequises: [
+          { nom: 'Supply Chain', niveau: 'expert' },
+          { nom: 'Gestion des stocks', niveau: 'expert' },
+          { nom: 'Transport international', niveau: 'avancé' },
+          { nom: 'ERP', niveau: 'avancé' }
+        ],
+        salaireMoyen: {
+          junior: { min: 400000, max: 800000 },
+          confirme: { min: 800000, max: 1600000 },
+          senior: { min: 1600000, max: 3000000 }
+        },
+        formation: [
+          'Master en Logistique',
+          'École de commerce',
+          'Certifications logistiques'
+        ],
+        perspectives: [
+          'Directeur Supply Chain',
+          'Consultant logistique',
+          'Responsable des opérations'
+        ],
+        environnementTravail: [
+          'Entreprises industrielles',
+          'Transporteurs',
+          'Import-Export'
+        ],
+        tags: ['Logistique', 'Supply Chain', 'Transport']
+      }
+    ]
+  },
+  {
+    id: 'environnement',
+    nom: 'Environnement & Énergie',
+    description: 'Les métiers de l\'environnement, des énergies renouvelables et du développement durable',
+    icone: '🌱',
+    couleur: '#52c41a',
+    metiers: [
+      {
+        id: 'ingenieur-energie-solaire',
+        titre: 'Ingénieur en Énergie Solaire',
+        description: 'Conçoit et met en œuvre des solutions d\'énergie solaire',
+        secteur: 'environnement',
+        competencesRequises: [
+          { nom: 'Technologie solaire', niveau: 'expert' },
+          { nom: 'Gestion de projet', niveau: 'avancé' },
+          { nom: 'Dimensionnement', niveau: 'expert' },
+          { nom: 'AutoCAD', niveau: 'intermédiaire' }
+        ],
+        salaireMoyen: {
+          junior: { min: 500000, max: 900000 },
+          confirme: { min: 900000, max: 1800000 },
+          senior: { min: 1800000, max: 3500000 }
+        },
+        formation: [
+          'Ingénieur énergéticien',
+          'Master énergies renouvelables',
+          'Certifications techniques'
+        ],
+        perspectives: [
+          'Chef de projets solaires',
+          'Consultant en énergie',
+          'Directeur technique'
+        ],
+        environnementTravail: [
+          'Entreprises d\'énergie',
+          'Bureaux d\'études',
+          'ONG'
+        ],
+        tags: ['Énergie', 'Solaire', 'Environnement']
+      },
+      {
+        id: 'expert-environnement',
+        titre: 'Expert Environnemental',
+        description: 'Évalue l\'impact environnemental et propose des solutions durables',
+        secteur: 'environnement',
+        competencesRequises: [
+          { nom: 'Études d\'impact', niveau: 'expert' },
+          { nom: 'Réglementation', niveau: 'avancé' },
+          { nom: 'Gestion de projets', niveau: 'avancé' },
+          { nom: 'Outils SIG', niveau: 'intermédiaire' }
+        ],
+        salaireMoyen: {
+          junior: { min: 400000, max: 800000 },
+          confirme: { min: 800000, max: 1600000 },
+          senior: { min: 1600000, max: 3000000 }
+        },
+        formation: [
+          'Master en environnement',
+          'Ingénieur environnement',
+          'Certifications HSE'
+        ],
+        perspectives: [
+          'Directeur HSE',
+          'Consultant environnement',
+          'Chef de projets durables'
+        ],
+        environnementTravail: [
+          'Bureaux d\'études',
+          'Industries',
+          'Organisations internationales'
+        ],
+        tags: ['Environnement', 'Développement durable', 'HSE']
+      },
+      {
+        id: 'expert-eolien',
+        titre: 'Expert en Énergie Éolienne',
+        description: 'Développe et gère des projets d\'énergie éolienne',
+        secteur: 'environnement',
+        competencesRequises: [
+          { nom: 'Technologie éolienne', niveau: 'expert' },
+          { nom: 'Gestion projet', niveau: 'avancé' },
+          { nom: 'Études impact', niveau: 'avancé' },
+          { nom: 'Maintenance éolienne', niveau: 'expert' }
+        ],
+        salaireMoyen: {
+          junior: { min: 600000, max: 1200000 },
+          confirme: { min: 1200000, max: 2400000 },
+          senior: { min: 2400000, max: 4000000 }
+        },
+        formation: [
+          'Ingénieur énergies',
+          'Master éolien',
+          'Certifications techniques'
+        ],
+        perspectives: [
+          'Chef projet éolien',
+          'Directeur technique',
+          'Consultant énergie'
+        ],
+        environnementTravail: [
+          'Parcs éoliens',
+          'Bureaux études',
+          'Entreprises énergie'
+        ],
+        tags: ['Énergie', 'Éolien', 'Environnement']
+      },
+      {
+        id: 'expert-economie-circulaire',
+        titre: 'Expert en Économie Circulaire',
+        description: 'Développe des solutions pour optimiser l\'utilisation des ressources',
+        secteur: 'environnement',
+        competencesRequises: [
+          { nom: 'Économie circulaire', niveau: 'expert' },
+          { nom: 'Gestion déchets', niveau: 'avancé' },
+          { nom: 'Analyse cycle vie', niveau: 'expert' },
+          { nom: 'RSE', niveau: 'avancé' }
+        ],
+        salaireMoyen: {
+          junior: { min: 450000, max: 900000 },
+          confirme: { min: 900000, max: 1800000 },
+          senior: { min: 1800000, max: 3000000 }
+        },
+        formation: [
+          'Master Environnement',
+          'Spécialisation économie circulaire',
+          'Certifications RSE'
+        ],
+        perspectives: [
+          'Directeur développement durable',
+          'Consultant environnement',
+          'Chef projet RSE'
+        ],
+        environnementTravail: [
+          'Entreprises industrielles',
+          'Cabinets conseil',
+          'Collectivités'
+        ],
+        tags: ['Environnement', 'Économie circulaire', 'RSE']
+      }
+    ]
+  },
+  {
+    id: 'agriculture',
     nom: 'Agriculture & Agroalimentaire',
     description: 'Les métiers de l\'agriculture moderne et de l\'industrie agroalimentaire',
     icone: '🌾',
