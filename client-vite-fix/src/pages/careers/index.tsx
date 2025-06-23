@@ -4579,87 +4579,94 @@ const CareersPage: React.FC = () => {
           </TabPane>
           {secteurs.map(secteur => (
             <TabPane tab={`${secteur.icone} ${secteur.nom}`} key={secteur.id}>
-              <Row gutter={[24, 24]}>
-                {secteur.metiers.map(metier => (
-                  <Col key={metier.id} xs={24} md={12} lg={8} style={{ display: 'flex' }}>
-                    <Card
-                      hoverable={isPremium}
-                      style={{
-                        height: '100%',
-                        borderRadius: 18,
-                        boxShadow: '0 4px 24px #e3e8f7',
-                        border: 'none',
-                        background: '#fff',
-                        marginBottom: 24,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'space-between',
-                        width: '100%',
-                        maxWidth: 400,
-                        margin: '0 auto',
-                      }}
-                      onClick={isPremium ? () => showMetierDetail(metier) : undefined}
-                    >
-                      <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-                        <Title level={4} style={{ margin: 0 }}>{metier.titre}</Title>
-                        <Paragraph>{metier.description}</Paragraph>
-                        <div>
-                          {metier.tags.map(tag => (
-                            <Tag key={tag} color={secteur.couleur} style={{ fontSize: 15 }}>{tag}</Tag>
-                          ))}
-                        </div>
-                        <Button
-                          type={isPremium ? 'primary' : 'default'}
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: 8,
-                            borderRadius: 20,
-                            fontWeight: 700,
-                            background: isPremium ? '#1890ff' : '#fff',
-                            color: isPremium ? '#fff' : '#bbb',
-                            border: isPremium ? 'none' : '1.5px solid #eee',
-                            fontSize: 16,
-                            padding: '8px 24px',
-                            width: '100%',
-                            maxWidth: 180,
-                            margin: '0 auto',
-                            cursor: 'pointer',
-                            opacity: 1,
-                            boxShadow: '0 2px 8px #e3e8f7',
-                            transition: 'all 0.2s',
-                            height: 44,
-                          }}
-                          onClick={() => {
-                            if (isPremium) {
-                              showMetierDetail(metier);
-                            } else {
-                              navigate('/subscription');
-                            }
-                          }}
-                        >
-                          {!isPremium ? (
-                            <span style={{
-                              display: 'inline-flex',
+              <div style={{ marginBottom: 48 }}>
+                <Space align="center" style={{ marginBottom: 24 }}>
+                  <span style={{ fontSize: 32 }}>{secteur.icone}</span>
+                  <Title level={2} style={{ margin: 0, color: secteur.couleur }}>{secteur.nom}</Title>
+                </Space>
+                <Paragraph style={{ marginBottom: 24 }}>{secteur.description}</Paragraph>
+                <Row gutter={[24, 24]}>
+                  {secteur.metiers.map(metier => (
+                    <Col key={metier.id} xs={24} md={12} lg={8} style={{ display: 'flex' }}>
+                      <Card
+                        hoverable={isPremium}
+                        style={{
+                          height: '100%',
+                          borderRadius: 18,
+                          boxShadow: '0 4px 24px #e3e8f7',
+                          border: 'none',
+                          background: '#fff',
+                          marginBottom: 24,
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between',
+                          width: '100%',
+                          maxWidth: 400,
+                          margin: '0 auto',
+                        }}
+                        onClick={isPremium ? () => showMetierDetail(metier) : undefined}
+                      >
+                        <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+                          <Title level={4} style={{ margin: 0 }}>{metier.titre}</Title>
+                          <Paragraph>{metier.description}</Paragraph>
+                          <div>
+                            {metier.tags.map(tag => (
+                              <Tag key={tag} color={secteur.couleur} style={{ fontSize: 15 }}>{tag}</Tag>
+                            ))}
+                          </div>
+                          <Button
+                            type={isPremium ? 'primary' : 'default'}
+                            style={{
+                              display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
-                              width: 28,
-                              height: 28,
-                              borderRadius: '50%',
-                              background: '#fff',
+                              gap: 8,
+                              borderRadius: 20,
+                              fontWeight: 700,
+                              background: isPremium ? '#1890ff' : '#fff',
+                              color: isPremium ? '#fff' : '#bbb',
+                              border: isPremium ? 'none' : '1.5px solid #eee',
+                              fontSize: 16,
+                              padding: '8px 24px',
+                              width: '100%',
+                              maxWidth: 180,
+                              margin: '0 auto',
+                              cursor: 'pointer',
+                              opacity: 1,
                               boxShadow: '0 2px 8px #e3e8f7',
-                            }}>
-                              <LockOutlined style={{ color: '#bbb', fontSize: 18 }} />
-                            </span>
-                          ) : <ArrowRightOutlined />}
-                          <span>Consulter</span>
-                        </Button>
-                      </Space>
-                    </Card>
-                  </Col>
-                ))}
-              </Row>
+                              transition: 'all 0.2s',
+                              height: 44,
+                            }}
+                            onClick={() => {
+                              if (isPremium) {
+                                showMetierDetail(metier);
+                              } else {
+                                navigate('/subscription');
+                              }
+                            }}
+                          >
+                            {!isPremium ? (
+                              <span style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: 28,
+                                height: 28,
+                                borderRadius: '50%',
+                                background: '#fff',
+                                boxShadow: '0 2px 8px #e3e8f7',
+                              }}>
+                                <LockOutlined style={{ color: '#bbb', fontSize: 18 }} />
+                              </span>
+                            ) : <ArrowRightOutlined />}
+                            <span>Consulter</span>
+                          </Button>
+                        </Space>
+                      </Card>
+                    </Col>
+                  ))}
+                </Row>
+              </div>
             </TabPane>
           ))}
         </Tabs>
