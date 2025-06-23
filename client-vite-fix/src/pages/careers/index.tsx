@@ -1196,42 +1196,141 @@ const secteurs: Secteur[] = [
   {
     id: 'tourisme',
     nom: 'Tourisme & Hôtellerie',
-    description: 'Les métiers du tourisme, de l\'hôtellerie et de la restauration',
+    description: "Le secteur du tourisme et de l'hôtellerie au Sénégal est en pleine expansion grâce à la richesse culturelle, aux plages paradisiaques et aux sites historiques. Avec l'émergence de nouveaux hôtels, resorts et activités touristiques, les opportunités sont nombreuses pour les professionnels qualifiés dans l'accueil, la gestion hôtelière et l'organisation d'événements.",
     icone: '🏨',
     couleur: '#13c2c2',
     metiers: [
       {
-        id: 'manager-hotel',
-        titre: 'Directeur d\'Hôtel',
-        description: 'Gère et développe l\'activité d\'un établissement hôtelier',
+        id: 'directeur-hotel',
+        titre: 'Directeur d\'Hôtel / Hotel Manager',
+        description: "Le Directeur d'Hôtel supervise l'ensemble des opérations d'un établissement hôtelier. Il assure la gestion commerciale, financière et opérationnelle tout en garantissant l'excellence du service client et la satisfaction des équipes.",
         secteur: 'tourisme',
+        missions: [
+          "Gérer l'ensemble des opérations hôtelières (réception, restauration, chambres, maintenance).",
+          "Développer la stratégie commerciale et marketing de l'établissement.",
+          "Superviser les équipes et assurer la formation du personnel.",
+          "Gérer les relations avec les clients, fournisseurs et partenaires.",
+          "Contrôler les indicateurs de performance (taux d'occupation, satisfaction client, rentabilité)."
+        ],
         competencesRequises: [
-          { nom: 'Gestion hôtelière', niveau: 'expert' },
-          { nom: 'Management d\'équipe', niveau: 'expert' },
-          { nom: 'Marketing hôtelier', niveau: 'avancé' },
-          { nom: 'Relation client', niveau: 'expert' }
+          { nom: 'Gestion hôtelière et opérations', niveau: 'expert' },
+          { nom: 'Management d\'équipe et leadership', niveau: 'expert' },
+          { nom: 'Marketing hôtelier et stratégie commerciale', niveau: 'avancé' },
+          { nom: 'Gestion financière et budgétaire', niveau: 'expert' },
+          { nom: 'Service client et excellence opérationnelle', niveau: 'expert' }
         ],
         salaireMoyen: {
           junior: { min: 800000, max: 1500000 },
-          confirme: { min: 1500000, max: 2500000 },
+          confirme: { min: 1500000, max: 3000000 },
+          senior: { min: 3000000, max: 6000000 }
+        },
+        formation: [
+          "Master en Management Hôtelier ou MBA Hospitality.",
+          "École hôtelière internationale (EHL, Glion, Les Roches).",
+          "Formation continue en gestion hôtelière et leadership.",
+          "Certifications en service client et management."
+        ],
+        perspectives: [
+          "Directeur régional ou Directeur de groupe hôtelier.",
+          "Consultant en développement hôtelier.",
+          "Propriétaire d'établissement hôtelier.",
+          "Directeur général d'entreprise touristique."
+        ],
+        environnementTravail: [
+          "Hôtels, resorts et établissements de luxe.",
+          "Groupes hôteliers internationaux et chaînes locales.",
+          "Centres de villégiature et complexes touristiques.",
+          "Bureaux de représentation hôtelière."
+        ],
+        tags: ['Hôtellerie', 'Management', 'Service client', 'Tourisme', 'Leadership']
+      },
+      {
+        id: 'chef-restaurant',
+        titre: 'Chef de Cuisine / Executive Chef',
+        description: "Le Chef de Cuisine crée et supervise l'ensemble de l'offre gastronomique d'un établissement. Il gère l'équipe de cuisine, les approvisionnements et assure l'excellence culinaire tout en respectant les contraintes budgétaires et sanitaires.",
+        secteur: 'tourisme',
+        missions: [
+          "Créer et développer les menus et cartes de l'établissement.",
+          "Superviser l'équipe de cuisine et assurer la formation.",
+          "Gérer les approvisionnements et les relations avec les fournisseurs.",
+          "Contrôler la qualité des plats et le respect des normes d'hygiène.",
+          "Optimiser les coûts et la rentabilité de la cuisine."
+        ],
+        competencesRequises: [
+          { nom: 'Techniques culinaires et gastronomie', niveau: 'expert' },
+          { nom: 'Gestion d\'équipe et formation', niveau: 'avancé' },
+          { nom: 'Gestion des approvisionnements et coûts', niveau: 'avancé' },
+          { nom: 'Hygiène alimentaire et sécurité sanitaire', niveau: 'expert' },
+          { nom: 'Créativité culinaire et innovation', niveau: 'expert' }
+        ],
+        salaireMoyen: {
+          junior: { min: 600000, max: 1200000 },
+          confirme: { min: 1200000, max: 2500000 },
           senior: { min: 2500000, max: 4500000 }
         },
         formation: [
-          'Master en Management Hôtelier',
-          'École hôtelière',
-          'MBA Hospitality'
+          "CAP ou BEP en cuisine, puis formation continue.",
+          "École hôtelière spécialisée en arts culinaires.",
+          "Formations en gestion culinaire et management.",
+          "Certifications en hygiène alimentaire (HACCP)."
         ],
         perspectives: [
-          'Directeur régional',
-          'Consultant hôtelier',
-          'Propriétaire d\'établissement'
+          "Chef exécutif ou Directeur culinaire de groupe.",
+          "Propriétaire de restaurant ou traiteur.",
+          "Consultant culinaire ou formateur.",
+          "Chef de cuisine dans des établissements de luxe."
         ],
         environnementTravail: [
-          'Hôtels',
-          'Resorts',
-          'Groupes hôteliers'
+          "Restaurants, hôtels et établissements gastronomiques.",
+          "Catering et traiteurs événementiels.",
+          "Centres de formation culinaire.",
+          "Consulting en restauration."
         ],
-        tags: ['Hôtellerie', 'Management', 'Tourisme']
+        tags: ['Cuisine', 'Gastronomie', 'Management', 'Créativité', 'Hygiène']
+      },
+      {
+        id: 'responsable-evenements',
+        titre: 'Responsable Événementiel / Event Manager',
+        description: "Le Responsable Événementiel conçoit, organise et supervise des événements professionnels et privés. Il coordonne tous les aspects logistiques, créatifs et opérationnels pour garantir le succès de chaque événement.",
+        secteur: 'tourisme',
+        missions: [
+          "Concevoir et planifier des événements sur mesure (mariages, séminaires, lancements).",
+          "Coordonner les prestataires (traiteurs, décorateurs, techniciens).",
+          "Gérer le budget et les négociations avec les fournisseurs.",
+          "Superviser la logistique et l'installation sur site.",
+          "Assurer le suivi client et la satisfaction des participants."
+        ],
+        competencesRequises: [
+          { nom: 'Organisation d\'événements et planification', niveau: 'expert' },
+          { nom: 'Gestion de projet et coordination', niveau: 'avancé' },
+          { nom: 'Négociation et relations fournisseurs', niveau: 'avancé' },
+          { nom: 'Créativité et design événementiel', niveau: 'avancé' },
+          { nom: 'Service client et communication', niveau: 'expert' }
+        ],
+        salaireMoyen: {
+          junior: { min: 500000, max: 1000000 },
+          confirme: { min: 1000000, max: 2000000 },
+          senior: { min: 2000000, max: 4000000 }
+        },
+        formation: [
+          "Formation en événementiel ou management de projet.",
+          "École de commerce spécialisée en événementiel.",
+          "Certifications en gestion d'événements (CMP, CSEP).",
+          "Formations continues en design et créativité."
+        ],
+        perspectives: [
+          "Directeur d'agence événementielle.",
+          "Consultant indépendant en événementiel.",
+          "Responsable événementiel corporate.",
+          "Créateur d'entreprise événementielle."
+        ],
+        environnementTravail: [
+          "Agences événementielles et de communication.",
+          "Hôtels et centres de congrès.",
+          "Entreprises (événements internes).",
+          "Indépendant (freelance événementiel)."
+        ],
+        tags: ['Événementiel', 'Organisation', 'Créativité', 'Logistique', 'Service client']
       }
     ]
   },
