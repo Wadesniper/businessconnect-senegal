@@ -528,207 +528,258 @@ const secteurs: Secteur[] = [
   {
     id: 'sante',
     nom: 'Santé & Médical',
-    description: 'Les métiers de la santé et du secteur médical',
+    description: "Le secteur de la santé au Sénégal est en pleine structuration, avec des investissements importants dans les infrastructures hospitalières et la formation. La demande pour des professionnels qualifiés est forte, tant dans le secteur public que privé, avec des enjeux majeurs de santé publique et de couverture médicale universelle (CMU).",
     icone: '⚕️',
-    couleur: '#eb2f96',
+    couleur: '#ff4d4f',
     metiers: [
       {
         id: 'medecin-generaliste',
         titre: 'Médecin Généraliste',
-        description: 'Assure les soins de santé primaires et le suivi des patients',
+        description: "En première ligne du système de santé, le médecin généraliste assure le diagnostic, le traitement des maladies courantes et le suivi à long terme des patients. Il joue un rôle essentiel dans la prévention et l'orientation vers les spécialistes.",
         secteur: 'sante',
+        missions: [
+          "Mener des consultations de médecine générale (anamnèse, examen clinique).",
+          "Prescrire des traitements médicamenteux et des examens complémentaires.",
+          "Assurer le suivi des maladies chroniques (diabète, HTA) et la vaccination.",
+          "Participer à des campagnes de santé publique et de prévention.",
+          "Gérer le dossier médical des patients."
+        ],
         competencesRequises: [
-          { nom: 'Diagnostic clinique', niveau: 'expert' },
-          { nom: 'Relations patients', niveau: 'expert' },
-          { nom: 'Connaissances médicales', niveau: 'expert' },
-          { nom: 'Gestion cabinet', niveau: 'intermédiaire' }
+          { nom: 'Connaissances médicales générales solides', niveau: 'expert' },
+          { nom: 'Capacité de diagnostic clinique', niveau: 'expert' },
+          { nom: 'Excellentes qualités d\'écoute et d\'empathie', niveau: 'expert' },
+          { nom: 'Gestion de l\'urgence médicale', niveau: 'avancé' },
+          { nom: 'Connaissance du système de santé sénégalais', niveau: 'avancé' }
         ],
         salaireMoyen: {
-          junior: { min: 800000, max: 1500000 },
-          confirme: { min: 1500000, max: 3000000 },
-          senior: { min: 3000000, max: 5000000 }
+          junior: { min: 700000, max: 1200000 },
+          confirme: { min: 1200000, max: 2500000 },
+          senior: { min: 2500000, max: 4500000 }
         },
         formation: [
-          'Doctorat en Médecine',
-          'Internat',
-          'Formation continue'
+          "Doctorat d'État en Médecine, délivré par une faculté de médecine (UCAD, UGB, etc.).",
+          "Inscription à l'Ordre National des Médecins du Sénégal."
         ],
         perspectives: [
-          'Installation en cabinet',
-          'Médecin chef',
-          'Spécialisation'
+          "Spécialisation via l'internat ou le résidanat (cardiologie, pédiatrie, etc.).",
+          "Ouvrir son propre cabinet médical.",
+          "Carrière en santé publique ou dans l'humanitaire.",
+          "Direction d'un centre de santé ou d'un district sanitaire."
         ],
         environnementTravail: [
-          'Cabinet privé',
-          'Hôpital',
-          'Clinique'
+          "Hôpitaux publics et privés",
+          "Postes et centres de santé",
+          "Cabinets médicaux libéraux",
+          "ONG et organisations internationales."
         ],
-        tags: ['Médecine', 'Soins', 'Santé publique']
+        tags: ['Médecine', 'Soins', 'Santé publique', 'Diagnostic', 'Prévention']
       },
       {
-        id: 'pharmacien-clinicien',
+        id: 'pharmacien',
         titre: 'Pharmacien Clinicien',
-        description: 'Assure le suivi thérapeutique et la sécurité des traitements',
+        description: "Le pharmacien est le spécialiste du médicament. Au-delà de la dispensation en officine, il joue un rôle de plus en plus clinique dans les établissements de santé, assurant le bon usage des médicaments et la pharmacovigilance.",
         secteur: 'sante',
+        missions: [
+          "Analyser les prescriptions médicales et délivrer les médicaments.",
+          "Conseiller les patients sur le bon usage des traitements et les effets secondaires.",
+          "Gérer les stocks de médicaments et de dispositifs médicaux.",
+          "Participer à la pharmacovigilance (déclaration des effets indésirables).",
+          "Réaliser des préparations magistrales."
+        ],
         competencesRequises: [
-          { nom: 'Pharmacologie', niveau: 'expert' },
-          { nom: 'Suivi thérapeutique', niveau: 'expert' },
-          { nom: 'Pharmacovigilance', niveau: 'avancé' },
-          { nom: 'Logiciels santé', niveau: 'intermédiaire' }
+          { nom: 'Pharmacologie et connaissances thérapeutiques', niveau: 'expert' },
+          { nom: 'Législation pharmaceutique sénégalaise', niveau: 'expert' },
+          { nom: 'Gestion des stocks et logistique', niveau: 'avancé' },
+          { nom: 'Bonnes pratiques de dispensation', niveau: 'expert' },
+          { nom: 'Conseil et communication patient', niveau: 'avancé' }
         ],
         salaireMoyen: {
-          junior: { min: 600000, max: 1200000 },
-          confirme: { min: 1200000, max: 2400000 },
-          senior: { min: 2400000, max: 3500000 }
+          junior: { min: 600000, max: 1000000 },
+          confirme: { min: 1000000, max: 2000000 },
+          senior: { min: 2000000, max: 3500000 }
         },
         formation: [
-          'Doctorat en Pharmacie',
-          'Spécialisation clinique',
-          'Formation continue'
+          "Doctorat d'État en Pharmacie.",
+          "Inscription à l'Ordre National des Pharmaciens du Sénégal."
         ],
         perspectives: [
-          'Chef de service pharmacie',
-          'Directeur pharmacie',
-          'Consultant pharmaceutique'
+          "Spécialisation (biologie médicale, pharmacie hospitalière).",
+          "Devenir propriétaire d'une officine.",
+          "Carrière dans l'industrie pharmaceutique (affaires réglementaires, marketing).",
+          "Intégrer les corps de pharmaciens-inspecteurs de la santé publique."
         ],
         environnementTravail: [
-          'Hôpitaux',
-          'Cliniques',
-          'Centres de santé'
+          "Pharmacies d'officine (privées)",
+          "Pharmacies à usage intérieur (PUI) dans les hôpitaux et cliniques",
+          "Industrie pharmaceutique",
+          "Grossistes-répartiteurs."
         ],
-        tags: ['Santé', 'Pharmacie', 'Clinique']
+        tags: ['Santé', 'Pharmacie', 'Clinique', 'Médicament', 'Conseil']
       },
       {
-        id: 'infirmier-specialise',
+        id: 'infirmier',
         titre: 'Infirmier Spécialisé',
-        description: 'Prodigue des soins spécialisés et assure le suivi des patients',
+        description: "Pilier des équipes de soins, l'infirmier dispense les soins prescrits par le médecin, surveille l'état de santé des patients et assure leur confort. Les spécialisations (anesthésie-réanimation, bloc opératoire, pédiatrie) sont très recherchées.",
         secteur: 'sante',
+        missions: [
+          "Réaliser les soins infirmiers (pansements, injections, perfusions).",
+          "Administrer les traitements et surveiller leur efficacité.",
+          "Assurer la surveillance continue des patients (constantes vitales).",
+          "Participer à l'éducation thérapeutique du patient et de sa famille.",
+          "Travailler en collaboration avec les médecins et les aides-soignants."
+        ],
         competencesRequises: [
-          { nom: 'Soins infirmiers', niveau: 'expert' },
-          { nom: 'Urgences', niveau: 'avancé' },
-          { nom: 'Gestion équipe', niveau: 'avancé' },
-          { nom: 'Protocoles médicaux', niveau: 'expert' }
+          { nom: 'Maîtrise des techniques de soins infirmiers', niveau: 'expert' },
+          { nom: 'Connaissance des protocoles d\'hygiène et d\'asepsie', niveau: 'expert' },
+          { nom: 'Rigueur, organisation et gestion du stress', niveau: 'expert' },
+          { nom: 'Compétences relationnelles et empathie', niveau: 'avancé' },
+          { nom: 'Utilisation des outils informatiques de suivi des soins', niveau: 'intermédiaire' }
         ],
         salaireMoyen: {
-          junior: { min: 400000, max: 800000 },
-          confirme: { min: 800000, max: 1600000 },
-          senior: { min: 1600000, max: 2500000 }
+          junior: { min: 250000, max: 450000 },
+          confirme: { min: 450000, max: 700000 },
+          senior: { min: 700000, max: 1200000 }
         },
         formation: [
-          'Diplôme Infirmier',
-          'Spécialisation',
-          'Formation continue'
+          "Diplôme d'État d'Infirmier.",
+          "Diplômes de spécialisation (Infirmier anesthésiste, IBODE, puériculture)."
         ],
         perspectives: [
-          'Cadre de santé',
-          'Coordinateur soins',
-          'Formateur'
+          "Devenir cadre de santé ou infirmier en chef.",
+          "Se spécialiser davantage ou se tourner vers la formation.",
+          "Ouvrir un cabinet de soins infirmiers libéral.",
+          "Intégrer des programmes de santé publique."
         ],
         environnementTravail: [
-          'Hôpitaux',
-          'Cliniques privées',
-          'Centres spécialisés'
+          "Hôpitaux et cliniques (tous services)",
+          "Centres de santé",
+          "Soins à domicile",
+          "Médecine du travail, médecine scolaire."
         ],
-        tags: ['Santé', 'Soins', 'Médical']
+        tags: ['Santé', 'Soins', 'Médical', 'Hôpital', 'Patient']
       },
       {
         id: 'chirurgien-specialiste',
         titre: 'Chirurgien Spécialiste',
-        description: 'Réalise des interventions chirurgicales spécialisées',
+        description: "Le chirurgien réalise des interventions chirurgicales pour traiter des maladies, des blessures ou des malformations. C'est une profession qui exige une haute technicité, une grande résistance au stress et de longues années d'études.",
         secteur: 'sante',
+        missions: [
+          "Poser l'indication opératoire lors de consultations pré-chirurgicales.",
+          "Réaliser l'intervention chirurgicale en respectant des protocoles stricts.",
+          "Assurer le suivi post-opératoire des patients, en collaboration avec les anesthésistes et les infirmiers.",
+          "Participer aux gardes et astreintes.",
+          "Se former continuellement aux nouvelles techniques chirurgicales."
+        ],
         competencesRequises: [
-          { nom: 'Chirurgie', niveau: 'expert' },
-          { nom: 'Anatomie', niveau: 'expert' },
-          { nom: 'Techniques opératoires', niveau: 'expert' },
-          { nom: 'Gestion équipe bloc', niveau: 'avancé' }
+          { nom: 'Maîtrise des techniques chirurgicales de sa spécialité', niveau: 'expert' },
+          { nom: 'Excellente connaissance de l\'anatomie et de la physiologie', niveau: 'expert' },
+          { nom: 'Grande dextérité manuelle et précision', niveau: 'expert' },
+          { nom: 'Capacité à prendre des décisions rapides sous pression', niveau: 'expert' },
+          { nom: 'Endurance physique et mentale', niveau: 'expert' }
         ],
         salaireMoyen: {
-          junior: { min: 1200000, max: 2400000 },
-          confirme: { min: 2400000, max: 4800000 },
-          senior: { min: 4800000, max: 8000000 }
+          junior: { min: 1500000, max: 3000000 },
+          confirme: { min: 3000000, max: 6000000 },
+          senior: { min: 6000000, max: 10000000 }
         },
         formation: [
-          'Doctorat en Médecine',
-          'Spécialisation chirurgicale',
-          'Formation continue'
+          "Doctorat en médecine puis spécialisation via le concours de l'internat (5 à 6 ans supplémentaires).",
+          "Spécialités : Chirurgie viscérale, orthopédique, urologie, neurochirurgie, etc."
         ],
         perspectives: [
-          'Chef de service chirurgie',
-          'Directeur médical',
-          'Professeur de médecine'
+          "Devenir chef de service hospitalier.",
+          "Développer une activité libérale en clinique privée.",
+          "Carrière hospitalo-universitaire (enseignement et recherche).",
+          "Participer à des missions humanitaires."
         ],
         environnementTravail: [
-          'Hôpitaux',
-          'Cliniques privées',
-          'Centres chirurgicaux'
+          "Blocs opératoires des hôpitaux et cliniques.",
+          "Services de chirurgie.",
+          "Consultations externes."
         ],
-        tags: ['Chirurgie', 'Médecine', 'Spécialisation']
+        tags: ['Chirurgie', 'Médecine', 'Spécialisation', 'Bloc opératoire', 'Intervention']
       },
       {
         id: 'radiologue',
         titre: 'Radiologue',
-        description: 'Réalise et interprète les examens d\'imagerie médicale',
+        description: "Le médecin radiologue est spécialisé dans l'obtention et l'interprétation des images médicales (radiographie, échographie, scanner, IRM). Son rôle est fondamental dans le parcours de diagnostic des patients.",
         secteur: 'sante',
+        missions: [
+          "Superviser la réalisation des examens d'imagerie.",
+          "Interpréter les images et rédiger un compte-rendu pour le médecin traitant.",
+          "Réaliser des actes de radiologie interventionnelle (biopsies, drainages guidés par l'image).",
+          "S'assurer du respect des règles de radioprotection pour le patient et le personnel.",
+          "Participer aux staffs pluridisciplinaires pour discuter des cas patients."
+        ],
         competencesRequises: [
-          { nom: 'Imagerie médicale', niveau: 'expert' },
-          { nom: 'Diagnostic', niveau: 'expert' },
-          { nom: 'Technologies médicales', niveau: 'avancé' },
-          { nom: 'IA médicale', niveau: 'intermédiaire' }
+          { nom: 'Connaissance approfondie des différentes techniques d\'imagerie', niveau: 'expert' },
+          { nom: 'Solides compétences en sémiologie radiologique', niveau: 'expert' },
+          { nom: 'Précision et rigueur dans l\'interprétation', niveau: 'expert' },
+          { nom: 'Maîtrise des outils informatiques (PACS, RIS)', niveau: 'avancé' },
+          { nom: 'Bonne communication avec les autres spécialistes', niveau: 'avancé' }
         ],
         salaireMoyen: {
-          junior: { min: 1000000, max: 2000000 },
-          confirme: { min: 2000000, max: 4000000 },
-          senior: { min: 4000000, max: 7000000 }
+          junior: { min: 1200000, max: 2500000 },
+          confirme: { min: 2500000, max: 5000000 },
+          senior: { min: 5000000, max: 9000000 }
         },
         formation: [
-          'Doctorat en Médecine',
-          'Spécialisation radiologie',
-          'Formation technologies'
+          "Doctorat en médecine puis spécialisation en radiologie et imagerie médicale via l'internat."
         ],
         perspectives: [
-          'Chef service radiologie',
-          'Directeur imagerie',
-          'Expert consultant'
+          "S'installer en libéral et investir dans son propre plateau technique.",
+          "Se sur-spécialiser (neuroradiologie, imagerie de la femme, etc.).",
+          "Carrière hospitalo-universitaire.",
+          "Développer la téléradiologie."
         ],
         environnementTravail: [
-          'Centres d\'imagerie',
-          'Hôpitaux',
-          'Cliniques'
+          "Cabinets de radiologie libéraux.",
+          "Services d'imagerie médicale des hôpitaux et cliniques.",
+          "Centres de dépistage."
         ],
-        tags: ['Radiologie', 'Imagerie', 'Diagnostic']
+        tags: ['Radiologie', 'Imagerie', 'Diagnostic', 'Scanner', 'IRM']
       },
       {
         id: 'kinesitherapeute',
         titre: 'Kinésithérapeute',
-        description: 'Assure la rééducation et la réadaptation fonctionnelle',
+        description: "Le kinésithérapeute (ou masseur-kinésithérapeute) est le spécialiste de la rééducation fonctionnelle. Il intervient sur prescription médicale pour aider les patients à retrouver leurs capacités motrices après une blessure, une chirurgie ou une maladie.",
         secteur: 'sante',
+        missions: [
+          "Établir un bilan diagnostic kinésithérapique.",
+          "Mettre en œuvre des techniques de rééducation (massages, mobilisations, renforcement musculaire).",
+          "Utiliser des techniques de physiothérapie (ultrasons, électrothérapie).",
+          "Éduquer le patient et lui apprendre des auto-exercices.",
+          "Assurer la traçabilité des soins dans le dossier du patient."
+        ],
         competencesRequises: [
-          { nom: 'Techniques de rééducation', niveau: 'expert' },
-          { nom: 'Anatomie', niveau: 'expert' },
-          { nom: 'Biomécanique', niveau: 'avancé' },
-          { nom: 'Sport-santé', niveau: 'avancé' }
+          { nom: 'Connaissances en anatomie, physiologie et biomécanique', niveau: 'expert' },
+          { nom: 'Maîtrise des techniques de masso-kinésithérapie', niveau: 'expert' },
+          { nom: 'Qualités pédagogiques et patience', niveau: 'expert' },
+          { nom: 'Bonne condition physique', niveau: 'avancé' },
+          { nom: 'Écoute et sens du contact', niveau: 'expert' }
         ],
         salaireMoyen: {
-          junior: { min: 400000, max: 800000 },
-          confirme: { min: 800000, max: 1600000 },
-          senior: { min: 1600000, max: 3000000 }
+          junior: { min: 300000, max: 500000 },
+          confirme: { min: 500000, max: 800000 },
+          senior: { min: 800000, max: 1500000 }
         },
         formation: [
-          'Diplôme Kinésithérapie',
-          'Spécialisations',
-          'Formation continue'
+          "Diplôme d'État de Masseur-Kinésithérapeute."
         ],
         perspectives: [
-          'Cabinet privé',
-          'Coordinateur rééducation',
-          'Enseignant'
+          "Ouvrir son propre cabinet de kinésithérapie.",
+          "Se spécialiser (kiné du sport, respiratoire, pédiatrique, ostéopathie).",
+          "Devenir cadre de santé dans un service de rééducation.",
+          "Intervenir au sein de clubs sportifs."
         ],
         environnementTravail: [
-          'Cabinet libéral',
-          'Centres rééducation',
-          'Clubs sportifs'
+          "Cabinets libéraux",
+          "Centres de rééducation fonctionnelle",
+          "Hôpitaux et cliniques",
+          "Établissements pour personnes âgées (EHPAD)",
+          "Clubs sportifs."
         ],
-        tags: ['Rééducation', 'Sport', 'Santé']
+        tags: ['Rééducation', 'Sport', 'Santé', 'Kinésithérapie', 'Mouvement']
       }
     ]
   },
