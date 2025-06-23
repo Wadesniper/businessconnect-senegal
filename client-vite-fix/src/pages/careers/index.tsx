@@ -4350,15 +4350,16 @@ const CareersPage: React.FC = () => {
   const [loadingMetier, setLoadingMetier] = useState(false);
   const [loadingPage, setLoadingPage] = useState(true);
   const [activeTab, setActiveTab] = useState('all');
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => setLoadingPage(false), 300);
     return () => clearTimeout(timer);
   }, []);
 
-  // Scroll automatique vers le contenu quand on change d'onglet
+  // Scroll automatique vers le contenu quand on change d'onglet (pas au chargement initial)
   useEffect(() => {
-    if (!loadingPage) {
+    if (!loadingPage && !isInitialLoad) {
       const timer = setTimeout(() => {
         const contentElement = document.querySelector('.ant-tabs-content-holder');
         if (contentElement) {
@@ -4370,7 +4371,7 @@ const CareersPage: React.FC = () => {
       }, 100);
       return () => clearTimeout(timer);
     }
-  }, [activeTab, loadingPage]);
+  }, [activeTab, loadingPage, isInitialLoad]);
 
   const filteredSecteurs = useMemo(() => {
     if (!searchTerm) return secteurs;
@@ -4439,6 +4440,7 @@ const CareersPage: React.FC = () => {
 
   const handleTabChange = (key: string) => {
     setActiveTab(key);
+    setIsInitialLoad(false);
   };
 
   if (loadingPage) {
