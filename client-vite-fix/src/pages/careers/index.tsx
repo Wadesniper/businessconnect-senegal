@@ -1600,86 +1600,28 @@ const secteurs: Secteur[] = [
   {
     id: 'agriculture',
     nom: 'Agriculture & Agroalimentaire',
-    description: 'Les métiers de l\'agriculture moderne et de l\'industrie agroalimentaire',
+    description: "Le secteur de l'agriculture et de l'agroalimentaire au Sénégal est un pilier de l'économie nationale. Avec l'émergence de l'agriculture moderne, des technologies AgriTech et de l'industrie agroalimentaire, les opportunités sont nombreuses pour les professionnels qualifiés dans la production agricole, la transformation alimentaire et l'innovation technologique.",
     icone: '🌾',
     couleur: '#a0d911',
     metiers: [
       {
-        id: 'agronome',
-        titre: 'Ingénieur Agronome',
-        description: 'Développe et optimise les productions agricoles',
+        id: 'ingenieur-agronome',
+        titre: 'Ingénieur Agronome / Agronomist',
+        description: "L'Ingénieur Agronome développe et optimise les productions agricoles en appliquant les principes scientifiques et techniques. Il assure la gestion des exploitations agricoles, l'amélioration des rendements et la durabilité des systèmes de production.",
         secteur: 'agriculture',
+        missions: [
+          "Analyser et optimiser les systèmes de production agricole.",
+          "Concevoir et mettre en œuvre des programmes de fertilisation et d'irrigation.",
+          "Gérer les exploitations agricoles et superviser les équipes.",
+          "Développer des projets d'agriculture durable et de conservation des sols.",
+          "Conseiller les agriculteurs sur les techniques culturales et la gestion des ressources."
+        ],
         competencesRequises: [
-          { nom: 'Agronomie', niveau: 'expert' },
-          { nom: 'Agriculture durable', niveau: 'avancé' },
-          { nom: 'Gestion de projet', niveau: 'avancé' },
-          { nom: 'Biotechnologies', niveau: 'intermédiaire' }
-        ],
-        salaireMoyen: {
-          junior: { min: 400000, max: 800000 },
-          confirme: { min: 800000, max: 1500000 },
-          senior: { min: 1500000, max: 2800000 }
-        },
-        formation: [
-          'Ingénieur agronome',
-          'Master en agronomie',
-          'Spécialisation agriculture'
-        ],
-        perspectives: [
-          'Directeur exploitation',
-          'Consultant agricole',
-          'Chef de projets agricoles'
-        ],
-        environnementTravail: [
-          'Exploitations agricoles',
-          'Organisations agricoles',
-          'Centres de recherche'
-        ],
-        tags: ['Agriculture', 'Agronomie', 'Production']
-      },
-      {
-        id: 'qualite-agroalimentaire',
-        titre: 'Responsable Qualité Agroalimentaire',
-        description: 'Assure la qualité et la sécurité des produits alimentaires',
-        secteur: 'agriculture',
-        competencesRequises: [
-          { nom: 'Normes HACCP', niveau: 'expert' },
-          { nom: 'Sécurité alimentaire', niveau: 'expert' },
-          { nom: 'Gestion qualité', niveau: 'avancé' },
-          { nom: 'Audit qualité', niveau: 'avancé' }
-        ],
-        salaireMoyen: {
-          junior: { min: 450000, max: 900000 },
-          confirme: { min: 900000, max: 1700000 },
-          senior: { min: 1700000, max: 3000000 }
-        },
-        formation: [
-          'Master agroalimentaire',
-          'Ingénieur qualité',
-          'Certifications HACCP'
-        ],
-        perspectives: [
-          'Directeur qualité',
-          'Auditeur qualité',
-          'Consultant agroalimentaire'
-        ],
-        environnementTravail: [
-          'Industries agroalimentaires',
-          'Laboratoires',
-          'Organismes de certification'
-        ],
-        tags: ['Qualité', 'Agroalimentaire', 'HACCP']
-      },
-      {
-        id: 'agritech-specialist',
-        titre: 'Spécialiste AgriTech',
-        description: 'Développe et implémente des solutions technologiques pour l\'agriculture',
-        secteur: 'agriculture',
-        competencesRequises: [
-          { nom: 'Agriculture digitale', niveau: 'expert' },
-          { nom: 'IoT agricole', niveau: 'avancé' },
-          { nom: 'Data farming', niveau: 'avancé' },
-          { nom: 'Systèmes irrigation', niveau: 'expert' }
+          { nom: 'Agronomie et sciences du sol', niveau: 'expert' },
+          { nom: 'Gestion d\'exploitation agricole', niveau: 'expert' },
+          { nom: 'Agriculture durable et conservation', niveau: 'avancé' },
+          { nom: 'Gestion de projet agricole', niveau: 'avancé' },
+          { nom: 'Biotechnologies et amélioration variétale', niveau: 'intermédiaire' }
         ],
         salaireMoyen: {
           junior: { min: 500000, max: 1000000 },
@@ -1687,54 +1629,112 @@ const secteurs: Secteur[] = [
           senior: { min: 2000000, max: 3500000 }
         },
         formation: [
-          'Ingénieur AgriTech',
-          'Master Agriculture',
-          'Certifications tech'
+          "Ingénieur agronome ou Master en agronomie.",
+          "Spécialisation en agriculture durable ou tropicale.",
+          "Formations continues en nouvelles techniques culturales.",
+          "Certifications en gestion d'exploitation agricole."
         ],
         perspectives: [
-          'Directeur innovation',
-          'Chef projet AgriTech',
-          'Consultant agriculture'
+          "Directeur d'exploitation agricole ou Chef de projet.",
+          "Consultant agronomique indépendant.",
+          "Responsable de programmes agricoles.",
+          "Expert en développement rural."
         ],
         environnementTravail: [
-          'Startups AgriTech',
-          'Exploitations modernes',
-          'Centres recherche'
+          "Exploitations agricoles et coopératives.",
+          "Organisations agricoles et instituts de recherche.",
+          "Bureaux d'études et cabinets de conseil.",
+          "Organisations internationales et ONG."
         ],
-        tags: ['Agriculture', 'Innovation', 'Technologie']
+        tags: ['Agronomie', 'Agriculture durable', 'Gestion exploitation', 'Conseil agricole', 'Développement rural']
       },
       {
-        id: 'expert-aquaculture',
-        titre: 'Expert en Aquaculture',
-        description: 'Gère et optimise la production aquacole',
+        id: 'responsable-qualite-agroalimentaire',
+        titre: 'Responsable Qualité Agroalimentaire / Food Quality Manager',
+        description: "Le Responsable Qualité Agroalimentaire assure la qualité et la sécurité des produits alimentaires tout au long de la chaîne de production. Il met en place et supervise les systèmes de gestion de la qualité et de la sécurité alimentaire.",
         secteur: 'agriculture',
+        missions: [
+          "Mettre en place et maintenir les systèmes de gestion de la qualité (HACCP, ISO 22000).",
+          "Contrôler la qualité des matières premières et des produits finis.",
+          "Former et sensibiliser les équipes aux bonnes pratiques d'hygiène.",
+          "Gérer les audits qualité et les relations avec les organismes de certification.",
+          "Analyser les risques et mettre en place des mesures préventives."
+        ],
         competencesRequises: [
-          { nom: 'Aquaculture', niveau: 'expert' },
-          { nom: 'Biologie marine', niveau: 'avancé' },
-          { nom: 'Gestion production', niveau: 'expert' },
-          { nom: 'Qualité eau', niveau: 'avancé' }
+          { nom: 'Normes HACCP et sécurité alimentaire', niveau: 'expert' },
+          { nom: 'Gestion de la qualité et systèmes de management', niveau: 'expert' },
+          { nom: 'Audit qualité et certification', niveau: 'avancé' },
+          { nom: 'Réglementation agroalimentaire', niveau: 'expert' },
+          { nom: 'Formation et sensibilisation des équipes', niveau: 'avancé' }
         ],
         salaireMoyen: {
-          junior: { min: 400000, max: 800000 },
-          confirme: { min: 800000, max: 1600000 },
-          senior: { min: 1600000, max: 2800000 }
+          junior: { min: 550000, max: 1100000 },
+          confirme: { min: 1100000, max: 2200000 },
+          senior: { min: 2200000, max: 4000000 }
         },
         formation: [
-          'Master Aquaculture',
-          'Ingénieur agronome',
-          'Spécialisation marine'
+          "Master en agroalimentaire ou ingénieur qualité.",
+          "Certifications HACCP et ISO 22000.",
+          "Formation en audit qualité et sécurité alimentaire.",
+          "Formations continues en nouvelles réglementations."
         ],
         perspectives: [
-          'Directeur production',
-          'Consultant aquacole',
-          'Chef exploitation'
+          "Directeur qualité ou Responsable sécurité alimentaire.",
+          "Auditeur qualité indépendant.",
+          "Consultant en qualité agroalimentaire.",
+          "Expert en certification et accréditation."
         ],
         environnementTravail: [
-          'Fermes aquacoles',
-          'Centres recherche',
-          'Entreprises pêche'
+          "Industries agroalimentaires et entreprises de transformation.",
+          "Laboratoires d'analyse et organismes de certification.",
+          "Cabinets de conseil en qualité.",
+          "Administrations publiques et collectivités."
         ],
-        tags: ['Aquaculture', 'Agriculture', 'Production']
+        tags: ['Qualité', 'Sécurité alimentaire', 'HACCP', 'Audit', 'Certification']
+      },
+      {
+        id: 'specialiste-agritech',
+        titre: 'Spécialiste AgriTech / AgriTech Specialist',
+        description: "Le Spécialiste AgriTech développe et implémente des solutions technologiques innovantes pour l'agriculture. Il utilise les nouvelles technologies pour optimiser la production, réduire les coûts et améliorer la durabilité agricole.",
+        secteur: 'agriculture',
+        missions: [
+          "Développer et implémenter des solutions technologiques agricoles.",
+          "Analyser les données agricoles pour optimiser les rendements.",
+          "Gérer les systèmes d'irrigation intelligente et de monitoring.",
+          "Former les agriculteurs aux nouvelles technologies.",
+          "Évaluer et recommander les innovations technologiques pertinentes."
+        ],
+        competencesRequises: [
+          { nom: 'Agriculture digitale et technologies innovantes', niveau: 'expert' },
+          { nom: 'IoT agricole et capteurs connectés', niveau: 'avancé' },
+          { nom: 'Analyse de données agricoles (Data Farming)', niveau: 'avancé' },
+          { nom: 'Systèmes d\'irrigation intelligente', niveau: 'expert' },
+          { nom: 'Formation et accompagnement au changement', niveau: 'avancé' }
+        ],
+        salaireMoyen: {
+          junior: { min: 600000, max: 1200000 },
+          confirme: { min: 1200000, max: 2500000 },
+          senior: { min: 2500000, max: 4500000 }
+        },
+        formation: [
+          "Ingénieur AgriTech ou Master en agriculture digitale.",
+          "Formation en IoT et technologies connectées.",
+          "Certifications en analyse de données agricoles.",
+          "Formations continues en innovations technologiques."
+        ],
+        perspectives: [
+          "Directeur innovation ou Chef de projet AgriTech.",
+          "Consultant en agriculture digitale.",
+          "Entrepreneur dans l'AgriTech.",
+          "Expert en transformation digitale agricole."
+        ],
+        environnementTravail: [
+          "Startups AgriTech et entreprises innovantes.",
+          "Exploitations agricoles modernes et centres de recherche.",
+          "Cabinets de conseil en innovation agricole.",
+          "Organisations internationales et institutions financières."
+        ],
+        tags: ['AgriTech', 'Innovation', 'IoT', 'Data Farming', 'Agriculture digitale']
       }
     ]
   },
