@@ -786,134 +786,141 @@ const secteurs: Secteur[] = [
   {
     id: 'marketing',
     nom: 'Marketing & Communication',
-    description: "Dans un marché sénégalais de plus en plus concurrentiel et digitalisé, les métiers du marketing et de la communication sont stratégiques. Les entreprises, des PME aux multinationales, investissent pour construire leur image de marque, acquérir et fidéliser leurs clients.",
-    icone: '📢',
-    couleur: '#722ed1',
+    description: "Le secteur des médias et de la communication au Sénégal connaît une transformation digitale majeure. Avec l'essor des médias en ligne, des réseaux sociaux et des nouvelles technologies de communication, les opportunités sont nombreuses pour les professionnels créatifs et technologiques dans le journalisme, la production audiovisuelle et la communication digitale.",
+    icone: '📺',
+    couleur: '#f759ab',
     metiers: [
       {
-        id: 'digital-marketer',
-        titre: 'Digital Marketing Manager',
-        description: "Orchestrateur de la stratégie digitale, le Digital Marketing Manager utilise tous les leviers numériques (SEO, SEA, Social Media, Emailing) pour atteindre les objectifs de notoriété, d'acquisition et de conversion de l'entreprise.",
-        secteur: 'marketing',
+        id: 'journaliste',
+        titre: 'Journaliste / Journalist',
+        description: "Le Journaliste collecte, vérifie et diffuse l'information sur différents supports médiatiques. Il assure la couverture de l'actualité, mène des investigations et produit des contenus informatifs de qualité pour informer le public.",
+        secteur: 'medias',
         missions: [
-          "Définir la stratégie de marketing digital et allouer les budgets.",
-          "Piloter les campagnes d'acquisition de trafic payant (Google Ads, Social Ads).",
-          "Optimiser le référencement naturel (SEO) du site web.",
-          "Superviser la stratégie de contenu et le community management.",
-          "Analyser la performance des actions via des outils comme Google Analytics et rapporter au management."
+          "Rechercher, collecter et vérifier les informations.",
+          "Rédiger des articles, reportages et contenus multimédias.",
+          "Conduire des interviews et mener des investigations.",
+          "Assurer la couverture de l'actualité en temps réel.",
+          "Respecter l'éthique journalistique et la déontologie."
         ],
         competencesRequises: [
-          { nom: 'Stratégie Marketing Digital 360°', niveau: 'expert' },
-          { nom: 'Google Ads & Social Ads (Facebook, Instagram, LinkedIn)', niveau: 'expert' },
-          { nom: 'SEO technique et de contenu', niveau: 'avancé' },
-          { nom: 'Google Analytics et Data Studio', niveau: 'avancé' },
-          { nom: 'Marketing Automation (ex: Mailchimp, Sendinblue)', niveau: 'intermédiaire' }
+          { nom: 'Rédaction et storytelling', niveau: 'expert' },
+          { nom: 'Investigation et fact-checking', niveau: 'expert' },
+          { nom: 'Techniques d\'interview et communication', niveau: 'avancé' },
+          { nom: 'Outils numériques et réseaux sociaux', niveau: 'avancé' },
+          { nom: 'Éthique journalistique et déontologie', niveau: 'expert' }
         ],
         salaireMoyen: {
-          junior: { min: 400000, max: 700000 },
+          junior: { min: 350000, max: 700000 },
           confirme: { min: 700000, max: 1500000 },
           senior: { min: 1500000, max: 3000000 }
         },
         formation: [
-          "Master en Marketing Digital, Communication ou E-commerce.",
-          "École de commerce avec une spécialisation digitale.",
-          "Les certifications (Google Ads, HubSpot, etc.) sont très valorisées."
+          "Master en Journalisme ou École de journalisme.",
+          "Formation continue en techniques journalistiques.",
+          "Certifications en fact-checking et vérification d'information.",
+          "Formations spécialisées (investigation, data journalism)."
         ],
         perspectives: [
-          "Directeur Marketing (CMO)",
-          "Head of Acquisition",
-          "Consultant en stratégie digitale",
-          "Lancer sa propre agence digitale."
+          "Rédacteur en chef ou Directeur de rédaction.",
+          "Grand reporter ou Journaliste d'investigation.",
+          "Journaliste spécialisé ou Correspondant.",
+          "Créateur de contenus indépendant."
         ],
         environnementTravail: [
-          "Agences de communication et digitales",
-          "Annonceurs (grandes entreprises, PME)",
-          "Startups et entreprises e-commerce",
-          "Freelance."
+          "Rédactions de presse écrite et médias en ligne.",
+          "Chaînes de télévision et radios.",
+          "Agences de presse et médias internationaux.",
+          "Médias spécialisés et plateformes digitales."
         ],
-        tags: ['Digital', 'Marketing', 'Communication', 'Web', 'Stratégie']
+        tags: ['Journalisme', 'Information', 'Investigation', 'Médias', 'Communication']
+      },
+      {
+        id: 'producteur-audiovisuel',
+        titre: 'Producteur Audiovisuel / Audiovisual Producer',
+        description: "Le Producteur Audiovisuel gère la production de contenus audiovisuels et coordonne les équipes techniques et créatives. Il assure la gestion budgétaire, la planification et la réalisation de projets audiovisuels.",
+        secteur: 'medias',
+        missions: [
+          "Gérer la production de contenus audiovisuels de A à Z.",
+          "Coordonner les équipes techniques et créatives.",
+          "Gérer les budgets et la planification des projets.",
+          "Assurer la direction artistique et le suivi de production.",
+          "Négocier avec les partenaires et gérer les droits."
+        ],
+        competencesRequises: [
+          { nom: 'Gestion de production audiovisuelle', niveau: 'expert' },
+          { nom: 'Budgétisation et planification de projets', niveau: 'expert' },
+          { nom: 'Direction artistique et créative', niveau: 'avancé' },
+          { nom: 'Droit audiovisuel et propriété intellectuelle', niveau: 'avancé' },
+          { nom: 'Management d\'équipe et coordination', niveau: 'expert' }
+        ],
+        salaireMoyen: {
+          junior: { min: 600000, max: 1200000 },
+          confirme: { min: 1200000, max: 2500000 },
+          senior: { min: 2500000, max: 5000000 }
+        },
+        formation: [
+          "Master Production Audiovisuelle ou École de cinéma.",
+          "Formation technique en audiovisuel et cinéma.",
+          "Certifications en gestion de production.",
+          "Formations continues en nouvelles technologies."
+        ],
+        perspectives: [
+          "Directeur de production ou Producteur exécutif.",
+          "Créateur de contenus ou Réalisateur.",
+          "Consultant en production audiovisuelle.",
+          "Entrepreneur dans l'audiovisuel."
+        ],
+        environnementTravail: [
+          "Sociétés de production audiovisuelle et cinématographique.",
+          "Chaînes de télévision et plateformes de streaming.",
+          "Studios et maisons de production.",
+          "Agences de communication et entreprises."
+        ],
+        tags: ['Audiovisuel', 'Production', 'Cinéma', 'Télévision', 'Création']
       },
       {
         id: 'community-manager',
-        titre: 'Community Manager',
-        description: "Ambassadeur de la marque sur les réseaux sociaux, le Community Manager crée et anime une communauté engagée. Il est la voix de l'entreprise sur des plateformes comme Facebook, Instagram, Twitter, LinkedIn et même TikTok, très populaires au Sénégal.",
-        secteur: 'marketing',
+        titre: 'Community Manager / Social Media Manager',
+        description: "Le Community Manager gère la présence digitale des marques et organisations sur les réseaux sociaux. Il crée du contenu engageant, anime les communautés en ligne et développe la stratégie de communication digitale.",
+        secteur: 'medias',
         missions: [
-          "Élaborer le calendrier éditorial pour les différents réseaux sociaux.",
-          "Créer et publier du contenu attractif (visuels, vidéos, stories, textes).",
-          "Animer la communauté : répondre aux commentaires, messages privés, organiser des jeux-concours.",
-          "Assurer la modération des commentaires et gérer les avis négatifs (e-réputation).",
-          "Suivre les indicateurs de performance (engagement, portée, croissance de la communauté)."
+          "Créer et publier du contenu engageant sur les réseaux sociaux.",
+          "Animer et modérer les communautés en ligne.",
+          "Développer et exécuter la stratégie de communication digitale.",
+          "Analyser les performances et optimiser les campagnes.",
+          "Gérer la relation avec les influenceurs et partenaires."
         ],
         competencesRequises: [
-          { nom: 'Excellente maîtrise des réseaux sociaux et de leurs codes', niveau: 'expert' },
-          { nom: 'Créativité et compétences en création de contenu (Canva, Photoshop, outils de montage vidéo)', niveau: 'avancé' },
-          { nom: 'Très bonnes capacités rédactionnelles (storytelling, copywriting)', niveau: 'expert' },
-          { nom: 'Gestion de crise et e-réputation', niveau: 'intermédiaire' },
-          { nom: 'Veille sur les tendances et les formats émergents', niveau: 'expert' }
+          { nom: 'Stratégie de communication digitale', niveau: 'expert' },
+          { nom: 'Création de contenu et storytelling', niveau: 'avancé' },
+          { nom: 'Gestion des réseaux sociaux et outils digitaux', niveau: 'expert' },
+          { nom: 'Analyse de données et métriques sociales', niveau: 'avancé' },
+          { nom: 'Marketing d\'influence et partenariats', niveau: 'avancé' }
         ],
         salaireMoyen: {
-          junior: { min: 250000, max: 450000 },
-          confirme: { min: 450000, max: 800000 },
-          senior: { min: 800000, max: 1300000 }
+          junior: { min: 400000, max: 800000 },
+          confirme: { min: 800000, max: 1600000 },
+          senior: { min: 1600000, max: 3200000 }
         },
         formation: [
-          "BTS ou Licence en Communication, Marketing.",
-          "Formations spécialisées en community management.",
-          "Un portfolio de pages gérées est souvent plus important que le diplôme."
+          "Formation en communication digitale ou marketing.",
+          "Certifications en réseaux sociaux et outils digitaux.",
+          "Formation en création de contenu et storytelling.",
+          "Formations continues en nouvelles plateformes."
         ],
         perspectives: [
-          "Social Media Manager (plus stratégique)",
-          "Content Manager",
-          "Responsable de l'e-réputation."
+          "Directeur de communication digitale.",
+          "Consultant en stratégie digitale.",
+          "Créateur de contenu indépendant.",
+          "Entrepreneur dans le digital."
         ],
         environnementTravail: [
-          "Agences de communication",
-          "Entreprises de tous secteurs",
-          "Médias et personnalités publiques",
-          "Freelance."
+          "Agences de communication et marketing digital.",
+          "Entreprises et organisations diverses.",
+          "Startups et entreprises technologiques.",
+          "Freelance et agences indépendantes."
         ],
-        tags: ['Social Media', 'Communication', 'Content', 'Community', 'E-réputation']
-      },
-      {
-        id: 'brand-manager',
-        titre: 'Chef de Marque / Brand Manager',
-        description: "Le Brand Manager est le gardien de l'identité et de l'image d'une marque. Il s'assure de la cohérence de tous les points de contact avec le consommateur pour construire une marque forte et reconnue.",
-        secteur: 'marketing',
-        missions: [
-          "Définir le positionnement et la plateforme de marque (mission, vision, valeurs).",
-          "Développer et lancer de nouvelles offres ou produits.",
-          "Piloter le plan de communication 360° (publicité, digital, relations presse, événements).",
-          "Analyser les études de marché et la veille concurrentielle.",
-          "Garantir la cohérence de l'identité visuelle et du discours de la marque."
-        ],
-        competencesRequises: [
-          { nom: 'Gestion de marque (Branding)', niveau: 'expert' },
-          { nom: 'Gestion de projet', niveau: 'expert' },
-          { nom: 'Analyse de marché et études consommateurs', niveau: 'avancé' },
-          { nom: 'Compétences budgétaires et analytiques', niveau: 'avancé' },
-          { nom: 'Créativité et sens de l\'esthétique', niveau: 'avancé' }
-        ],
-        salaireMoyen: {
-          junior: { min: 500000, max: 900000 },
-          confirme: { min: 900000, max: 1800000 },
-          senior: { min: 1800000, max: 3500000 }
-        },
-        formation: [
-          "Master d'une école de commerce ou d'un IAE avec spécialisation Marketing.",
-          "Master en Communication, Publicité."
-        ],
-        perspectives: [
-          "Directeur Marketing",
-          "Directeur de la Communication",
-          "Prendre la responsabilité d'un portefeuille de marques."
-        ],
-        environnementTravail: [
-          "Grandes entreprises de biens de consommation (agroalimentaire, cosmétiques)",
-          "Opérateurs de services (télécoms, banques)",
-          "Agences de publicité et de branding."
-        ],
-        tags: ['Marketing', 'Branding', 'Stratégie', 'Publicité', 'Produit']
+        tags: ['Digital', 'Réseaux sociaux', 'Communication', 'Marketing', 'Contenu']
       }
     ]
   },
@@ -1741,75 +1748,141 @@ const secteurs: Secteur[] = [
   {
     id: 'medias',
     nom: 'Médias & Communication',
-    description: 'Les métiers des médias, du journalisme et de la production audiovisuelle',
+    description: "Le secteur des médias et de la communication au Sénégal connaît une transformation digitale majeure. Avec l'essor des médias en ligne, des réseaux sociaux et des nouvelles technologies de communication, les opportunités sont nombreuses pour les professionnels créatifs et technologiques dans le journalisme, la production audiovisuelle et la communication digitale.",
     icone: '📺',
     couleur: '#f759ab',
     metiers: [
       {
         id: 'journaliste',
-        titre: 'Journaliste',
-        description: 'Collecte, vérifie et diffuse l\'information sur différents supports médiatiques',
+        titre: 'Journaliste / Journalist',
+        description: "Le Journaliste collecte, vérifie et diffuse l'information sur différents supports médiatiques. Il assure la couverture de l'actualité, mène des investigations et produit des contenus informatifs de qualité pour informer le public.",
         secteur: 'medias',
+        missions: [
+          "Rechercher, collecter et vérifier les informations.",
+          "Rédiger des articles, reportages et contenus multimédias.",
+          "Conduire des interviews et mener des investigations.",
+          "Assurer la couverture de l'actualité en temps réel.",
+          "Respecter l'éthique journalistique et la déontologie."
+        ],
         competencesRequises: [
-          { nom: 'Rédaction', niveau: 'expert' },
-          { nom: 'Investigation', niveau: 'avancé' },
-          { nom: 'Fact-checking', niveau: 'expert' },
-          { nom: 'Outils numériques', niveau: 'intermédiaire' }
+          { nom: 'Rédaction et storytelling', niveau: 'expert' },
+          { nom: 'Investigation et fact-checking', niveau: 'expert' },
+          { nom: 'Techniques d\'interview et communication', niveau: 'avancé' },
+          { nom: 'Outils numériques et réseaux sociaux', niveau: 'avancé' },
+          { nom: 'Éthique journalistique et déontologie', niveau: 'expert' }
         ],
         salaireMoyen: {
-          junior: { min: 300000, max: 600000 },
-          confirme: { min: 600000, max: 1200000 },
-          senior: { min: 1200000, max: 2500000 }
+          junior: { min: 350000, max: 700000 },
+          confirme: { min: 700000, max: 1500000 },
+          senior: { min: 1500000, max: 3000000 }
         },
         formation: [
-          'Master en Journalisme',
-          'École de journalisme',
-          'Formation continue'
+          "Master en Journalisme ou École de journalisme.",
+          "Formation continue en techniques journalistiques.",
+          "Certifications en fact-checking et vérification d'information.",
+          "Formations spécialisées (investigation, data journalism)."
         ],
         perspectives: [
-          'Rédacteur en chef',
-          'Grand reporter',
-          'Journaliste spécialisé'
+          "Rédacteur en chef ou Directeur de rédaction.",
+          "Grand reporter ou Journaliste d'investigation.",
+          "Journaliste spécialisé ou Correspondant.",
+          "Créateur de contenus indépendant."
         ],
         environnementTravail: [
-          'Presse écrite',
-          'Télévision',
-          'Médias en ligne'
+          "Rédactions de presse écrite et médias en ligne.",
+          "Chaînes de télévision et radios.",
+          "Agences de presse et médias internationaux.",
+          "Médias spécialisés et plateformes digitales."
         ],
-        tags: ['Médias', 'Information', 'Presse']
+        tags: ['Journalisme', 'Information', 'Investigation', 'Médias', 'Communication']
       },
       {
         id: 'producteur-audiovisuel',
-        titre: 'Producteur Audiovisuel',
-        description: 'Gère la production de contenus audiovisuels et coordonne les équipes',
+        titre: 'Producteur Audiovisuel / Audiovisual Producer',
+        description: "Le Producteur Audiovisuel gère la production de contenus audiovisuels et coordonne les équipes techniques et créatives. Il assure la gestion budgétaire, la planification et la réalisation de projets audiovisuels.",
         secteur: 'medias',
+        missions: [
+          "Gérer la production de contenus audiovisuels de A à Z.",
+          "Coordonner les équipes techniques et créatives.",
+          "Gérer les budgets et la planification des projets.",
+          "Assurer la direction artistique et le suivi de production.",
+          "Négocier avec les partenaires et gérer les droits."
+        ],
         competencesRequises: [
-          { nom: 'Gestion de production', niveau: 'expert' },
-          { nom: 'Budgétisation', niveau: 'avancé' },
-          { nom: 'Direction artistique', niveau: 'avancé' },
-          { nom: 'Droit audiovisuel', niveau: 'intermédiaire' }
+          { nom: 'Gestion de production audiovisuelle', niveau: 'expert' },
+          { nom: 'Budgétisation et planification de projets', niveau: 'expert' },
+          { nom: 'Direction artistique et créative', niveau: 'avancé' },
+          { nom: 'Droit audiovisuel et propriété intellectuelle', niveau: 'avancé' },
+          { nom: 'Management d\'équipe et coordination', niveau: 'expert' }
         ],
         salaireMoyen: {
-          junior: { min: 500000, max: 1000000 },
-          confirme: { min: 1000000, max: 2000000 },
-          senior: { min: 2000000, max: 4000000 }
+          junior: { min: 600000, max: 1200000 },
+          confirme: { min: 1200000, max: 2500000 },
+          senior: { min: 2500000, max: 5000000 }
         },
         formation: [
-          'Master Production Audiovisuelle',
-          'École de cinéma',
-          'Formation technique'
+          "Master Production Audiovisuelle ou École de cinéma.",
+          "Formation technique en audiovisuel et cinéma.",
+          "Certifications en gestion de production.",
+          "Formations continues en nouvelles technologies."
         ],
         perspectives: [
-          'Directeur de production',
-          'Producteur exécutif',
-          'Créateur de contenus'
+          "Directeur de production ou Producteur exécutif.",
+          "Créateur de contenus ou Réalisateur.",
+          "Consultant en production audiovisuelle.",
+          "Entrepreneur dans l'audiovisuel."
         ],
         environnementTravail: [
-          'Sociétés de production',
-          'Chaînes TV',
-          'Studios'
+          "Sociétés de production audiovisuelle et cinématographique.",
+          "Chaînes de télévision et plateformes de streaming.",
+          "Studios et maisons de production.",
+          "Agences de communication et entreprises."
         ],
-        tags: ['Audiovisuel', 'Production', 'Médias']
+        tags: ['Audiovisuel', 'Production', 'Cinéma', 'Télévision', 'Création']
+      },
+      {
+        id: 'community-manager',
+        titre: 'Community Manager / Social Media Manager',
+        description: "Le Community Manager gère la présence digitale des marques et organisations sur les réseaux sociaux. Il crée du contenu engageant, anime les communautés en ligne et développe la stratégie de communication digitale.",
+        secteur: 'medias',
+        missions: [
+          "Créer et publier du contenu engageant sur les réseaux sociaux.",
+          "Animer et modérer les communautés en ligne.",
+          "Développer et exécuter la stratégie de communication digitale.",
+          "Analyser les performances et optimiser les campagnes.",
+          "Gérer la relation avec les influenceurs et partenaires."
+        ],
+        competencesRequises: [
+          { nom: 'Stratégie de communication digitale', niveau: 'expert' },
+          { nom: 'Création de contenu et storytelling', niveau: 'avancé' },
+          { nom: 'Gestion des réseaux sociaux et outils digitaux', niveau: 'expert' },
+          { nom: 'Analyse de données et métriques sociales', niveau: 'avancé' },
+          { nom: 'Marketing d\'influence et partenariats', niveau: 'avancé' }
+        ],
+        salaireMoyen: {
+          junior: { min: 400000, max: 800000 },
+          confirme: { min: 800000, max: 1600000 },
+          senior: { min: 1600000, max: 3200000 }
+        },
+        formation: [
+          "Formation en communication digitale ou marketing.",
+          "Certifications en réseaux sociaux et outils digitaux.",
+          "Formation en création de contenu et storytelling.",
+          "Formations continues en nouvelles plateformes."
+        ],
+        perspectives: [
+          "Directeur de communication digitale.",
+          "Consultant en stratégie digitale.",
+          "Créateur de contenu indépendant.",
+          "Entrepreneur dans le digital."
+        ],
+        environnementTravail: [
+          "Agences de communication et marketing digital.",
+          "Entreprises et organisations diverses.",
+          "Startups et entreprises technologiques.",
+          "Freelance et agences indépendantes."
+        ],
+        tags: ['Digital', 'Réseaux sociaux', 'Communication', 'Marketing', 'Contenu']
       }
     ]
   },
