@@ -73,22 +73,22 @@ export const useSubscription = () => {
         setLoading(false);
         return;
       }
-
+      
       // Si l'utilisateur est un admin, accorder l'accès et arrêter immédiatement.
       if (user.role === 'admin') {
         setHasActiveSubscription(true);
         setLoading(false);
         return;
       }
-
+      
       // Pour les autres utilisateurs, vérifier l'abonnement en base de données.
       try {
         setLoading(true);
         setError(null);
-
+        
         const isActive = await subscriptionService.fetchSubscriptionStatus(user.id);
         setHasActiveSubscription(isActive);
-
+        
         console.log('useSubscription - Statut abonnement vérifié:', {
           userId: user.id,
           hasActiveSubscription: isActive
@@ -107,7 +107,7 @@ export const useSubscription = () => {
         setLoading(false);
       }
     };
-
+    
     checkSubscriptionStatus();
     
   }, [isAuthenticated, user]); // Dépendre de l'objet 'user' entier.

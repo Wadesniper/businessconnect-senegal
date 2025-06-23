@@ -9,7 +9,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login: (phoneNumber: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  register: (data: UserRegistrationData) => Promise<{ token: string; user: User; } | void>;
+  register: (data: UserRegistrationData) => Promise<{ success: boolean; message: string; token?: string; user?: User; }>;
   updateProfile: (data: Partial<User>) => Promise<void>;
   refreshAuth: () => Promise<void>;
 }
@@ -78,9 +78,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setUser(serverUser);
         }
       } catch (serverError: any) {
-        console.error('AuthProvider - Token invalide côté serveur:', serverError.message);
-        // Ne pas déconnecter immédiatement, laisser l'utilisateur continuer
-        // Le serveur renverra 401 sur les prochaines requêtes si nécessaire
+        console.error('AuthProvider - Token invalide côté serveur, déconnexion:', serverError.message);
+        // Le token est invalide, on nettoie tout.
+        authService.removeToken();
+        authService.removeUser();
+        setUser(null);
+        setIsAuthenticated(false);
       }
     } catch (error) {
       console.error('AuthProvider - Erreur initialisation:', error);
@@ -163,17 +166,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       const response = await authService.register(data);
       
-      if (response.success && response.data) {
+      if (response.success && response.user && response.token) {
         // Sauvegarder de manière atomique
-        authService.setToken(response.data.token);
-        authService.setUser(response.data.user);
+        authService.setToken(response.token);
+        authService.setUser(response.user);
         
         // Mettre à jour l'état
-        setUser(response.data.user);
+        setUser(response.user);
         setIsAuthenticated(true);
         
-        console.log('AuthProvider - Inscription réussie:', response.data.user.id);
-        return response.data;
+        console.log('AuthProvider - Inscription réussie:', response.user.id);
+        return response;
       } else {
         throw new Error(response.message || 'Erreur lors de l\'inscription');
       }
