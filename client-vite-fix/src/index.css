@@ -126,6 +126,35 @@ button:focus-visible {
   }
 }
 
+/* Style bouton-carte pour chaque secteur (onglet) du filtre Carrières */
+.ant-tabs-tab {
+  background: #fff !important;
+  border-radius: 18px !important;
+  box-shadow: 0 2px 8px #e3e8f7 !important;
+  margin: 4px 6px !important;
+  padding: 8px 18px !important;
+  font-size: 1.08em !important;
+  font-weight: 500 !important;
+  color: #222 !important;
+  transition: box-shadow 0.2s, background 0.2s, color 0.2s;
+  border: 1.5px solid #f0f0f0 !important;
+  display: flex !important;
+  align-items: center;
+  min-height: 44px;
+}
+.ant-tabs-tab-active {
+  background: #f0f5ff !important;
+  color: #1890ff !important;
+  border-color: #1890ff !important;
+  box-shadow: 0 4px 16px #e3e8f7 !important;
+}
+.ant-tabs-tab:hover {
+  background: #f5f8ff !important;
+  color: #1890ff !important;
+  box-shadow: 0 6px 18px #e3e8f7 !important;
+  border-color: #91d5ff !important;
+}
+
 /* Affichage multi-lignes des tabs secteurs (Carrières) */
 .ant-tabs-nav {
   flex-wrap: wrap !important;
@@ -149,6 +178,11 @@ button:focus-visible {
 }
 
 @media (max-width: 900px) {
+  .ant-tabs-tab {
+    font-size: 0.98em !important;
+    padding: 7px 10px !important;
+    min-height: 38px;
+  }
   .ant-tabs-nav, .ant-tabs-nav-list {
     row-gap: 4px;
     column-gap: 4px;
