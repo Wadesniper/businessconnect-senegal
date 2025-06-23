@@ -2170,53 +2170,116 @@ const secteurs: Secteur[] = [
   {
     id: 'commerce',
     nom: 'Commerce & Distribution',
-    description: 'Les métiers du commerce, de la vente et de la grande distribution',
+    description: "Le secteur du commerce et de la distribution au Sénégal connaît une évolution rapide avec l'essor du e-commerce et la transformation digitale. Les opportunités sont nombreuses pour les professionnels qualifiés dans la gestion commerciale, le retail et la logistique pour répondre aux nouvelles attentes des consommateurs.",
     icone: '🏪',
     couleur: '#36cfc9',
     metiers: [
       {
         id: 'category-manager',
         titre: 'Category Manager',
-        description: 'Gère et optimise une catégorie de produits pour maximiser les ventes',
+        description: "Le Category Manager gère et optimise une catégorie de produits pour maximiser les ventes et la rentabilité. Il analyse les tendances du marché, négocie avec les fournisseurs et développe des stratégies commerciales adaptées.",
         secteur: 'commerce',
+        missions: [
+          "Analyser les performances de la catégorie et identifier les opportunités.",
+          "Négocier avec les fournisseurs pour optimiser les conditions commerciales.",
+          "Développer des stratégies de merchandising et de promotion.",
+          "Suivre les tendances du marché et anticiper les évolutions.",
+          "Collaborer avec les équipes marketing et logistique."
+        ],
         competencesRequises: [
-          { nom: 'Analyse commerciale', niveau: 'expert' },
-          { nom: 'Marketing', niveau: 'avancé' },
-          { nom: 'Négociation', niveau: 'avancé' },
-          { nom: 'Merchandising', niveau: 'expert' }
+          { nom: 'Analyse commerciale et études de marché', niveau: 'expert' },
+          { nom: 'Marketing et merchandising', niveau: 'expert' },
+          { nom: 'Négociation commerciale et achats', niveau: 'avancé' },
+          { nom: 'Gestion de la relation fournisseurs', niveau: 'avancé' },
+          { nom: 'Outils d\'analyse et de reporting', niveau: 'expert' }
         ],
         salaireMoyen: {
-          junior: { min: 400000, max: 800000 },
-          confirme: { min: 800000, max: 1500000 },
-          senior: { min: 1500000, max: 2500000 }
+          junior: { min: 450000, max: 900000 },
+          confirme: { min: 900000, max: 1800000 },
+          senior: { min: 1800000, max: 3000000 }
         },
         formation: [
-          'Master Commerce/Marketing',
-          'École de commerce',
-          'Formation retail'
+          "Master Commerce/Marketing ou École de commerce.",
+          "Formation spécialisée en retail et merchandising.",
+          "Certifications en analyse commerciale.",
+          "Formations continues en nouvelles tendances."
         ],
         perspectives: [
-          'Directeur commercial',
-          'Chef de produit',
-          'Directeur des achats'
+          "Directeur commercial ou Directeur des achats.",
+          "Chef de produit ou Brand Manager.",
+          "Consultant en stratégie commerciale.",
+          "Responsable de catégorie senior."
         ],
         environnementTravail: [
-          'Grande distribution',
-          'Centrales d\'achat',
-          'Retail'
+          "Grande distribution et centrales d'achat.",
+          "Entreprises de retail et e-commerce.",
+          "Cabinets de conseil en commerce.",
+          "Fournisseurs et fabricants."
         ],
-        tags: ['Commerce', 'Marketing', 'Distribution']
+        tags: ['Commerce', 'Marketing', 'Distribution', 'Retail', 'Merchandising']
       },
       {
         id: 'responsable-magasin',
         titre: 'Responsable de Magasin',
-        description: 'Gère et développe l\'activité d\'un point de vente',
+        description: "Le Responsable de Magasin gère et développe l'activité d'un point de vente. Il assure la gestion des équipes, l'optimisation des ventes et la satisfaction client pour maximiser la performance commerciale.",
         secteur: 'commerce',
+        missions: [
+          "Gérer les équipes de vente et assurer leur formation.",
+          "Optimiser les ventes et atteindre les objectifs commerciaux.",
+          "Assurer la gestion des stocks et la logistique.",
+          "Garantir la satisfaction client et la qualité de service.",
+          "Analyser les performances et proposer des améliorations."
+        ],
         competencesRequises: [
-          { nom: 'Management équipe', niveau: 'expert' },
-          { nom: 'Gestion commerciale', niveau: 'expert' },
-          { nom: 'Service client', niveau: 'avancé' },
-          { nom: 'Gestion stocks', niveau: 'avancé' }
+          { nom: 'Management d\'équipe et leadership', niveau: 'expert' },
+          { nom: 'Gestion commerciale et vente', niveau: 'expert' },
+          { nom: 'Service client et relation client', niveau: 'avancé' },
+          { nom: 'Gestion des stocks et logistique', niveau: 'avancé' },
+          { nom: 'Analyse de performance et reporting', niveau: 'expert' }
+        ],
+        salaireMoyen: {
+          junior: { min: 400000, max: 800000 },
+          confirme: { min: 800000, max: 1600000 },
+          senior: { min: 1600000, max: 2500000 }
+        },
+        formation: [
+          "BTS Management Commercial ou Licence Pro Commerce.",
+          "Formation continue en management et retail.",
+          "Certifications en service client.",
+          "Formations spécialisées par secteur d'activité."
+        ],
+        perspectives: [
+          "Directeur régional ou Responsable réseau.",
+          "Consultant retail ou formateur.",
+          "Entrepreneur dans le commerce.",
+          "Responsable de zone ou de région."
+        ],
+        environnementTravail: [
+          "Points de vente et boutiques.",
+          "Centres commerciaux et galeries.",
+          "Réseaux de distribution.",
+          "Entreprises de retail."
+        ],
+        tags: ['Retail', 'Management', 'Commerce', 'Vente', 'Service client']
+      },
+      {
+        id: 'chef-vente',
+        titre: 'Chef de Vente',
+        description: "Le Chef de Vente encadre et motive une équipe de commerciaux pour atteindre les objectifs de vente. Il assure la formation des vendeurs, le suivi des performances et l'optimisation des techniques de vente.",
+        secteur: 'commerce',
+        missions: [
+          "Encadrer et former une équipe de vendeurs.",
+          "Fixer et suivre les objectifs de vente individuels et collectifs.",
+          "Coacher les vendeurs et améliorer leurs performances.",
+          "Analyser les résultats et proposer des actions d'amélioration.",
+          "Assurer la coordination avec les autres services."
+        ],
+        competencesRequises: [
+          { nom: 'Management d\'équipe et coaching', niveau: 'expert' },
+          { nom: 'Techniques de vente et négociation', niveau: 'expert' },
+          { nom: 'Analyse de performance et reporting', niveau: 'avancé' },
+          { nom: 'Formation et développement des compétences', niveau: 'avancé' },
+          { nom: 'Gestion des objectifs et motivation', niveau: 'expert' }
         ],
         salaireMoyen: {
           junior: { min: 350000, max: 700000 },
@@ -2224,21 +2287,24 @@ const secteurs: Secteur[] = [
           senior: { min: 1400000, max: 2200000 }
         },
         formation: [
-          'BTS Management Commercial',
-          'Licence Pro Commerce',
-          'Formation continue'
+          "Formation en management commercial et vente.",
+          "Certifications en coaching et management.",
+          "Formation continue en techniques de vente.",
+          "Formations spécialisées par secteur."
         ],
         perspectives: [
-          'Directeur régional',
-          'Responsable réseau',
-          'Consultant retail'
+          "Directeur commercial ou Responsable des ventes.",
+          "Formateur en techniques de vente.",
+          "Consultant en performance commerciale.",
+          "Responsable de zone commerciale."
         ],
         environnementTravail: [
-          'Points de vente',
-          'Centres commerciaux',
-          'Boutiques'
+          "Équipes de vente et points de vente.",
+          "Centres de formation et instituts.",
+          "Cabinets de conseil en vente.",
+          "Entreprises de tous secteurs."
         ],
-        tags: ['Retail', 'Management', 'Commerce']
+        tags: ['Vente', 'Management', 'Coaching', 'Performance', 'Formation']
       }
     ]
   },
