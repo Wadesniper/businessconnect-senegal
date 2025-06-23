@@ -1478,47 +1478,58 @@ const secteurs: Secteur[] = [
   {
     id: 'environnement',
     nom: 'Environnement & Énergie',
-    description: 'Les métiers de l\'environnement, des énergies renouvelables et du développement durable',
+    description: "Le secteur de l'environnement et des énergies renouvelables au Sénégal est en pleine expansion grâce aux engagements climatiques et aux opportunités d'énergie verte. Avec l'émergence de projets solaires, éoliens et de développement durable, les professionnels qualifiés sont très recherchés pour accompagner la transition énergétique et écologique.",
     icone: '🌱',
     couleur: '#52c41a',
     metiers: [
       {
         id: 'ingenieur-energie-solaire',
-        titre: 'Ingénieur en Énergie Solaire',
-        description: 'Conçoit et met en œuvre des solutions d\'énergie solaire',
+        titre: 'Ingénieur en Énergie Solaire / Solar Energy Engineer',
+        description: "L'Ingénieur en Énergie Solaire conçoit, développe et supervise des projets d'énergie solaire. Il assure la faisabilité technique, l'optimisation des performances et la maintenance des installations photovoltaïques pour contribuer à la transition énergétique.",
         secteur: 'environnement',
+        missions: [
+          "Concevoir et dimensionner des installations solaires photovoltaïques.",
+          "Analyser la faisabilité technique et économique des projets solaires.",
+          "Superviser la construction et l'installation des centrales solaires.",
+          "Optimiser les performances et assurer la maintenance des installations.",
+          "Assurer la conformité aux normes et réglementations en vigueur."
+        ],
         competencesRequises: [
-          { nom: 'Technologie solaire', niveau: 'expert' },
-          { nom: 'Gestion de projet', niveau: 'avancé' },
-          { nom: 'Dimensionnement', niveau: 'expert' },
-          { nom: 'AutoCAD', niveau: 'intermédiaire' }
+          { nom: 'Technologies solaires et photovoltaïques', niveau: 'expert' },
+          { nom: 'Dimensionnement et conception d\'installations', niveau: 'expert' },
+          { nom: 'Gestion de projet et coordination technique', niveau: 'avancé' },
+          { nom: 'Outils de simulation (PVsyst, AutoCAD)', niveau: 'avancé' },
+          { nom: 'Réglementation énergétique et normes techniques', niveau: 'expert' }
         ],
         salaireMoyen: {
-          junior: { min: 500000, max: 900000 },
-          confirme: { min: 900000, max: 1800000 },
-          senior: { min: 1800000, max: 3500000 }
+          junior: { min: 600000, max: 1200000 },
+          confirme: { min: 1200000, max: 2500000 },
+          senior: { min: 2500000, max: 4500000 }
         },
         formation: [
-          'Ingénieur énergéticien',
-          'Master énergies renouvelables',
-          'Certifications techniques'
+          "Ingénieur en énergétique ou Master en énergies renouvelables.",
+          "Spécialisation en énergie solaire et photovoltaïque.",
+          "Certifications techniques en installation solaire.",
+          "Formations continues en nouvelles technologies solaires."
         ],
         perspectives: [
-          'Chef de projets solaires',
-          'Consultant en énergie',
-          'Directeur technique'
+          "Chef de projet solaire ou Directeur technique.",
+          "Consultant en énergies renouvelables.",
+          "Directeur d'exploitation de centrales solaires.",
+          "Expert en développement de projets solaires."
         ],
         environnementTravail: [
-          'Entreprises d\'énergie',
-          'Bureaux d\'études',
-          'ONG'
+          "Entreprises d'énergie et producteurs d'électricité.",
+          "Bureaux d'études et cabinets d'ingénierie.",
+          "Installateurs et mainteneurs d'équipements solaires.",
+          "Organisations internationales et ONG environnementales."
         ],
-        tags: ['Énergie', 'Solaire', 'Environnement']
+        tags: ['Énergie solaire', 'Photovoltaïque', 'Renouvelable', 'Ingénierie', 'Développement durable']
       },
       {
         id: 'expert-environnement',
-        titre: 'Expert Environnemental',
-        description: 'Évalue l\'impact environnemental et propose des solutions durables',
+        titre: 'Expert Environnemental / Environmental Specialist',
+        description: "L'Expert Environnemental évalue l'impact environnemental des projets et propose des solutions durables. Il assure la conformité réglementaire, la protection de l'environnement et l'accompagnement des entreprises dans leur transition écologique.",
         secteur: 'environnement',
         competencesRequises: [
           { nom: 'Études d\'impact', niveau: 'expert' },
@@ -1550,8 +1561,8 @@ const secteurs: Secteur[] = [
       },
       {
         id: 'expert-eolien',
-        titre: 'Expert en Énergie Éolienne',
-        description: 'Développe et gère des projets d\'énergie éolienne',
+        titre: 'Expert en Énergie Éolienne / Wind Energy Specialist',
+        description: "L'Expert en Énergie Éolienne développe et gère des projets d'énergie éolienne. Il assure la conception, l'installation et l'exploitation des parcs éoliens pour contribuer au mix énergétique renouvelable du Sénégal.",
         secteur: 'environnement',
         competencesRequises: [
           { nom: 'Technologie éolienne', niveau: 'expert' },
@@ -1560,59 +1571,29 @@ const secteurs: Secteur[] = [
           { nom: 'Maintenance éolienne', niveau: 'expert' }
         ],
         salaireMoyen: {
-          junior: { min: 600000, max: 1200000 },
-          confirme: { min: 1200000, max: 2400000 },
-          senior: { min: 2400000, max: 4000000 }
+          junior: { min: 700000, max: 1400000 },
+          confirme: { min: 1400000, max: 2800000 },
+          senior: { min: 2800000, max: 5000000 }
         },
         formation: [
-          'Ingénieur énergies',
-          'Master éolien',
-          'Certifications techniques'
+          "Ingénieur en énergies ou Master spécialisé en éolien.",
+          "Formation en technologies éoliennes et maintenance.",
+          "Certifications techniques en énergie éolienne.",
+          "Formations continues en nouvelles technologies éoliennes."
         ],
         perspectives: [
-          'Chef projet éolien',
-          'Directeur technique',
-          'Consultant énergie'
+          "Chef de projet éolien ou Directeur technique.",
+          "Consultant en énergies renouvelables.",
+          "Directeur d'exploitation de parcs éoliens.",
+          "Expert en développement de projets éoliens."
         ],
         environnementTravail: [
-          'Parcs éoliens',
-          'Bureaux études',
-          'Entreprises énergie'
+          "Parcs éoliens et producteurs d'énergie éolienne.",
+          "Bureaux d'études et cabinets d'ingénierie.",
+          "Fabricants et installateurs d'éoliennes.",
+          "Organisations internationales et institutions financières."
         ],
-        tags: ['Énergie', 'Éolien', 'Environnement']
-      },
-      {
-        id: 'expert-economie-circulaire',
-        titre: 'Expert en Économie Circulaire',
-        description: 'Développe des solutions pour optimiser l\'utilisation des ressources',
-        secteur: 'environnement',
-        competencesRequises: [
-          { nom: 'Économie circulaire', niveau: 'expert' },
-          { nom: 'Gestion déchets', niveau: 'avancé' },
-          { nom: 'Analyse cycle vie', niveau: 'expert' },
-          { nom: 'RSE', niveau: 'avancé' }
-        ],
-        salaireMoyen: {
-          junior: { min: 450000, max: 900000 },
-          confirme: { min: 900000, max: 1800000 },
-          senior: { min: 1800000, max: 3000000 }
-        },
-        formation: [
-          'Master Environnement',
-          'Spécialisation économie circulaire',
-          'Certifications RSE'
-        ],
-        perspectives: [
-          'Directeur développement durable',
-          'Consultant environnement',
-          'Chef projet RSE'
-        ],
-        environnementTravail: [
-          'Entreprises industrielles',
-          'Cabinets conseil',
-          'Collectivités'
-        ],
-        tags: ['Environnement', 'Économie circulaire', 'RSE']
+        tags: ['Énergie éolienne', 'Parcs éoliens', 'Renouvelable', 'Maintenance', 'Développement durable']
       }
     ]
   },
