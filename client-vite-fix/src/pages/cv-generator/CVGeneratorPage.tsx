@@ -23,7 +23,13 @@ const CVGeneratorPage: React.FC = () => {
   const { hasActiveSubscription } = useSubscription();
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
   const [myCVs, setMyCVs] = useState(exampleCVs);
+  const [loadingPage, setLoadingPage] = useState(true);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoadingPage(false), 300);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     if (user && user.subscription && typeof user.subscription === 'object' && 'type' in user.subscription && user.subscription.type !== 'etudiant') {
@@ -57,6 +63,22 @@ const CVGeneratorPage: React.FC = () => {
   const handleShareCV = (id: string) => {
     Modal.info({ title: 'Partager le CV', content: 'Cette fonctionnalité sera bientôt disponible.' });
   };
+
+  if (loadingPage) {
+    return (
+      <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <span className="ant-spin ant-spin-lg ant-spin-spinning">
+          <span className="ant-spin-dot ant-spin-dot-spin">
+            <i className="ant-spin-dot-item" />
+            <i className="ant-spin-dot-item" />
+            <i className="ant-spin-dot-item" />
+            <i className="ant-spin-dot-item" />
+          </span>
+        </span>
+        <span style={{ marginLeft: 16, fontSize: 18, color: '#1890ff' }}>Chargement du générateur de CV...</span>
+      </div>
+    );
+  }
 
   return (
     <div style={{ padding: '16px', maxWidth: '100%' }}>
