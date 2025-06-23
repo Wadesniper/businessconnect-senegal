@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { authService } from '../services/authService';
 import type { User, UserRegistrationData } from '../types/user';
 
@@ -22,95 +22,48 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [error, setError] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Fonction centralisée pour vérifier l'authentification
-  const validateAuthState = (): boolean => {
+  const initAuth = useCallback(async () => {
     const token = authService.getToken();
-    const localUser = authService.getUser();
-    
-    // Les deux doivent être présents pour être authentifié
-    const isValid = !!(token && localUser);
-    
-    console.log('AuthProvider - Validation état auth:', {
-      hasToken: !!token,
-      hasUser: !!localUser,
-      isValid
-    });
-    
-    if (!isValid) {
-      // Si état incohérent, nettoyer complètement
+    if (!token) {
+      setLoading(false);
+      setIsAuthenticated(false);
+      setUser(null);
+      return;
+    }
+
+    try {
+      // Le token est déjà dans les headers grâce à l'intercepteur de l'api
+      const serverUser = await authService.getCurrentUser();
+      if (serverUser) {
+        setUser(serverUser);
+        setIsAuthenticated(true);
+        // Assurer la cohérence du localStorage
+        authService.setUser(serverUser);
+      } else {
+        // Cas où le serveur ne renvoie pas d'erreur mais pas d'utilisateur
+        throw new Error("Impossible de vérifier l'utilisateur");
+      }
+    } catch (e: any) {
+      console.error('Auth Init Error - Token probablement invalide:', e.message);
       authService.removeToken();
       authService.removeUser();
       setUser(null);
       setIsAuthenticated(false);
-      return false;
-    }
-    
-    return true;
-  };
-
-  // Fonction pour initialiser l'authentification
-  const initAuth = async (): Promise<void> => {
-    setLoading(true);
-    
-    try {
-      // Vérifier l'état local d'abord
-      if (!validateAuthState()) {
-        console.log('AuthProvider - État local invalide');
-        setLoading(false);
-        return;
-      }
-
-      // Si on a des données locales valides, on considère l'utilisateur comme authentifié
-      const localUser = authService.getUser();
-      if (localUser) {
-        setUser(localUser);
-        setIsAuthenticated(true);
-      }
-
-      // Vérifier la validité du token côté serveur en arrière-plan
-      try {
-        console.log('AuthProvider - Validation token côté serveur...');
-        const serverUser = await authService.getCurrentUser();
-        
-        if (serverUser) {
-          // Mettre à jour les données utilisateur si nécessaire
-          authService.setUser(serverUser);
-          setUser(serverUser);
-        }
-      } catch (serverError: any) {
-        console.error('AuthProvider - Token invalide côté serveur, déconnexion:', serverError.message);
-        // Le token est invalide, on nettoie tout.
-        authService.removeToken();
-        authService.removeUser();
-        setUser(null);
-        setIsAuthenticated(false);
-      }
-    } catch (error) {
-      console.error('AuthProvider - Erreur initialisation:', error);
-      setError('Erreur lors de la vérification de l\'authentification');
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Fonction pour rafraîchir l'authentification
   const refreshAuth = async (): Promise<void> => {
+    console.log("AuthProvider - Rafraîchissement manuel de l'authentification...");
     await initAuth();
   };
 
   // Initialisation au chargement
   useEffect(() => {
     initAuth();
-    
-    // Écouter les changements de localStorage
-    const handleStorageChange = () => {
-      console.log('AuthProvider - Changement localStorage détecté');
-      initAuth();
-    };
-    
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, []);
+  }, [initAuth]);
 
   const login = async (phoneNumber: string, password: string) => {
     try {
@@ -122,40 +75,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         authService.setUser(response.user);
         setUser(response.user);
         setIsAuthenticated(true);
-        console.log('AuthProvider - Connexion réussie:', response.user.id);
       } else {
         throw new Error('Réponse de connexion invalide');
       }
     } catch (error: any) {
-      console.error('AuthProvider - Erreur connexion (catch):', error);
-      setError(error.message || 'Erreur lors de la connexion');
+      const errorMessage = error.response?.data?.message || error.message || 'Erreur lors de la connexion';
+      setError(errorMessage);
       authService.removeToken();
       authService.removeUser();
       setUser(null);
       setIsAuthenticated(false);
+      throw new Error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
   const logout = async () => {
+    console.log('AuthProvider - Déconnexion...');
     try {
-      setError(null);
-      
-      // Nettoyer localement d'abord
+      // Notifier le serveur en premier, mais ne pas bloquer si ça échoue
+      await authService.logout();
+    } catch (error) {
+      console.error("Erreur lors de l'appel de déconnexion au serveur, déconnexion locale quand même.", error);
+    } finally {
+      // Nettoyage local impératif
       authService.removeToken();
       authService.removeUser();
       setUser(null);
       setIsAuthenticated(false);
-      
-      // Puis côté serveur
-      await authService.logout();
-      
-      console.log('AuthProvider - Déconnexion réussie');
-    } catch (error: any) {
-      console.error('AuthProvider - Erreur déconnexion:', error);
-      setError('Erreur lors de la déconnexion');
-      throw error;
+      setError(null);
     }
   };
 
@@ -167,30 +116,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const response = await authService.register(data);
       
       if (response.success && response.user && response.token) {
-        // Sauvegarder de manière atomique
         authService.setToken(response.token);
         authService.setUser(response.user);
-        
-        // Mettre à jour l'état
         setUser(response.user);
         setIsAuthenticated(true);
-        
-        console.log('AuthProvider - Inscription réussie:', response.user.id);
         return response;
       } else {
         throw new Error(response.message || 'Erreur lors de l\'inscription');
       }
     } catch (error: any) {
-      console.error('AuthProvider - Erreur inscription:', error);
       const errorMessage = error.response?.data?.message || error.message || 'Erreur lors de l\'inscription';
       setError(errorMessage);
-      
-      // Nettoyer en cas d'erreur
       authService.removeToken();
       authService.removeUser();
       setUser(null);
       setIsAuthenticated(false);
-      
       throw new Error(errorMessage);
     } finally {
       setLoading(false);
