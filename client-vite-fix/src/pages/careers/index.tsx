@@ -4351,7 +4351,7 @@ const CareersPage: React.FC = () => {
   const [loadingPage, setLoadingPage] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoadingPage(false), 400);
+    const timer = setTimeout(() => setLoadingPage(false), 300);
     return () => clearTimeout(timer);
   }, []);
 

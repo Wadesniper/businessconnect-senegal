@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Layout, Card, Row, Col, Input, Button, Empty } from 'antd';
 import { SearchOutlined, ArrowRightOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
@@ -27,6 +27,12 @@ const FormationsPage: React.FC = () => {
   const navigate = useNavigate();
   const isPremium = hasPremiumAccess(user, hasActiveSubscription);
   const [search, setSearch] = useState('');
+  const [loadingPage, setLoadingPage] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoadingPage(false), 300);
+    return () => clearTimeout(timer);
+  }, []);
 
   const filteredFormations = formationsData.filter(f =>
     f.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -51,6 +57,22 @@ const FormationsPage: React.FC = () => {
     maxWidth: 900,
     margin: '0 auto 32px auto',
   };
+
+  if (loadingPage) {
+    return (
+      <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <span className="ant-spin ant-spin-lg ant-spin-spinning">
+          <span className="ant-spin-dot ant-spin-dot-spin">
+            <i className="ant-spin-dot-item" />
+            <i className="ant-spin-dot-item" />
+            <i className="ant-spin-dot-item" />
+            <i className="ant-spin-dot-item" />
+          </span>
+        </span>
+        <span style={{ marginLeft: 16, fontSize: 18, color: '#1890ff' }}>Chargement des formations...</span>
+      </div>
+    );
+  }
 
   return (
     <Layout>
