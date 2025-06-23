@@ -2,29 +2,48 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Result, Button, Spin } from 'antd';
 import { CheckCircleOutlined, CloseCircleOutlined, LoadingOutlined } from '@ant-design/icons';
+import { useAuth } from '../../context/AuthContext';
+import { subscriptionService } from '../../services/subscriptionService';
 
 const PaymentReturnPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { refreshAuth } = useAuth();
   const [loading, setLoading] = useState(true);
   const [paymentStatus, setPaymentStatus] = useState<'success' | 'failed' | 'pending'>('pending');
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const transactionId = searchParams.get('transaction_id');
-    const status = searchParams.get('status');
+    const token = searchParams.get('token') || searchParams.get('transaction_id');
     
-    // Simuler la vérification du statut de paiement
-    setTimeout(() => {
-      if (status === 'ACCEPTED' || status === 'success') {
-        setPaymentStatus('success');
-      } else if (status === 'CANCELLED' || status === 'failed') {
-        setPaymentStatus('failed');
-      } else {
-        setPaymentStatus('failed'); // Par défaut, considérer comme échoué
-      }
+    if (!token) {
+      setError('Identifiant de transaction manquant.');
+      setPaymentStatus('failed');
       setLoading(false);
-    }, 2000);
-  }, [searchParams]);
+      return;
+    }
+
+    const verifyPayment = async () => {
+      try {
+        const response = await subscriptionService.verifyPayment({ token });
+
+        if (response.success) {
+          await refreshAuth();
+          setPaymentStatus('success');
+        } else {
+          setError(response.message || 'La vérification du paiement a échoué.');
+          setPaymentStatus('failed');
+        }
+      } catch (err: any) {
+        setError(err.message || 'Une erreur est survenue lors de la vérification du paiement.');
+        setPaymentStatus('failed');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    verifyPayment();
+  }, [searchParams, refreshAuth]);
 
   if (loading) {
     return (
@@ -52,24 +71,21 @@ const PaymentReturnPage: React.FC = () => {
             subTitle="Votre abonnement a été activé avec succès. Vous pouvez maintenant accéder à toutes les fonctionnalités premium de BusinessConnect Sénégal."
             extra={[
               <Button type="primary" key="dashboard" onClick={() => navigate('/dashboard')}>
-                Aller au tableau de bord
+                Accéder à mon tableau de bord
               </Button>,
-              <Button key="subscription" onClick={() => navigate('/subscription')}>
-                Voir mes abonnements
-              </Button>
             ]}
           />
         )}
 
-        {paymentStatus === 'failed' && (
+        {(paymentStatus === 'failed' || error) && (
           <Result
             icon={<CloseCircleOutlined style={{ color: '#ff4d4f' }} />}
             status="error"
             title="Paiement échoué"
-            subTitle="Une erreur s'est produite lors du traitement de votre paiement. Veuillez réessayer ou contacter le support."
+            subTitle={error || "Une erreur s'est produite lors du traitement de votre paiement. Veuillez réessayer ou contacter le support."}
             extra={[
               <Button type="primary" key="retry" onClick={() => navigate('/subscription')}>
-                Réessayer le paiement
+                Voir les abonnements
               </Button>,
               <Button key="dashboard" onClick={() => navigate('/dashboard')}>
                 Retour au tableau de bord

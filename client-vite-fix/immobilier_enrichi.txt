@@ -1,0 +1,135 @@
+{
+  id: 'immobilier',
+  nom: 'Immobilier & Construction',
+  description: "Le secteur de l_immobilier et de la construction au Sénégal est un pilier de l_économie, tiré par une forte demande en logements, en infrastructures commerciales et en grands projets étatiques. Il offre des carrières variées allant de la conception à la commercialisation, en passant par la gestion d_actifs.",
+  icone: '🏢',
+  couleur: '#ff7a45',
+  metiers: [
+    {
+      id: 'agent-immobilier',
+      titre: 'Agent Immobilier',
+      description: "L_Agent Immobilier est l_intermédiaire clé dans les transactions de vente, d_achat ou de location de biens. Il prospecte, estime la valeur des biens, organise les visites et accompagne les clients jusqu_à la signature finale, en assurant un rôle de conseil essentiel.",
+      secteur: 'immobilier',
+      missions: [
+        "Prospecter et obtenir des mandats de vente ou de location.",
+        "Estimer la valeur des biens immobiliers en fonction du marché.",
+        "Organiser et réaliser les visites des biens avec les clients potentiels.",
+        "Négocier les offres entre vendeurs et acquéreurs.",
+        "Accompagner les clients dans le montage de leur dossier financier et administratif."
+      ],
+      competencesRequises: [
+        { nom: 'Techniques de négociation commerciale', niveau: 'expert' },
+        { nom: 'Connaissance du droit immobilier et de la loi sur le bail', niveau: 'avancé' },
+        { nom: 'Marketing et promotion des biens immobiliers', niveau: 'avancé' },
+        { nom: 'Capacité d_évaluation et d_estimation des biens', niveau: 'expert' },
+        { nom: 'Excellent relationnel et sens du service client', niveau: 'expert' }
+      ],
+      salaireMoyen: {
+        junior: { min: 300000, max: 800000 },
+        confirme: { min: 800000, max: 2000000 },
+        senior: { min: 2000000, max: 5000000 }
+      },
+      formation: [
+        "BTS Professions Immobilières ou Licence Pro spécialisée.",
+        "Formation en école de commerce avec une spécialisation en immobilier.",
+        "L_obtention de la carte professionnelle d_agent immobilier est souvent requise."
+      ],
+      perspectives: [
+        "Directeur d_agence immobilière.",
+        "Spécialisation dans un type de bien (luxe, commercial).",
+        "Création de sa propre agence.",
+        "Évolution vers la promotion immobilière."
+      ],
+      environnementTravail: [
+        "Agences immobilières indépendantes ou en réseau.",
+        "Promoteurs immobiliers.",
+        "Travailleur indépendant (agent commercial en immobilier)."
+      ],
+      tags: ['Immobilier', 'Vente', 'Négociation', 'Location', 'Conseil']
+    },
+    {
+      id: 'promoteur-immobilier',
+      titre: 'Promoteur Immobilier',
+      description: "Le Promoteur Immobilier est un chef d_orchestre qui initie, pilote et commercialise des projets de construction, de la recherche du terrain à la livraison des bâtiments. Il est le maître d_ouvrage et porte la responsabilité financière et technique de l_opération.",
+      secteur: 'immobilier',
+      missions: [
+        "Identifier des opportunités foncières et réaliser des études de faisabilité.",
+        "Monter le financement du projet (fonds propres, crédits bancaires).",
+        "Obtenir les autorisations administratives (permis de construire).",
+        "Piloter la phase de conception avec les architectes et bureaux d_études.",
+        "Superviser la construction et la commercialisation des lots."
+      ],
+      competencesRequises: [
+        { nom: 'Gestion de projet complexe', niveau: 'expert' },
+        { nom: 'Finance immobilière et montages financiers', niveau: 'expert' },
+        { nom: 'Connaissance du droit de la construction et de l_urbanisme', niveau: 'expert' },
+        { nom: 'Négociation foncière et commerciale', niveau: 'avancé' },
+        { nom: 'Management d_équipes pluridisciplinaires', niveau: 'avancé' }
+      ],
+      salaireMoyen: {
+        junior: { min: 900000, max: 1800000 },
+        confirme: { min: 1800000, max: 4000000 },
+        senior: { min: 4000000, max: 8000000 }
+      },
+      formation: [
+        "Master en Immobilier, Urbanisme ou Aménagement.",
+        "Diplôme d_école de commerce, d_ingénieur ou d_architecture complété par une spécialisation.",
+        "Une solide expérience en développement foncier ou en conduite d_opérations est primordiale."
+      ],
+      perspectives: [
+        "Directeur de la promotion immobilière.",
+        "Directeur du développement.",
+        "Création de sa propre société de promotion.",
+        "Spécialisation dans des projets d_envergure (complexes hôteliers, centres commerciaux)."
+      ],
+      environnementTravail: [
+        "Sociétés de promotion immobilière.",
+        "Groupes de BTP avec une filiale promotion.",
+        "Foncières et sociétés d_investissement."
+      ],
+      tags: ['Promotion', 'Construction', 'Finance', 'Urbanisme', 'Projet']
+    },
+    {
+      id: 'gestionnaire-patrimoine',
+      titre: 'Gestionnaire de Patrimoine Immobilier / Asset Manager',
+      description: "L_Asset Manager immobilier gère et valorise un portefeuille d_actifs (bureaux, commerces, logements) pour le compte d_investisseurs. Il définit la stratégie d_investissement et de gestion pour maximiser la rentabilité et la valeur du patrimoine.",
+      secteur: 'immobilier',
+      missions: [
+        "Analyser le marché et définir la stratégie d_acquisition et de cession des actifs.",
+        "Piloter la gestion locative (commercialisation, recouvrement, relations locataires).",
+        "Superviser les travaux de rénovation ou de développement sur les actifs existants.",
+        "Modéliser les business plans et assurer le reporting financier aux investisseurs.",
+        "Coordonner les différents intervenants (property managers, experts, avocats)."
+      ],
+      competencesRequises: [
+        { nom: 'Analyse financière et modélisation (cash-flow)', niveau: 'expert' },
+        { nom: 'Gestion locative et droit des baux commerciaux', niveau: 'expert' },
+        { nom: 'Stratégie d_investissement immobilier', niveau: 'avancé' },
+        { nom: 'Négociation et communication', niveau: 'expert' },
+        { nom: 'Maîtrise de l_anglais des affaires', niveau: 'avancé' }
+      ],
+      salaireMoyen: {
+        junior: { min: 700000, max: 1200000 },
+        confirme: { min: 1200000, max: 2500000 },
+        senior: { min: 2500000, max: 5000000 }
+      },
+      formation: [
+        "Master spécialisé en Gestion de Patrimoine ou en Finance Immobilière.",
+        "Diplôme d_école de commerce, d_ingénieur ou d_architecture complété par une forte coloration financière.",
+        "Certifications professionnelles comme le RICS (Royal Institution of Chartered Surveyors)."
+      ],
+      perspectives: [
+        "Directeur de l_Asset Management.",
+        "Responsable d_un fonds d_investissement immobilier.",
+        "Consultant en stratégie immobilière."
+      ],
+      environnementTravail: [
+        "Sociétés foncières.",
+        "Sociétés de gestion de portefeuille (SCPI, OPCI).",
+        "Banques d_affaires et départements immobiliers de grands groupes.",
+        "Family offices."
+      ],
+      tags: ['Asset Management', 'Finance', 'Patrimoine', 'Investissement', 'Gestion']
+    }
+  ]
+}, 

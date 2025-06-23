@@ -115,8 +115,19 @@ class SubscriptionService {
         return false;
       }
       // Pour les autres erreurs, on log mais on retourne false silencieusement
-      console.warn('Erreur lors de la vérification du statut d\'abonnement:', error.message);
+      console.warn('Erreur lors de la vérification du statut d_abonnement:', error.message);
       return false;
+    }
+  }
+
+  async verifyPayment(data: { token: string }): Promise<{ success: boolean; message?: string }> {
+    try {
+      const response = await api.post<{ success: boolean; message?: string }>('/api/subscriptions/verify-payment', data);
+      return response.data;
+    } catch (error: any) {
+      console.error('Erreur lors de la vérification du paiement:', error);
+      const message = error.response?.data?.message || 'La vérification du paiement a échoué côté serveur.';
+      throw new Error(message);
     }
   }
 }
