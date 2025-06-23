@@ -353,141 +353,175 @@ const secteurs: Secteur[] = [
   {
     id: 'finance',
     nom: 'Finance & Banque',
-    description: 'Les métiers de la finance, de la banque et de l\'assurance',
+    description: "Les métiers de la finance, de la banque et de l'assurance au Sénégal connaissent une transformation rapide, tirée par la digitalisation et l'inclusion financière. Le secteur offre des carrières solides au sein de banques panafricaines, de compagnies d'assurance, de microfinances et de startups Fintech en plein essor.",
     icone: '💰',
-    couleur: '#52c41a',
+    couleur: '#f5c41a',
     metiers: [
       {
         id: 'analyste-financier',
         titre: 'Analyste Financier',
-        description: 'Analyse les données financières et conseille sur les investissements',
+        description: "Acteur clé de la prise de décision, l'analyste financier évalue la santé financière des entreprises, des projets ou des marchés pour guider les stratégies d'investissement. Au Sénégal, ce rôle est crucial pour les banques d'affaires, les sociétés de gestion d'actifs et les grandes entreprises.",
         secteur: 'finance',
+        missions: [
+          "Analyser les états financiers (bilan, compte de résultat, tableau de flux de trésorerie).",
+          "Construire des modèles financiers complexes pour la valorisation d'entreprises (DCF, multiples).",
+          "Rédiger des rapports d'analyse et des recommandations d'investissement (acheter, vendre, conserver).",
+          "Suivre l'actualité économique et financière du marché sénégalais et de la zone UEMOA.",
+          "Participer à des opérations de haut de bilan (fusions-acquisitions, levées de fonds)."
+        ],
         competencesRequises: [
-          { nom: 'Analyse financière', niveau: 'expert' },
-          { nom: 'Excel', niveau: 'expert' },
-          { nom: 'Modélisation financière', niveau: 'avancé' },
-          { nom: 'Bloomberg Terminal', niveau: 'intermédiaire' }
+          { nom: 'Modélisation financière (Excel, VBA)', niveau: 'expert' },
+          { nom: 'Analyse comptable et financière (normes SYSCOHADA, IFRS)', niveau: 'expert' },
+          { nom: 'Connaissance des marchés financiers et des produits de placement', niveau: 'avancé' },
+          { nom: 'Maîtrise des outils de data (Bloomberg, Reuters, Capital IQ)', niveau: 'intermédiaire' },
+          { nom: 'Anglais des affaires', niveau: 'avancé' }
+        ],
+        salaireMoyen: {
+          junior: { min: 600000, max: 1000000 },
+          confirme: { min: 1000000, max: 2500000 },
+          senior: { min: 2500000, max: 5000000 }
+        },
+        formation: [
+          "Master en Finance, Ingénierie Financière, Comptabilité Contrôle Audit (CCA).",
+          "Écoles de commerce prestigieuses (BEM Dakar, ISM, etc.).",
+          "Les certifications professionnelles (CFA, FRM) sont un atout majeur."
+        ],
+        perspectives: [
+          "Gestionnaire de portefeuille (Portfolio Manager)",
+          "Analyste Buy-Side / Sell-Side",
+          "Consultant en stratégie financière",
+          "Directeur Financier (CFO) à terme."
+        ],
+        environnementTravail: [
+          "Banques d'investissement et d'affaires",
+          "Sociétés de gestion d'actifs (Asset Management)",
+          "Cabinets d'audit et de conseil (Big Four)",
+          "Grandes entreprises et multinationales."
+        ],
+        tags: ['Finance', 'Investissement', 'Analyse', 'Marchés', 'Valorisation']
+      },
+      {
+        id: 'expert-comptable',
+        titre: 'Expert-Comptable',
+        description: "Garant de la fiabilité des comptes de l'entreprise, l'expert-comptable est un partenaire stratégique du dirigeant. Sa mission va de la tenue de la comptabilité à l'optimisation fiscale et au conseil en gestion. La profession est réglementée par l'ONECCA au Sénégal.",
+        secteur: 'finance',
+        missions: [
+          "Superviser et valider les comptes annuels (bilan, liasse fiscale).",
+          "Réaliser des missions d'audit légal (commissariat aux comptes) ou contractuel.",
+          "Conseiller les entreprises sur les aspects fiscaux, sociaux et juridiques.",
+          "Établir des prévisionnels financiers et des business plans.",
+          "Accompagner les entreprises dans leur transformation numérique (dématérialisation, etc.)."
+        ],
+        competencesRequises: [
+          { nom: 'Maîtrise du référentiel SYSCOHADA Révisé', niveau: 'expert' },
+          { nom: 'Droit fiscal et social sénégalais', niveau: 'expert' },
+          { nom: 'Logiciels comptables et de paie (Sage, Odoo, etc.)', niveau: 'avancé' },
+          { nom: 'Audit comptable et financier', niveau: 'avancé' },
+          { nom: 'Qualités de conseil et de communication', niveau: 'expert' }
         ],
         salaireMoyen: {
           junior: { min: 500000, max: 900000 },
-          confirme: { min: 900000, max: 1800000 },
-          senior: { min: 1800000, max: 3500000 }
+          confirme: { min: 900000, max: 2000000 },
+          senior: { min: 2000000, max: 4000000 }
         },
         formation: [
-          'Master en Finance',
-          'École de commerce',
-          'CFA'
+          "Diplôme d'Expertise Comptable et Financière (DECOFI) de l'UEMOA, préparé via l'ONECCA.",
+          "Master CCA (Comptabilité, Contrôle, Audit)."
         ],
         perspectives: [
-          'Senior Analyste',
-          'Gestionnaire de portefeuille',
-          'Directeur des investissements'
+          "S'associer au sein d'un cabinet d'expertise comptable.",
+          "Créer son propre cabinet.",
+          "Devenir Directeur Administratif et Financier (DAF) en entreprise."
         ],
         environnementTravail: [
-          'Banques d\'investissement',
-          'Sociétés de gestion',
-          'Cabinets de conseil'
+          "Cabinets d'expertise comptable et d'audit (des Big Four aux petites structures).",
+          "Direction financière de PME ou de grands groupes.",
+          "Exercice en libéral."
         ],
-        tags: ['Finance', 'Investissement', 'Analyse', 'Marchés']
-      },
-      {
-        id: 'comptable',
-        titre: 'Expert Comptable',
-        description: 'Gère la comptabilité et conseille sur les aspects financiers et fiscaux',
-        secteur: 'finance',
-        competencesRequises: [
-          { nom: 'Comptabilité', niveau: 'expert' },
-          { nom: 'Fiscalité', niveau: 'expert' },
-          { nom: 'Logiciels comptables', niveau: 'avancé' },
-          { nom: 'Droit des sociétés', niveau: 'avancé' }
-        ],
-        salaireMoyen: {
-          junior: { min: 450000, max: 800000 },
-          confirme: { min: 800000, max: 1600000 },
-          senior: { min: 1600000, max: 3000000 }
-        },
-        formation: [
-          'DESCF',
-          'Master en Comptabilité',
-          'Diplôme d\'expertise comptable'
-        ],
-        perspectives: [
-          'Associé cabinet comptable',
-          'DAF',
-          'Consultant financier'
-        ],
-        environnementTravail: [
-          'Cabinets comptables',
-          'Entreprises',
-          'Banques'
-        ],
-        tags: ['Comptabilité', 'Finance', 'Fiscalité']
+        tags: ['Comptabilité', 'Finance', 'Fiscalité', 'Audit', 'Conseil']
       },
       {
         id: 'risk-manager',
-        titre: 'Risk Manager',
-        description: 'Identifie et gère les risques financiers de l\'entreprise',
+        titre: 'Risk Manager / Gestionnaire de Risques',
+        description: "Le Risk Manager a pour mission d'identifier, d'analyser et de maîtriser l'ensemble des risques (financiers, opérationnels, de conformité) qui pourraient affecter l'entreprise. Un rôle essentiel dans le secteur bancaire et de l'assurance, régulé par la BCEAO et la CIMA.",
         secteur: 'finance',
+        missions: [
+          "Élaborer la cartographie des risques de l'entreprise.",
+          "Mettre en place des politiques et des procédures de gestion des risques.",
+          "Quantifier les risques de marché, de crédit et opérationnels (modèles VaR, Stress Tests).",
+          "Assurer la veille réglementaire (Bâle III, IFRS 9, Solvabilité II).",
+          "Rédiger des rapports de risques pour la direction générale et les régulateurs."
+        ],
         competencesRequises: [
-          { nom: 'Analyse des risques', niveau: 'expert' },
-          { nom: 'Modélisation financière', niveau: 'avancé' },
-          { nom: 'Réglementation bancaire', niveau: 'avancé' },
-          { nom: 'Statistiques', niveau: 'avancé' }
+          { nom: 'Connaissance des réglementations prudentielles (BCEAO, CIMA)', niveau: 'expert' },
+          { nom: 'Modélisation statistique et quantitative des risques', niveau: 'avancé' },
+          { nom: 'Maîtrise des normes de contrôle interne (COSO)', niveau: 'avancé' },
+          { nom: 'Capacité d\'analyse et de synthèse', niveau: 'expert' },
+          { nom: 'Anglais courant', niveau: 'avancé' }
         ],
         salaireMoyen: {
-          junior: { min: 600000, max: 1200000 },
-          confirme: { min: 1200000, max: 2400000 },
-          senior: { min: 2400000, max: 4000000 }
+          junior: { min: 700000, max: 1200000 },
+          confirme: { min: 1200000, max: 2800000 },
+          senior: { min: 2800000, max: 6000000 }
         },
         formation: [
-          'Master en Finance',
-          'Certifications FRM/PRM',
-          'Formation réglementaire'
+          "Master spécialisé en gestion des risques, actuariat ou finance.",
+          "Diplôme d'ingénieur ou d'école de commerce avec une spécialisation finance.",
+          "Certifications comme le FRM (Financial Risk Manager) sont très appréciées."
         ],
         perspectives: [
-          'Directeur des risques',
-          'Consultant risques',
-          'Responsable conformité'
+          "Chief Risk Officer (CRO)",
+          "Directeur de l'audit interne ou de la conformité",
+          "Consultant en gestion des risques"
         ],
         environnementTravail: [
-          'Banques',
-          'Assurances',
-          'Grandes entreprises'
+          "Banques et établissements de crédit",
+          "Compagnies d'assurance et de réassurance",
+          "Grandes entreprises industrielles ou de services",
+          "Cabinets de conseil spécialisés."
         ],
-        tags: ['Risques', 'Finance', 'Conformité']
+        tags: ['Risques', 'Finance', 'Conformité', 'Réglementation', 'Audit']
       },
       {
-        id: 'fintech-product-manager',
+        id: 'product-manager-fintech',
         titre: 'Product Manager Fintech',
-        description: 'Développe et gère des produits financiers innovants',
+        description: "À la croisée de la finance, de la technologie et de l'expérience utilisateur, le Product Manager Fintech conçoit et gère le cycle de vie des produits financiers digitaux (applications de paiement, plateformes de prêt, etc.). C'est un métier phare de l'écosystème tech sénégalais.",
         secteur: 'finance',
+        missions: [
+          "Identifier les besoins des utilisateurs et les opportunités du marché (veille concurrentielle).",
+          "Définir la vision et la roadmap du produit.",
+          "Rédiger les spécifications fonctionnelles (user stories) et prioriser le backlog.",
+          "Collaborer étroitement avec les équipes de développement (développeurs, designers UX/UI) en méthode Agile.",
+          "Analyser les KPIs du produit (acquisition, rétention, monétisation) et itérer."
+        ],
         competencesRequises: [
-          { nom: 'Product Management', niveau: 'expert' },
-          { nom: 'Finance digitale', niveau: 'avancé' },
-          { nom: 'UX/UI', niveau: 'avancé' },
-          { nom: 'Analyse data', niveau: 'expert' }
+          { nom: 'Méthodologies agiles (Scrum, Kanban)', niveau: 'expert' },
+          { nom: 'Compréhension des enjeux du Mobile Money et des paiements digitaux en Afrique', niveau: 'expert' },
+          { nom: 'Gestion de produit (Roadmap, Backlog, A/B Testing)', niveau: 'avancé' },
+          { nom: 'Conception UX/UI (wireframing, prototypage)', niveau: 'intermédiaire' },
+          { nom: 'Analyse de données (Data-driven decisions)', niveau: 'avancé' }
         ],
         salaireMoyen: {
-          junior: { min: 600000, max: 1200000 },
-          confirme: { min: 1200000, max: 2400000 },
-          senior: { min: 2400000, max: 4000000 }
+          junior: { min: 800000, max: 1500000 },
+          confirme: { min: 1500000, max: 3000000 },
+          senior: { min: 3000000, max: 5000000 }
         },
         formation: [
-          'Master Finance/Tech',
-          'MBA',
-          'Certifications Produit'
+          "Double cursus ingénieur / école de commerce est idéal.",
+          "Master en management de l'innovation, marketing digital ou gestion de projet.",
+          "Expérience préalable dans une startup technologique ou une institution financière est souvent requise."
         ],
         perspectives: [
-          'CPO',
-          'Directeur innovation',
-          'Entrepreneur Fintech'
+          "Head of Product / CPO (Chief Product Officer)",
+          "Lancer sa propre startup Fintech",
+          "Évoluer vers des postes de direction générale"
         ],
         environnementTravail: [
-          'Fintech',
-          'Banques digitales',
-          'Startups'
+          "Startups Fintech (Wave, InTouch, etc.)",
+          "Banques et assurances dans leurs départements de transformation digitale",
+          "Opérateurs télécoms (Orange Money, Free Money)"
         ],
-        tags: ['Fintech', 'Product', 'Innovation']
+        tags: ['Fintech', 'Product', 'Innovation', 'Mobile Money', 'Agile']
       }
     ]
   },
