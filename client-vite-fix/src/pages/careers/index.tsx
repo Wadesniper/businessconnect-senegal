@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Row, Col, Card, Typography, Button, Space, Tag, Input, Tabs, Modal, Statistic, Spin } from 'antd';
 import { SearchOutlined, ArrowRightOutlined, EnvironmentOutlined, BookOutlined, TrophyOutlined, LockOutlined } from '@ant-design/icons';
 import type { Secteur, FicheMetier, Competence } from './types';
@@ -4348,6 +4348,12 @@ const CareersPage: React.FC = () => {
   const [forceShow, setForceShow] = useState(false);
   const isPremium = hasPremiumAccess(user, hasActiveSubscription);
   const [loadingMetier, setLoadingMetier] = useState(false);
+  const [loadingPage, setLoadingPage] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoadingPage(false), 400);
+    return () => clearTimeout(timer);
+  }, []);
 
   const filteredSecteurs = useMemo(() => {
     if (!searchTerm) return secteurs;
@@ -4395,8 +4401,11 @@ const CareersPage: React.FC = () => {
       return;
     }
     setLoadingMetier(true);
-    setSelectedMetier(metier);
-    setTimeout(() => setLoadingMetier(false), 350); // délai court pour UX fluide
+    setSelectedMetier(null);
+    setTimeout(() => {
+      setSelectedMetier(metier);
+      setLoadingMetier(false);
+    }, 350);
   };
 
   // Header premium
@@ -4410,6 +4419,14 @@ const CareersPage: React.FC = () => {
     maxWidth: 900,
     margin: '0 auto 32px auto',
   };
+
+  if (loadingPage) {
+    return (
+      <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Spin size="large" tip="Chargement des métiers..." />
+      </div>
+    );
+  }
 
   return (
     <div style={{ padding: '40px 8px', background: '#f7faff', minHeight: '100vh' }}>
