@@ -1889,53 +1889,71 @@ const secteurs: Secteur[] = [
   {
     id: 'artisanat',
     nom: 'Artisanat & Métiers d\'art',
-    description: 'Les métiers de l\'artisanat traditionnel et contemporain',
+    description: "Le secteur de l'artisanat et des métiers d'art au Sénégal est riche d'une tradition séculaire et d'un savoir-faire unique. Avec la valorisation du patrimoine culturel et l'essor du tourisme, les artisans et créateurs bénéficient d'opportunités croissantes pour perpétuer les traditions tout en innovant pour répondre aux marchés contemporains.",
     icone: '🎨',
     couleur: '#9254de',
     metiers: [
       {
         id: 'artisan-bijoutier',
         titre: 'Artisan Bijoutier',
-        description: 'Crée et restaure des bijoux en métaux précieux et pierres',
+        description: "L'Artisan Bijoutier crée et restaure des bijoux en métaux précieux et pierres. Il maîtrise les techniques traditionnelles et contemporaines pour créer des pièces uniques qui allient esthétique, qualité et savoir-faire ancestral.",
         secteur: 'artisanat',
+        missions: [
+          "Créer des bijoux uniques selon les demandes des clients.",
+          "Restaurer et réparer des bijoux anciens ou endommagés.",
+          "Sélectionner et travailler les métaux précieux et pierres.",
+          "Concevoir des collections personnalisées et innovantes.",
+          "Former des apprentis et transmettre le savoir-faire."
+        ],
         competencesRequises: [
-          { nom: 'Travail des métaux', niveau: 'expert' },
+          { nom: 'Travail des métaux précieux et alliages', niveau: 'expert' },
           { nom: 'Design bijoux', niveau: 'avancé' },
           { nom: 'Gemmologie', niveau: 'intermédiaire' },
           { nom: 'Techniques traditionnelles', niveau: 'expert' }
         ],
         salaireMoyen: {
-          junior: { min: 200000, max: 400000 },
-          confirme: { min: 400000, max: 800000 },
-          senior: { min: 800000, max: 2000000 }
+          junior: { min: 250000, max: 500000 },
+          confirme: { min: 500000, max: 1000000 },
+          senior: { min: 1000000, max: 2500000 }
         },
         formation: [
-          'CAP Bijouterie',
-          'Formation professionnelle',
-          'Apprentissage'
+          "CAP Bijouterie ou formation professionnelle spécialisée.",
+          "Apprentissage auprès d'un maître artisan.",
+          "Formations continues en nouvelles techniques.",
+          "Certifications en gemmologie et métallurgie."
         ],
         perspectives: [
-          'Artisan indépendant',
-          'Chef d\'atelier',
-          'Formateur'
+          "Artisan indépendant avec atelier propre.",
+          "Chef d'atelier ou maître artisan.",
+          "Formateur en techniques bijouterie.",
+          "Créateur de marque de bijoux."
         ],
         environnementTravail: [
-          'Ateliers',
-          'Boutiques',
-          'Marchés artisanaux'
+          "Ateliers traditionnels et modernes.",
+          "Boutiques de bijouterie et galeries.",
+          "Marchés artisanaux et centres touristiques.",
+          "Écoles de formation et centres d'apprentissage."
         ],
-        tags: ['Artisanat', 'Bijouterie', 'Création']
+        tags: ['Artisanat', 'Bijouterie', 'Création', 'Métaux précieux', 'Savoir-faire']
       },
       {
-        id: 'tisserand',
+        id: 'maitre-tisserand',
         titre: 'Maître Tisserand',
-        description: 'Crée des textiles traditionnels et contemporains',
+        description: "Le Maître Tisserand crée des textiles traditionnels et contemporains en utilisant des techniques ancestrales. Il perpétue un savoir-faire unique et crée des pièces textiles de qualité qui valorisent le patrimoine culturel sénégalais.",
         secteur: 'artisanat',
+        missions: [
+          "Créer des textiles traditionnels selon les techniques ancestrales.",
+          "Concevoir des motifs et designs contemporains.",
+          "Maîtriser les techniques de tissage manuel et mécanique.",
+          "Préparer et appliquer les teintures naturelles.",
+          "Gérer l'atelier et former des apprentis.",
+          "Développer des collections pour différents marchés."
+        ],
         competencesRequises: [
-          { nom: 'Techniques de tissage', niveau: 'expert' },
-          { nom: 'Design textile', niveau: 'avancé' },
-          { nom: 'Teinture naturelle', niveau: 'avancé' },
-          { nom: 'Gestion atelier', niveau: 'intermédiaire' }
+          { nom: 'Techniques de tissage traditionnel et moderne', niveau: 'expert' },
+          { nom: 'Design textile et création de motifs', niveau: 'expert' },
+          { nom: 'Teinture naturelle et chimique', niveau: 'avancé' },
+          { nom: 'Gestion d\'atelier et production', niveau: 'intermédiaire' }
         ],
         salaireMoyen: {
           junior: { min: 150000, max: 300000 },
@@ -1943,21 +1961,68 @@ const secteurs: Secteur[] = [
           senior: { min: 600000, max: 1500000 }
         },
         formation: [
-          'Formation traditionnelle',
-          'Centre artisanal',
-          'Apprentissage'
+          "Formation traditionnelle auprès d'un maître tisserand.",
+          "Centre artisanal et école de métiers d'art.",
+          "Apprentissage des techniques ancestrales.",
+          "Formations continues en design textile."
         ],
         perspectives: [
-          'Artisan indépendant',
-          'Formateur',
-          'Entrepreneur textile'
+          "Artisan indépendant avec atelier.",
+          "Formateur en techniques de tissage.",
+          "Entrepreneur textile et créateur de marque.",
+          "Consultant en patrimoine textile."
         ],
         environnementTravail: [
-          'Ateliers traditionnels',
-          'Coopératives',
-          'Centres artisanaux'
+          "Ateliers traditionnels et centres artisanaux.",
+          "Coopératives et associations d'artisans.",
+          "Centres culturels et musées.",
+          "Boutiques spécialisées et marchés."
         ],
-        tags: ['Artisanat', 'Textile', 'Tradition']
+        tags: ['Artisanat', 'Textile', 'Tissage', 'Tradition', 'Patrimoine']
+      },
+      {
+        id: 'sculpteur-bois',
+        titre: 'Sculpteur sur Bois',
+        description: "Le Sculpteur sur Bois crée des œuvres d'art et des objets utilitaires en bois. Il maîtrise les techniques de sculpture traditionnelle et contemporaine pour créer des pièces uniques qui valorisent les essences locales.",
+        secteur: 'artisanat',
+        missions: [
+          "Sculpter des œuvres d'art et objets décoratifs.",
+          "Créer des pièces utilitaires et meubles traditionnels.",
+          "Sélectionner et préparer les essences de bois.",
+          "Restaurer des pièces anciennes et patrimoniales.",
+          "Former des apprentis aux techniques de sculpture."
+        ],
+        competencesRequises: [
+          { nom: 'Techniques de sculpture sur bois', niveau: 'expert' },
+          { nom: 'Connaissance des essences et propriétés du bois', niveau: 'expert' },
+          { nom: 'Design et création artistique', niveau: 'avancé' },
+          { nom: 'Outillage et maintenance des outils', niveau: 'avancé' },
+          { nom: 'Conservation et finition des œuvres', niveau: 'expert' }
+        ],
+        salaireMoyen: {
+          junior: { min: 180000, max: 350000 },
+          confirme: { min: 350000, max: 700000 },
+          senior: { min: 700000, max: 1500000 }
+        },
+        formation: [
+          "Formation traditionnelle auprès d'un maître sculpteur.",
+          "École des métiers d'art et centre de formation.",
+          "Apprentissage des techniques ancestrales.",
+          "Formations continues en design et création."
+        ],
+        perspectives: [
+          "Artisan sculpteur indépendant.",
+          "Maître artisan et formateur.",
+          "Créateur d'œuvres d'art reconnu.",
+          "Restaurateur de patrimoine."
+        ],
+        environnementTravail: [
+          "Ateliers de sculpture traditionnels.",
+          "Centres d'art et galeries.",
+          "Musées et institutions culturelles.",
+          "Boutiques d'artisanat et marchés."
+        ],
+        tags: ['Artisanat', 'Sculpture', 'Bois', 'Création', 'Patrimoine']
       }
     ]
   },
