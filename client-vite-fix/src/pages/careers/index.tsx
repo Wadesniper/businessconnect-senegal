@@ -4349,11 +4349,28 @@ const CareersPage: React.FC = () => {
   const isPremium = hasPremiumAccess(user, hasActiveSubscription);
   const [loadingMetier, setLoadingMetier] = useState(false);
   const [loadingPage, setLoadingPage] = useState(true);
+  const [activeTab, setActiveTab] = useState('all');
 
   useEffect(() => {
     const timer = setTimeout(() => setLoadingPage(false), 300);
     return () => clearTimeout(timer);
   }, []);
+
+  // Scroll automatique vers le contenu quand on change d'onglet
+  useEffect(() => {
+    if (!loadingPage) {
+      const timer = setTimeout(() => {
+        const contentElement = document.querySelector('.ant-tabs-content-holder');
+        if (contentElement) {
+          contentElement.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start' 
+          });
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [activeTab, loadingPage]);
 
   const filteredSecteurs = useMemo(() => {
     if (!searchTerm) return secteurs;
@@ -4420,6 +4437,10 @@ const CareersPage: React.FC = () => {
     margin: '0 auto 32px auto',
   };
 
+  const handleTabChange = (key: string) => {
+    setActiveTab(key);
+  };
+
   if (loadingPage) {
     return (
       <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -4484,7 +4505,7 @@ const CareersPage: React.FC = () => {
             />
           </Col>
         </Row>
-        <Tabs defaultActiveKey="all" centered>
+        <Tabs defaultActiveKey="all" centered onChange={handleTabChange}>
           <TabPane tab="Tous les secteurs" key="all">
             {filteredSecteurs.map(secteur => (
               <div key={secteur.id} style={{ marginBottom: 48 }}>
