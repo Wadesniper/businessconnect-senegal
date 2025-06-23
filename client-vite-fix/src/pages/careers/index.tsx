@@ -1058,20 +1058,71 @@ const secteurs: Secteur[] = [
   {
     id: 'construction',
     nom: 'Construction & BTP',
-    description: 'Les métiers du bâtiment et des travaux publics',
+    description: "Le secteur du BTP au Sénégal est en pleine expansion grâce aux grands projets d'infrastructure (autoroutes, ponts, ports, aéroports) et au boom immobilier. Les entreprises locales et internationales recherchent des professionnels qualifiés pour répondre aux défis de la construction durable et de l'innovation technique.",
     icone: '🏗️',
     couleur: '#faad14',
     metiers: [
       {
         id: 'ingenieur-civil',
         titre: 'Ingénieur Génie Civil',
-        description: 'Conçoit et supervise les projets de construction et d\'infrastructure',
+        description: "L'Ingénieur Génie Civil conçoit, supervise et réalise des projets de construction et d'infrastructure. Il assure la sécurité, la durabilité et la conformité des ouvrages tout en optimisant les coûts et les délais.",
         secteur: 'construction',
+        missions: [
+          "Concevoir et dimensionner des structures (bâtiments, ponts, routes, barrages).",
+          "Superviser les études techniques et la préparation des dossiers d'exécution.",
+          "Assurer le suivi de chantier et le contrôle qualité des travaux.",
+          "Analyser les risques techniques et proposer des solutions d'optimisation.",
+          "Coordonner les équipes techniques et les sous-traitants."
+        ],
         competencesRequises: [
-          { nom: 'Calcul structures', niveau: 'expert' },
-          { nom: 'AutoCAD', niveau: 'avancé' },
-          { nom: 'Gestion de projet', niveau: 'avancé' },
-          { nom: 'Normes construction', niveau: 'expert' }
+          { nom: 'Calcul de structures et résistance des matériaux', niveau: 'expert' },
+          { nom: 'Logiciels de CAO/DAO (AutoCAD, Revit, Tekla)', niveau: 'expert' },
+          { nom: 'Gestion de projet et planification de chantier', niveau: 'avancé' },
+          { nom: 'Normes de construction et réglementation technique', niveau: 'expert' },
+          { nom: 'Géotechnique et fondations', niveau: 'avancé' }
+        ],
+        salaireMoyen: {
+          junior: { min: 700000, max: 1200000 },
+          confirme: { min: 1200000, max: 2500000 },
+          senior: { min: 2500000, max: 5000000 }
+        },
+        formation: [
+          "Diplôme d'ingénieur en Génie Civil ou Master en Construction.",
+          "Spécialisations : structures, géotechnique, hydraulique, transport.",
+          "Certifications professionnelles (ex: PMP, certifications logiciels)."
+        ],
+        perspectives: [
+          "Chef de projet ou Directeur technique.",
+          "Directeur d'études ou Responsable bureau d'études.",
+          "Expert consultant en construction.",
+          "Créer son propre bureau d'études."
+        ],
+        environnementTravail: [
+          "Bureaux d'études techniques et cabinets d'ingénierie.",
+          "Entreprises de BTP et sociétés de construction.",
+          "Administrations publiques (ministères, collectivités).",
+          "Cabinets d'architecture et sociétés de maîtrise d'œuvre."
+        ],
+        tags: ['Construction', 'Ingénierie', 'BTP', 'Structures', 'Infrastructure']
+      },
+      {
+        id: 'architecte',
+        titre: 'Architecte',
+        description: "L'Architecte conçoit et suit la réalisation de projets architecturaux. Il crée des espaces fonctionnels, esthétiques et durables en tenant compte des contraintes techniques, réglementaires et environnementales.",
+        secteur: 'construction',
+        missions: [
+          "Concevoir des projets architecturaux (esquisses, plans, maquettes 3D).",
+          "Élaborer les dossiers de permis de construire et d'autorisation.",
+          "Assurer la maîtrise d'œuvre et le suivi de chantier.",
+          "Coordonner les intervenants (bureaux d'études, entreprises).",
+          "Respecter les normes d'accessibilité et de performance énergétique."
+        ],
+        competencesRequises: [
+          { nom: 'Conception architecturale et design d\'espace', niveau: 'expert' },
+          { nom: 'Logiciels 3D et BIM (Revit, ArchiCAD, SketchUp)', niveau: 'expert' },
+          { nom: 'Gestion de projet et coordination d\'équipe', niveau: 'avancé' },
+          { nom: 'Réglementation urbanisme et construction', niveau: 'expert' },
+          { nom: 'Architecture durable et écoconstruction', niveau: 'avancé' }
         ],
         salaireMoyen: {
           junior: { min: 600000, max: 1000000 },
@@ -1079,32 +1130,42 @@ const secteurs: Secteur[] = [
           senior: { min: 2000000, max: 4000000 }
         },
         formation: [
-          'Diplôme d\'ingénieur',
-          'Master en Génie Civil',
-          'Certifications professionnelles'
+          "Diplôme d'État d'Architecte (DEA) ou Master en Architecture.",
+          "Habilitation à la maîtrise d'œuvre en son nom propre (HMONP).",
+          "Formations spécialisées : architecture durable, patrimoine, etc."
         ],
         perspectives: [
-          'Chef de projets',
-          'Directeur technique',
-          'Expert consultant'
+          "Architecte en chef ou Directeur de projet.",
+          "Directeur de cabinet d'architecture.",
+          "Urbaniste ou Paysagiste.",
+          "Créer son propre cabinet d'architecture."
         ],
         environnementTravail: [
-          'Bureaux d\'études',
-          'Entreprises BTP',
-          'Cabinets d\'architecture'
+          "Cabinets d'architecture et agences d'urbanisme.",
+          "Bureaux d'études et sociétés de maîtrise d'œuvre.",
+          "Administrations publiques et collectivités.",
+          "Indépendant (libéral)."
         ],
-        tags: ['Construction', 'Ingénierie', 'BTP']
+        tags: ['Architecture', 'Design', 'Construction', 'Urbanisme', 'BIM']
       },
       {
-        id: 'architecte',
-        titre: 'Architecte',
-        description: 'Conçoit et suit la réalisation de projets architecturaux',
+        id: 'conducteur-travaux',
+        titre: 'Conducteur de Travaux',
+        description: "Le Conducteur de Travaux supervise l'exécution des chantiers de construction. Il assure la coordination des équipes, le respect des délais et des budgets, ainsi que la qualité des réalisations.",
         secteur: 'construction',
+        missions: [
+          "Planifier et organiser l'exécution des travaux sur le chantier.",
+          "Superviser les équipes d'ouvriers et de techniciens.",
+          "Contrôler la qualité des travaux et le respect des normes.",
+          "Gérer les approvisionnements et les relations avec les fournisseurs.",
+          "Assurer la sécurité sur le chantier et le respect des règles HSE."
+        ],
         competencesRequises: [
-          { nom: 'Conception architecturale', niveau: 'expert' },
-          { nom: 'Logiciels 3D', niveau: 'avancé' },
-          { nom: 'Gestion de projet', niveau: 'avancé' },
-          { nom: 'Réglementation', niveau: 'expert' }
+          { nom: 'Techniques de construction et procédés de mise en œuvre', niveau: 'expert' },
+          { nom: 'Gestion d\'équipe et management opérationnel', niveau: 'expert' },
+          { nom: 'Planification et suivi de chantier (MS Project, Primavera)', niveau: 'avancé' },
+          { nom: 'Contrôle qualité et assurance construction', niveau: 'avancé' },
+          { nom: 'Sécurité chantier et réglementation HSE', niveau: 'expert' }
         ],
         salaireMoyen: {
           junior: { min: 500000, max: 900000 },
@@ -1112,21 +1173,23 @@ const secteurs: Secteur[] = [
           senior: { min: 1800000, max: 3500000 }
         },
         formation: [
-          'Diplôme d\'architecte',
-          'DESA',
-          'Formations spécialisées'
+          "BTS ou DUT en BTP, Génie Civil ou Construction.",
+          "Formation continue en conduite de travaux.",
+          "Certifications sécurité chantier (SST, CACES)."
         ],
         perspectives: [
-          'Architecte en chef',
-          'Directeur de cabinet',
-          'Urbaniste'
+          "Chef de chantier ou Responsable travaux.",
+          "Directeur technique ou Directeur d'exploitation.",
+          "Chef d'entreprise BTP.",
+          "Expert consultant en conduite de travaux."
         ],
         environnementTravail: [
-          'Cabinets d\'architecture',
-          'Bureaux d\'études',
-          'Indépendant'
+          "Entreprises de BTP et sociétés de construction.",
+          "Bureaux d'études et cabinets d'ingénierie.",
+          "Promoteurs immobiliers et aménageurs.",
+          "Administrations publiques (travaux publics)."
         ],
-        tags: ['Architecture', 'Design', 'Construction']
+        tags: ['Conduite de travaux', 'Chantier', 'BTP', 'Management', 'Sécurité']
       }
     ]
   },
