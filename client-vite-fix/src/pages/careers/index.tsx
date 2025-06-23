@@ -920,108 +920,138 @@ const secteurs: Secteur[] = [
   {
     id: 'education',
     nom: 'Éducation & Formation',
-    description: 'Les métiers de l\'enseignement et de la formation professionnelle',
+    description: "Le secteur de l'éducation et de la formation au Sénégal est en pleine transformation numérique. Avec l'émergence des EdTech, la démocratisation de l'enseignement supérieur et l'importance croissante de la formation continue, les opportunités sont nombreuses pour les professionnels qualifiés.",
     icone: '📚',
     couleur: '#fa8c16',
     metiers: [
       {
         id: 'formateur-pro',
         titre: 'Formateur Professionnel',
-        description: 'Conçoit et anime des formations pour adultes dans divers domaines',
+        description: "Le Formateur Professionnel conçoit et anime des formations pour adultes dans divers domaines. Il adapte ses méthodes pédagogiques aux besoins spécifiques des apprenants et utilise les technologies modernes pour optimiser l'apprentissage.",
         secteur: 'education',
+        missions: [
+          "Analyser les besoins de formation et concevoir des programmes adaptés.",
+          "Créer des supports pédagogiques variés (présentations, exercices, études de cas).",
+          "Animer des sessions de formation en présentiel et/ou en distanciel.",
+          "Évaluer les acquis des participants et ajuster les contenus.",
+          "Assurer le suivi post-formation et mesurer l'impact sur les performances."
+        ],
         competencesRequises: [
-          { nom: 'Pédagogie', niveau: 'expert' },
-          { nom: 'Conception de formation', niveau: 'avancé' },
-          { nom: 'Outils e-learning', niveau: 'intermédiaire' },
-          { nom: 'Animation de groupe', niveau: 'expert' }
+          { nom: 'Pédagogie pour adultes (andragogie)', niveau: 'expert' },
+          { nom: 'Conception de formation et ingénierie pédagogique', niveau: 'expert' },
+          { nom: 'Outils e-learning et plateformes LMS', niveau: 'avancé' },
+          { nom: 'Animation de groupe et techniques de facilitation', niveau: 'expert' },
+          { nom: 'Évaluation des apprentissages et mesure d\'impact', niveau: 'avancé' }
         ],
         salaireMoyen: {
-          junior: { min: 300000, max: 600000 },
-          confirme: { min: 600000, max: 1200000 },
-          senior: { min: 1200000, max: 2000000 }
+          junior: { min: 350000, max: 700000 },
+          confirme: { min: 700000, max: 1400000 },
+          senior: { min: 1400000, max: 2500000 }
         },
         formation: [
-          'Master en Sciences de l\'Éducation',
-          'Certification de formateur',
-          'Expertise métier'
+          "Master en Sciences de l'Éducation ou en Ingénierie de la Formation.",
+          "Certification de formateur (ex: Certificat de Compétences en Formation d'Adultes).",
+          "Expertise métier dans le domaine d'intervention (informatique, management, etc.)."
         ],
         perspectives: [
-          'Responsable pédagogique',
-          'Consultant formation',
-          'Directeur centre de formation'
+          "Responsable pédagogique ou Directeur de formation.",
+          "Consultant en ingénierie de formation.",
+          "Directeur de centre de formation ou d'école.",
+          "Créer son propre organisme de formation."
         ],
         environnementTravail: [
-          'Centres de formation',
-          'Entreprises',
-          'Indépendant'
+          "Centres de formation professionnelle et organismes de formation.",
+          "Services formation des entreprises.",
+          "Écoles et universités (formation continue).",
+          "Indépendant (freelance)."
         ],
-        tags: ['Formation', 'Pédagogie', 'E-learning']
+        tags: ['Formation', 'Pédagogie', 'E-learning', 'Andragogie', 'Ingénierie']
       },
       {
         id: 'edtech-specialist',
         titre: 'Spécialiste EdTech',
-        description: 'Développe et met en œuvre des solutions d\'apprentissage numérique',
+        description: "Le Spécialiste EdTech développe et met en œuvre des solutions d'apprentissage numérique innovantes. Il combine expertise pédagogique et maîtrise des technologies pour créer des expériences d'apprentissage engageantes et efficaces.",
         secteur: 'education',
+        missions: [
+          "Concevoir et développer des plateformes d'apprentissage en ligne (LMS).",
+          "Créer des contenus pédagogiques numériques (vidéos, modules interactifs, serious games).",
+          "Intégrer les technologies émergentes (IA, VR/AR) dans les parcours de formation.",
+          "Analyser les données d'apprentissage pour optimiser les contenus et parcours.",
+          "Former les enseignants et formateurs aux outils numériques."
+        ],
         competencesRequises: [
-          { nom: 'LMS', niveau: 'expert' },
-          { nom: 'Pédagogie numérique', niveau: 'expert' },
-          { nom: 'Production contenus', niveau: 'avancé' },
-          { nom: 'Analytics learning', niveau: 'avancé' }
+          { nom: 'Plateformes LMS (Moodle, Canvas, etc.) et outils e-learning', niveau: 'expert' },
+          { nom: 'Pédagogie numérique et design d\'expérience d\'apprentissage', niveau: 'expert' },
+          { nom: 'Production de contenus multimédia (vidéo, audio, infographies)', niveau: 'avancé' },
+          { nom: 'Learning Analytics et mesure de l\'engagement', niveau: 'avancé' },
+          { nom: 'Technologies émergentes (IA, VR/AR, chatbots)', niveau: 'intermédiaire' }
         ],
         salaireMoyen: {
-          junior: { min: 400000, max: 800000 },
-          confirme: { min: 800000, max: 1600000 },
-          senior: { min: 1600000, max: 2800000 }
+          junior: { min: 500000, max: 900000 },
+          confirme: { min: 900000, max: 1800000 },
+          senior: { min: 1800000, max: 3200000 }
         },
         formation: [
-          'Master EdTech',
-          'Ingénierie pédagogique',
-          'Certifications e-learning'
+          "Master en EdTech, Ingénierie pédagogique ou Sciences de l'éducation.",
+          "Formation en développement web et multimédia.",
+          "Certifications e-learning (ex: Adobe Captivate, Articulate)."
         ],
         perspectives: [
-          'Directeur digital learning',
-          'Chef de projet EdTech',
-          'Consultant e-learning'
+          "Directeur digital learning ou Chief Learning Officer.",
+          "Chef de projet EdTech ou Product Manager EdTech.",
+          "Consultant e-learning et transformation digitale de la formation.",
+          "Créer sa propre startup EdTech."
         ],
         environnementTravail: [
-          'Startups EdTech',
-          'Universités',
-          'Entreprises formation'
+          "Startups EdTech et entreprises de formation digitale.",
+          "Universités et établissements d'enseignement supérieur.",
+          "Services formation des grandes entreprises.",
+          "Agences de conseil en transformation digitale."
         ],
-        tags: ['Education', 'Digital', 'E-learning']
+        tags: ['EdTech', 'Digital Learning', 'E-learning', 'Innovation', 'Pédagogie']
       },
       {
         id: 'conseiller-orientation',
         titre: 'Conseiller en Orientation Numérique',
-        description: 'Guide les étudiants dans leur parcours académique et professionnel avec des outils numériques',
+        description: "Le Conseiller en Orientation Numérique guide les étudiants et professionnels dans leur parcours académique et professionnel en utilisant des outils digitaux avancés. Il aide à faire les bons choix de formation et de carrière.",
         secteur: 'education',
+        missions: [
+          "Accompagner individuellement les étudiants dans leur orientation scolaire et professionnelle.",
+          "Utiliser des outils numériques d'évaluation des compétences et de personnalité.",
+          "Organiser des ateliers de découverte des métiers et des formations.",
+          "Maintenir une veille sur les évolutions du marché du travail et des formations.",
+          "Collaborer avec les établissements et entreprises pour organiser des événements d'orientation."
+        ],
         competencesRequises: [
-          { nom: 'Conseil carrière', niveau: 'expert' },
-          { nom: 'Outils orientation', niveau: 'avancé' },
-          { nom: 'Psychologie', niveau: 'avancé' },
-          { nom: 'Digital coaching', niveau: 'intermédiaire' }
+          { nom: 'Conseil en orientation et psychologie de l\'orientation', niveau: 'expert' },
+          { nom: 'Outils d\'évaluation numérique et plateformes d\'orientation', niveau: 'avancé' },
+          { nom: 'Connaissance du système éducatif et des filières de formation', niveau: 'expert' },
+          { nom: 'Digital coaching et accompagnement à distance', niveau: 'avancé' },
+          { nom: 'Veille sur les métiers émergents et les compétences recherchées', niveau: 'expert' }
         ],
         salaireMoyen: {
-          junior: { min: 300000, max: 600000 },
-          confirme: { min: 600000, max: 1200000 },
-          senior: { min: 1200000, max: 2000000 }
+          junior: { min: 350000, max: 700000 },
+          confirme: { min: 700000, max: 1400000 },
+          senior: { min: 1400000, max: 2500000 }
         },
         formation: [
-          'Master Orientation',
-          'Psychologie',
-          'Certification coaching'
+          "Master en Orientation scolaire et professionnelle ou en Psychologie.",
+          "Formation en coaching et accompagnement professionnel.",
+          "Certification en outils d'évaluation et de bilan de compétences."
         ],
         perspectives: [
-          'Directeur orientation',
-          'Coach carrière',
-          'Consultant éducation'
+          "Directeur d'un service d'orientation ou d'un CIO.",
+          "Coach carrière spécialisé en reconversion professionnelle.",
+          "Consultant en orientation pour les entreprises et organisations.",
+          "Créer son propre cabinet de conseil en orientation."
         ],
         environnementTravail: [
-          'Établissements scolaires',
-          'Universités',
-          'Cabinets conseil'
+          "Établissements scolaires et universitaires (CIO, SCUIO).",
+          "Centres d'information et d'orientation (CIO).",
+          "Cabinets de conseil en orientation et coaching.",
+          "Services RH des entreprises."
         ],
-        tags: ['Orientation', 'Education', 'Conseil']
+        tags: ['Orientation', 'Conseil', 'Coaching', 'Digital', 'Éducation']
       }
     ]
   },
