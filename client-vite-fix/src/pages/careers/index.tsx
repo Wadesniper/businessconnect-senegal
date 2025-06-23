@@ -2311,75 +2311,141 @@ const secteurs: Secteur[] = [
   {
     id: 'juridique',
     nom: 'Droit & Justice',
-    description: 'Les métiers du droit, de la justice et du conseil juridique',
+    description: "Le secteur du droit et de la justice au Sénégal connaît une évolution importante avec l'internationalisation des échanges et la complexification des réglementations. Les opportunités sont nombreuses pour les professionnels qualifiés dans le conseil juridique, la défense des droits et la conformité réglementaire.",
     icone: '⚖️',
     couleur: '#ffc53d',
     metiers: [
       {
         id: 'avocat-affaires',
         titre: 'Avocat d\'Affaires',
-        description: 'Conseille et défend les entreprises sur les aspects juridiques',
+        description: "L'Avocat d'Affaires conseille et défend les entreprises sur tous les aspects juridiques. Il assure la sécurité juridique des opérations commerciales et accompagne les entreprises dans leurs projets de développement.",
         secteur: 'juridique',
+        missions: [
+          "Conseiller les entreprises sur les aspects juridiques de leurs opérations.",
+          "Négocier et rédiger des contrats commerciaux et financiers.",
+          "Assurer la représentation en justice et la défense des intérêts.",
+          "Accompagner les fusions-acquisitions et restructurations.",
+          "Former les équipes aux aspects juridiques et réglementaires."
+        ],
         competencesRequises: [
-          { nom: 'Droit des affaires', niveau: 'expert' },
-          { nom: 'Négociation', niveau: 'avancé' },
-          { nom: 'Anglais juridique', niveau: 'avancé' },
-          { nom: 'Rédaction juridique', niveau: 'expert' }
+          { nom: 'Droit des affaires et droit commercial', niveau: 'expert' },
+          { nom: 'Négociation et rédaction de contrats', niveau: 'expert' },
+          { nom: 'Procédure civile et commerciale', niveau: 'avancé' },
+          { nom: 'Anglais juridique et droit international', niveau: 'avancé' },
+          { nom: 'Rédaction juridique et plaidoirie', niveau: 'expert' }
         ],
         salaireMoyen: {
-          junior: { min: 800000, max: 1500000 },
-          confirme: { min: 1500000, max: 3000000 },
-          senior: { min: 3000000, max: 5000000 }
+          junior: { min: 900000, max: 1800000 },
+          confirme: { min: 1800000, max: 3500000 },
+          senior: { min: 3500000, max: 6000000 }
         },
         formation: [
-          'Master en Droit',
-          'CAPA',
-          'Spécialisation Droit des affaires'
+          "Master en Droit des affaires ou Master DJCE.",
+          "Certificat d'Aptitude à la Profession d'Avocat (CAPA).",
+          "Spécialisation en droit international des affaires.",
+          "Formations continues en nouvelles réglementations."
         ],
         perspectives: [
-          'Associé cabinet',
-          'Juriste d\'entreprise',
-          'Consultant juridique'
+          "Associé de cabinet ou Directeur juridique.",
+          "Juriste d'entreprise ou Consultant juridique.",
+          "Expert en droit international des affaires.",
+          "Créateur de cabinet d'avocats."
         ],
         environnementTravail: [
-          'Cabinets d\'avocats',
-          'Entreprises',
-          'Banques'
+          "Cabinets d'avocats et études juridiques.",
+          "Entreprises multinationales et banques.",
+          "Institutions financières et assurances.",
+          "Organisations internationales."
         ],
-        tags: ['Droit', 'Conseil', 'Juridique']
+        tags: ['Droit', 'Affaires', 'Conseil', 'Négociation', 'Justice']
       },
       {
         id: 'juriste-entreprise',
         titre: 'Juriste d\'Entreprise',
-        description: 'Assure la sécurité juridique de l\'entreprise',
+        description: "Le Juriste d'Entreprise assure la sécurité juridique de l'entreprise en veillant au respect des réglementations et en anticipant les risques juridiques. Il conseille la direction sur tous les aspects légaux.",
         secteur: 'juridique',
+        missions: [
+          "Assurer la conformité juridique des activités de l'entreprise.",
+          "Rédiger et négocier les contrats commerciaux.",
+          "Gérer les contentieux et les litiges.",
+          "Former les équipes aux aspects juridiques.",
+          "Veiller au respect des réglementations sectorielles."
+        ],
         competencesRequises: [
-          { nom: 'Droit des sociétés', niveau: 'expert' },
-          { nom: 'Droit des contrats', niveau: 'expert' },
-          { nom: 'Droit social', niveau: 'avancé' },
-          { nom: 'Compliance', niveau: 'avancé' }
+          { nom: 'Droit des sociétés et droit commercial', niveau: 'expert' },
+          { nom: 'Droit des contrats et négociation', niveau: 'expert' },
+          { nom: 'Droit social et droit du travail', niveau: 'avancé' },
+          { nom: 'Compliance et gestion des risques', niveau: 'avancé' },
+          { nom: 'Veille juridique et réglementaire', niveau: 'expert' }
+        ],
+        salaireMoyen: {
+          junior: { min: 700000, max: 1400000 },
+          confirme: { min: 1400000, max: 2800000 },
+          senior: { min: 2800000, max: 4500000 }
+        },
+        formation: [
+          "Master en Droit des affaires ou DJCE.",
+          "Formation continue en compliance et réglementation.",
+          "Certifications en gestion des risques juridiques.",
+          "Formations spécialisées par secteur d'activité."
+        ],
+        perspectives: [
+          "Directeur juridique ou Responsable conformité.",
+          "Secrétaire général ou Directeur administratif.",
+          "Consultant en droit des affaires.",
+          "Expert en compliance et réglementation."
+        ],
+        environnementTravail: [
+          "Grandes entreprises et multinationales.",
+          "Banques et institutions financières.",
+          "Assurances et cabinets de conseil.",
+          "Organisations publiques et parapubliques."
+        ],
+        tags: ['Juridique', 'Entreprise', 'Compliance', 'Conformité', 'Droit']
+      },
+      {
+        id: 'notaire',
+        titre: 'Notaire',
+        description: "Le Notaire est un officier public qui authentifie les actes juridiques et conseille les particuliers et les entreprises dans leurs projets immobiliers, familiaux et patrimoniaux.",
+        secteur: 'juridique',
+        missions: [
+          "Authentifier les actes juridiques et les contrats.",
+          "Conseiller les clients sur les aspects juridiques et fiscaux.",
+          "Rédiger et enregistrer les actes notariés.",
+          "Assurer la conservation des minutes et archives.",
+          "Accompagner les transactions immobilières et familiales."
+        ],
+        competencesRequises: [
+          { nom: 'Droit civil et droit des obligations', niveau: 'expert' },
+          { nom: 'Droit immobilier et droit de la famille', niveau: 'expert' },
+          { nom: 'Fiscalité et droit des successions', niveau: 'avancé' },
+          { nom: 'Rédaction d\'actes et procédures notariales', niveau: 'expert' },
+          { nom: 'Conseil juridique et patrimonial', niveau: 'avancé' }
         ],
         salaireMoyen: {
           junior: { min: 600000, max: 1200000 },
-          confirme: { min: 1200000, max: 2400000 },
-          senior: { min: 2400000, max: 4000000 }
+          confirme: { min: 1200000, max: 2500000 },
+          senior: { min: 2500000, max: 4000000 }
         },
         formation: [
-          'Master en Droit',
-          'DJCE',
-          'Formation continue'
+          "Master en Droit notarial ou formation notariale.",
+          "Stage notarial et formation pratique.",
+          "Formation continue en nouvelles réglementations.",
+          "Certifications en conseil patrimonial."
         ],
         perspectives: [
-          'Directeur juridique',
-          'Responsable conformité',
-          'Secrétaire général'
+          "Notaire associé ou Notaire titulaire.",
+          "Expert en conseil patrimonial.",
+          "Consultant en droit immobilier.",
+          "Formateur en droit notarial."
         ],
         environnementTravail: [
-          'Grandes entreprises',
-          'Banques',
-          'Assurances'
+          "Études notariales et cabinets notariaux.",
+          "Centres de conseil patrimonial.",
+          "Institutions financières et banques.",
+          "Cabinets de conseil juridique."
         ],
-        tags: ['Juridique', 'Entreprise', 'Droit']
+        tags: ['Notariat', 'Droit civil', 'Immobilier', 'Patrimoine', 'Authentification']
       }
     ]
   },
