@@ -4347,6 +4347,7 @@ const CareersPage: React.FC = () => {
   const [selectedMetier, setSelectedMetier] = useState<FicheMetier | null>(null);
   const [forceShow, setForceShow] = useState(false);
   const isPremium = hasPremiumAccess(user, hasActiveSubscription);
+  const [loadingMetier, setLoadingMetier] = useState(false);
 
   const filteredSecteurs = useMemo(() => {
     if (!searchTerm) return secteurs;
@@ -4393,7 +4394,9 @@ const CareersPage: React.FC = () => {
       });
       return;
     }
+    setLoadingMetier(true);
     setSelectedMetier(metier);
+    setTimeout(() => setLoadingMetier(false), 350); // délai court pour UX fluide
   };
 
   // Header premium
@@ -4648,90 +4651,97 @@ const CareersPage: React.FC = () => {
           onCancel={() => setSelectedMetier(null)}
           footer={null}
           width={800}
+          destroyOnClose
         >
-          {selectedMetier && (
-            <div>
-              <Title level={2}>{selectedMetier.titre}</Title>
-              <Paragraph>{selectedMetier.description}</Paragraph>
+          {loadingMetier ? (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 320 }}>
+              <Spin size="large" tip="Chargement de la fiche métier..." />
+            </div>
+          ) : (
+            selectedMetier && (
+              <div>
+                <Title level={2}>{selectedMetier.titre}</Title>
+                <Paragraph>{selectedMetier.description}</Paragraph>
 
-              <Title level={3}>Salaires</Title>
-              <Row gutter={[16, 16]}>
-                <Col span={8}>
-                  <Card>
-                    <Statistic
-                      title="Junior"
-                      value={`${formatNumberToCurrency(selectedMetier.salaireMoyen.junior.min)} - ${formatNumberToCurrency(selectedMetier.salaireMoyen.junior.max)}`}
-                      suffix="FCFA"
-                    />
-                  </Card>
-                </Col>
-                <Col span={8}>
-                  <Card>
-                    <Statistic
-                      title="Confirmé"
-                      value={`${formatNumberToCurrency(selectedMetier.salaireMoyen.confirme.min)} - ${formatNumberToCurrency(selectedMetier.salaireMoyen.confirme.max)}`}
-                      suffix="FCFA"
-                    />
-                  </Card>
-                </Col>
-                <Col span={8}>
-                  <Card>
-                    <Statistic
-                      title="Senior"
-                      value={`${formatNumberToCurrency(selectedMetier.salaireMoyen.senior.min)} - ${formatNumberToCurrency(selectedMetier.salaireMoyen.senior.max)}`}
-                      suffix="FCFA"
-                    />
-                  </Card>
-                </Col>
-              </Row>
-
-              <Title level={3} style={{ marginTop: 24 }}>Compétences requises</Title>
-              <Row gutter={[16, 16]}>
-                {selectedMetier.competencesRequises.map(comp => (
-                  <Col key={comp.nom} span={12}>
-                    <Card size="small">
-                      <Space>
-                        <Text>{comp.nom}</Text>
-                        {renderCompetenceLevel(comp.niveau)}
-                      </Space>
+                <Title level={3}>Salaires</Title>
+                <Row gutter={[16, 16]}>
+                  <Col span={8}>
+                    <Card>
+                      <Statistic
+                        title="Junior"
+                        value={`${formatNumberToCurrency(selectedMetier.salaireMoyen.junior.min)} - ${formatNumberToCurrency(selectedMetier.salaireMoyen.junior.max)}`}
+                        suffix="FCFA"
+                      />
                     </Card>
                   </Col>
-                ))}
-              </Row>
+                  <Col span={8}>
+                    <Card>
+                      <Statistic
+                        title="Confirmé"
+                        value={`${formatNumberToCurrency(selectedMetier.salaireMoyen.confirme.min)} - ${formatNumberToCurrency(selectedMetier.salaireMoyen.confirme.max)}`}
+                        suffix="FCFA"
+                      />
+                    </Card>
+                  </Col>
+                  <Col span={8}>
+                    <Card>
+                      <Statistic
+                        title="Senior"
+                        value={`${formatNumberToCurrency(selectedMetier.salaireMoyen.senior.min)} - ${formatNumberToCurrency(selectedMetier.salaireMoyen.senior.max)}`}
+                        suffix="FCFA"
+                      />
+                    </Card>
+                  </Col>
+                </Row>
 
-              <Row gutter={24} style={{ marginTop: 24 }}>
-                <Col span={8}>
-                  <Title level={3}>
-                    <BookOutlined /> Formation
-                  </Title>
-                  <ul>
-                    {selectedMetier.formation.map(f => (
-                      <li key={f}>{f}</li>
-                    ))}
-                  </ul>
-                </Col>
-                <Col span={8}>
-                  <Title level={3}>
-                    <TrophyOutlined /> Perspectives
-                  </Title>
-                  <ul>
-                    {selectedMetier.perspectives.map(p => (
-                      <li key={p}>{p}</li>
-                    ))}
-                  </ul>
-                </Col>
-                <Col span={8}>
-                  <Title level={3}>
-                    <EnvironmentOutlined /> Environnement
-                  </Title>
-                  <ul>
-                    {selectedMetier.environnementTravail.map(e => (
-                      <li key={e}>{e}</li>
-                    ))}
-                  </ul>
-                </Col>
-              </Row>
-            </div>
+                <Title level={3} style={{ marginTop: 24 }}>Compétences requises</Title>
+                <Row gutter={[16, 16]}>
+                  {selectedMetier.competencesRequises.map(comp => (
+                    <Col key={comp.nom} span={12}>
+                      <Card size="small">
+                        <Space>
+                          <Text>{comp.nom}</Text>
+                          {renderCompetenceLevel(comp.niveau)}
+                        </Space>
+                      </Card>
+                    </Col>
+                  ))}
+                </Row>
+
+                <Row gutter={24} style={{ marginTop: 24 }}>
+                  <Col span={8}>
+                    <Title level={3}>
+                      <BookOutlined /> Formation
+                    </Title>
+                    <ul>
+                      {selectedMetier.formation.map(f => (
+                        <li key={f}>{f}</li>
+                      ))}
+                    </ul>
+                  </Col>
+                  <Col span={8}>
+                    <Title level={3}>
+                      <TrophyOutlined /> Perspectives
+                    </Title>
+                    <ul>
+                      {selectedMetier.perspectives.map(p => (
+                        <li key={p}>{p}</li>
+                      ))}
+                    </ul>
+                  </Col>
+                  <Col span={8}>
+                    <Title level={3}>
+                      <EnvironmentOutlined /> Environnement
+                    </Title>
+                    <ul>
+                      {selectedMetier.environnementTravail.map(e => (
+                        <li key={e}>{e}</li>
+                      ))}
+                    </ul>
+                  </Col>
+                </Row>
+              </div>
+            )
           )}
         </Modal>
       </Space>
