@@ -63,7 +63,7 @@ const MarketplacePage: React.FC = () => {
     search: '',
     location: ''
   });
-  const { user } = useAuth();
+  const { user, loading: loadingUser } = useAuth();
   const { hasActiveSubscription, loading: loadingSub } = useSubscription();
   const isAdmin = user?.role === 'admin';
   const [subscription, setSubscription] = useState(
@@ -247,8 +247,8 @@ const MarketplacePage: React.FC = () => {
     }
   };
 
-  if (loading) {
-    return <div style={{ minHeight: 420, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement des annonces..." /></div>;
+  if (loadingUser) {
+    return <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement..." /></div>;
   }
 
   return (
@@ -338,43 +338,51 @@ const MarketplacePage: React.FC = () => {
             </Card>
           </Col>
 
-          {items.map(item => (
-            <Col xs={24} sm={12} md={8} lg={6} key={item.id}>
-              <Card
-                hoverable
-                cover={
-                  Array.isArray(item.images) && item.images[0] ? (
-                    <LazyImage
-                      alt={item.title}
-                      src={item.images[0]}
-                      style={{ height: 200 }}
-                    />
-                  ) : <div style={{ height: 200, background: '#f0f2f5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Pas d'image</div>
-                }
-                onClick={() => navigate(`/marketplace/${item.id}`)}
-                actions={[
-                  <Button type="primary" onClick={() => navigate(`/marketplace/${item.id}`)}>Voir les détails</Button>,
-                  ...(user && (user.role === 'admin' || user.id === item.seller) ? [
-                    <Button onClick={() => handleEdit(item)}>Modifier</Button>,
-                    <Button danger onClick={() => handleDelete(item.id)}>Supprimer</Button>
-                  ] : [])
-                ]}
-              >
-                <div style={{ minHeight: 120 }}>
-                  <Typography.Title level={5}>{item.title}</Typography.Title>
-                  <div style={{ margin: '8px 0' }}>{(item.description || '').substring(0, 100)}...</div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span>{<EuroOutlined style={{ color: '#1890ff' }} />}</span>
-                    <span style={{ fontWeight: 'bold' }}>{item.price}</span>
+          {items.map(item => {
+            const isOwner = user && (user.id === item.userId || user.id === item.sellerId || user.id === item.seller);
+            const isAdmin = user && user.role === 'admin';
+            return (
+              <Col xs={24} sm={12} md={8} lg={6} key={item.id}>
+                <Card
+                  hoverable
+                  cover={
+                    Array.isArray(item.images) && item.images[0] ? (
+                      <LazyImage
+                        alt={item.title}
+                        src={item.images[0]}
+                        style={{ height: 200 }}
+                      />
+                    ) : <div style={{ height: 200, background: '#f0f2f5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Pas d'image</div>
+                  }
+                  onClick={() => navigate(`/marketplace/${item.id}`)}
+                  actions={[
+                    <Button type="primary" onClick={() => navigate(`/marketplace/${item.id}`)}>Voir les détails</Button>,
+                    ...(
+                      user && (isAdmin || isOwner)
+                        ? [
+                            <Button onClick={() => handleEdit(item)}>Modifier</Button>,
+                            <Button danger onClick={() => handleDelete(item.id)}>Supprimer</Button>
+                          ]
+                        : []
+                    )
+                  ]}
+                >
+                  <div style={{ minHeight: 120 }}>
+                    <Typography.Title level={5}>{item.title}</Typography.Title>
+                    <div style={{ margin: '8px 0' }}>{(item.description || '').substring(0, 100)}...</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span>{<EuroOutlined style={{ color: '#1890ff' }} />}</span>
+                      <span style={{ fontWeight: 'bold' }}>{item.price}</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span>{<EnvironmentOutlined style={{ color: '#1890ff' }} />}</span>
+                      <span>{item.location}</span>
+                    </div>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span>{<EnvironmentOutlined style={{ color: '#1890ff' }} />}</span>
-                    <span>{item.location}</span>
-                  </div>
-                </div>
-              </Card>
-            </Col>
-          ))}
+                </Card>
+              </Col>
+            );
+          })}
           {items.length === 0 && (
             <Col span={24} style={{ textAlign: 'center', marginTop: 48, color: '#888', fontSize: 18 }}>
               Aucune annonce pour le moment.

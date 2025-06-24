@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Row, Col, Typography, Button, Space, Tag, Result } from 'antd';
+import { Card, Row, Col, Typography, Button, Space, Tag, Result, Spin } from 'antd';
 import { UserOutlined, ShopOutlined, TeamOutlined, LoginOutlined } from '@ant-design/icons';
 import './SubscriptionPage.css';
 import axios from 'axios';
@@ -61,23 +61,23 @@ const offers = [
 ];
 
 const SubscriptionPage: React.FC = () => {
-  const { user, isAuthenticated, loading } = useAuth();
+  const { user, loading: loadingUser } = useAuth();
   const navigate = useNavigate();
-  const { initiateSubscription, refreshSubscription, hasActiveSubscription } = useSubscription();
+  const { initiateSubscription, refreshSubscription, hasActiveSubscription, loading: loadingSub } = useSubscription();
 
   // Debug logs
   React.useEffect(() => {
     console.log('SubscriptionPage - État:', {
       user,
-      isAuthenticated,
-      loading,
+      loadingUser,
+      loadingSub,
       hasUser: !!user,
       hasToken: !!localStorage.getItem('token')
     });
-  }, [user, isAuthenticated, loading]);
+  }, [user, loadingUser, loadingSub]);
 
   // Si en cours de chargement, afficher le loader
-  if (loading) {
+  if (loadingUser || loadingSub) {
     return (
       <div style={{
         minHeight: '100vh',
@@ -86,7 +86,7 @@ const SubscriptionPage: React.FC = () => {
         alignItems: 'center',
         background: 'linear-gradient(135deg, #1890ff 0%, #43e97b 100%)',
       }}>
-        <div style={{ color: '#fff', fontSize: 18 }}>Chargement...</div>
+        <Spin size="large" tip="Chargement..." />
       </div>
     );
   }
@@ -94,7 +94,7 @@ const SubscriptionPage: React.FC = () => {
   const hasToken = !!localStorage.getItem('token');
   const hasUser = !!localStorage.getItem('user');
 
-  if (!isAuthenticated || !user || typeof user !== 'object' || !user.id) {
+  if (!user || !hasActiveSubscription) {
     // Cas où il y a un token/user en localStorage mais pas dans le contexte React
     if (hasToken || hasUser) {
       return (
