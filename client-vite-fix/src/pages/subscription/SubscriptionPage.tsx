@@ -78,17 +78,7 @@ const SubscriptionPage: React.FC = () => {
 
   // Si en cours de chargement, afficher le loader
   if (loadingUser || loadingSub) {
-    return (
-      <div style={{
-        minHeight: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        background: 'linear-gradient(135deg, #1890ff 0%, #43e97b 100%)',
-      }}>
-        <Spin size="large" tip="Chargement..." />
-      </div>
-    );
+    return <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement..." /> </div>;
   }
 
   const hasToken = !!localStorage.getItem('token');
