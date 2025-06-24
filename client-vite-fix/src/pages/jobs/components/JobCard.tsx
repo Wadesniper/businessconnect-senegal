@@ -60,7 +60,7 @@ const isSpecified = (value: string | undefined | null) => value && !/non précis
 
 const JobCard: React.FC<JobCardProps> = ({ job, isPremium, onEdit, onDelete }) => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
   if (!job) {
     return null;
@@ -78,8 +78,8 @@ const JobCard: React.FC<JobCardProps> = ({ job, isPremium, onEdit, onDelete }) =
     employerId,
   } = job;
   
-  const isOwner = user && employerId === user.id;
-  const isAdmin = user?.role === 'admin';
+  const isOwner = !loading && user && employerId === user.id;
+  const isAdmin = !loading && user?.role === 'admin';
   
   const hasAccess = isPremium || isOwner || isAdmin;
 

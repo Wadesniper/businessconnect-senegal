@@ -339,8 +339,8 @@ const MarketplacePage: React.FC = () => {
           </Col>
 
           {items.map(item => {
-            const isOwner = user && (user.id === item.userId || user.id === item.sellerId || user.id === item.seller);
-            const isAdmin = user && user.role === 'admin';
+            const isOwner = !loadingUser && user && (user.id === item.userId || user.id === item.sellerId || user.id === item.seller);
+            const isAdmin = !loadingUser && user && user.role === 'admin';
             return (
               <Col xs={24} sm={12} md={8} lg={6} key={item.id}>
                 <Card
