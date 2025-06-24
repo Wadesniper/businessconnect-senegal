@@ -63,7 +63,7 @@ const MarketplacePage: React.FC = () => {
     search: '',
     location: ''
   });
-  const { user, loading: loadingUser } = useAuth();
+  const { user } = useAuth();
   const { hasActiveSubscription, loading: loadingSub } = useSubscription();
   const isAdmin = user?.role === 'admin';
   const [subscription, setSubscription] = useState(
@@ -246,10 +246,6 @@ const MarketplacePage: React.FC = () => {
       message.error('Erreur lors de la suppression de l\'annonce');
     }
   };
-
-  if (loadingUser) {
-    return <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement..." /></div>;
-  }
 
   if (loading) {
     return <div style={{ minHeight: 420, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement des annonces..." /></div>;
