@@ -300,7 +300,7 @@ const MarketplacePage: React.FC = () => {
                       value={filters.search}
                     />
                   </Col>
-                  <Col span={6}>
+                  <Col span={6} style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
                     <Button
                       type="primary"
                       icon={<PlusOutlined />}
@@ -308,21 +308,16 @@ const MarketplacePage: React.FC = () => {
                     >
                       Créer une annonce
                     </Button>
+                    <Button
+                      type="default"
+                      icon={<ShopOutlined />}
+                      onClick={() => navigate('/marketplace/user/items')}
+                      style={{ marginLeft: 8 }}
+                    >
+                      Mes Annonces
+                    </Button>
                   </Col>
                 </Row>
-                {user && (
-                  <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
-                    <Col span={6}>
-                      <Button
-                        type="default"
-                        icon={<ShopOutlined />}
-                        onClick={() => navigate('/marketplace/user/items')}
-                      >
-                        Mes Annonces
-                      </Button>
-                    </Col>
-                  </Row>
-                )}
                 <Row>
                   <Col span={24}>
                     <span style={{ fontWeight: 'bold' }}>Prix :</span>
