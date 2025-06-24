@@ -60,7 +60,7 @@ const isSpecified = (value: string | undefined | null) => value && !/non précis
 
 const JobCard: React.FC<JobCardProps> = ({ job, isPremium, onEdit, onDelete }) => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading: loadingUser } = useAuth();
 
   if (!job) {
     return null;
@@ -78,8 +78,8 @@ const JobCard: React.FC<JobCardProps> = ({ job, isPremium, onEdit, onDelete }) =
     employerId,
   } = job;
   
-  const isOwner = user && employerId === user.id;
-  const isAdmin = user?.role === 'admin';
+  const isOwner = !loadingUser && user && employerId === user.id;
+  const isAdmin = !loadingUser && user?.role === 'admin';
   
   const hasAccess = isPremium || isOwner || isAdmin;
 
@@ -130,7 +130,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, isPremium, onEdit, onDelete }) =
         >
           {hasAccess ? "Détails de l'offre" : 'Accès Premium'}
         </Button>
-        {(isOwner || isAdmin) && onEdit && onDelete && (
+        {(!loadingUser && (isOwner || isAdmin)) && onEdit && onDelete && (
             <div style={{display: 'flex', gap: '8px', marginTop: '12px'}}>
                 <Button block icon={<EditOutlined />} onClick={() => onEdit(id)}>Modifier</Button>
                 <Button block danger icon={<DeleteOutlined />} onClick={() => onDelete(id)}>Supprimer</Button>
