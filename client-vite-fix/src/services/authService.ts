@@ -86,10 +86,10 @@ export class AuthService {
     localStorage.removeItem(this.USER_KEY);
   }
 
-  async getCurrentUser(): Promise<User> {
+  async getCurrentUser(): Promise<User | null> {
     try {
-      const response = await api.get<User>('/api/auth/me');
-      return response.data;
+      const response = await api.get<{ success: boolean; data: User }>('/api/auth/me');
+      return response.data.data;
     } catch (error: any) {
       if (error.response?.status === 401) {
         this.logout();
