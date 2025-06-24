@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { marketplaceService } from '../../services/marketplaceService';
 import type { MarketplaceItem } from '../../services/marketplaceService';
+import { useAuth } from '../../context/AuthContext';
 
 const UserItems: React.FC = () => {
   const [items, setItems] = useState<MarketplaceItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingItemId, setDeletingItemId] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { user, loading: loadingUser } = useAuth();
 
   useEffect(() => {
     loadUserItems();
@@ -76,7 +78,7 @@ const UserItems: React.FC = () => {
     }
   };
 
-  if (loading) {
+  if (loadingUser) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
