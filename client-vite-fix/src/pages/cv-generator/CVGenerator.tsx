@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Steps, Button, message } from 'antd';
 import TemplateSelection from './components/TemplateSelection';
 import CVForm from './components/CVForm';
-import { CVData, Template, CustomizationOptions } from '../../types/cv';
+import type { CVData, Template, CustomizationOptions } from '../../types/cv';
 
 const { Step } = Steps;
 
@@ -17,6 +17,7 @@ const CVGenerator: React.FC = () => {
     fontSize: '14px',
     spacing: 'comfortable',
   });
+  const isPremiumUser = true; // Placeholder for actual premium status check
 
   const steps = [
     {
@@ -25,12 +26,13 @@ const CVGenerator: React.FC = () => {
         <TemplateSelection
           selected={selectedTemplate}
           onSelect={setSelectedTemplate}
+          isPremium={isPremiumUser}
         />
       ),
     },
     {
       title: 'Informations',
-      content: <CVForm data={cvData} onChange={setCvData} />,
+      content: <CVForm data={cvData} onChange={setCvData} isPremium={isPremiumUser} />,
     },
     {
       title: 'Personnalisation',
@@ -48,6 +50,7 @@ const CVGenerator: React.FC = () => {
       return;
     }
     setCurrentStep(currentStep + 1);
+    window.scrollTo(0, 0); // Fait remonter la page en haut
   };
 
   const prev = () => {

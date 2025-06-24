@@ -21,88 +21,52 @@ export const exportToPDF = async (
   options: ExportOptions = defaultOptions
 ): Promise<void> => {
   try {
-    // 1. Définir les dimensions de la page A4 en mm
-    const A4_WIDTH_MM = 210;
-    const A4_HEIGHT_MM = 297;
-    const margin = options.margin || 0;
-    
-    // Largeur utile de la page
-    const pdfWidth = A4_WIDTH_MM - margin * 2;
+    const { filename = 'cv.pdf', format = 'a4', orientation = 'portrait' } = options;
 
-    // 2. Options robustes pour html2canvas
     const canvas = await html2canvas(element, {
-      scale: 3, // Augmenter la résolution pour une meilleure qualité
+      scale: 2, // Une échelle de 2 est un bon compromis qualité/performance
       useCORS: true,
       logging: false,
-      width: element.offsetWidth, // Forcer la capture à la largeur réelle de l'élément
-      height: element.offsetHeight, // Forcer la capture à la hauteur réelle de l'élément
-      windowWidth: element.offsetWidth,
-      windowHeight: element.offsetHeight,
       backgroundColor: '#ffffff',
     });
+
+    const imgData = canvas.toDataURL('image/png');
+
+    const pdf = new jsPDF({
+      orientation,
+      unit: 'mm',
+      format,
+    });
+
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
 
     const canvasWidth = canvas.width;
     const canvasHeight = canvas.height;
 
-    // 3. Calculer le ratio pour l'insertion dans le PDF
-    const canvasAspectRatio = canvasWidth / canvasHeight;
-    const pdfHeight = pdfWidth / canvasAspectRatio;
+    // Calculer le ratio pour conserver les proportions de l'image
+    const ratio = canvasWidth / canvasHeight;
+    const imgWidth = pdfWidth;
+    const imgHeight = imgWidth / ratio;
 
-    // 4. Créer le document PDF
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4',
-    });
+    let heightLeft = imgHeight;
+    let position = 0;
 
-    let position = margin;
-    let remainingCanvasHeight = canvasHeight;
+    // Ajouter la première page
+    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+    heightLeft -= pdfHeight;
 
-    // Convertir les dimensions du canvas en mm pour le PDF
-    const A4_RATIO = A4_HEIGHT_MM / A4_WIDTH_MM;
-    const canvasHeightInMM = canvas.height * (pdfWidth / canvas.width);
-    
-    let canvasSliceY = 0;
-
-    // 5. Gérer les CV plus longs qu'une page
-    while (remainingCanvasHeight > 0) {
-      // Hauteur de la tranche de canvas à ajouter sur la page actuelle
-      const pageCanvasHeight = Math.min(
-        remainingCanvasHeight,
-        canvas.width * A4_RATIO
-      );
-
-      const pageCanvasSlice = document.createElement('canvas');
-      pageCanvasSlice.width = canvas.width;
-      pageCanvasSlice.height = pageCanvasHeight;
-      pageCanvasSlice
-        .getContext('2d')
-        ?.drawImage(canvas, 0, canvasSliceY, canvas.width, pageCanvasHeight, 0, 0, canvas.width, pageCanvasHeight);
-      
-      const pageHeight = (pageCanvasSlice.height * pdfWidth) / pageCanvasSlice.width;
-      
-      pdf.addImage(
-        pageCanvasSlice.toDataURL('image/jpeg', 1.0),
-        'JPEG',
-        margin,
-        position,
-        pdfWidth,
-        pageHeight
-      );
-
-      remainingCanvasHeight -= pageCanvasHeight;
-      canvasSliceY += pageCanvasHeight;
-
-      if (remainingCanvasHeight > 0) {
-        pdf.addPage();
-        position = margin; // Réinitialiser la position pour la nouvelle page
-      }
+    // Ajouter des pages supplémentaires si le contenu dépasse
+    while (heightLeft > 0) {
+      position = heightLeft - imgHeight; // Décaler l'image vers le haut sur la nouvelle page
+      pdf.addPage();
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pdfHeight;
     }
-    
-    // 6. Télécharger le PDF
-    pdf.save(options.filename || 'cv.pdf');
+
+    pdf.save(filename);
   } catch (error) {
-    console.error('Erreur lors de l\'export en PDF:', error);
+    console.error("Erreur lors de l'export en PDF:", error);
     throw error;
   }
 };
