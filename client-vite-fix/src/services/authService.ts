@@ -78,7 +78,11 @@ export class AuthService {
     }
 
     const data = await response.json();
-    return data;
+    return {
+      ...data,
+      token: data.data?.token,
+      user: data.data?.user
+    };
   }
 
   logout(): void {
