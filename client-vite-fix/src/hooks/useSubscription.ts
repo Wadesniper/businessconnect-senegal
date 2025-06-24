@@ -5,7 +5,7 @@ import { subscriptionService } from '../services/subscriptionService';
 import { api } from '../services/api';
 
 export const useSubscription = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, loading: loadingUser } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
@@ -68,27 +68,27 @@ export const useSubscription = () => {
   useEffect(() => {
     const checkSubscriptionStatus = async () => {
       // Attendre que l'objet utilisateur soit complètement chargé.
-      if (!isAuthenticated || !user) {
+      if (loadingUser) {
+        setLoading(true);
+        return;
+      }
+      if (!isAuthenticated || !user || !user.id) {
         setHasActiveSubscription(false);
         setLoading(false);
         return;
       }
-      
       // Si l'utilisateur est un admin, accorder l'accès et arrêter immédiatement.
       if (user.role === 'admin') {
         setHasActiveSubscription(true);
         setLoading(false);
         return;
       }
-      
       // Pour les autres utilisateurs, vérifier l'abonnement en base de données.
       try {
         setLoading(true);
         setError(null);
-        
         const isActive = await subscriptionService.fetchSubscriptionStatus(user.id);
         setHasActiveSubscription(isActive);
-        
         console.log('useSubscription - Statut abonnement vérifié:', {
           userId: user.id,
           hasActiveSubscription: isActive
@@ -107,10 +107,8 @@ export const useSubscription = () => {
         setLoading(false);
       }
     };
-    
     checkSubscriptionStatus();
-    
-  }, [isAuthenticated, user]); // Dépendre de l'objet 'user' entier.
+  }, [isAuthenticated, user, loadingUser]);
 
   // Ajout d'une méthode pour rafraîchir le statut d'abonnement à la demande
   const refreshSubscription = async () => {
