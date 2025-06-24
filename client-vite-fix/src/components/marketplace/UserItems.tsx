@@ -132,16 +132,16 @@ const UserItems: React.FC = () => {
                   <span>{item.location}</span>
                   <span>{new Date(item.createdAt).toLocaleDateString()}</span>
                 </div>
-                <div className="mt-auto flex flex-col gap-2 sm:flex-row sm:space-x-2">
+                <div className="mt-auto flex space-x-2">
                   <button
                     onClick={() => navigate(`/marketplace/edit/${item.id}`)}
-                    className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm mb-2 sm:mb-0"
+                    className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm"
                   >
                     Modifier
                   </button>
                   <button
                     onClick={() => navigate(`/marketplace/${item.id}`)}
-                    className="flex-1 bg-gray-500 text-white px-3 py-2 rounded-md hover:bg-gray-700 transition-colors text-sm mb-2 sm:mb-0"
+                    className="flex-1 bg-gray-600 text-white px-3 py-2 rounded-md hover:bg-gray-700 transition-colors text-sm"
                   >
                     Voir
                   </button>

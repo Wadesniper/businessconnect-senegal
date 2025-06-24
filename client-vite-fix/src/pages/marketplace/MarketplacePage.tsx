@@ -354,14 +354,10 @@ const MarketplacePage: React.FC = () => {
                 onClick={() => navigate(`/marketplace/${item.id}`)}
                 actions={[
                   <Button type="primary" onClick={() => navigate(`/marketplace/${item.id}`)}>Voir les détails</Button>,
-                  ...(
-                    user && (user.role === 'admin' || user.id === item.userId || user.id === item.sellerId || user.id === item.seller)
-                      ? [
-                          <Button onClick={() => handleEdit(item)}>Modifier</Button>,
-                          <Button danger onClick={() => handleDelete(item.id)}>Supprimer</Button>
-                        ]
-                      : []
-                  )
+                  ...(user && (user.role === 'admin' || user.id === item.seller) ? [
+                    <Button onClick={() => handleEdit(item)}>Modifier</Button>,
+                    <Button danger onClick={() => handleDelete(item.id)}>Supprimer</Button>
+                  ] : [])
                 ]}
               >
                 <div style={{ minHeight: 120 }}>
