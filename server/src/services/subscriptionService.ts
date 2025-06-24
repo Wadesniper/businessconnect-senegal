@@ -81,17 +81,23 @@ export class SubscriptionService {
   async initiateSubscription(params: InitiateSubscriptionParams): Promise<{ paymentUrl?: string; transactionId?: string }> {
     try {
       logger.info('[ABO] Début initiateSubscription, params:', params);
-      const existingSubscription = await this.getActiveSubscription(params.userId);
-      if (existingSubscription) {
-        logger.warn('[ABO] Abonnement déjà actif pour userId:', params.userId);
-        throw new Error('Vous avez déjà un abonnement actif.');
-      }
+      
       const plan = this.plans[params.type];
       logger.info('[ABO] Plan trouvé:', plan);
       if (!plan) {
         logger.error('[ABO] Type d\'abonnement invalide:', params.type);
         throw new Error('Type d\'abonnement invalide.');
       }
+      
+      const existingSubscription = await this.getActiveSubscription(params.userId);
+      if (existingSubscription && existingSubscription.type === params.type) {
+        logger.warn('[ABO] Tentative de rachat du même abonnement actif pour userId:', params.userId);
+        throw new Error('Vous possédez déjà ce plan d\'abonnement.');
+      }
+
+      // Si un abonnement existe mais est différent, la logique continue pour permettre l'upgrade.
+      // Si aucun abonnement n'existe, la logique continue normalement.
+
       const refCommand = `BCS-${params.userId}-${Date.now()}`;
       const paytechParams = {
         item_name: `Abonnement ${plan.type}`,
