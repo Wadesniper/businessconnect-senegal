@@ -65,13 +65,39 @@ const SubscriptionPage: React.FC = () => {
   const navigate = useNavigate();
   const { initiateSubscription, refreshSubscription, hasActiveSubscription, loading: loadingSub } = useSubscription();
 
-  // Si en cours de chargement des informations essentielles, afficher le loader
+  // Debug logs
+  React.useEffect(() => {
+    console.log('SubscriptionPage - État:', {
+      user,
+      loadingUser,
+      loadingSub,
+      hasUser: !!user,
+      hasToken: !!localStorage.getItem('token')
+    });
+  }, [user, loadingUser, loadingSub]);
+
+  // Si en cours de chargement, afficher le loader
   if (loadingUser || loadingSub) {
-    return <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement de votre statut..." /></div>;
+    return <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement..." /> </div>;
   }
 
-  // Si l'utilisateur n'est pas connecté, l'inviter à le faire.
-  if (!user) {
+  const hasToken = !!localStorage.getItem('token');
+  const hasUser = !!localStorage.getItem('user');
+
+  if (!user || !hasActiveSubscription) {
+    // Cas où il y a un token/user en localStorage mais pas dans le contexte React
+    if (hasToken || hasUser) {
+      return (
+        <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Result
+            status="info"
+            title="Merci de vous reconnecter pour accéder à votre abonnement."
+            extra={<Button type="primary" onClick={() => navigate('/auth')}>Se reconnecter</Button>}
+          />
+        </div>
+      );
+    }
+    // Cas classique : pas connecté du tout
     return (
       <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <Result
@@ -83,9 +109,6 @@ const SubscriptionPage: React.FC = () => {
     );
   }
 
-  // Si l'utilisateur est connecté, on affiche la page.
-  // La logique interne (ex: afficher l'abonnement actuel) peut être gérée ici.
-  
   const handleSubscribe = async (offerKey: string) => {
     try {
       // Mapping explicite des clés d'offre vers les types backend

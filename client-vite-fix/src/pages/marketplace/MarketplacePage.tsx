@@ -247,7 +247,7 @@ const MarketplacePage: React.FC = () => {
     }
   };
 
-  if (loadingUser || loadingSub) {
+  if (loadingUser) {
     return <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement..." /></div>;
   }
 
@@ -339,8 +339,8 @@ const MarketplacePage: React.FC = () => {
           </Col>
 
           {items.map(item => {
-            const isOwner = !loadingUser && user && (user.id === item.userId || user.id === item.sellerId || user.id === item.seller);
-            const isAdmin = !loadingUser && user && user.role === 'admin';
+            const isOwner = user && (user.id === item.userId || user.id === item.sellerId || user.id === item.seller);
+            const isAdmin = user && user.role === 'admin';
             return (
               <Col xs={24} sm={12} md={8} lg={6} key={item.id}>
                 <Card
@@ -356,12 +356,12 @@ const MarketplacePage: React.FC = () => {
                   }
                   onClick={() => navigate(`/marketplace/${item.id}`)}
                   actions={[
-                    <Button type="primary" onClick={(e) => { e.stopPropagation(); navigate(`/marketplace/${item.id}`)}}>Voir les détails</Button>,
+                    <Button type="primary" onClick={() => navigate(`/marketplace/${item.id}`)}>Voir les détails</Button>,
                     ...(
-                      (isAdmin || isOwner)
+                      user && (isAdmin || isOwner)
                         ? [
-                            <Button onClick={(e) => { e.stopPropagation(); handleEdit(item)}}>Modifier</Button>,
-                            <Button danger onClick={(e) => { e.stopPropagation(); handleDelete(item.id)}}>Supprimer</Button>
+                            <Button onClick={() => handleEdit(item)}>Modifier</Button>,
+                            <Button danger onClick={() => handleDelete(item.id)}>Supprimer</Button>
                           ]
                         : []
                     )
