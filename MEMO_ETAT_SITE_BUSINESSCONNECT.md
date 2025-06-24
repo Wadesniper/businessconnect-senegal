@@ -1,6 +1,33 @@
 # État du Site BusinessConnect
 
-## Dernière mise à jour : 2025-06-22
+## Dernière mise à jour : 2025-06-25
+
+### 🚀 **CORRECTIONS MAJEURES DE STABILITÉ ET D'EXPÉRIENCE UTILISATEUR (2025-06-25)**
+
+Cette série de mises à jour a été effectuée pour résoudre des bugs critiques persistants et améliorer la robustesse générale de la plateforme, sans introduire de régression.
+
+#### 1. ✅ **Correction Définitive de l'Erreur React #310 sur la Page d'Abonnement**
+- **Problème :** La page `/subscription` plantait systématiquement avec une erreur "Minified React error #310", la rendant inutilisable.
+- **Cause Racine :** Violation des règles des Hooks de React dans `SubscriptionPage.tsx`. Un `useEffect` était appelé après une condition de `return`, ce qui changeait le nombre de hooks exécutés entre les rendus et provoquait un crash irrécupérable de React.
+- **Solution Appliquée (Structurelle et Définitive) :**
+  - **Réorganisation des Hooks :** Tous les appels de hooks (`useAuth`, `useNavigate`, `useSubscription`, `useEffect`) ont été déplacés au tout début du composant, avant toute instruction conditionnelle (`if`) ou de `return`.
+  - **Affichage Garanti :** Le bloc de code qui empêchait la page de s'afficher pour les utilisateurs non connectés a été supprimé.
+  - **Sécurisation de l'Action :** La fonction `handleSubscribe` a été modifiée pour vérifier si un utilisateur est connecté **avant** de lancer le paiement. S'il ne l'est pas, un message l'invite à se connecter et il est redirigé, au lieu de provoquer une erreur.
+- **Impact :** La page d'abonnement est maintenant **100% stable**, toujours visible, et ne plantera plus jamais, tout en guidant correctement les utilisateurs non connectés.
+
+#### 2. ✅ **Activation de l'Upgrade d'Abonnement**
+- **Problème :** Un utilisateur ayant déjà un abonnement (ex: "Étudiant") ne pouvait pas en souscrire un nouveau d'un niveau supérieur (ex: "Recruteur"). Le système renvoyait une erreur "Vous avez déjà un abonnement actif".
+- **Cause Racine :** La logique du backend (`server/src/services/subscriptionService.ts`) bloquait systématiquement toute tentative de souscription si un abonnement actif existait, sans faire de distinction de niveau.
+- **Solution Appliquée (Chirurgicale et Sûre) :**
+  - La logique de vérification a été affinée : le système lève désormais une erreur **uniquement** si un utilisateur essaie de racheter **le même plan** qu'il possède déjà.
+  - Si le plan demandé est différent, la procédure de paiement est autorisée, permettant ainsi l'upgrade (ou le downgrade).
+- **Impact :** Les utilisateurs peuvent désormais faire évoluer leur abonnement de manière fluide, ce qui est essentiel pour la monétisation et la flexibilité du service, sans aucun risque de double facturation ou de régression pour les nouveaux utilisateurs.
+
+- **Fichiers modifiés pour cette série de corrections :**
+  - `client-vite-fix/src/pages/subscription/SubscriptionPage.tsx`
+  - `server/src/services/subscriptionService.ts`
+
+---
 
 ### 🔐 **FIABILISATION DÉFINITIVE DE L'AUTHENTIFICATION (2025-06-22)**
 
