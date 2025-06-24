@@ -81,8 +81,23 @@ const SubscriptionPage: React.FC = () => {
     return <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement..." /> </div>;
   }
 
-  // Si pas connecté du tout, rediriger vers la connexion
-  if (!user) {
+  const hasToken = !!localStorage.getItem('token');
+  const hasUser = !!localStorage.getItem('user');
+
+  if (!user || !hasActiveSubscription) {
+    // Cas où il y a un token/user en localStorage mais pas dans le contexte React
+    if (hasToken || hasUser) {
+      return (
+        <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Result
+            status="info"
+            title="Merci de vous reconnecter pour accéder à votre abonnement."
+            extra={<Button type="primary" onClick={() => navigate('/auth')}>Se reconnecter</Button>}
+          />
+        </div>
+      );
+    }
+    // Cas classique : pas connecté du tout
     return (
       <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <Result
@@ -93,8 +108,6 @@ const SubscriptionPage: React.FC = () => {
       </div>
     );
   }
-
-  // L'utilisateur est connecté, afficher la page d'abonnement
 
   const handleSubscribe = async (offerKey: string) => {
     try {
