@@ -23,28 +23,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const initAuth = useCallback(async () => {
+    setLoading(true);
     const token = authService.getToken();
+    console.log('[AuthProvider] Token trouvé dans le localStorage:', token);
     if (!token) {
-      setLoading(false);
-      setIsAuthenticated(false);
       setUser(null);
+      setIsAuthenticated(false);
+      setLoading(false);
       return;
     }
-
     try {
-      // Le token est déjà dans les headers grâce à l'intercepteur de l'api
       const serverUser = await authService.getCurrentUser();
       if (serverUser) {
         setUser(serverUser);
         setIsAuthenticated(true);
-        // Assurer la cohérence du localStorage
         authService.setUser(serverUser);
+        console.log('[AuthProvider] Utilisateur restauré:', serverUser);
       } else {
-        // Cas où le serveur ne renvoie pas d'erreur mais pas d'utilisateur
         throw new Error("Impossible de vérifier l'utilisateur");
       }
     } catch (e: any) {
-      console.error('Auth Init Error - Token probablement invalide:', e.message);
+      console.error('[AuthProvider] Erreur lors de la vérification du token:', e.message);
       authService.removeToken();
       authService.removeUser();
       setUser(null);
@@ -54,43 +53,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
-  // Fonction pour rafraîchir l'authentification
-  const refreshAuth = async (): Promise<void> => {
-    console.log("AuthProvider - Rafraîchissement manuel de l'authentification...");
-    await initAuth();
-  };
-
-  // Initialisation au chargement
   useEffect(() => {
-    const restoreSession = async () => {
-      setLoading(true);
-      const token = authService.getToken();
-      if (!token) {
-        setUser(null);
-        setIsAuthenticated(false);
-        setLoading(false);
-        return;
-      }
-      try {
-        const serverUser = await authService.getCurrentUser();
-        if (serverUser) {
-          setUser(serverUser);
-          setIsAuthenticated(true);
-        } else {
-          authService.clearAuthState();
-          setUser(null);
-          setIsAuthenticated(false);
-        }
-      } catch (e) {
-        authService.clearAuthState();
-        setUser(null);
-        setIsAuthenticated(false);
-      } finally {
-        setLoading(false);
-      }
-    };
-    restoreSession();
-  }, []);
+    initAuth();
+  }, [initAuth]);
 
   const login = async (phoneNumber: string, password: string) => {
     try {
@@ -179,6 +144,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setError('Erreur lors de la mise à jour du profil');
       throw error;
     }
+  };
+
+  // Fonction pour rafraîchir l'authentification (utilise la logique unifiée)
+  const refreshAuth = async (): Promise<void> => {
+    await initAuth();
   };
 
   const contextValue: AuthContextType = {
