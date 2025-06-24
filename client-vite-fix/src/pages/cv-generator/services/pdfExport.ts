@@ -23,15 +23,19 @@ export const exportToPDF = async (
   try {
     const { filename = 'cv.pdf', format = 'a4', orientation = 'portrait' } = options;
 
+    // 1. Capture haute résolution
     const canvas = await html2canvas(element, {
-      scale: 2, // Une échelle de 2 est un bon compromis qualité/performance
+      scale: 3, // Résolution plus élevée pour une netteté maximale
       useCORS: true,
       logging: false,
       backgroundColor: '#ffffff',
+      width: element.offsetWidth, // Forcer la capture à la largeur réelle de l'élément
+      height: element.offsetHeight, // Forcer la capture à la hauteur réelle de l'élément
     });
 
-    const imgData = canvas.toDataURL('image/png');
+    const imgData = canvas.toDataURL('image/jpeg', 0.98); // JPEG de haute qualité
 
+    // 2. Initialisation du PDF au format A4
     const pdf = new jsPDF({
       orientation,
       unit: 'mm',
@@ -40,30 +44,28 @@ export const exportToPDF = async (
 
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = pdf.internal.pageSize.getHeight();
-
     const canvasWidth = canvas.width;
     const canvasHeight = canvas.height;
 
-    // Calculer le ratio pour conserver les proportions de l'image
-    const ratio = canvasWidth / canvasHeight;
-    const imgWidth = pdfWidth;
-    const imgHeight = imgWidth / ratio;
+    // 3. Calcul du ratio pour un ajustement parfait à la largeur de la page
+    const ratio = canvasHeight / canvasWidth;
+    const imgHeight = pdfWidth * ratio;
 
     let heightLeft = imgHeight;
     let position = 0;
 
-    // Ajouter la première page
-    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+    // 4. Ajout de l'image (et des pages suivantes si nécessaire)
+    pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
     heightLeft -= pdfHeight;
 
-    // Ajouter des pages supplémentaires si le contenu dépasse
     while (heightLeft > 0) {
-      position = heightLeft - imgHeight; // Décaler l'image vers le haut sur la nouvelle page
+      position = -heightLeft; // La position est négative pour remonter l'image
       pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
       heightLeft -= pdfHeight;
     }
 
+    // 5. Sauvegarde
     pdf.save(filename);
   } catch (error) {
     console.error("Erreur lors de l'export en PDF:", error);
