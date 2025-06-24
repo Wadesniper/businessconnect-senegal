@@ -63,7 +63,7 @@ const offers = [
 const SubscriptionPage: React.FC = () => {
   const { user, loading: loadingUser } = useAuth();
   const navigate = useNavigate();
-  const { initiateSubscription, refreshSubscription, hasActiveSubscription, loading: loadingSub } = useSubscription();
+  const { initiateSubscription, refreshSubscription, loading: loadingSub } = useSubscription();
 
   // Debug logs
   React.useEffect(() => {
@@ -76,48 +76,34 @@ const SubscriptionPage: React.FC = () => {
     });
   }, [user, loadingUser, loadingSub]);
 
+  // Après retour de paiement, forcer le rafraîchissement de l'abonnement
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('payment') === 'success') {
+      refreshSubscription();
+    }
+  }, [refreshSubscription]);
+
   // Si en cours de chargement, afficher le loader
   if (loadingUser || loadingSub) {
     return <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement..." /> </div>;
   }
 
-  const hasToken = !!localStorage.getItem('token');
-  const hasUser = !!localStorage.getItem('user');
-
-  if (!user || !hasActiveSubscription) {
-    // Cas où il y a un token/user en localStorage mais pas dans le contexte React
-    if (hasToken || hasUser) {
-      return (
-        <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Result
-            status="info"
-            title="Merci de vous reconnecter pour accéder à votre abonnement."
-            extra={<Button type="primary" onClick={() => navigate('/auth')}>Se reconnecter</Button>}
-          />
-        </div>
-      );
-    }
-    // Cas classique : pas connecté du tout
-    return (
-      <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Result
-          status="info"
-          title="Vous devez être connecté pour souscrire à un abonnement."
-          extra={<Button type="primary" onClick={() => navigate('/auth')}>Se connecter</Button>}
-        />
-      </div>
-    );
-  }
-
   const handleSubscribe = async (offerKey: string) => {
+    // Si l'utilisateur n'est pas connecté, le rediriger vers la page d'authentification
+    if (!user) {
+      message.info('Veuillez vous connecter pour vous abonner.');
+      navigate('/auth');
+      return;
+    }
+    
     try {
-      // Mapping explicite des clés d'offre vers les types backend
       let type: SubscriptionType;
       if (offerKey === 'student') type = 'etudiant';
       else if (offerKey === 'annonceur') type = 'annonceur';
       else if (offerKey === 'employeur') type = 'recruteur';
       else throw new Error('Type d\'abonnement inconnu');
-      // Tous les abonnements sont mensuels (30 jours)
+      
       const res = await initiateSubscription(type);
       if (res?.paymentUrl) {
         window.location.href = res.paymentUrl;
@@ -133,14 +119,6 @@ const SubscriptionPage: React.FC = () => {
       }
     }
   };
-
-  // Après retour de paiement, forcer le rafraîchissement de l'abonnement
-  React.useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('payment') === 'success') {
-      refreshSubscription();
-    }
-  }, []);
 
   return (
     <div style={{
