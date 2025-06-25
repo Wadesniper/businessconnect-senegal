@@ -594,17 +594,23 @@ const DEMO_PROFILES: Record<string, any> = {
         startDate: '2019',
         endDate: '2019',
         description: 'Spécialisation en React, hooks, context, tests.'
+      },
+      {
+        degree: 'AWS Cloud Practitioner',
+        field: 'Cloud',
+        institution: 'Amazon',
+        startDate: '2022',
+        endDate: '2022',
+        description: 'Fondamentaux du cloud, sécurité, déploiement.'
       }
     ],
     skills: [
       { name: 'React', level: 'Expert' },
       { name: 'Node.js', level: 'Expert' },
-      { name: 'API REST', level: 'Expert' },
       { name: 'DevOps', level: 'Avancé' },
       { name: 'Gestion d\'équipe', level: 'Avancé' },
-      { name: 'Typescript', level: 'Avancé' },
       { name: 'CI/CD', level: 'Avancé' },
-      { name: 'Sécurité', level: 'Intermédiaire' }
+      { name: 'Sécurité', level: 'Avancé' }
     ],
     languages: [
       { name: 'Français', level: 'Bilingue' },
@@ -614,6 +620,11 @@ const DEMO_PROFILES: Record<string, any> = {
       { name: 'Certification React', issuer: 'OpenClassrooms', date: '2019' },
       { name: 'AWS Cloud Practitioner', issuer: 'Amazon', date: '2022' }
     ],
+    interests: [
+      { name: 'Photographie' },
+      { name: 'Musique' },
+      { name: 'Sport' }
+    ]
   },
   logistics: {
     personalInfo: {
@@ -1342,6 +1353,101 @@ const DEMO_PROFILES: Record<string, any> = {
       { name: 'Certification AMF', issuer: 'Autorité des Marchés Financiers', date: '2018' },
       { name: 'Prix du Meilleur Conseiller', issuer: 'CBAO', date: '2022' }
     ],
+  },
+  techModern: {
+    personalInfo: {
+      firstName: 'Moussa',
+      lastName: 'Gaye',
+      title: 'Lead Développeur Full Stack',
+      email: 'moussa.gaye@email.com',
+      phone: '+221 77 789 01 23',
+      photo: '/images/avatars/man-4.png',
+      profileImage: '/images/avatars/man-4.png',
+      address: 'Dakar, Sénégal',
+      linkedin: 'linkedin.com/in/moussagaye',
+      portfolio: 'moussadev.com',
+      summary: "Lead développeur full stack avec 9 ans d'expérience, expert en React, Node.js, architecture logicielle, gestion d'équipe et DevOps. Passionné par l'innovation et la transmission."
+    },
+    summary: "Lead développeur full stack, expert React, Node.js, architecture logicielle et DevOps.",
+    experience: [
+      {
+        company: 'Wave',
+        title: 'Lead Développeur Full Stack',
+        years: '2021-2024',
+        description: "Conception d'architectures web, développement d'applications à fort trafic, management d'une équipe de 5 développeurs.",
+        achievements: ["Migration vers microservices", "Mise en place CI/CD", "Formation de 3 juniors"],
+        startDate: '2021',
+        endDate: '2024',
+        current: true,
+      },
+      {
+        company: 'PayDunya',
+        title: 'Développeur Backend',
+        years: '2018-2021',
+        description: "Développement d'API, optimisation des performances, sécurité.",
+        achievements: ["Refonte API paiement", "Automatisation des tests"],
+        startDate: '2018',
+        endDate: '2021',
+        current: false,
+      },
+      {
+        company: 'Freelance',
+        title: 'Développeur Web',
+        years: '2015-2018',
+        description: "Création de sites et applications pour PME, maintenance, support.",
+        achievements: ['+20 projets livrés', 'Satisfaction client 100%'],
+        startDate: '2015',
+        endDate: '2018',
+        current: false,
+      }
+    ],
+    education: [
+      {
+        degree: 'Ingénieur Logiciel',
+        field: 'Informatique',
+        institution: 'ESMT',
+        startDate: '2012',
+        endDate: '2017',
+        description: 'Développement logiciel, web, mobile, architecture et sécurité.'
+      },
+      {
+        degree: 'Certification React',
+        field: 'Développement Web',
+        institution: 'OpenClassrooms',
+        startDate: '2019',
+        endDate: '2019',
+        description: 'Spécialisation en React, hooks, context, tests.'
+      },
+      {
+        degree: 'AWS Cloud Practitioner',
+        field: 'Cloud',
+        institution: 'Amazon',
+        startDate: '2022',
+        endDate: '2022',
+        description: 'Fondamentaux du cloud, sécurité, déploiement.'
+      }
+    ],
+    skills: [
+      { name: 'React', level: 'Expert' },
+      { name: 'Node.js', level: 'Expert' },
+      { name: 'DevOps', level: 'Avancé' },
+      { name: 'Gestion d\'équipe', level: 'Avancé' },
+      { name: 'CI/CD', level: 'Avancé' },
+      { name: 'Sécurité', level: 'Avancé' }
+    ],
+    languages: [
+      { name: 'Français', level: 'Bilingue' },
+      { name: 'Anglais', level: 'Courant' }
+    ],
+    certifications: [
+      { name: 'Certification React', issuer: 'OpenClassrooms', date: '2019' },
+      { name: 'AWS Cloud Practitioner', issuer: 'Amazon', date: '2022' }
+    ],
+    interests: [
+      { name: 'Photographie' },
+      { name: 'Musique' },
+      { name: 'Sport' }
+    ]
   },
 };
 

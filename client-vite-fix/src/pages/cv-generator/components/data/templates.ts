@@ -304,6 +304,6 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     previewImage: techModernPreview,
     features: ['Design épuré', 'Forte hiérarchie visuelle', 'Mise en page moderne'],
     profileImage: '/images/avatars/woman-1.png',
-    sampleData: DEMO_PROFILES.tech,
+    sampleData: DEMO_PROFILES.techModern,
   },
 ]; 
