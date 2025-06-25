@@ -113,7 +113,7 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
   const handleSelectTemplate = (template: Template | null) => {
     setSelectedTemplate(template);
     if (template) {
-      setCVData(template.sampleData || {
+      setCVData({
         personalInfo: {
           firstName: '',
           lastName: '',
