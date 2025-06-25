@@ -55,39 +55,50 @@ export const exportToPDF = async (
 ): Promise<void> => {
   const {
     filename = 'cv.pdf',
-    quality = 3, // Qualité de capture élevée par défaut
+    quality = 3,
   } = options;
 
-  // --- 1. Création de la Salle Blanche ---
+  // --- 1. Mesure des dimensions réelles de l'élément source ---
+  const { offsetWidth, offsetHeight } = originalElement;
+
+  // --- 2. Création de la Salle Blanche SUR MESURE ---
   const cloneContainer = document.createElement('div');
   
-  // Styles pour rendre le conteneur invisible mais avec des dimensions réelles
-  cloneContainer.style.position = 'absolute';
-  cloneContainer.style.left = '-9999px';
-  cloneContainer.style.top = '0px';
-  cloneContainer.style.width = '1024px'; // Largeur de travail fixe pour le rendu
-  cloneContainer.style.height = 'auto';
-  cloneContainer.style.overflow = 'visible';
-  cloneContainer.style.backgroundColor = 'white';
+  // Appliquer les styles pour une capture propre
+  Object.assign(cloneContainer.style, {
+    position: 'absolute',
+    left: '-9999px', // Hors de l'écran
+    top: '0px',
+    width: `${offsetWidth}px`, // Largeur exacte de l'élément original
+    height: `${offsetHeight}px`, // Hauteur exacte de l'élément original
+    overflow: 'visible',
+    backgroundColor: 'white',
+  });
 
-  // --- 2. Clonage et Injection ---
+  // --- 3. Clonage et Injection ---
   const clonedElement = originalElement.cloneNode(true) as HTMLElement;
+  // S'assurer que le clone remplit bien son conteneur
+  clonedElement.style.width = '100%';
+  clonedElement.style.height = '100%';
+  
   cloneContainer.appendChild(clonedElement);
   document.body.appendChild(cloneContainer);
 
   try {
-    // --- 3. Capture du clone propre ---
+    // --- 4. Capture du clone parfait ---
     const canvas = await html2canvas(clonedElement, {
       scale: quality,
       useCORS: true,
       logging: false,
       backgroundColor: '#ffffff',
-      // Les dimensions sont gérées par le conteneur parent
+      width: offsetWidth, // Préciser les dimensions à html2canvas
+      height: offsetHeight,
+      windowWidth: offsetWidth,
+      windowHeight: offsetHeight,
     });
 
-    // --- 4. Génération du PDF à partir de l'image parfaite ---
-    const imgData = canvas.toDataURL('image/jpeg', 0.98); // JPEG haute qualité
-    
+    // --- 5. Génération du PDF à partir de l'image ---
+    const imgData = canvas.toDataURL('image/jpeg', 0.98);
     const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
@@ -96,7 +107,6 @@ export const exportToPDF = async (
 
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = pdf.internal.pageSize.getHeight();
-    
     const canvasAspectRatio = canvas.width / canvas.height;
     const imgHeight = pdfWidth / canvasAspectRatio;
 
@@ -117,11 +127,11 @@ export const exportToPDF = async (
     message.success('CV exporté avec succès en PDF');
 
   } catch (error) {
-    console.error("Erreur lors de l'export PDF nouvelle méthode :", error);
+    console.error("Erreur lors de l'export PDF :", error);
     message.error("Une erreur est survenue lors de l'export du CV.");
     throw error;
   } finally {
-    // --- 5. Nettoyage Impératif ---
+    // --- 6. Nettoyage ---
     document.body.removeChild(cloneContainer);
   }
 };
