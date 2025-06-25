@@ -17,6 +17,9 @@ const initialForm = {
   salary_min: '',
   contactEmail: '',
   contactPhone: '',
+  requirements: '',
+  keywords: '',
+  missions: '',
 };
 
 const PublishJobPage: React.FC = () => {
@@ -31,7 +34,7 @@ const PublishJobPage: React.FC = () => {
     return <Container><Alert severity="error">Accès réservé aux employeurs et admins.</Alert></Container>;
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
@@ -40,13 +43,24 @@ const PublishJobPage: React.FC = () => {
     setLoading(true);
     setError(null);
     setSuccess(false);
-    // Validation simple côté client
-    if (!form.contactEmail || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.contactEmail)) {
+    // Validation des champs obligatoires
+    if (!form.title.trim() || !form.company.trim() || !form.sector.trim() || !form.type.trim() || !form.location.trim() || !form.description.trim()) {
+      setError('Veuillez remplir tous les champs obligatoires.');
+      setLoading(false);
+      return;
+    }
+    // Validation coordonnées : au moins un des deux
+    if (!form.contactEmail && !form.contactPhone) {
+      setError('Veuillez renseigner au moins un email ou un téléphone de contact.');
+      setLoading(false);
+      return;
+    }
+    if (form.contactEmail && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.contactEmail)) {
       setError('Veuillez saisir un email de contact valide.');
       setLoading(false);
       return;
     }
-    if (!form.contactPhone || form.contactPhone.length < 6) {
+    if (form.contactPhone && form.contactPhone.length < 6) {
       setError('Veuillez saisir un numéro de téléphone valide.');
       setLoading(false);
       return;
@@ -55,7 +69,10 @@ const PublishJobPage: React.FC = () => {
       await JobService.createJob({ 
         ...form, 
         type: form.type as JobType,
-        salary_min: form.salary_min ? Number(form.salary_min) : undefined
+        salary_min: form.salary_min ? Number(form.salary_min) : undefined,
+        requirements: form.requirements ? form.requirements.split('\n').map(s => s.trim()).filter(Boolean) : [],
+        keywords: form.keywords ? form.keywords.split(',').map(s => s.trim()).filter(Boolean) : [],
+        missions: form.missions ? form.missions.split('\n').map(s => s.trim()).filter(Boolean) : [],
       });
       setSuccess(true);
       setTimeout(() => navigate('/jobs'), 1200);
@@ -70,33 +87,56 @@ const PublishJobPage: React.FC = () => {
     <Container maxWidth="sm" sx={{ py: 4 }}>
       <Typography variant="h4" fontWeight={700} mb={3}>Publier une offre d'emploi</Typography>
       <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 3, bgcolor: '#fff', p: 4, borderRadius: 3, boxShadow: 2 }}>
-        <TextField label="Titre du poste" name="title" value={form.title} onChange={handleChange} required fullWidth />
-        <TextField label="Entreprise" name="company" value={form.company} onChange={handleChange} required fullWidth />
-        <TextField label="Description" name="description" value={form.description} onChange={handleChange} required fullWidth multiline minRows={3} />
-        <TextField label="Secteur" name="sector" value={form.sector} onChange={handleChange} required select fullWidth>
+        <TextField label="Titre du poste *" name="title" value={form.title} onChange={handleChange} required fullWidth />
+        <TextField label="Entreprise *" name="company" value={form.company} onChange={handleChange} required fullWidth />
+        <TextField label="Description *" name="description" value={form.description} onChange={handleChange} required fullWidth multiline minRows={3} />
+        <TextField label="Secteur *" name="sector" value={form.sector} onChange={handleChange} required select fullWidth>
           {JOB_SECTORS.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
         </TextField>
-        <TextField label="Type de contrat" name="type" value={form.type} onChange={handleChange} required select fullWidth>
+        <TextField label="Type de contrat *" name="type" value={form.type} onChange={handleChange} required select fullWidth>
           {types.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
         </TextField>
-        <TextField label="Localisation" name="location" value={form.location} onChange={handleChange} required fullWidth />
+        <TextField label="Localisation *" name="location" value={form.location} onChange={handleChange} required fullWidth />
         <TextField 
-          label="Email de contact *" 
+          label="Email de contact" 
           name="contactEmail" 
           value={form.contactEmail} 
           onChange={handleChange} 
-          required 
           fullWidth 
           type="email"
         />
         <TextField 
-          label="Téléphone de contact *" 
+          label="Téléphone de contact" 
           name="contactPhone" 
           value={form.contactPhone} 
           onChange={handleChange} 
-          required 
           fullWidth 
           type="tel"
+        />
+        <TextField 
+          label="Exigences / Qualifications requises (une par ligne)" 
+          name="requirements" 
+          value={form.requirements} 
+          onChange={handleChange} 
+          fullWidth 
+          multiline 
+          minRows={3}
+        />
+        <TextField 
+          label="Mots-clés (séparés par des virgules)" 
+          name="keywords" 
+          value={form.keywords} 
+          onChange={handleChange} 
+          fullWidth 
+        />
+        <TextField 
+          label="Missions principales (une par ligne)" 
+          name="missions" 
+          value={form.missions} 
+          onChange={handleChange} 
+          fullWidth 
+          multiline 
+          minRows={2}
         />
         <TextField 
           label="Salaire minimum (optionnel)" 
