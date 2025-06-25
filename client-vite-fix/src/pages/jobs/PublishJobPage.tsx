@@ -41,6 +41,19 @@ const PublishJobPage: React.FC = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // Mapping des types de contrat frontend -> backend (Prisma)
+  const mapJobType = (type: string): string => {
+    switch (type) {
+      case 'CDI': return 'full_time';
+      case 'CDD': return 'contract';
+      case 'Stage': return 'internship';
+      case 'Temps partiel': return 'part_time';
+      case 'Freelance': return 'contract';
+      case 'Alternance': return 'internship';
+      default: return 'full_time';
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -69,17 +82,24 @@ const PublishJobPage: React.FC = () => {
       return;
     }
     try {
-      await JobService.createJob({ 
-        ...form, 
-        type: form.type as JobType,
+      // Construction de l'objet à envoyer, nettoyage des champs vides
+      const jobPayload: any = {
+        ...form,
+        type: mapJobType(form.type),
         salary_min: form.salary_min ? Number(form.salary_min) : undefined,
         requirements: form.requirements ? form.requirements.split('\n').map(s => s.trim()).filter(Boolean) : [],
         keywords: form.keywords ? form.keywords.split(',').map(s => s.trim()).filter(Boolean) : [],
         missions: form.missions ? form.missions.split('\n').map(s => s.trim()).filter(Boolean) : [],
         salary_currency: form.salary_currency || 'XOF',
         isActive: true,
-        jobTypeDetail: form.type
+      };
+      // Suppression des champs vides ou inutiles
+      Object.keys(jobPayload).forEach(key => {
+        if (jobPayload[key] === '' || jobPayload[key] === undefined) {
+          delete jobPayload[key];
+        }
       });
+      await JobService.createJob(jobPayload);
       setSuccess(true);
       setTimeout(() => navigate('/jobs'), 1200);
     } catch (err: any) {
