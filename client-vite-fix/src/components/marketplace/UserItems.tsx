@@ -207,7 +207,7 @@ const UserItems: React.FC = () => {
       ) : (
         <div className="user-items-grid">
           {items.map((item) => {
-            const isOwner = user && (user.id === item.userId || user.id === item.sellerId || user.id === item.seller);
+            const isOwner = user && (user.id === item.userId || user.id === item.sellerId);
             const isAdmin = user && user.role === 'admin';
             return (
               <div key={item.id} className="user-item-card">
