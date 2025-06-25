@@ -55,7 +55,11 @@ const MyJobsPage: React.FC = () => {
 
   return (
     <Content style={{ padding: '24px' }}>
-      <Title level={3} style={{ marginBottom: 24 }}>Mes offres publiées</Title>
+      <Title level={3} style={{ marginBottom: 24, marginTop: 40, paddingTop: 16 }}>Mes offres publiées</Title>
+      {/* Debug temporaire */}
+      <div style={{ color: '#888', fontSize: 13, marginBottom: 8 }}>
+        Utilisateur connecté : {user?.id} | Offres récupérées : {jobs.length}
+      </div>
       {error ? (
         <div style={{ textAlign: 'center', padding: '32px 0' }}>
           <Title level={4}>{error}</Title>

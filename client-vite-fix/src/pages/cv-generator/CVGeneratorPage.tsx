@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Typography, Row, Col, Button, Empty, List, Modal } from 'antd';
+import { Card, Typography, Row, Col, Button, Empty, List, Modal, Spin } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, DownloadOutlined, ShareAltOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import type { Template } from '../../types/cv';
@@ -66,16 +66,9 @@ const CVGeneratorPage: React.FC = () => {
 
   if (loadingPage) {
     return (
-      <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <span className="ant-spin ant-spin-lg ant-spin-spinning">
-          <span className="ant-spin-dot ant-spin-dot-spin">
-            <i className="ant-spin-dot-item" />
-            <i className="ant-spin-dot-item" />
-            <i className="ant-spin-dot-item" />
-            <i className="ant-spin-dot-item" />
-          </span>
-        </span>
-        <span style={{ marginLeft: 16, fontSize: 18, color: '#1890ff' }}>Chargement du générateur de CV...</span>
+      <div style={{ minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <Spin size="large" />
+        <div style={{ marginTop: 24, fontSize: 18, color: '#1890ff' }}>Chargement du générateur de CV...</div>
       </div>
     );
   }
