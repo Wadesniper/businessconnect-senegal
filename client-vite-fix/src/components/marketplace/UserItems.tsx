@@ -87,111 +87,7 @@ const UserItems: React.FC = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6 user-items-fallback-style">
-      <style>{`
-        .user-items-fallback-style .user-items-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-          gap: 2.5rem;
-        }
-        .user-items-fallback-style .user-item-card {
-          background: #fff;
-          border-radius: 1rem;
-          box-shadow: 0 2px 16px #e5e7eb;
-          border: 1px solid #f3f4f6;
-          display: flex;
-          flex-direction: column;
-          overflow: hidden;
-          transition: box-shadow 0.2s;
-        }
-        .user-items-fallback-style .user-item-card:hover {
-          box-shadow: 0 8px 32px #e5e7eb;
-        }
-        .user-items-fallback-style .user-item-img {
-          width: 100%;
-          height: 220px;
-          object-fit: contain;
-          background: #f9fafb;
-          border-bottom: 1px solid #f3f4f6;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .user-items-fallback-style .user-item-content {
-          padding: 1.5rem;
-          display: flex;
-          flex-direction: column;
-          flex: 1;
-        }
-        .user-items-fallback-style .user-item-title {
-          font-size: 1.1rem;
-          font-weight: 600;
-          color: #111827;
-          margin-bottom: 0.5rem;
-          max-width: 70%;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-        .user-items-fallback-style .user-item-status {
-          font-size: 0.85rem;
-          padding: 0.2rem 0.7rem;
-          border-radius: 999px;
-          font-weight: 500;
-        }
-        .user-items-fallback-style .user-item-desc {
-          color: #4b5563;
-          font-size: 0.97rem;
-          margin-bottom: 1rem;
-          min-height: 40px;
-        }
-        .user-items-fallback-style .user-item-meta {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 1rem;
-        }
-        .user-items-fallback-style .user-item-meta span {
-          font-size: 1rem;
-        }
-        .user-items-fallback-style .user-item-btns {
-          margin-top: auto;
-          display: flex;
-          flex-wrap: wrap;
-          gap: 0.5rem;
-        }
-        .user-items-fallback-style .user-item-btns button {
-          min-width: 90px;
-          padding: 0.5rem 1rem;
-          border-radius: 0.5rem;
-          border: none;
-          font-size: 0.97rem;
-          font-weight: 500;
-          cursor: pointer;
-          transition: background 0.2s;
-        }
-        .user-items-fallback-style .user-item-btns .edit {
-          background: #2563eb;
-          color: #fff;
-        }
-        .user-items-fallback-style .user-item-btns .edit:hover {
-          background: #1d4ed8;
-        }
-        .user-items-fallback-style .user-item-btns .delete {
-          background: #dc2626;
-          color: #fff;
-        }
-        .user-items-fallback-style .user-item-btns .delete:hover {
-          background: #b91c1c;
-        }
-        .user-items-fallback-style .user-item-btns .view {
-          background: #374151;
-          color: #fff;
-        }
-        .user-items-fallback-style .user-item-btns .view:hover {
-          background: #111827;
-        }
-      `}</style>
+    <div className="max-w-6xl mx-auto p-6">
       <h1 className="text-3xl font-bold text-gray-900 mb-10 text-center">Mes Annonces</h1>
 
       {items.length === 0 ? (
@@ -205,54 +101,55 @@ const UserItems: React.FC = () => {
           </button>
         </div>
       ) : (
-        <div className="user-items-grid">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
           {items.map((item) => {
             const isOwner = user && (user.id === item.userId || user.id === item.sellerId);
             const isAdmin = user && user.role === 'admin';
             return (
-              <div key={item.id} className="user-item-card">
+              <div key={item.id} className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col border border-gray-100 hover:shadow-xl transition-shadow duration-200">
                 {item.images.length > 0 && (
-                  <div className="user-item-img">
+                  <div className="w-full h-56 bg-gray-50 flex items-center justify-center overflow-hidden border-b border-gray-100">
                     <img
                       src={item.images[0]}
                       alt={item.title}
-                      style={{ maxHeight: 220, maxWidth: '100%' }}
+                      className="object-contain w-full h-full"
+                      style={{ maxHeight: 220 }}
                     />
                   </div>
                 )}
-                <div className="user-item-content">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                    <div className="user-item-title">{item.title}</div>
-                    <span className={`user-item-status ${getStatusColor(item.status)}`}>{getStatusText(item.status)}</span>
+                <div className="p-6 flex flex-col flex-1">
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="text-lg font-semibold text-gray-900 truncate max-w-[70%]">{item.title}</h3>
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(item.status)}`}>{getStatusText(item.status)}</span>
                   </div>
-                  <div className="user-item-desc">{item.description}</div>
-                  <div className="user-item-meta">
-                    <span style={{ color: '#2563eb', fontWeight: 700 }}>{formatPrice(item)}</span>
-                    <span style={{ color: '#6b7280', marginLeft: 8 }}>{item.category}</span>
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-2 min-h-[40px]">{item.description}</p>
+                  <div className="flex justify-between items-center mb-4">
+                    <span className="text-lg font-bold text-blue-600">{formatPrice(item)}</span>
+                    <span className="text-sm text-gray-500 ml-2">{item.category}</span>
                   </div>
                   {item.moderationComment && (
-                    <div style={{ marginBottom: 16, padding: 12, background: '#fef9c3', borderRadius: 8, border: '1px solid #fde68a' }}>
-                      <div style={{ fontWeight: 600, color: '#b45309', marginBottom: 4 }}>Commentaire de modération:</div>
-                      <div style={{ color: '#92400e' }}>{item.moderationComment}</div>
+                    <div className="mb-4 p-3 bg-yellow-50 rounded-md border border-yellow-100">
+                      <div className="text-sm font-medium text-yellow-800 mb-1">Commentaire de modération:</div>
+                      <div className="text-sm text-yellow-700">{item.moderationComment}</div>
                     </div>
                   )}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: '#9ca3af', marginBottom: 18 }}>
+                  <div className="flex justify-between items-center text-xs text-gray-400 mb-5">
                     <span>{item.location}</span>
                     <span>{new Date(item.createdAt).toLocaleDateString()}</span>
                   </div>
-                  <div className="user-item-btns">
+                  <div className="mt-auto flex flex-wrap gap-2">
                     {isOwner && (
                       <>
                         <button
                           onClick={() => navigate(`/marketplace/edit/${item.id}`)}
-                          className="edit"
+                          className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm min-w-[90px]"
                         >
                           Modifier
                         </button>
                         <button
                           onClick={() => handleDeleteItem(item.id)}
                           disabled={deletingItemId === item.id}
-                          className="delete"
+                          className="flex-1 bg-red-600 text-white px-3 py-2 rounded-md hover:bg-red-700 transition-colors text-sm min-w-[90px] disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {deletingItemId === item.id ? 'Suppression...' : 'Supprimer'}
                         </button>
@@ -262,14 +159,14 @@ const UserItems: React.FC = () => {
                       <>
                         <button
                           onClick={() => navigate(`/marketplace/edit/${item.id}`)}
-                          className="edit"
+                          className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm min-w-[90px]"
                         >
                           Modifier
                         </button>
                         <button
                           onClick={() => handleDeleteItem(item.id)}
                           disabled={deletingItemId === item.id}
-                          className="delete"
+                          className="flex-1 bg-red-600 text-white px-3 py-2 rounded-md hover:bg-red-700 transition-colors text-sm min-w-[90px] disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {deletingItemId === item.id ? 'Suppression...' : 'Supprimer'}
                         </button>
@@ -277,7 +174,7 @@ const UserItems: React.FC = () => {
                     )}
                     <button
                       onClick={() => navigate(`/marketplace/${item.id}`)}
-                      className="view"
+                      className="flex-1 bg-gray-600 text-white px-3 py-2 rounded-md hover:bg-gray-700 transition-colors text-sm min-w-[90px]"
                     >
                       Voir
                     </button>
