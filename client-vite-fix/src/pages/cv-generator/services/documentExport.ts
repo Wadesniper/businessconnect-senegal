@@ -58,9 +58,10 @@ export const exportToPDF = async (
     quality = 3,
   } = options;
 
-  // --- 1. Mesure des dimensions réelles de l'élément source ---
-  const { offsetWidth, scrollHeight, offsetHeight } = originalElement;
-  const heightToUse = Math.max(scrollHeight, offsetHeight);
+  // --- 1. Mesure de la hauteur TOTALE et infaillible de l'élément source ---
+  // On utilise EXCLUSIVEMENT scrollHeight pour avoir la hauteur totale du contenu, même ce qui n'est pas visible.
+  const { offsetWidth, scrollHeight } = originalElement;
+  const heightToUse = scrollHeight;
 
   // --- 2. Création de la Salle Blanche SUR MESURE ---
   const cloneContainer = document.createElement('div');

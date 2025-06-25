@@ -32,7 +32,13 @@ const CVWizard: React.FC<CVWizardProps> = ({ current, setCurrent }) => {
 
   // Effet pour remonter en haut de la page à chaque changement d'étape
   useEffect(() => {
-    window.scrollTo(0, 0);
+    // On utilise un setTimeout pour s'assurer que le scroll s'exécute APRÈS le rendu de React.
+    const timer = setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 0);
+
+    // Nettoyage du timer si le composant est démonté avant son exécution.
+    return () => clearTimeout(timer);
   }, [current]);
 
   const goNext = () => {
