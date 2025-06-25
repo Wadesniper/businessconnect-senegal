@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, forwardRef } from 'react';
 import type { CVData } from '../../../types/cv';
 import ExperienceForm from './ExperienceForm';
 import EducationForm from './EducationForm';
@@ -27,17 +27,19 @@ const steps = [
   { key: 'interests', label: 'Intérêts', component: InterestsForm },
 ];
 
-const CVWizard: React.FC<CVWizardProps> = ({ current, setCurrent }) => {
+const CVWizard = forwardRef<HTMLDivElement, CVWizardProps>(({ current, setCurrent }, ref) => {
   const { cvData, setCVData, isStepValid } = useCV();
 
-  // Effet pour remonter en haut de la page à chaque changement d'étape
-  useEffect(() => {
-    // On utilise un setTimeout (50ms) pour s'assurer que le scroll s'exécute APRÈS le rendu et tout focus éventuel.
-    const timer = setTimeout(() => {
-      window.scrollTo(0, 0);
-    }, 50);
+  // Ref sur le conteneur principal du wizard (utilise le ref passé ou un ref local)
+  const wizardRef = (ref as React.RefObject<HTMLDivElement>) || useRef<HTMLDivElement>(null);
 
-    // Nettoyage du timer si le composant est démonté avant son exécution.
+  // Effet pour remonter en haut du wizard à chaque changement d'étape
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (wizardRef.current) {
+        wizardRef.current.scrollIntoView({ behavior: 'auto', block: 'start' });
+      }
+    }, 50);
     return () => clearTimeout(timer);
   }, [current]);
 
@@ -69,7 +71,7 @@ const CVWizard: React.FC<CVWizardProps> = ({ current, setCurrent }) => {
   };
 
   return (
-    <div style={{ maxWidth: 800, margin: '0 auto', background: '#fff', borderRadius: 16, boxShadow: '0 2px 16px #eee', padding: 32 }}>
+    <div ref={wizardRef} style={{ maxWidth: 800, margin: '0 auto', background: '#fff', borderRadius: 16, boxShadow: '0 2px 16px #eee', padding: 32 }}>
       <div style={{ marginBottom: 32, textAlign: 'center' }}>
         <h2>Étape {current + 1} / {steps.length} : {steps[current].label}</h2>
       </div>
@@ -84,6 +86,6 @@ const CVWizard: React.FC<CVWizardProps> = ({ current, setCurrent }) => {
       </div>
     </div>
   );
-};
+});
 
 export default CVWizard; 

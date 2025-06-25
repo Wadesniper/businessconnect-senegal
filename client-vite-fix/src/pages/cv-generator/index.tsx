@@ -80,6 +80,7 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
   } = useCV();
 
   const previewRef = React.useRef<HTMLDivElement>(null);
+  const wizardRef = React.useRef<HTMLDivElement>(null);
   const [isExporting, setIsExporting] = useState(false);
   const { user } = useAuth();
   const { hasActiveSubscription } = useSubscription();
@@ -131,6 +132,14 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
         projects: [],
         interests: [],
       });
+      // Scroll en haut du wizard après sélection du modèle
+      setTimeout(() => {
+        if (wizardRef.current) {
+          wizardRef.current.scrollIntoView({ behavior: 'auto', block: 'start' });
+        } else {
+          window.scrollTo(0, 0);
+        }
+      }, 100);
     }
   };
 
@@ -172,10 +181,9 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
       );
     }
     if (currentStep > 0 && currentStep < steps.length - 1) {
-      // Le Wizard gère maintenant sa propre logique interne.
-      // On lui passe juste l'étape actuelle et la fonction pour la changer.
       return (
         <CVWizard
+          ref={wizardRef}
           current={currentStep - 1}
           setCurrent={step => setCurrentStep(step + 1)}
         />
