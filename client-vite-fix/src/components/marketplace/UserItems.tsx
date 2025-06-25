@@ -88,7 +88,7 @@ const UserItems: React.FC = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Mes Annonces</h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-10 text-center">Mes Annonces</h1>
 
       {items.length === 0 ? (
         <div className="text-center py-12">
@@ -101,55 +101,55 @@ const UserItems: React.FC = () => {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
           {items.map((item) => {
             const isOwner = user && (user.id === item.userId || user.id === item.sellerId || user.id === item.seller);
             const isAdmin = user && user.role === 'admin';
             return (
-              <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
+              <div key={item.id} className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col border border-gray-100 hover:shadow-xl transition-shadow duration-200">
                 {item.images.length > 0 && (
-                  <div className="w-full h-56 bg-gray-100 flex items-center justify-center overflow-hidden">
+                  <div className="w-full h-56 bg-gray-50 flex items-center justify-center overflow-hidden border-b border-gray-100">
                     <img
                       src={item.images[0]}
                       alt={item.title}
-                      className="object-cover w-full h-full"
+                      className="object-contain w-full h-full"
                       style={{ maxHeight: 220 }}
                     />
                   </div>
                 )}
-                <div className="p-5 flex flex-col flex-1">
-                  <div className="flex justify-between items-center mb-2">
-                    <h3 className="text-lg font-semibold text-gray-900 truncate">{item.title}</h3>
+                <div className="p-6 flex flex-col flex-1">
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="text-lg font-semibold text-gray-900 truncate max-w-[70%]">{item.title}</h3>
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(item.status)}`}>{getStatusText(item.status)}</span>
                   </div>
-                  <p className="text-gray-600 text-sm mb-3 line-clamp-2">{item.description}</p>
-                  <div className="flex justify-between items-center mb-3">
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-2 min-h-[40px]">{item.description}</p>
+                  <div className="flex justify-between items-center mb-4">
                     <span className="text-lg font-bold text-blue-600">{formatPrice(item)}</span>
-                    <span className="text-sm text-gray-500">{item.category}</span>
+                    <span className="text-sm text-gray-500 ml-2">{item.category}</span>
                   </div>
                   {item.moderationComment && (
-                    <div className="mb-3 p-3 bg-gray-50 rounded-md">
-                      <div className="text-sm font-medium text-gray-700 mb-1">Commentaire de modération:</div>
-                      <div className="text-sm text-gray-600">{item.moderationComment}</div>
+                    <div className="mb-4 p-3 bg-yellow-50 rounded-md border border-yellow-100">
+                      <div className="text-sm font-medium text-yellow-800 mb-1">Commentaire de modération:</div>
+                      <div className="text-sm text-yellow-700">{item.moderationComment}</div>
                     </div>
                   )}
-                  <div className="flex justify-between items-center text-sm text-gray-500 mb-4">
+                  <div className="flex justify-between items-center text-xs text-gray-400 mb-5">
                     <span>{item.location}</span>
                     <span>{new Date(item.createdAt).toLocaleDateString()}</span>
                   </div>
-                  <div className="mt-auto flex space-x-2">
+                  <div className="mt-auto flex flex-wrap gap-2">
                     {isOwner && (
                       <>
                         <button
                           onClick={() => navigate(`/marketplace/edit/${item.id}`)}
-                          className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm"
+                          className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm min-w-[90px]"
                         >
                           Modifier
                         </button>
                         <button
                           onClick={() => handleDeleteItem(item.id)}
                           disabled={deletingItemId === item.id}
-                          className="flex-1 bg-red-600 text-white px-3 py-2 rounded-md hover:bg-red-700 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="flex-1 bg-red-600 text-white px-3 py-2 rounded-md hover:bg-red-700 transition-colors text-sm min-w-[90px] disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {deletingItemId === item.id ? 'Suppression...' : 'Supprimer'}
                         </button>
@@ -159,14 +159,14 @@ const UserItems: React.FC = () => {
                       <>
                         <button
                           onClick={() => navigate(`/marketplace/edit/${item.id}`)}
-                          className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm"
+                          className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm min-w-[90px]"
                         >
                           Modifier
                         </button>
                         <button
                           onClick={() => handleDeleteItem(item.id)}
                           disabled={deletingItemId === item.id}
-                          className="flex-1 bg-red-600 text-white px-3 py-2 rounded-md hover:bg-red-700 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="flex-1 bg-red-600 text-white px-3 py-2 rounded-md hover:bg-red-700 transition-colors text-sm min-w-[90px] disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {deletingItemId === item.id ? 'Suppression...' : 'Supprimer'}
                         </button>
@@ -174,7 +174,7 @@ const UserItems: React.FC = () => {
                     )}
                     <button
                       onClick={() => navigate(`/marketplace/${item.id}`)}
-                      className="flex-1 bg-gray-600 text-white px-3 py-2 rounded-md hover:bg-gray-700 transition-colors text-sm"
+                      className="flex-1 bg-gray-600 text-white px-3 py-2 rounded-md hover:bg-gray-700 transition-colors text-sm min-w-[90px]"
                     >
                       Voir
                     </button>
