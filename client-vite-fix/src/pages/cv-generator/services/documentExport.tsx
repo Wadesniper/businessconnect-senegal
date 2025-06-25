@@ -49,14 +49,27 @@ const getWordStyles = (customization: CustomizationOptions): any => ({
   }
 });
 
+// Helper function pour attendre que toutes les images dans un élément soient chargées
+const waitForImages = (element: HTMLElement): Promise<void[]> => {
+  const images = Array.from(element.getElementsByTagName('img'));
+  const promises = images.map(img => {
+    return new Promise<void>((resolve, reject) => {
+      if (img.complete) {
+        // Si l'image est déjà chargée (depuis le cache par exemple)
+        resolve();
+      } else {
+        img.onload = () => resolve();
+        img.onerror = () => resolve(); // On résout même en cas d'erreur pour ne pas bloquer l'export
+      }
+    });
+  });
+  return Promise.all(promises);
+};
+
 /**
- * Fonction d'exportation PDF 100% fiable.
- * Elle ne s'appuie plus sur le DOM visible.
- * 1. Crée un conteneur invisible.
- * 2. Y "rend" une copie propre du template de CV avec les bonnes données.
- * 3. Mesure la hauteur de ce rendu propre (qui est forcément correcte).
- * 4. Capture le conteneur avec html2canvas.
- * 5. Génère le PDF.
+ * Fonction d'exportation PDF ultra-robuste.
+ * Elle attend activement que toutes les images soient chargées avant de mesurer
+ * et de capturer le CV, garantissant une capture parfaite.
  */
 export const exportToPDF = async (
   _originalElement: HTMLElement,
@@ -72,21 +85,18 @@ export const exportToPDF = async (
 
   if (!template || !data || !customization) {
     message.error("Données manquantes pour l'export PDF.");
-    console.error("Erreur export PDF: template, data, ou customization manquant.");
     return;
   }
   
-  // 1. Création de la "Salle Blanche"
   const container = document.createElement('div');
   container.style.position = 'absolute';
-  container.style.left = '-9999px'; // Hors de l'écran
+  container.style.left = '-9999px';
   container.style.top = '0';
-  container.style.width = '210mm'; // Largeur A4 fixe
+  container.style.width = '210mm';
   container.style.background = 'white';
   document.body.appendChild(container);
 
   try {
-    // 2. Rendu propre du CV dans la salle blanche
     const TemplateComponent = template.component;
     const cvElement = (
       <React.StrictMode>
@@ -99,17 +109,19 @@ export const exportToPDF = async (
     );
 
     const root = createRoot(container);
-    await new Promise<void>((resolve) => {
+    await new Promise<void>(resolve => {
       root.render(cvElement);
-      // On attend un instant pour s'assurer que le rendu est terminé
-      setTimeout(resolve, 100); 
+      // On utilise requestAnimationFrame pour s'assurer que le premier rendu est fait
+      requestAnimationFrame(() => resolve());
     });
 
-    // 3. Mesure du rendu propre
+    // Étape cruciale : attendre que TOUTES les images soient chargées
+    await waitForImages(container);
+    
+    // La mesure n'a lieu qu'après le chargement complet
     const height = container.scrollHeight;
     const width = container.offsetWidth;
-
-    // 4. Capture avec html2canvas
+    
     const canvas = await html2canvas(container, {
       scale: quality,
       useCORS: true,
@@ -121,7 +133,6 @@ export const exportToPDF = async (
       windowHeight: height,
     });
 
-    // 5. Génération du PDF (logique inchangée)
     const imgData = canvas.toDataURL('image/jpeg', 0.98);
     const pdf = new jsPDF({
       orientation: 'portrait',
@@ -155,7 +166,6 @@ export const exportToPDF = async (
     message.error("Une erreur est survenue lors de l'export du CV.");
     throw error;
   } finally {
-    // 6. Nettoyage
     document.body.removeChild(container);
   }
 };
