@@ -408,7 +408,7 @@ const MarketplacePage: React.FC = () => {
                   actions={[
                     <Button type="primary" onClick={() => navigate(`/marketplace/${item.id}`)}>Voir les détails</Button>,
                     ...(
-                      user && (isAdmin || isOwner)
+                      isAdmin
                         ? [
                             <Button onClick={() => handleEdit(item)}>Modifier</Button>,
                             <Button danger onClick={() => handleDelete(item.id)}>Supprimer</Button>
