@@ -295,6 +295,8 @@ const MarketplacePage: React.FC = () => {
     }
   };
 
+  const cleanFileList = (fileList: any[]) => fileList.filter(f => f.status === 'done' && f.url);
+
   if (loadingUser) {
     return <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement..." /></div>;
   }
@@ -765,14 +767,21 @@ const MarketplacePage: React.FC = () => {
                 maxCount={5}
                 fileList={editFileList}
                 onChange={({ fileList: newFileList }) => {
-                  console.log('onChange newFileList:', newFileList);
-                  setEditFileList(newFileList);
+                  const cleaned = newFileList.map(f => {
+                    if (f.response && f.response.url) {
+                      return { ...f, url: f.response.url, status: 'done' as UploadFileStatus };
+                    }
+                    return f;
+                  }).filter(f => f.status === 'done' && f.url);
+                  setEditFileList(cleaned as UploadFile<any>[]);
+                  setEditUploadedUrls(cleaned.map(f => f.url));
                 }}
                 onRemove={(file) => {
                   const url = file.url || (file.response && file.response.url);
                   if (url) {
                     setEditUploadedUrls(prev => prev.filter(u => u !== url));
                   }
+                  setEditFileList(prev => prev.filter(f => (f.url || (f.response && f.response.url)) !== url));
                   return true;
                 }}
               >
