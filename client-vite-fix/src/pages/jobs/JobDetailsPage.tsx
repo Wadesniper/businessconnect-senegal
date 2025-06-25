@@ -93,13 +93,23 @@ const JobDetailsPage: React.FC = () => {
               </Stack>
               <Divider sx={{ my: 2 }} />
               <Typography variant="h6" gutterBottom>Description</Typography>
-              <Typography sx={{ mb: 2 }}>{job.description}</Typography>
+              <Typography sx={{ mb: 2, wordBreak: 'break-word' }}>{job.description}</Typography>
               <Typography variant="h6" gutterBottom>Prérequis</Typography>
               <Stack component="ul" sx={{ pl: 3, mb: 2 }}>
                 {job.requirements && job.requirements.map((req: string, idx: number) => (
-                  <li key={idx}><Typography>{req}</Typography></li>
+                  <li key={idx}><Typography sx={{ wordBreak: 'break-word' }}>{req}</Typography></li>
                 ))}
               </Stack>
+              {Array.isArray(job.missions) && job.missions.length > 0 ? (
+                <>
+                  <Typography variant="h6" gutterBottom>Missions principales</Typography>
+                  <Stack component="ul" sx={{ pl: 3, mb: 2 }}>
+                    {job.missions.map((mission: string, idx: number) => (
+                      <li key={idx}><Typography sx={{ wordBreak: 'break-word' }}>{mission}</Typography></li>
+                    ))}
+                  </Stack>
+                </>
+              ) : null}
             </Grid>
             <Grid size={{ xs: 12, md: 4 }}>
               {/* SUPPRESSION de l'affichage des coordonnées ici */}
