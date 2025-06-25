@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Layout, Card, Row, Col, Button, Typography, Spin, message, Space } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
 import { marketplaceService } from '../../services/marketplaceService';
 import type { MarketplaceItem } from '../../services/marketplaceService';
 import { useAuth } from '../../context/AuthContext';
+
+const { Content } = Layout;
+const { Title, Text } = Typography;
 
 const UserItems: React.FC = () => {
   const [items, setItems] = useState<MarketplaceItem[]>([]);
@@ -22,6 +27,7 @@ const UserItems: React.FC = () => {
       setItems(userItems);
     } catch (error) {
       console.error('Erreur lors du chargement des annonces:', error);
+      message.error('Erreur lors du chargement des annonces');
     } finally {
       setLoading(false);
     }
@@ -29,11 +35,11 @@ const UserItems: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'approved': return 'text-green-600 bg-green-100';
-      case 'pending': return 'text-yellow-600 bg-yellow-100';
-      case 'rejected': return 'text-red-600 bg-red-100';
-      case 'suspended': return 'text-orange-600 bg-orange-100';
-      default: return 'text-gray-600 bg-gray-100';
+      case 'approved': return 'success';
+      case 'pending': return 'warning';
+      case 'rejected': return 'danger';
+      case 'suspended': return 'danger';
+      default: return 'secondary';
     }
   };
 
@@ -68,11 +74,11 @@ const UserItems: React.FC = () => {
     try {
       setDeletingItemId(itemId);
       await marketplaceService.deleteItem(itemId);
-      // Recharger la liste après suppression
+      message.success('Annonce supprimée avec succès');
       await loadUserItems();
     } catch (error) {
       console.error('Erreur lors de la suppression:', error);
-      alert('Erreur lors de la suppression de l\'annonce. Veuillez réessayer.');
+      message.error('Erreur lors de la suppression de l\'annonce');
     } finally {
       setDeletingItemId(null);
     }
@@ -80,112 +86,149 @@ const UserItems: React.FC = () => {
 
   if (loadingUser) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Spin size="large" tip="Chargement..." />
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <h1 className="text-3xl font-bold text-gray-900 mb-10 text-center">Mes Annonces</h1>
+    <Layout style={{ padding: '24px' }}>
+      <Content>
+        <Row gutter={[24, 24]}>
+          <Col span={24}>
+            <Card>
+              <Title level={2} style={{ marginBottom: 24, textAlign: 'center' }}>Mes Annonces</Title>
 
-      {items.length === 0 ? (
-        <div className="text-center py-12">
-          <div className="text-gray-500 text-lg mb-4">Vous n'avez pas encore d'annonces</div>
-          <button
-            onClick={() => navigate('/marketplace/create')}
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Créer une annonce
-          </button>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
-          {items.map((item) => {
-            const isOwner = user && (user.id === item.userId || user.id === item.sellerId);
-            const isAdmin = user && user.role === 'admin';
-            return (
-              <div key={item.id} className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col border border-gray-100 hover:shadow-xl transition-shadow duration-200">
-                {item.images.length > 0 && (
-                  <div className="w-full h-56 bg-gray-50 flex items-center justify-center overflow-hidden border-b border-gray-100">
-                    <img
-                      src={item.images[0]}
-                      alt={item.title}
-                      className="object-contain w-full h-full"
-                      style={{ maxHeight: 220 }}
-                    />
-                  </div>
-                )}
-                <div className="p-6 flex flex-col flex-1">
-                  <div className="flex justify-between items-center mb-3">
-                    <h3 className="text-lg font-semibold text-gray-900 truncate max-w-[70%]">{item.title}</h3>
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(item.status)}`}>{getStatusText(item.status)}</span>
-                  </div>
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-2 min-h-[40px]">{item.description}</p>
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="text-lg font-bold text-blue-600">{formatPrice(item)}</span>
-                    <span className="text-sm text-gray-500 ml-2">{item.category}</span>
-                  </div>
-                  {item.moderationComment && (
-                    <div className="mb-4 p-3 bg-yellow-50 rounded-md border border-yellow-100">
-                      <div className="text-sm font-medium text-yellow-800 mb-1">Commentaire de modération:</div>
-                      <div className="text-sm text-yellow-700">{item.moderationComment}</div>
-                    </div>
-                  )}
-                  <div className="flex justify-between items-center text-xs text-gray-400 mb-5">
-                    <span>{item.location}</span>
-                    <span>{new Date(item.createdAt).toLocaleDateString()}</span>
-                  </div>
-                  <div className="mt-auto flex flex-wrap gap-2">
-                    {isOwner && (
-                      <>
-                        <button
-                          onClick={() => navigate(`/marketplace/edit/${item.id}`)}
-                          className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm min-w-[90px]"
-                        >
-                          Modifier
-                        </button>
-                        <button
-                          onClick={() => handleDeleteItem(item.id)}
-                          disabled={deletingItemId === item.id}
-                          className="flex-1 bg-red-600 text-white px-3 py-2 rounded-md hover:bg-red-700 transition-colors text-sm min-w-[90px] disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {deletingItemId === item.id ? 'Suppression...' : 'Supprimer'}
-                        </button>
-                      </>
-                    )}
-                    {isAdmin && (
-                      <>
-                        <button
-                          onClick={() => navigate(`/marketplace/edit/${item.id}`)}
-                          className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm min-w-[90px]"
-                        >
-                          Modifier
-                        </button>
-                        <button
-                          onClick={() => handleDeleteItem(item.id)}
-                          disabled={deletingItemId === item.id}
-                          className="flex-1 bg-red-600 text-white px-3 py-2 rounded-md hover:bg-red-700 transition-colors text-sm min-w-[90px] disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {deletingItemId === item.id ? 'Suppression...' : 'Supprimer'}
-                        </button>
-                      </>
-                    )}
-                    <button
-                      onClick={() => navigate(`/marketplace/${item.id}`)}
-                      className="flex-1 bg-gray-600 text-white px-3 py-2 rounded-md hover:bg-gray-700 transition-colors text-sm min-w-[90px]"
-                    >
-                      Voir
-                    </button>
-                  </div>
+              {items.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '48px 0' }}>
+                  <Text type="secondary" style={{ fontSize: 16, display: 'block', marginBottom: 16 }}>
+                    Vous n'avez pas encore d'annonces
+                  </Text>
+                  <Button
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    size="large"
+                    onClick={() => navigate('/marketplace/create')}
+                  >
+                    Créer une annonce
+                  </Button>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
+              ) : (
+                <Row gutter={[16, 16]}>
+                  {items.map((item) => {
+                    const isOwner = user && (user.id === item.userId || user.id === item.sellerId);
+                    const isAdmin = user && user.role === 'admin';
+                    return (
+                      <Col xs={24} sm={12} md={8} lg={6} key={item.id}>
+                        <Card
+                          hoverable
+                          cover={
+                            item.images.length > 0 ? (
+                              <div style={{ height: 200, overflow: 'hidden' }}>
+                                <img
+                                  src={item.images[0]}
+                                  alt={item.title}
+                                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                />
+                              </div>
+                            ) : (
+                              <div style={{ height: 200, background: '#f0f2f5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <Text type="secondary">Pas d'image</Text>
+                              </div>
+                            )
+                          }
+                          actions={[
+                            <Button
+                              type="primary"
+                              icon={<EyeOutlined />}
+                              onClick={() => navigate(`/marketplace/${item.id}`)}
+                            >
+                              Voir
+                            </Button>,
+                            ...(isOwner || isAdmin ? [
+                              <Button
+                                icon={<EditOutlined />}
+                                onClick={() => navigate(`/marketplace/edit/${item.id}`)}
+                              >
+                                Modifier
+                              </Button>,
+                              <Button
+                                danger
+                                icon={<DeleteOutlined />}
+                                loading={deletingItemId === item.id}
+                                onClick={() => handleDeleteItem(item.id)}
+                              >
+                                {deletingItemId === item.id ? 'Suppression...' : 'Supprimer'}
+                              </Button>
+                            ] : [])
+                          ]}
+                        >
+                          <div style={{ minHeight: 120 }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+                              <Title level={5} style={{ margin: 0, flex: 1, marginRight: 8 }}>
+                                {item.title}
+                              </Title>
+                              <Text
+                                type={getStatusColor(item.status)}
+                                style={{ fontSize: 12, fontWeight: 'bold' }}
+                              >
+                                {getStatusText(item.status)}
+                              </Text>
+                            </div>
+                            
+                            <Text type="secondary" style={{ display: 'block', marginBottom: 12 }}>
+                              {item.description.length > 100 
+                                ? `${item.description.substring(0, 100)}...` 
+                                : item.description
+                              }
+                            </Text>
+                            
+                            <div style={{ marginBottom: 8 }}>
+                              <Text strong style={{ color: '#1890ff', fontSize: 16 }}>
+                                {formatPrice(item)}
+                              </Text>
+                            </div>
+                            
+                            <div style={{ marginBottom: 8 }}>
+                              <Text type="secondary" style={{ fontSize: 12 }}>
+                                {item.category}
+                              </Text>
+                            </div>
+                            
+                            {item.moderationComment && (
+                              <div style={{ 
+                                marginBottom: 8, 
+                                padding: 8, 
+                                background: '#fff7e6', 
+                                border: '1px solid #ffd591',
+                                borderRadius: 4
+                              }}>
+                                <Text strong style={{ fontSize: 12, color: '#d46b08' }}>
+                                  Commentaire de modération:
+                                </Text>
+                                <div style={{ fontSize: 12, color: '#d46b08', marginTop: 4 }}>
+                                  {item.moderationComment}
+                                </div>
+                              </div>
+                            )}
+                            
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: '#8c8c8c' }}>
+                              <span>{item.location}</span>
+                              <span>{new Date(item.createdAt).toLocaleDateString()}</span>
+                            </div>
+                          </div>
+                        </Card>
+                      </Col>
+                    );
+                  })}
+                </Row>
+              )}
+            </Card>
+          </Col>
+        </Row>
+      </Content>
+    </Layout>
   );
 };
 
