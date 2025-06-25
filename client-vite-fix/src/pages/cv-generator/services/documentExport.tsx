@@ -66,9 +66,13 @@ const waitForImages = (element: HTMLElement): Promise<void[]> => {
 };
 
 /**
- * Fonction d'exportation PDF PARANOÏAQUE.
- * Attend le chargement COMPLET de TOUTES les ressources (images et polices)
- * avant de faire quoi que ce soit. C'est la solution définitive.
+ * Fonction d'exportation PDF Page par Page. C'est la seule méthode fiable.
+ * 1. Le CV est rendu intégralement dans un conteneur invisible.
+ * 2. On calcule le nombre de pages A4 nécessaires.
+ * 3. On boucle sur chaque page, on "scrolle" le CV avec une transformation CSS
+ *    pour n'exposer que le contenu de la page en cours.
+ * 4. On capture cette vue de la taille d'une page avec html2canvas.
+ * 5. On l'ajoute au PDF.
  */
 export const exportToPDF = async (
   _originalElement: HTMLElement,
@@ -86,80 +90,73 @@ export const exportToPDF = async (
     message.error("Données manquantes pour l'export PDF.");
     return;
   }
-  
+
+  // --- 1. Création de la Salle Blanche ---
   const container = document.createElement('div');
-  container.style.position = 'absolute';
-  container.style.left = '-9999px';
-  container.style.top = '0';
-  container.style.width = '210mm';
-  container.style.background = 'white';
+  const a4WidthPx = 794; // 210mm à 96dpi
+  const a4HeightPx = 1123; // 297mm à 96dpi
+  
+  // Conteneur extérieur qui simule le papier, mais qui peut grandir
+  Object.assign(container.style, {
+    position: 'absolute',
+    left: '-9999px',
+    top: '0',
+    width: `${a4WidthPx}px`,
+    background: 'white',
+    boxSizing: 'border-box',
+  });
+
+  // Conteneur intérieur qui sera "scrollé"
+  const content = document.createElement('div');
+  container.appendChild(content);
   document.body.appendChild(container);
 
   try {
+    // --- 2. Rendu du CV complet ---
     const TemplateComponent = template.component;
-    const cvElement = (
+    const root = createRoot(content);
+    root.render(
       <React.StrictMode>
-        <TemplateComponent 
-          data={data} 
-          customization={customization} 
-          isMiniature={false} 
-        />
+        <TemplateComponent data={data} customization={customization} isMiniature={false} />
       </React.StrictMode>
     );
 
-    const root = createRoot(container);
-    await new Promise<void>(resolve => {
-      root.render(cvElement);
-      requestAnimationFrame(() => resolve());
-    });
-
-    // Étape 1 : Attendre les images
-    await waitForImages(container);
-    // Étape 2 : Attendre les polices
     await document.fonts.ready;
-    // Étape 3 (sécurité) : Attendre le prochain "paint" du navigateur
     await new Promise(resolve => requestAnimationFrame(resolve));
     
-    // Mesure et capture seulement après que TOUT soit chargé et rendu
-    const height = container.scrollHeight;
-    const width = container.offsetWidth;
+    const totalHeight = content.scrollHeight;
+    const pageCount = Math.ceil(totalHeight / a4HeightPx);
     
-    const canvas = await html2canvas(container, {
-      scale: quality,
-      useCORS: true,
-      logging: false,
-      backgroundColor: '#ffffff',
-      width: width,
-      height: height,
-      windowWidth: width,
-      windowHeight: height,
-      // Option pour s'assurer que html2canvas attend bien les polices aussi
-      allowTaint: true, 
-    });
-
-    const imgData = canvas.toDataURL('image/jpeg', 0.98);
     const pdf = new jsPDF({
       orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4',
+      unit: 'px',
+      format: [a4WidthPx, a4HeightPx],
     });
 
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = pdf.internal.pageSize.getHeight();
-    const canvasAspectRatio = canvas.width / canvas.height;
-    const imgHeight = pdfWidth / canvasAspectRatio;
+    // --- 3. Capture Page par Page ---
+    for (let i = 0; i < pageCount; i++) {
+      const yOffset = -i * a4HeightPx;
+      content.style.transform = `translateY(${yOffset}px)`;
+      
+      const canvas = await html2canvas(container, {
+        scale: quality,
+        useCORS: true,
+        logging: false,
+        width: a4WidthPx,
+        height: a4HeightPx, // On capture une seule page à la fois
+        windowWidth: a4WidthPx,
+        windowHeight: a4HeightPx,
+        scrollY: 0, // Le scroll est géré par notre transform
+        scrollX: 0,
+      });
 
-    let heightLeft = imgHeight;
-    let position = 0;
+      const imgData = canvas.toDataURL('image/jpeg', 0.98);
 
-    pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
-    heightLeft -= pdfHeight;
-
-    while (heightLeft > 0) {
-      position = -heightLeft;
-      pdf.addPage();
-      pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
-      heightLeft -= pdfHeight;
+      if (i > 0) {
+        pdf.addPage([a4WidthPx, a4HeightPx], 'portrait');
+      }
+      
+      pdf.addImage(imgData, 'JPEG', 0, 0, a4WidthPx, a4HeightPx);
     }
     
     pdf.save(`${filename}.pdf`);
