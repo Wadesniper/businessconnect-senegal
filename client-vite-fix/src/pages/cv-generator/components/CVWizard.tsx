@@ -33,6 +33,7 @@ const CVWizard: React.FC<CVWizardProps> = ({ current, setCurrent }) => {
   const goNext = () => {
     if (isStepValid(current + 1)) {
       setCurrent(current + 1);
+      setTimeout(() => window.scrollTo(0, 0), 0);
     } else {
       message.error('Veuillez remplir tous les champs obligatoires.');
     }

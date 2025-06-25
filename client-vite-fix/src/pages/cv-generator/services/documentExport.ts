@@ -59,7 +59,8 @@ export const exportToPDF = async (
   } = options;
 
   // --- 1. Mesure des dimensions réelles de l'élément source ---
-  const { offsetWidth, offsetHeight } = originalElement;
+  const { offsetWidth, scrollHeight, offsetHeight } = originalElement;
+  const heightToUse = Math.max(scrollHeight, offsetHeight);
 
   // --- 2. Création de la Salle Blanche SUR MESURE ---
   const cloneContainer = document.createElement('div');
@@ -70,7 +71,7 @@ export const exportToPDF = async (
     left: '-9999px', // Hors de l'écran
     top: '0px',
     width: `${offsetWidth}px`, // Largeur exacte de l'élément original
-    height: `${offsetHeight}px`, // Hauteur exacte de l'élément original
+    height: `${heightToUse}px`, // Hauteur TOTALE de l'élément original
     overflow: 'visible',
     backgroundColor: 'white',
   });
@@ -92,9 +93,9 @@ export const exportToPDF = async (
       logging: false,
       backgroundColor: '#ffffff',
       width: offsetWidth, // Préciser les dimensions à html2canvas
-      height: offsetHeight,
+      height: heightToUse, // Utiliser la hauteur totale
       windowWidth: offsetWidth,
-      windowHeight: offsetHeight,
+      windowHeight: heightToUse,
     });
 
     // --- 5. Génération du PDF à partir de l'image ---

@@ -6,6 +6,26 @@ import type { CVData, Template, CustomizationOptions } from '../../../types/cv';
 
 const { Title, Text, Paragraph } = Typography;
 
+const GlobalCVStyles = () => (
+  <style>{`
+    .cv-preview-for-export,
+    .cv-preview-for-export * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .cv-preview-for-export p,
+    .cv-preview-for-export div,
+    .cv-preview-for-export span,
+    .cv-preview-for-export li {
+      word-wrap: break-word; /* Ancien nom */
+      overflow-wrap: break-word; /* Nouveau nom, standard */
+      white-space: pre-wrap; /* Respecte les retours à la ligne et espaces */
+    }
+  `}</style>
+);
+
 interface CVPreviewProps {
   data: CVData;
   template: Template;
@@ -130,32 +150,44 @@ const CVPreview = forwardRef<HTMLDivElement, CVPreviewProps>(
     );
 
     return (
-      <div className="cv-preview-wrapper" style={{ position: 'relative', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', overflowX: 'hidden' }}>
-        <div style={{
-          maxWidth: 800,
-          margin: '24px 0 12px 0',
-          padding: '12px 20px',
-          background: '#f5f7fa',
-          border: '1px solid #dbeafe',
-          borderRadius: 8,
-          color: '#1e293b',
-          fontSize: 15,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 12
-        }}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{flexShrink:0}} xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#2563eb"/><text x="12" y="17" textAnchor="middle" fontSize="15" fill="#fff" fontFamily="Arial" fontWeight="bold">i</text></svg>
-          <span>Si l'aperçu de votre CV est coupé en bas, il faut télécharger le PDF pour voir l'intégralité de votre CV.</span>
+      <>
+        <style>{`
+          .cv-preview-for-export p,
+          .cv-preview-for-export div,
+          .cv-preview-for-export span,
+          .cv-preview-for-export li {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            white-space: pre-wrap;
+          }
+        `}</style>
+        <div className="cv-preview-wrapper" style={{ position: 'relative', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', overflowX: 'hidden' }}>
+          <div style={{
+            maxWidth: 800,
+            margin: '24px 0 12px 0',
+            padding: '12px 20px',
+            background: '#f5f7fa',
+            border: '1px solid #dbeafe',
+            borderRadius: 8,
+            color: '#1e293b',
+            fontSize: 15,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12
+          }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{flexShrink:0}} xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#2563eb"/><text x="12" y="17" textAnchor="middle" fontSize="15" fill="#fff" fontFamily="Arial" fontWeight="bold">i</text></svg>
+            <span>Si l'aperçu de votre CV est coupé en bas, il faut télécharger le PDF pour voir l'intégralité de votre CV.</span>
+          </div>
+          <div style={{
+            width: baseA4Width,
+            transform: `scale(${autoScale * (zoom / 100)})`,
+            transformOrigin: 'top center',
+            transition: 'transform 0.3s ease',
+          }}>
+            {previewContent}
+          </div>
         </div>
-        <div style={{
-          width: baseA4Width,
-          transform: `scale(${autoScale * (zoom / 100)})`,
-          transformOrigin: 'top center',
-          transition: 'transform 0.3s ease',
-        }}>
-          {previewContent}
-        </div>
-      </div>
+      </>
     );
   }
 );
