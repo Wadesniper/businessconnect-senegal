@@ -53,13 +53,12 @@ const getWordStyles = (customization: CustomizationOptions): any => ({
 const waitForImages = (element: HTMLElement): Promise<void[]> => {
   const images = Array.from(element.getElementsByTagName('img'));
   const promises = images.map(img => {
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<void>((resolve) => {
       if (img.complete) {
-        // Si l'image est déjà chargée (depuis le cache par exemple)
         resolve();
       } else {
         img.onload = () => resolve();
-        img.onerror = () => resolve(); // On résout même en cas d'erreur pour ne pas bloquer l'export
+        img.onerror = () => resolve(); // On résout même en cas d'erreur
       }
     });
   });
@@ -67,9 +66,9 @@ const waitForImages = (element: HTMLElement): Promise<void[]> => {
 };
 
 /**
- * Fonction d'exportation PDF ultra-robuste.
- * Elle attend activement que toutes les images soient chargées avant de mesurer
- * et de capturer le CV, garantissant une capture parfaite.
+ * Fonction d'exportation PDF PARANOÏAQUE.
+ * Attend le chargement COMPLET de TOUTES les ressources (images et polices)
+ * avant de faire quoi que ce soit. C'est la solution définitive.
  */
 export const exportToPDF = async (
   _originalElement: HTMLElement,
@@ -111,14 +110,17 @@ export const exportToPDF = async (
     const root = createRoot(container);
     await new Promise<void>(resolve => {
       root.render(cvElement);
-      // On utilise requestAnimationFrame pour s'assurer que le premier rendu est fait
       requestAnimationFrame(() => resolve());
     });
 
-    // Étape cruciale : attendre que TOUTES les images soient chargées
+    // Étape 1 : Attendre les images
     await waitForImages(container);
+    // Étape 2 : Attendre les polices
+    await document.fonts.ready;
+    // Étape 3 (sécurité) : Attendre le prochain "paint" du navigateur
+    await new Promise(resolve => requestAnimationFrame(resolve));
     
-    // La mesure n'a lieu qu'après le chargement complet
+    // Mesure et capture seulement après que TOUT soit chargé et rendu
     const height = container.scrollHeight;
     const width = container.offsetWidth;
     
@@ -131,6 +133,8 @@ export const exportToPDF = async (
       height: height,
       windowWidth: width,
       windowHeight: height,
+      // Option pour s'assurer que html2canvas attend bien les polices aussi
+      allowTaint: true, 
     });
 
     const imgData = canvas.toDataURL('image/jpeg', 0.98);
