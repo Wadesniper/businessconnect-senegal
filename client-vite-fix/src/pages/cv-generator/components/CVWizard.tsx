@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import type { CVData } from '../../../types/cv';
 import ExperienceForm from './ExperienceForm';
 import EducationForm from './EducationForm';
@@ -30,10 +30,14 @@ const steps = [
 const CVWizard: React.FC<CVWizardProps> = ({ current, setCurrent }) => {
   const { cvData, setCVData, isStepValid } = useCV();
 
+  // Effet pour remonter en haut de la page à chaque changement d'étape
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [current]);
+
   const goNext = () => {
     if (isStepValid(current + 1)) {
       setCurrent(current + 1);
-      setTimeout(() => window.scrollTo(0, 0), 0);
     } else {
       message.error('Veuillez remplir tous les champs obligatoires.');
     }
