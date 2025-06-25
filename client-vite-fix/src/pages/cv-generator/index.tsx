@@ -266,6 +266,11 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
                 </div>
               </div>
             )}
+            {currentStep > 0 && (
+              <Button onClick={() => setCurrentStep(0)} style={{ marginBottom: 16 }}>
+                Retour à la galerie
+              </Button>
+            )}
             {renderStepContent()}
           </Col>
         </Row>

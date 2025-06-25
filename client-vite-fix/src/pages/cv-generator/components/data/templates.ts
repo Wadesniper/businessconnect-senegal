@@ -293,17 +293,4 @@ export const CV_TEMPLATES: CVTemplateConfig[] = [
     profileImage: '/images/avatars/man-3.png',
     sampleData: DEMO_PROFILES.bank,
   },
-  {
-    id: 'tech-modern',
-    name: 'Tech Modern',
-    component: TechModernTemplate,
-    description: 'CV tech moderne, design épuré, pour profils IT',
-    premium: true,
-    category: 'Tech',
-    thumbnail: techModernPreview,
-    previewImage: techModernPreview,
-    features: ['Design épuré', 'Forte hiérarchie visuelle', 'Mise en page moderne'],
-    profileImage: '/images/avatars/woman-1.png',
-    sampleData: DEMO_PROFILES.techModern,
-  },
 ]; 
