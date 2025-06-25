@@ -1,6 +1,7 @@
 import React from 'react';
 import { Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
+import { JOB_TYPES } from '../../../types/job';
 
 interface JobFiltersProps {
   sectors: string[];
@@ -100,10 +101,9 @@ const JobFilters: React.FC<JobFiltersProps> = ({
             style={{ width: '100%', padding: 8, borderRadius: 8, marginTop: 4, background: '#fff', color: '#222', border: '1.5px solid #e3e8f7' }}
           >
             <option value="">Tous types</option>
-            <option value="full_time">Temps plein</option>
-            <option value="part_time">Temps partiel</option>
-            <option value="contract">Contrat</option>
-            <option value="internship">Stage</option>
+            {JOB_TYPES.map((type) => (
+              <option key={type} value={type}>{type}</option>
+            ))}
           </select>
         </label>
         <label style={{ minWidth: 180 }}>

@@ -40,6 +40,7 @@ import AuthPage from './pages/auth/AuthPage';
 const CVPreviewGallery = lazy(() => import('./pages/cv-generator/CVPreviewGallery'));
 const MarketplaceModeration = lazy(() => import('./components/admin/MarketplaceModeration'));
 const UserItems = lazy(() => import('./components/marketplace/UserItems'));
+const MyJobsPage = lazy(() => import('./pages/jobs/MyJobsPage'));
 
 // ErrorBoundary global
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, error: any}> {
@@ -185,6 +186,17 @@ const App: React.FC = () => {
 
             {/* New route */}
             <Route path="/cv-preview/:templateId" element={<CVPreviewGallery />} />
+
+            {/* New route */}
+            <Route 
+              path="/jobs/my-jobs" 
+              element={
+                <ProtectedRoute 
+                  element={<MyJobsPage />} 
+                  allowedRoles={['admin', 'employeur']} 
+                />
+              } 
+            />
           </Routes>
         </Suspense>
       </ProLayout>

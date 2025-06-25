@@ -48,6 +48,19 @@ const JobsPage: React.FC = () => {
     setCurrentPage(1);
   }
 
+  // Mapping du type de contrat français -> backend
+  const mapJobTypeToBackend = (type: string | null) => {
+    switch (type) {
+      case 'CDI': return 'full_time';
+      case 'CDD': return 'contract';
+      case 'Stage': return 'internship';
+      case 'Freelance': return 'contract';
+      case 'Alternance': return 'internship';
+      case 'Temps partiel': return 'part_time';
+      default: return undefined;
+    }
+  };
+
   useEffect(() => {
     if (currentPage === 1) {
       setIsLoading(true);
@@ -55,7 +68,14 @@ const JobsPage: React.FC = () => {
       setIsLoadingMore(true);
     }
     
-    JobService.getJobs(currentPage, 12, debouncedSearchQuery, selectedSector, selectedType, selectedLocation)
+    JobService.getJobs(
+      currentPage,
+      12,
+      debouncedSearchQuery,
+      selectedSector,
+      mapJobTypeToBackend(selectedType),
+      selectedLocation
+    )
       .then(response => {
         setJobs(prev => currentPage === 1 ? (response.jobs || []) : [...prev, ...(response.jobs || [])]);
         setTotalJobs(response.total || 0);
