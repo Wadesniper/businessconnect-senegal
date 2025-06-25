@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   Layout,
   Card,
@@ -50,6 +50,7 @@ const categories = [
 
 const MarketplacePage: React.FC = () => {
   const navigate = useNavigate();
+  const { id: editId } = useParams<{ id: string }>();
   const [items, setItems] = useState<MarketplaceItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -80,8 +81,11 @@ const MarketplacePage: React.FC = () => {
 
   useEffect(() => {
     fetchItems();
+    if (editId) {
+      handleEditFromUrl(editId);
+    }
     // eslint-disable-next-line
-  }, [filters]);
+  }, [filters, editId]);
 
   const fetchItems = async () => {
     setLoading(true);
@@ -92,6 +96,34 @@ const MarketplacePage: React.FC = () => {
       message.error('Erreur lors de la récupération des annonces');
     }
     setLoading(false);
+  };
+
+  const handleEditFromUrl = async (itemId: string) => {
+    try {
+      setLoading(true);
+      const item = await marketplaceService.getItem(itemId);
+      if (item) {
+        setEditingItem(item);
+        const existingFileList = item.images?.map((url: string, index: number) => ({
+          uid: `-${index}`,
+          name: `image-${index + 1}`,
+          status: 'done' as UploadFileStatus,
+          url: url,
+        })) || [];
+        setEditFileList(existingFileList);
+        setEditUploadedUrls(item.images || []);
+        setEditModalVisible(true);
+      } else {
+        message.error('Annonce non trouvée');
+        navigate('/marketplace');
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement de l\'annonce:', error);
+      message.error('Erreur lors du chargement de l\'annonce');
+      navigate('/marketplace');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const customUpload = async ({ file, onSuccess, onError }: any) => {
