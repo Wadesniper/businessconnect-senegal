@@ -1,3 +1,5 @@
+import React from 'react';
+import { createRoot } from 'react-dom/client';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { Document, Paragraph, TextRun, HeadingLevel, Packer, SectionType, Table, TableRow, TableCell, WidthType, AlignmentType } from 'docx';
@@ -13,6 +15,9 @@ export interface ExportOptions {
   format?: 'pdf' | 'docx';
   quality?: number;
   filename?: string;
+  template?: Template;
+  data?: CVData;
+  customization?: CustomizationOptions;
 }
 
 const defaultOptions: ExportOptions = {
@@ -45,61 +50,78 @@ const getWordStyles = (customization: CustomizationOptions): any => ({
 });
 
 /**
- * Nouvelle fonction d'exportation PDF robuste.
- * Elle crée un clone de l'élément à exporter dans un conteneur "salle blanche"
- * pour garantir une capture propre, indépendante des styles de la page.
+ * Fonction d'exportation PDF 100% fiable.
+ * Elle ne s'appuie plus sur le DOM visible.
+ * 1. Crée un conteneur invisible.
+ * 2. Y "rend" une copie propre du template de CV avec les bonnes données.
+ * 3. Mesure la hauteur de ce rendu propre (qui est forcément correcte).
+ * 4. Capture le conteneur avec html2canvas.
+ * 5. Génère le PDF.
  */
 export const exportToPDF = async (
-  originalElement: HTMLElement,
+  _originalElement: HTMLElement,
   options: ExportOptions = defaultOptions
 ): Promise<void> => {
   const {
     filename = 'cv.pdf',
     quality = 3,
+    template,
+    data,
+    customization
   } = options;
 
-  // --- 1. Mesure de la hauteur TOTALE et infaillible de l'élément source ---
-  // On utilise EXCLUSIVEMENT scrollHeight pour avoir la hauteur totale du contenu, même ce qui n'est pas visible.
-  const { offsetWidth, scrollHeight } = originalElement;
-  const heightToUse = scrollHeight;
-
-  // --- 2. Création de la Salle Blanche SUR MESURE ---
-  const cloneContainer = document.createElement('div');
+  if (!template || !data || !customization) {
+    message.error("Données manquantes pour l'export PDF.");
+    console.error("Erreur export PDF: template, data, ou customization manquant.");
+    return;
+  }
   
-  // Appliquer les styles pour une capture propre
-  Object.assign(cloneContainer.style, {
-    position: 'absolute',
-    left: '-9999px', // Hors de l'écran
-    top: '0px',
-    width: `${offsetWidth}px`, // Largeur exacte de l'élément original
-    height: `${heightToUse}px`, // Hauteur TOTALE de l'élément original
-    overflow: 'visible',
-    backgroundColor: 'white',
-  });
-
-  // --- 3. Clonage et Injection ---
-  const clonedElement = originalElement.cloneNode(true) as HTMLElement;
-  // S'assurer que le clone remplit bien son conteneur
-  clonedElement.style.width = '100%';
-  clonedElement.style.height = '100%';
-  
-  cloneContainer.appendChild(clonedElement);
-  document.body.appendChild(cloneContainer);
+  // 1. Création de la "Salle Blanche"
+  const container = document.createElement('div');
+  container.style.position = 'absolute';
+  container.style.left = '-9999px'; // Hors de l'écran
+  container.style.top = '0';
+  container.style.width = '210mm'; // Largeur A4 fixe
+  container.style.background = 'white';
+  document.body.appendChild(container);
 
   try {
-    // --- 4. Capture du clone parfait ---
-    const canvas = await html2canvas(clonedElement, {
+    // 2. Rendu propre du CV dans la salle blanche
+    const TemplateComponent = template.component;
+    const cvElement = (
+      <React.StrictMode>
+        <TemplateComponent 
+          data={data} 
+          customization={customization} 
+          isMiniature={false} 
+        />
+      </React.StrictMode>
+    );
+
+    const root = createRoot(container);
+    await new Promise<void>((resolve) => {
+      root.render(cvElement);
+      // On attend un instant pour s'assurer que le rendu est terminé
+      setTimeout(resolve, 100); 
+    });
+
+    // 3. Mesure du rendu propre
+    const height = container.scrollHeight;
+    const width = container.offsetWidth;
+
+    // 4. Capture avec html2canvas
+    const canvas = await html2canvas(container, {
       scale: quality,
       useCORS: true,
       logging: false,
       backgroundColor: '#ffffff',
-      width: offsetWidth, // Préciser les dimensions à html2canvas
-      height: heightToUse, // Utiliser la hauteur totale
-      windowWidth: offsetWidth,
-      windowHeight: heightToUse,
+      width: width,
+      height: height,
+      windowWidth: width,
+      windowHeight: height,
     });
 
-    // --- 5. Génération du PDF à partir de l'image ---
+    // 5. Génération du PDF (logique inchangée)
     const imgData = canvas.toDataURL('image/jpeg', 0.98);
     const pdf = new jsPDF({
       orientation: 'portrait',
@@ -133,8 +155,8 @@ export const exportToPDF = async (
     message.error("Une erreur est survenue lors de l'export du CV.");
     throw error;
   } finally {
-    // --- 6. Nettoyage ---
-    document.body.removeChild(cloneContainer);
+    // 6. Nettoyage
+    document.body.removeChild(container);
   }
 };
 
@@ -329,7 +351,14 @@ export const exportCV = async (
   options: ExportOptions = {}
 ) => {
   const finalFilename = generateFileName(data);
-  const finalOptions = { ...defaultOptions, ...options, filename: finalFilename };
+  const finalOptions = { 
+    ...defaultOptions, 
+    ...options, 
+    filename: finalFilename,
+    template,
+    data,
+    customization
+  };
 
   if (finalOptions.format === 'pdf') {
     await exportToPDF(element, finalOptions);
@@ -342,8 +371,9 @@ export const exportCV = async (
 };
 
 // Utilitaire pour diviser un tableau en groupes de taille n
-const chunk = <T>(arr: T[], size: number): T[][] => {
+// Syntaxe de fonction classique pour éviter les conflits avec JSX dans un fichier .tsx
+function chunk<T>(arr: T[], size: number): T[][] {
   return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
     arr.slice(i * size, i * size + size)
   );
-}; 
+} 
