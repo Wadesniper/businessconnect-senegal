@@ -30,6 +30,7 @@ import manHeadphones from '../assets/testimonials/man-headphones.png';
 import womanGlasses from '../assets/testimonials/woman-glasses.png';
 import womanHijab from '../assets/testimonials/woman-hijab.png';
 import LazyImage from '../components/LazyImage';
+import { JOB_SECTORS } from '../types/job';
 
 const { Content } = Layout;
 const { Title, Paragraph, Text } = Typography;
@@ -279,16 +280,15 @@ const Home: React.FC = () => {
       }
   ];
   
-  const sectors = [
-    { name: 'Informatique', icon: '💻', color: '#2db7f5' },
-    { name: 'Commerce', icon: '🛒', color: '#87d068' },
-    { name: 'Industrie', icon: '🏭', color: '#f50' },
-    { name: 'Santé', icon: '❤️', color: '#ff4d4f' },
-    { name: 'Finance', icon: '💰', color: '#ffd700' },
-    { name: 'Services', icon: '🤝', color: '#b37feb' },
-    { name: 'Éducation', icon: '🎓', color: '#3b5998' },
-    { name: 'Tourisme', icon: '✈️', color: '#1ec773' },
-  ];
+  const sectors = JOB_SECTORS.map((sector, index) => {
+    const icons = ['💻', '🛒', '🏭', '❤️', '💰', '🤝', '🎓', '✈️', '🏢', '📦', '⚙️', '⚖️', '🔧'];
+    const colors = ['#2db7f5', '#87d068', '#f50', '#ff4d4f', '#ffd700', '#b37feb', '#3b5998', '#1ec773', '#722ed1', '#13c2c2', '#fa8c16', '#eb2f96', '#52c41a'];
+    return {
+      name: sector,
+      icon: icons[index % icons.length],
+      color: colors[index % colors.length]
+    };
+  });
 
   const subscriptions = [
     { 

@@ -54,14 +54,17 @@ const JobFilters: React.FC<JobFiltersProps> = ({
           flex: 1,
         }}
       >
-        <Input
-          placeholder="Rechercher par titre, compétence..."
-          value={searchQuery}
-          onChange={e => onSearchChange(e.target.value)}
-          prefix={<SearchOutlined style={{ color: 'rgba(0,0,0,.25)' }} />}
-          style={{ minWidth: 200, flex: 1 }}
-          allowClear
-        />
+        <label style={{ minWidth: 180, maxWidth: 260 }}>
+          <span style={{ fontWeight: 600 }}>Recherche</span>
+          <Input
+            placeholder="Rechercher par titre, compétence..."
+            value={searchQuery}
+            onChange={e => onSearchChange(e.target.value)}
+            prefix={<SearchOutlined style={{ color: 'rgba(0,0,0,.25)' }} />}
+            style={{ minWidth: 200, flex: 1, marginTop: 4 }}
+            allowClear
+          />
+        </label>
         <label style={{ minWidth: 180, maxWidth: 260 }}>
           <span style={{ fontWeight: 600 }}>Secteur</span>
           <select
@@ -97,12 +100,10 @@ const JobFilters: React.FC<JobFiltersProps> = ({
             style={{ width: '100%', padding: 8, borderRadius: 8, marginTop: 4, background: '#fff', color: '#222', border: '1.5px solid #e3e8f7' }}
           >
             <option value="">Tous types</option>
-            <option value="CDI">CDI</option>
-            <option value="CDD">CDD</option>
-            <option value="Stage">Stage</option>
-            <option value="Freelance">Freelance</option>
-            <option value="Alternance">Alternance</option>
-            <option value="Temps partiel">Temps partiel</option>
+            <option value="full_time">Temps plein</option>
+            <option value="part_time">Temps partiel</option>
+            <option value="contract">Contrat</option>
+            <option value="internship">Stage</option>
           </select>
         </label>
         <label style={{ minWidth: 180 }}>

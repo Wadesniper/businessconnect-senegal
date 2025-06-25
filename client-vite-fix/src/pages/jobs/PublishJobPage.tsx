@@ -3,11 +3,9 @@ import { Container, Typography, Box, TextField, Button, MenuItem, Alert, Circula
 import { useNavigate } from 'react-router-dom';
 import { JobService } from '../../services/jobService';
 import { useAuth } from '../../context/AuthContext';
+import { JOB_SECTORS, JOB_TYPES, type JobType } from '../../types/job';
 
-const sectors = [
-  'Informatique', 'Finance', 'Santé', 'Éducation', 'Marketing', 'Industrie', 'Services', 'Agriculture', 'Tourisme', 'Communication'
-];
-const types = ['CDI', 'CDD', 'Stage', 'Freelance', 'Alternance', 'Temps partiel'];
+const types: JobType[] = ['CDI', 'CDD', 'Stage', 'Freelance', 'Alternance', 'Temps partiel'];
 
 const PublishJobPage: React.FC = () => {
   const { user } = useAuth();
@@ -41,8 +39,8 @@ const PublishJobPage: React.FC = () => {
     try {
       await JobService.createJob({ 
         ...form, 
-        salary_min: form.salary_min ? Number(form.salary_min) : undefined,
-        createdBy: user.id 
+        type: form.type as JobType,
+        salary_min: form.salary_min ? Number(form.salary_min) : undefined
       });
       setSuccess(true);
       setTimeout(() => navigate('/jobs'), 1200);
@@ -61,7 +59,7 @@ const PublishJobPage: React.FC = () => {
         <TextField label="Entreprise" name="company" value={form.company} onChange={handleChange} required fullWidth />
         <TextField label="Description" name="description" value={form.description} onChange={handleChange} required fullWidth multiline minRows={3} />
         <TextField label="Secteur" name="sector" value={form.sector} onChange={handleChange} required select fullWidth>
-          {sectors.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
+          {JOB_SECTORS.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
         </TextField>
         <TextField label="Type de contrat" name="type" value={form.type} onChange={handleChange} required select fullWidth>
           {types.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}

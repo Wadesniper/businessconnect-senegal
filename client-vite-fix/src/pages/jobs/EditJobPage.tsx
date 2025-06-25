@@ -3,11 +3,8 @@ import { Container, Typography, Box, TextField, Button, MenuItem, Alert, Circula
 import { useNavigate, useParams } from 'react-router-dom';
 import { JobService } from '../../services/jobService';
 import { useAuth } from '../../context/AuthContext';
-import type { JobType } from '../../types/job';
+import { JOB_SECTORS, type JobType } from '../../types/job';
 
-const sectors = [
-  'Informatique', 'Finance', 'Santé', 'Éducation', 'Marketing', 'Industrie', 'Services', 'Agriculture', 'Tourisme', 'Communication'
-];
 const types: JobType[] = ['CDI', 'CDD', 'Stage', 'Freelance', 'Alternance', 'Temps partiel'];
 
 const EditJobPage: React.FC = () => {
@@ -102,7 +99,7 @@ const EditJobPage: React.FC = () => {
         <TextField label="Entreprise" name="company" value={form.company} onChange={handleChange} required fullWidth />
         <TextField label="Description" name="description" value={form.description} onChange={handleChange} required fullWidth multiline minRows={3} />
         <TextField label="Secteur" name="sector" value={form.sector} onChange={handleChange} required select fullWidth>
-          {sectors.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
+          {JOB_SECTORS.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
         </TextField>
         <TextField label="Type de contrat" name="type" value={form.type || ''} onChange={(e) => handleTypeChange(e.target.value as JobType)} required select fullWidth>
           {types.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}

@@ -142,12 +142,14 @@ export const JOB_TYPES = [
 ] as const;
 
 export const JOB_SECTORS = [
-  'Ressources Humaines',
   'Informatique',
   'Marketing',
   'Finance',
-  'Commercial',
+  'Ressources Humaines',
   'Communication',
+  'Santé',
+  'Éducation',
+  'Commercial',
   'Administration',
   'Logistique',
   'Production',

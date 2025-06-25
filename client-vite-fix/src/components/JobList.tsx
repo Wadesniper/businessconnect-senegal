@@ -3,24 +3,15 @@ import { Card, Button, Tag, Space, Input, Select, message, Modal, Typography, Di
 import { SearchOutlined, EyeOutlined, SendOutlined } from '@ant-design/icons';
 import { JobService } from '../services/jobService';
 import { authService } from '../services/authService';
-import type { Job } from '../types/job';
+import type { JobData } from '../types/job';
 import { useNavigate } from 'react-router-dom';
 import { useSubscription } from '../hooks/useSubscription';
 import { useAuth } from '../context/AuthContext';
+import { JOB_SECTORS } from '../types/job';
 
 const { Search } = Input;
 const { Option } = Select;
 const { Title, Paragraph } = Typography;
-
-const sectors = [
-  'Informatique',
-  'Marketing',
-  'Finance',
-  'Ressources Humaines',
-  'Communication',
-  'Santé',
-  'Éducation'
-];
 
 const contractTypes = [
   'CDI',
@@ -31,12 +22,12 @@ const contractTypes = [
 ];
 
 export const JobList: React.FC = () => {
-  const [jobs, setJobs] = useState<Job[]>([]);
+  const [jobs, setJobs] = useState<JobData[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedSector, setSelectedSector] = useState<string>();
   const [selectedType, setSelectedType] = useState<string>();
   const [searchText, setSearchText] = useState('');
-  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+  const [selectedJob, setSelectedJob] = useState<JobData | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const navigate = useNavigate();
   const { hasActiveSubscription } = useSubscription();
@@ -49,15 +40,15 @@ export const JobList: React.FC = () => {
   const fetchJobs = async () => {
     setLoading(true);
     try {
-      const jobs = await JobService.getJobs();
-      setJobs(jobs as Job[]);
+      const response = await JobService.getJobs();
+      setJobs(response.jobs || []);
     } catch (error) {
       message.error('Erreur lors de la récupération des offres');
     }
     setLoading(false);
   };
 
-  const handleViewDetails = (job: Job) => {
+  const handleViewDetails = (job: JobData) => {
     setSelectedJob(job);
     setIsModalVisible(true);
   };
@@ -82,7 +73,7 @@ export const JobList: React.FC = () => {
             onChange={setSelectedSector}
             allowClear
           >
-            {sectors.map(sector => (
+            {JOB_SECTORS.map(sector => (
               <Option key={sector} value={sector}>{sector}</Option>
             ))}
           </Select>
@@ -113,7 +104,7 @@ export const JobList: React.FC = () => {
             style={{ marginBottom: 16 }}
           >
             <p><strong>Lieu:</strong> {job.location}</p>
-            <p><strong>Type:</strong> <Tag>{job.jobType}</Tag></p>
+            <p><strong>Type:</strong> <Tag>{job.type}</Tag></p>
             <p><strong>Secteur:</strong> <Tag color="green">{job.sector}</Tag></p>
             <p>{job.description.substring(0, 150)}...</p>
             <div style={{ marginTop: 16 }}>
@@ -178,7 +169,7 @@ export const JobList: React.FC = () => {
               <strong>Lieu:</strong> {selectedJob.location}
             </Paragraph>
             <Paragraph>
-              <strong>Type:</strong> {selectedJob.jobType}
+              <strong>Type:</strong> {selectedJob.type}
             </Paragraph>
             <Title level={5}>Description</Title>
             <Paragraph>{selectedJob.description}</Paragraph>
