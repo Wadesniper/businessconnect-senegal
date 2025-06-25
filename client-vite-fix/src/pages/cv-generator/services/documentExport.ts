@@ -44,96 +44,85 @@ const getWordStyles = (customization: CustomizationOptions): any => ({
   }
 });
 
+/**
+ * Nouvelle fonction d'exportation PDF robuste.
+ * Elle crée un clone de l'élément à exporter dans un conteneur "salle blanche"
+ * pour garantir une capture propre, indépendante des styles de la page.
+ */
 export const exportToPDF = async (
-  element: HTMLElement,
-  options: ExportOptions = defaultOptions,
-  customization: CustomizationOptions
+  originalElement: HTMLElement,
+  options: ExportOptions = defaultOptions
 ): Promise<void> => {
-  try {
-    const {
-      format = 'pdf',
-      quality = 2,
-      filename = `CV_export`.replace(/\s+/g, '_')
-    } = options;
+  const {
+    filename = 'cv.pdf',
+    quality = 3, // Qualité de capture élevée par défaut
+  } = options;
 
-    const canvas = await html2canvas(element, {
+  // --- 1. Création de la Salle Blanche ---
+  const cloneContainer = document.createElement('div');
+  
+  // Styles pour rendre le conteneur invisible mais avec des dimensions réelles
+  cloneContainer.style.position = 'absolute';
+  cloneContainer.style.left = '-9999px';
+  cloneContainer.style.top = '0px';
+  cloneContainer.style.width = '1024px'; // Largeur de travail fixe pour le rendu
+  cloneContainer.style.height = 'auto';
+  cloneContainer.style.overflow = 'visible';
+  cloneContainer.style.backgroundColor = 'white';
+
+  // --- 2. Clonage et Injection ---
+  const clonedElement = originalElement.cloneNode(true) as HTMLElement;
+  cloneContainer.appendChild(clonedElement);
+  document.body.appendChild(cloneContainer);
+
+  try {
+    // --- 3. Capture du clone propre ---
+    const canvas = await html2canvas(clonedElement, {
       scale: quality,
       useCORS: true,
-      allowTaint: true,
       logging: false,
       backgroundColor: '#ffffff',
-      width: element.offsetWidth,
-      height: element.offsetHeight,
-      windowWidth: element.scrollWidth,
-      windowHeight: element.scrollHeight,
+      // Les dimensions sont gérées par le conteneur parent
     });
 
-    if (format === 'pdf') {
-      const imgWidth = 210; // A4 width in mm
-      const pageHeight = 297; // A4 height in mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4',
-      });
+    // --- 4. Génération du PDF à partir de l'image parfaite ---
+    const imgData = canvas.toDataURL('image/jpeg', 0.98); // JPEG haute qualité
+    
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4',
+    });
 
-      pdf.setProperties({
-        title: `CV exporté`,
-        subject: '',
-        author: '',
-        keywords: `cv`,
-        creator: 'BusinessConnect Sénégal'
-      });
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+    
+    const canvasAspectRatio = canvas.width / canvas.height;
+    const imgHeight = pdfWidth / canvasAspectRatio;
 
-      let position = 0;
-      let page = 0;
-      let remainingHeight = imgHeight;
-      const pageCanvasHeight = (canvas.width * pageHeight) / imgWidth;
+    let heightLeft = imgHeight;
+    let position = 0;
 
-      while (remainingHeight > 0) {
-        // Crée un sous-canvas pour chaque page
-        const pageCanvas = document.createElement('canvas');
-        pageCanvas.width = canvas.width;
-        pageCanvas.height = Math.min(pageCanvasHeight, canvas.height - page * pageCanvasHeight);
-        const ctx = pageCanvas.getContext('2d');
-        if (ctx) {
-          ctx.drawImage(
-            canvas,
-            0,
-            page * pageCanvasHeight,
-            canvas.width,
-            pageCanvas.height,
-            0,
-            0,
-            canvas.width,
-            pageCanvas.height
-          );
-        }
-        const pageImgData = pageCanvas.toDataURL('image/jpeg', 1.0);
-        if (page > 0) pdf.addPage();
-        pdf.addImage(
-          pageImgData,
-          'JPEG',
-          0,
-          0,
-          imgWidth,
-          (pageCanvas.height * imgWidth) / canvas.width
-        );
-        remainingHeight -= pageCanvasHeight;
-        page++;
-      }
+    pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
+    heightLeft -= pdfHeight;
 
-      pdf.save(`${filename}.pdf`);
-      message.success('CV exporté avec succès en PDF');
-    } else if (format === 'docx') {
-      message.info('Export Word bientôt disponible');
+    while (heightLeft > 0) {
+      position = -heightLeft;
+      pdf.addPage();
+      pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
+      heightLeft -= pdfHeight;
     }
+    
+    pdf.save(`${filename}.pdf`);
+    message.success('CV exporté avec succès en PDF');
+
   } catch (error) {
-    console.error('Erreur lors de l\'export :', error);
-    message.error('Une erreur est survenue lors de l\'export du CV');
+    console.error("Erreur lors de l'export PDF nouvelle méthode :", error);
+    message.error("Une erreur est survenue lors de l'export du CV.");
     throw error;
+  } finally {
+    // --- 5. Nettoyage Impératif ---
+    document.body.removeChild(cloneContainer);
   }
 };
 
@@ -327,12 +316,16 @@ export const exportCV = async (
   customization: CustomizationOptions,
   options: ExportOptions = {}
 ) => {
-  try {
-    await exportToPDF(element, options, customization);
-  } catch (error) {
-    console.error('Erreur lors de l\'export :', error);
-    message.error('Une erreur est survenue lors de l\'export du CV');
-    throw error;
+  const finalFilename = generateFileName(data);
+  const finalOptions = { ...defaultOptions, ...options, filename: finalFilename };
+
+  if (finalOptions.format === 'pdf') {
+    await exportToPDF(element, finalOptions);
+  } else if (finalOptions.format === 'docx') {
+    await exportToWord(data, customization);
+  } else {
+    console.error('Format d\'export non supporté:', finalOptions.format);
+    message.error("Format d'export non supporté");
   }
 };
 
