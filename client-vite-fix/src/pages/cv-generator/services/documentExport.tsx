@@ -112,6 +112,23 @@ export const exportToPDF = async (
   const content = document.createElement('div');
   content.style.width = `${a4WidthPx}px`;
   content.style.background = 'white';
+  content.className = 'cv-preview-for-export';
+  // Injection du style de retour à la ligne
+  const style = document.createElement('style');
+  style.innerHTML = `
+    .cv-preview-for-export, .cv-preview-for-export * {
+      box-sizing: border-box;
+    }
+    .cv-preview-for-export p,
+    .cv-preview-for-export div,
+    .cv-preview-for-export span,
+    .cv-preview-for-export li {
+      word-break: break-word;
+      overflow-wrap: break-word;
+      white-space: pre-line;
+    }
+  `;
+  content.appendChild(style);
   viewport.appendChild(content);
   document.body.appendChild(viewport);
 
