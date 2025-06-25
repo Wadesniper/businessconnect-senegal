@@ -92,24 +92,28 @@ export const exportToPDF = async (
   }
 
   // --- 1. Création de la Salle Blanche ---
-  const container = document.createElement('div');
   const a4WidthPx = 794; // 210mm à 96dpi
   const a4HeightPx = 1123; // 297mm à 96dpi
-  
-  // Conteneur extérieur qui simule le papier, mais qui peut grandir
-  Object.assign(container.style, {
+
+  // Viewport de taille A4
+  const viewport = document.createElement('div');
+  Object.assign(viewport.style, {
     position: 'absolute',
     left: '-9999px',
     top: '0',
     width: `${a4WidthPx}px`,
+    height: `${a4HeightPx}px`,
+    overflow: 'hidden',
     background: 'white',
     boxSizing: 'border-box',
   });
 
-  // Conteneur intérieur qui sera "scrollé"
+  // Contenu du CV (non transformé)
   const content = document.createElement('div');
-  container.appendChild(content);
-  document.body.appendChild(container);
+  content.style.width = `${a4WidthPx}px`;
+  content.style.background = 'white';
+  viewport.appendChild(content);
+  document.body.appendChild(viewport);
 
   try {
     // --- 2. Rendu du CV complet ---
@@ -123,42 +127,40 @@ export const exportToPDF = async (
 
     await document.fonts.ready;
     await new Promise(resolve => requestAnimationFrame(resolve));
-    
+
     const totalHeight = content.scrollHeight;
     const pageCount = Math.ceil(totalHeight / a4HeightPx);
-    
+
     const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'px',
       format: [a4WidthPx, a4HeightPx],
     });
 
-    // --- 3. Capture Page par Page ---
     for (let i = 0; i < pageCount; i++) {
-      const yOffset = -i * a4HeightPx;
-      content.style.transform = `translateY(${yOffset}px)`;
-      
-      const canvas = await html2canvas(container, {
+      // Décaler le contenu à la bonne position
+      content.style.marginTop = `-${i * a4HeightPx}px`;
+      await new Promise(r => requestAnimationFrame(r));
+
+      const canvas = await html2canvas(viewport, {
         scale: quality,
         useCORS: true,
         logging: false,
         width: a4WidthPx,
-        height: a4HeightPx, // On capture une seule page à la fois
+        height: a4HeightPx,
         windowWidth: a4WidthPx,
         windowHeight: a4HeightPx,
-        scrollY: 0, // Le scroll est géré par notre transform
+        scrollY: 0,
         scrollX: 0,
       });
 
       const imgData = canvas.toDataURL('image/jpeg', 0.98);
-
       if (i > 0) {
         pdf.addPage([a4WidthPx, a4HeightPx], 'portrait');
       }
-      
       pdf.addImage(imgData, 'JPEG', 0, 0, a4WidthPx, a4HeightPx);
     }
-    
+
     pdf.save(`${filename}.pdf`);
     message.success('CV exporté avec succès en PDF');
 
@@ -167,7 +169,7 @@ export const exportToPDF = async (
     message.error("Une erreur est survenue lors de l'export du CV.");
     throw error;
   } finally {
-    document.body.removeChild(container);
+    document.body.removeChild(viewport);
   }
 };
 
