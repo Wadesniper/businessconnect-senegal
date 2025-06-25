@@ -137,6 +137,17 @@ const MarketplacePage: React.FC = () => {
     }
   };
 
+  const customUploadEdit = async ({ file, onSuccess, onError }: any) => {
+    try {
+      const url = await marketplaceService.uploadImage(file);
+      setEditUploadedUrls(prev => [...prev, url]);
+      onSuccess({ url, name: file.name, status: 'done', uid: Date.now().toString() });
+    } catch (err) {
+      console.error('Erreur upload édition:', err);
+      onError(err);
+    }
+  };
+
   const handleOpenModal = () => {
     if (loadingSub) return;
     if (!(user?.role === 'admin' || (hasActiveSubscription && user?.role === 'annonceur'))) {
@@ -226,30 +237,35 @@ const MarketplacePage: React.FC = () => {
     try {
       console.log('[DEBUG] Début modification annonce');
       console.log('[DEBUG] Values reçues:', values);
-      let finalPrice;
-      if (priceType === 'fixed') {
-        const price = Number(values.price);
-        if (isNaN(price) || price < 0) {
+      
+      const { contactInfo, price, minPrice, maxPrice, priceType: formPriceType, ...restValues } = values;
+      
+      let finalPrice: number | { min: number; max: number } | string;
+      if (formPriceType === 'fixed') {
+        const priceValue = Number(price);
+        if (isNaN(priceValue) || priceValue < 0) {
           message.error('Le prix doit être un nombre positif');
           return;
         }
-        finalPrice = price;
-      } else if (priceType === 'range') {
-        const minPrice = Number(values.minPrice);
-        const maxPrice = Number(values.maxPrice);
-        if (isNaN(minPrice) || isNaN(maxPrice) || minPrice < 0 || maxPrice < minPrice) {
+        finalPrice = priceValue;
+      } else if (formPriceType === 'range') {
+        const minPriceValue = Number(minPrice);
+        const maxPriceValue = Number(maxPrice);
+        if (isNaN(minPriceValue) || isNaN(maxPriceValue) || minPriceValue < 0 || maxPriceValue < minPriceValue) {
           message.error('La fourchette de prix n\'est pas valide');
           return;
         }
-        finalPrice = { min: minPrice, max: maxPrice };
+        finalPrice = { min: minPriceValue, max: maxPriceValue };
       } else {
         finalPrice = 'Négociable';
       }
 
-      const { contactInfo, price, minPrice, maxPrice, ...restValues } = values;
       const itemData = {
         ...restValues,
-        price: finalPrice,
+        priceType: formPriceType,
+        price: formPriceType === 'fixed' ? finalPrice as number : null,
+        minPrice: formPriceType === 'range' ? (finalPrice as { min: number; max: number }).min : null,
+        maxPrice: formPriceType === 'range' ? (finalPrice as { min: number; max: number }).max : null,
         contactEmail: contactInfo?.email || '',
         contactPhone: contactInfo?.phone || '',
         images: editUploadedUrls
@@ -607,6 +623,9 @@ const MarketplacePage: React.FC = () => {
               description: editingItem?.description,
               category: editingItem?.category,
               price: editingItem?.price,
+              minPrice: editingItem?.minPrice,
+              maxPrice: editingItem?.maxPrice,
+              priceType: editingItem?.priceType || 'fixed',
               location: editingItem?.location,
               contactInfo: {
                 email: editingItem?.contactEmail,
@@ -742,7 +761,7 @@ const MarketplacePage: React.FC = () => {
             >
               <Upload
                 listType="picture-card"
-                customRequest={customUpload}
+                customRequest={customUploadEdit}
                 maxCount={5}
                 fileList={editFileList}
                 onChange={({ fileList: newFileList }) => {
