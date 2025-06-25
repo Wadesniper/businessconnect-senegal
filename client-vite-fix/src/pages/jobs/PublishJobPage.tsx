@@ -7,18 +7,22 @@ import { JOB_SECTORS, JOB_TYPES, type JobType } from '../../types/job';
 
 const types: JobType[] = ['CDI', 'CDD', 'Stage', 'Freelance', 'Alternance', 'Temps partiel'];
 
+const initialForm = {
+  title: '',
+  description: '',
+  sector: '',
+  type: '',
+  location: '',
+  company: '',
+  salary_min: '',
+  contactEmail: '',
+  contactPhone: '',
+};
+
 const PublishJobPage: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [form, setForm] = useState({
-    title: '',
-    description: '',
-    sector: '',
-    type: '',
-    location: '',
-    company: '',
-    salary_min: '',
-  });
+  const [form, setForm] = useState(initialForm);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -36,6 +40,17 @@ const PublishJobPage: React.FC = () => {
     setLoading(true);
     setError(null);
     setSuccess(false);
+    // Validation simple côté client
+    if (!form.contactEmail || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.contactEmail)) {
+      setError('Veuillez saisir un email de contact valide.');
+      setLoading(false);
+      return;
+    }
+    if (!form.contactPhone || form.contactPhone.length < 6) {
+      setError('Veuillez saisir un numéro de téléphone valide.');
+      setLoading(false);
+      return;
+    }
     try {
       await JobService.createJob({ 
         ...form, 
@@ -65,6 +80,24 @@ const PublishJobPage: React.FC = () => {
           {types.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
         </TextField>
         <TextField label="Localisation" name="location" value={form.location} onChange={handleChange} required fullWidth />
+        <TextField 
+          label="Email de contact *" 
+          name="contactEmail" 
+          value={form.contactEmail} 
+          onChange={handleChange} 
+          required 
+          fullWidth 
+          type="email"
+        />
+        <TextField 
+          label="Téléphone de contact *" 
+          name="contactPhone" 
+          value={form.contactPhone} 
+          onChange={handleChange} 
+          required 
+          fullWidth 
+          type="tel"
+        />
         <TextField 
           label="Salaire minimum (optionnel)" 
           name="salary_min" 
