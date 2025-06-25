@@ -129,9 +129,14 @@ const JobsPage: React.FC = () => {
           onWorkLocationChange={() => {}}
           renderAction={
             (user?.role === 'admin' || user?.role === 'employeur') ? (
-              <Button type="primary" style={{ marginLeft: 16 }} onClick={handlePublish}>
-                Publier une offre
-              </Button>
+              <div style={{ display: 'flex', gap: 12 }}>
+                <Button type="primary" onClick={() => navigate('/jobs/my-jobs')}>
+                  Gérer mes offres
+                </Button>
+                <Button type="primary" style={{ marginLeft: 0 }} onClick={handlePublish}>
+                  Publier une offre
+                </Button>
+              </div>
             ) : null
           }
         />

@@ -58,6 +58,23 @@ const CardFooter = styled.div`
 
 const isSpecified = (value: string | undefined | null) => value && !/non précisé|non spécifié/i.test(value);
 
+// Utilitaire pour afficher le type de contrat en français
+const getTypeLabel = (type: string | undefined) => {
+  switch (type) {
+    case 'full_time': return 'CDI';
+    case 'part_time': return 'Temps partiel';
+    case 'contract': return 'CDD / Freelance';
+    case 'internship': return 'Stage / Alternance';
+    case 'CDI': return 'CDI';
+    case 'CDD': return 'CDD';
+    case 'Stage': return 'Stage';
+    case 'Freelance': return 'Freelance';
+    case 'Alternance': return 'Alternance';
+    case 'Temps partiel': return 'Temps partiel';
+    default: return type || '';
+  }
+};
+
 const JobCard: React.FC<JobCardProps> = ({ job, isPremium, onEdit, onDelete }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -110,7 +127,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, isPremium, onEdit, onDelete }) =
         </Paragraph>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
           {isSpecified(location) && <Tag icon={<EnvironmentOutlined />} color="blue" style={{ whiteSpace: 'normal', height: 'auto', lineHeight: '1.4' }}>{location}</Tag>}
-          {isSpecified(type) && <Tag icon={<ClockCircleOutlined />} color="green" style={{ whiteSpace: 'normal', height: 'auto', lineHeight: '1.4' }}>{type}</Tag>}
+          {isSpecified(type) && <Tag icon={<ClockCircleOutlined />} color="green" style={{ whiteSpace: 'normal', height: 'auto', lineHeight: '1.4' }}>{getTypeLabel(type)}</Tag>}
           {isSpecified(sector) && <Tag color="purple" style={{ whiteSpace: 'normal', height: 'auto', lineHeight: '1.4' }}>{sector}</Tag>}
         </div>
       </CardContent>
