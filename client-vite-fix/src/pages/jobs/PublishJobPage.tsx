@@ -20,6 +20,9 @@ const initialForm = {
   requirements: '',
   keywords: '',
   missions: '',
+  salary_currency: '',
+  isActive: true,
+  jobTypeDetail: '',
 };
 
 const PublishJobPage: React.FC = () => {
@@ -73,6 +76,9 @@ const PublishJobPage: React.FC = () => {
         requirements: form.requirements ? form.requirements.split('\n').map(s => s.trim()).filter(Boolean) : [],
         keywords: form.keywords ? form.keywords.split(',').map(s => s.trim()).filter(Boolean) : [],
         missions: form.missions ? form.missions.split('\n').map(s => s.trim()).filter(Boolean) : [],
+        salary_currency: form.salary_currency || 'XOF',
+        isActive: true,
+        jobTypeDetail: form.type
       });
       setSuccess(true);
       setTimeout(() => navigate('/jobs'), 1200);
