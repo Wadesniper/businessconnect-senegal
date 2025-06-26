@@ -101,10 +101,10 @@
 /* Logo centré dans la grille du footer */
 .footer-logo-section {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-start;
   min-width: 160px;
-  min-height: 100px;
+  min-height: 72px;
 }
 .footer-logo-img {
   width: 72px;

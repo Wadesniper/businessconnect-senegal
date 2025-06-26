@@ -7,7 +7,6 @@ const AuthPage: React.FC = () => {
     <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
       {/* Logo et message de bienvenue */}
       <div style={{ textAlign: 'center', marginBottom: 32 }}>
-        <img src="/logo192.png" alt="Logo" style={{ width: 64, marginBottom: 10 }} />
         <div style={{ fontWeight: 700, fontSize: 22, color: '#1890ff', marginBottom: 2 }}>
           Bienvenue sur BusinessConnect Sénégal
         </div>
