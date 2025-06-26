@@ -88,9 +88,9 @@ router.get('/my-jobs', authenticate, (req: Request, res: Response, next: NextFun
 
 // IMPORTANT : La route la plus générique avec un paramètre (:id) doit être à la fin
 // pour ne pas intercepter les routes plus spécifiques comme '/meta/categories' ou '/search/all'.
-// router.get('/:id', (req: Request, res: Response, next: NextFunction) => {
-//   jobController.getJobById(req, res).catch(next); 
-// });
+router.get('/:id', (req: Request, res: Response, next: NextFunction) => {
+  jobController.getJobById(req, res).catch(next); 
+});
 
 // Les autres routes (protégées) peuvent être ajoutées ici si besoin
 // router.use(authMiddleware);
