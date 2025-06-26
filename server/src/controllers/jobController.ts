@@ -274,7 +274,7 @@ class JobController {
       if (!req.user?.id) {
         return res.status(401).json({ error: 'Utilisateur non authentifié' });
       }
-
+      console.log('DEBUG getMyJobs Prisma filter:', { postedById: req.user.id });
       const jobs = await prisma.job.findMany({
         where: {
           postedById: req.user.id
@@ -282,7 +282,6 @@ class JobController {
         orderBy: { createdAt: 'desc' }
       });
       console.log('DEBUG getMyJobs jobs:', jobs);
-
       res.json(jobs);
     } catch (error) {
       logger.error('Erreur lors de la récupération de mes offres:', error);
