@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Steps, Button, message, Layout, Typography, Spin, Row, Col, Card } from 'antd';
 import TemplateSelection from './components/TemplateSelection';
 import CVWizard from './components/CVWizard';
@@ -284,8 +284,26 @@ const CVGenerator: React.FC<Partial<CVGeneratorProps>> = (props) => {
   const { hasActiveSubscription, loading } = useSubscription();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [loadingPage, setLoadingPage] = useState(true);
+
+  // Affiche le loader à chaque navigation vers la page CV (SPA friendly)
+  useEffect(() => {
+    setLoadingPage(true);
+    const timer = setTimeout(() => setLoadingPage(false), 300);
+    return () => clearTimeout(timer);
+  }, [location.pathname]);
 
   const isPremium = !!hasPremiumAccess(user, hasActiveSubscription);
+
+  if (loadingPage) {
+    return (
+      <div style={{ minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <Spin size="large" />
+        <div style={{ marginTop: 24, fontSize: 18, color: '#1890ff' }}>Chargement du générateur de CV...</div>
+      </div>
+    );
+  }
 
   return (
     <Layout style={{ minHeight: '100vh', backgroundColor: '#fff' }}>
