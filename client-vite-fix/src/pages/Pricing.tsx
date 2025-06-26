@@ -2,6 +2,7 @@ import React from 'react';
 import { Layout, Typography, Card, Row, Col, Button, List, Space, Tooltip } from 'antd';
 import { 
   CheckOutlined, 
+  CloseOutlined,
   UserOutlined, 
   ShopOutlined, 
   TeamOutlined,
@@ -66,46 +67,41 @@ const SecurityFeature = styled.div`
 
 const plans = [
   {
-    title: 'Étudiant / Chercheur d\'emploi',
+    title: "Étudiant / Chercheur d'emploi",
     price: 1000,
     features: [
-      'Accès aux offres d\'emploi',
-      'Espace CV',
-      'Forum',
-      'Fiches métiers',
-      'Formations',
-      'Support standard'
+      { label: "Accès aux offres d'emploi", included: true },
+      { label: 'Générer votre CV', included: true },
+      { label: 'Fiches métiers', included: true },
+      { label: 'Accès à +4000 formations', included: true },
+      { label: 'Support standard', included: true },
+      { label: 'Publier sur la marketplace', included: false },
+      { label: "Publier des offres d'emploi", included: false },
     ],
-    icon: <UserOutlined />,
-    color: '#1890ff'
+    icon: <UserOutlined />, color: '#1890ff'
   },
   {
     title: 'Annonceur',
     price: 5000,
     features: [
-      'Publication d\'offres',
-      'Visibilité plateforme',
-      'Statistiques de vues',
-      'Support prioritaire',
-      'Badge "Annonceur Vérifié"',
-      'Outils de promotion'
+      { label: 'Toutes les fonctionnalités Étudiant', included: true },
+      { label: 'Visibilité sur la plateforme', included: true },
+      { label: 'Badge "Annonceur Vérifié"', included: true },
+      { label: 'Support prioritaire', included: true },
+      { label: "Publier des offres d'emploi", included: false },
     ],
-    icon: <ShopOutlined />,
-    color: '#52c41a'
+    icon: <ShopOutlined />, color: '#52c41a'
   },
   {
     title: 'Recruteur',
     price: 9000,
     features: [
-      'Accès CVthèque complète',
-      'Contact direct candidats',
-      'Publication offres illimitées',
-      'Statistiques avancées',
-      'Support dédié 24/7',
-      'Outils de filtrage premium'
+      { label: 'Toutes les fonctionnalités Étudiant et Annonceur', included: true },
+      { label: "Publication d'offres d'emploi", included: true },
+      { label: 'Support dédié', included: true },
+      { label: 'Visibilité plateforme', included: true },
     ],
-    icon: <TeamOutlined />,
-    color: '#722ed1'
+    icon: <TeamOutlined />, color: '#722ed1'
   }
 ];
 
@@ -214,10 +210,14 @@ const Pricing: React.FC = () => {
                     <List
                       dataSource={plan.features}
                       renderItem={item => (
-                        <List.Item>
+                        <List.Item style={{ padding: 0, border: 'none', background: 'none' }}>
                           <Space>
-                            <CheckOutlined style={{ color: plan.color }} />
-                            <span>{item}</span>
+                            {item.included ? (
+                              <CheckOutlined style={{ color: plan.color }} />
+                            ) : (
+                              <CloseOutlined style={{ color: '#ff4d4f' }} />
+                            )}
+                            <span style={{ color: item.included ? undefined : '#888', textDecoration: item.included ? undefined : 'line-through' }}>{item.label}</span>
                           </Space>
                         </List.Item>
                       )}

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Card, Row, Col, Typography, Button, Space, Tag, Result, Spin } from 'antd';
-import { UserOutlined, ShopOutlined, TeamOutlined, LoginOutlined } from '@ant-design/icons';
+import { Card, Row, Col, Typography, Button, Space, Tag, Result, Spin, List } from 'antd';
+import { UserOutlined, ShopOutlined, TeamOutlined, LoginOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import './SubscriptionPage.css';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
@@ -19,12 +19,13 @@ const offers = [
     color: '#1890ff',
     icon: <UserOutlined style={{ fontSize: 40, color: '#1890ff' }} />,
     features: [
-      "Accès aux offres d'emploi",
-      'Espace CV',
-      'Forum',
-      'Fiches métiers',
-      'Formations',
-      'Support standard'
+      { label: "Accès aux offres d'emploi", included: true },
+      { label: 'Générer votre CV', included: true },
+      { label: 'Fiches métiers', included: true },
+      { label: 'Accès à +4000 formations', included: true },
+      { label: 'Support standard', included: true },
+      { label: 'Publier sur la marketplace', included: false },
+      { label: "Publier des offres d'emploi", included: false },
     ],
   },
   {
@@ -34,12 +35,11 @@ const offers = [
     color: '#52c41a',
     icon: <ShopOutlined style={{ fontSize: 40, color: '#52c41a' }} />,
     features: [
-      "Publication d'offres",
-      'Visibilité plateforme',
-      'Statistiques de vues',
-      'Support prioritaire',
-      'Badge "Annonceur Vérifié"',
-      'Outils de promotion'
+      { label: 'Toutes les fonctionnalités Étudiant', included: true },
+      { label: 'Visibilité sur la plateforme', included: true },
+      { label: 'Badge "Annonceur Vérifié"', included: true },
+      { label: 'Support prioritaire', included: true },
+      { label: "Publier des offres d'emploi", included: false },
     ],
   },
   {
@@ -49,12 +49,10 @@ const offers = [
     color: '#faad14',
     icon: <TeamOutlined style={{ fontSize: 40, color: '#faad14' }} />,
     features: [
-      "Publication d'offres d'emploi",
-      'Gestion des candidatures reçues',
-      'Statistiques de candidatures',
-      'Support dédié',
-      'Outils de filtrage avancés',
-      'Visibilité plateforme'
+      { label: 'Toutes les fonctionnalités Étudiant et Annonceur', included: true },
+      { label: "Publication d'offres d'emploi", included: true },
+      { label: 'Support dédié', included: true },
+      { label: 'Visibilité plateforme', included: true },
     ],
     popular: true
   },
@@ -171,14 +169,22 @@ const SubscriptionPage: React.FC = () => {
                     {offer.popular && <Tag color="#43e97b" style={{ marginLeft: 8, fontWeight: 600, fontSize: 13 }}>Populaire</Tag>}
                   </div>
                   <div style={{ margin: '16px 0' }}>
-                    <ul style={{ textAlign: 'left', margin: '0 auto', maxWidth: 260, padding: 0, listStyle: 'none' }}>
-                      {offer.features.map((feature, idx) => (
-                        <li key={idx} style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
-                          <span style={{ display: 'inline-block', width: 22, color: offer.color, fontSize: 18, marginRight: 8 }}>•</span>
-                          <span>{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
+                    <List
+                      dataSource={offer.features}
+                      renderItem={item => (
+                        <List.Item style={{ padding: 0, border: 'none', background: 'none' }}>
+                          <Space>
+                            {item.included ? (
+                              <CheckOutlined style={{ color: offer.color }} />
+                            ) : (
+                              <CloseOutlined style={{ color: '#ff4d4f' }} />
+                            )}
+                            <span style={{ color: item.included ? undefined : '#888', textDecoration: item.included ? undefined : 'line-through' }}>{item.label}</span>
+                          </Space>
+                        </List.Item>
+                      )}
+                      style={{ textAlign: 'left', maxWidth: 260, margin: '0 auto' }}
+                    />
                   </div>
                   <Button
                     type="primary"
