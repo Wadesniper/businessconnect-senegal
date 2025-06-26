@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Notification } from '../types/notification';
+import { api } from '../services/api';
+import type { Notification } from '../types/notification';
 
 export const useNotifications = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -23,11 +24,8 @@ export const useNotifications = () => {
 
   const fetchNotifications = async () => {
     try {
-      const response = await fetch('/api/notifications');
-      if (!response.ok) throw new Error('Erreur lors de la récupération des notifications');
-      
-      const data = await response.json();
-      setNotifications(data);
+      const response = await api.get<Notification[]>('/api/notifications');
+      setNotifications(response.data);
     } catch (error) {
       console.error('Erreur:', error);
     }
@@ -35,14 +33,7 @@ export const useNotifications = () => {
 
   const markAsRead = async (notificationId: string) => {
     try {
-      const response = await fetch(`/api/notifications/${notificationId}/read`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      if (!response.ok) throw new Error('Erreur lors du marquage de la notification');
+      await api.put(`/api/notifications/${notificationId}/read`);
 
       setNotifications(prevNotifications =>
         prevNotifications.map(notification =>
@@ -58,14 +49,7 @@ export const useNotifications = () => {
 
   const markAllAsRead = async () => {
     try {
-      const response = await fetch('/api/notifications/mark-all-read', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      if (!response.ok) throw new Error('Erreur lors du marquage des notifications');
+      await api.put('/api/notifications/mark-all-read');
 
       setNotifications(prevNotifications =>
         prevNotifications.map(notification => ({
