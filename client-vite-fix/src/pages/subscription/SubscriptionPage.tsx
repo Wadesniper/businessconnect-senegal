@@ -9,8 +9,16 @@ import { useSubscription } from '../../hooks/useSubscription';
 import type { SubscriptionType } from '../../types/subscription';
 import { message } from 'antd';
 import { subscriptionOffers } from '../../data/subscriptionOffers';
+import type { SubscriptionOffer } from '../../data/subscriptionOffers';
 
 const { Title, Paragraph } = Typography;
+
+// Mapping local des icônes par clé d'offre
+const offerIcons: Record<string, JSX.Element> = {
+  student: <UserOutlined style={{ fontSize: 40, color: '#1890ff' }} />,
+  annonceur: <ShopOutlined style={{ fontSize: 40, color: '#52c41a' }} />,
+  employeur: <TeamOutlined style={{ fontSize: 40, color: '#faad14' }} />,
+};
 
 const SubscriptionPage: React.FC = () => {
   const { user, loading: loadingUser } = useAuth();
@@ -121,8 +129,8 @@ const SubscriptionPage: React.FC = () => {
                 }}
                 hoverable
               >
-                <Space direction="vertical" size="large" style={{ width: '100%', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                  {offer.icon}
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div style={{ marginBottom: 8 }}>{offerIcons[offer.key]}</div>
                   <Title level={3} style={{ color: offer.color, fontWeight: 700, marginBottom: 0 }}>
                     {offer.title}
                   </Title>
@@ -134,7 +142,7 @@ const SubscriptionPage: React.FC = () => {
                   <div style={{ margin: '16px 0' }}>
                     <List
                       dataSource={offer.features}
-                      renderItem={item => (
+                      renderItem={(item) => (
                         <List.Item style={{ padding: 0, border: 'none', background: 'none' }}>
                           <Space>
                             {item.included ? (
@@ -149,25 +157,25 @@ const SubscriptionPage: React.FC = () => {
                       style={{ textAlign: 'left', maxWidth: 260, margin: '0 auto' }}
                     />
                   </div>
-                  <Button
-                    type="primary"
-                    size="large"
-                    style={{
-                      background: offer.color,
-                      border: 'none',
-                      borderRadius: 25,
-                      width: '100%',
-                      fontWeight: 600,
-                      fontSize: 17,
-                      height: 52,
-                      marginTop: 'auto',
-                      boxShadow: offer.popular ? '0 2px 12px 0 rgba(67, 233, 123, 0.10)' : undefined
-                    }}
-                    onClick={() => handleSubscribe(offer.key)}
-                  >
-                    S'abonner
-                  </Button>
-                </Space>
+                </div>
+                <Button
+                  type="primary"
+                  size="large"
+                  style={{
+                    background: offer.color,
+                    border: 'none',
+                    borderRadius: 25,
+                    width: '100%',
+                    fontWeight: 600,
+                    fontSize: 17,
+                    height: 52,
+                    marginTop: 24,
+                    boxShadow: offer.popular ? '0 2px 12px 0 rgba(67, 233, 123, 0.10)' : undefined
+                  }}
+                  onClick={() => handleSubscribe(offer.key)}
+                >
+                  S'abonner
+                </Button>
               </Card>
             </Col>
           ))}
