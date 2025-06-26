@@ -34,7 +34,9 @@ export class JobService {
 
   static async createJob(jobData: Partial<JobData>): Promise<JobData> {
     try {
-      const response = await api.post<JobData>('/api/jobs', jobData);
+      // Ne jamais envoyer postedById côté client
+      const { postedById, ...cleanJobData } = jobData;
+      const response = await api.post<JobData>('/api/jobs', cleanJobData);
       return response.data;
     } catch (error: any) {
       console.error('Erreur lors de la création de l\'offre:', error.response?.data?.message || error.message);
@@ -44,7 +46,9 @@ export class JobService {
 
   static async updateJob(id: string, jobData: Partial<JobData>): Promise<JobData> {
     try {
-      const response = await api.put<JobData>(`/api/jobs/${id}`, jobData);
+      // Ne jamais envoyer postedById côté client
+      const { postedById, ...cleanJobData } = jobData;
+      const response = await api.put<JobData>(`/api/jobs/${id}`, cleanJobData);
       return response.data;
     } catch (error: any) {
       console.error(`Erreur lors de la mise à jour de l'offre ${id}:`, error.response?.data?.message || error.message);
