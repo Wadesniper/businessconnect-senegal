@@ -144,10 +144,11 @@ const SubscriptionPage: React.FC = () => {
                 variant="outlined"
                 style={{
                   borderRadius: 20,
+                  minHeight: 520,
                   boxShadow: offer.popular
                     ? '0 8px 32px 0 rgba(24, 144, 255, 0.18)'
                     : '0 4px 16px 0 rgba(31, 38, 135, 0.10)',
-                  border: offer.popular ? '2px solid #43e97b' : '1px solid #f0f0f0',
+                  border: `2.5px solid ${offer.color}`,
                   background: offer.popular
                     ? 'linear-gradient(135deg, #e0ffe9 0%, #e6f7ff 100%)'
                     : '#fff',

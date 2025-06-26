@@ -170,11 +170,13 @@ const Pricing: React.FC = () => {
                   className="pricing-card"
                   style={{
                     height: '100%',
+                    minHeight: 520,
                     transform: 'translateY(0)',
                     transition: 'all 0.3s ease',
                     cursor: 'pointer',
                     overflow: 'hidden',
-                    position: 'relative'
+                    position: 'relative',
+                    border: `2.5px solid ${plan.color}`,
                   }}
                   hoverable
                   variant="outlined"

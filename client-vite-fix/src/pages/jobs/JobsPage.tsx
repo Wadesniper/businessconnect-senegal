@@ -139,7 +139,7 @@ const JobsPage: React.FC = () => {
     );
   }
 
-  if (isLoading && jobs.length === 0) {
+  if (!loadingPage && isLoading && jobs.length === 0) {
     return <div style={{ minHeight: 420, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" /></div>;
   }
 
