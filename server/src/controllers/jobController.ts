@@ -270,6 +270,7 @@ class JobController {
 
   async getMyJobs(req: Request, res: Response) {
     try {
+      console.log('DEBUG getMyJobs user:', req.user);
       if (!req.user?.id) {
         return res.status(401).json({ error: 'Utilisateur non authentifié' });
       }
@@ -280,6 +281,7 @@ class JobController {
         },
         orderBy: { createdAt: 'desc' }
       });
+      console.log('DEBUG getMyJobs jobs:', jobs);
 
       res.json(jobs);
     } catch (error) {
