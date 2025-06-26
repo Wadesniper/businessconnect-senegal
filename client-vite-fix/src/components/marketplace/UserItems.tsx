@@ -100,7 +100,7 @@ const UserItems: React.FC = () => {
             <Card>
               <Title level={2} style={{ marginBottom: 24, textAlign: 'center' }}>Mes Annonces</Title>
 
-              {items.length === 0 ? (
+      {items.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '48px 0' }}>
                   <Text type="secondary" style={{ fontSize: 16, display: 'block', marginBottom: 16 }}>
                     Vous n'avez pas encore d'annonces
@@ -109,33 +109,33 @@ const UserItems: React.FC = () => {
                     type="primary"
                     icon={<PlusOutlined />}
                     size="large"
-                    onClick={() => navigate('/marketplace/create')}
-                  >
-                    Créer une annonce
+            onClick={() => navigate('/marketplace/create')}
+          >
+            Créer une annonce
                   </Button>
-                </div>
-              ) : (
+        </div>
+      ) : (
                 <Row gutter={[16, 16]}>
-                  {items.map((item) => {
+          {items.map((item) => {
                     const isOwner = user && (user.id === item.userId || user.id === item.sellerId);
-                    const isAdmin = user && user.role === 'admin';
-                    return (
+            const isAdmin = user && user.role === 'admin';
+            return (
                       <Col xs={24} sm={12} md={8} lg={6} key={item.id}>
                         <Card
                           hoverable
                           cover={
                             item.images.length > 0 ? (
                               <div style={{ height: 200, overflow: 'hidden' }}>
-                                <img
-                                  src={item.images[0]}
-                                  alt={item.title}
+                    <img
+                      src={item.images[0]}
+                      alt={item.title}
                                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                />
-                              </div>
+                    />
+                  </div>
                             ) : (
                               <div style={{ height: 200, background: '#f0f2f5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                 <Text type="secondary">Pas d'image</Text>
-                              </div>
+                  </div>
                             )
                           }
                           actions={[
@@ -149,17 +149,17 @@ const UserItems: React.FC = () => {
                             ...(isOwner || isAdmin ? [
                               <Button
                                 icon={<EditOutlined />}
-                                onClick={() => navigate(`/marketplace/edit/${item.id}`)}
-                              >
-                                Modifier
+                          onClick={() => navigate(`/marketplace/edit/${item.id}`)}
+                        >
+                          Modifier
                               </Button>,
                               <Button
                                 danger
                                 icon={<DeleteOutlined />}
                                 loading={deletingItemId === item.id}
-                                onClick={() => handleDeleteItem(item.id)}
-                              >
-                                {deletingItemId === item.id ? 'Suppression...' : 'Supprimer'}
+                          onClick={() => handleDeleteItem(item.id)}
+                        >
+                          {deletingItemId === item.id ? 'Suppression...' : 'Supprimer'}
                               </Button>
                             ] : [])
                           ]}
@@ -216,14 +216,14 @@ const UserItems: React.FC = () => {
                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: '#8c8c8c' }}>
                               <span>{item.location}</span>
                               <span>{new Date(item.createdAt).toLocaleDateString()}</span>
-                            </div>
-                          </div>
+                  </div>
+                </div>
                         </Card>
                       </Col>
-                    );
-                  })}
+            );
+          })}
                 </Row>
-              )}
+      )}
             </Card>
           </Col>
         </Row>

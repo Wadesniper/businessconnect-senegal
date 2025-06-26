@@ -8,55 +8,9 @@ import { useNavigate } from 'react-router-dom';
 import { useSubscription } from '../../hooks/useSubscription';
 import type { SubscriptionType } from '../../types/subscription';
 import { message } from 'antd';
+import { subscriptionOffers } from '../../data/subscriptionOffers';
 
 const { Title, Paragraph } = Typography;
-
-const offers = [
-  {
-    key: 'student',
-    title: "Étudiant / Chercheur d'emploi",
-    price: 1000,
-    color: '#1890ff',
-    icon: <UserOutlined style={{ fontSize: 40, color: '#1890ff' }} />,
-    features: [
-      { label: "Accès aux offres d'emploi", included: true },
-      { label: 'Générer votre CV', included: true },
-      { label: 'Fiches métiers', included: true },
-      { label: 'Accès à +4000 formations', included: true },
-      { label: 'Support standard', included: true },
-      { label: 'Publier sur la marketplace', included: false },
-      { label: "Publier des offres d'emploi", included: false },
-    ],
-  },
-  {
-    key: 'annonceur',
-    title: 'Annonceur',
-    price: 5000,
-    color: '#52c41a',
-    icon: <ShopOutlined style={{ fontSize: 40, color: '#52c41a' }} />,
-    features: [
-      { label: 'Toutes les fonctionnalités Étudiant', included: true },
-      { label: 'Visibilité sur la plateforme', included: true },
-      { label: 'Badge "Annonceur Vérifié"', included: true },
-      { label: 'Support prioritaire', included: true },
-      { label: "Publier des offres d'emploi", included: false },
-    ],
-  },
-  {
-    key: 'employeur',
-    title: 'Recruteur',
-    price: 9000,
-    color: '#faad14',
-    icon: <TeamOutlined style={{ fontSize: 40, color: '#faad14' }} />,
-    features: [
-      { label: 'Toutes les fonctionnalités Étudiant et Annonceur', included: true },
-      { label: "Publication d'offres d'emploi", included: true },
-      { label: 'Support dédié', included: true },
-      { label: 'Visibilité plateforme', included: true },
-    ],
-    popular: true
-  },
-];
 
 const SubscriptionPage: React.FC = () => {
   const { user, loading: loadingUser } = useAuth();
@@ -137,8 +91,8 @@ const SubscriptionPage: React.FC = () => {
           Accédez à toutes les fonctionnalités de BusinessConnect Sénégal selon votre profil. Paiement sécurisé via PayTech.
         </Paragraph>
         <Row gutter={[32, 32]} justify="center" style={{ display: 'flex', alignItems: 'stretch' }}>
-          {offers.map((offer) => (
-            <Col xs={24} sm={12} md={8} key={offer.key} style={{ display: 'flex' }}>
+          {subscriptionOffers.map((offer) => (
+            <Col xs={24} sm={12} md={8} key={offer.key} style={{ display: 'flex', width: '100%' }}>
               <Card
                 className="subscription-card"
                 variant="outlined"
@@ -146,6 +100,9 @@ const SubscriptionPage: React.FC = () => {
                   borderRadius: 20,
                   minHeight: 520,
                   height: '100%',
+                  width: '100%',
+                  maxWidth: 400,
+                  margin: '0 auto',
                   boxShadow: offer.popular
                     ? '0 8px 32px 0 rgba(24, 144, 255, 0.18)'
                     : '0 4px 16px 0 rgba(31, 38, 135, 0.10)',
@@ -160,10 +117,11 @@ const SubscriptionPage: React.FC = () => {
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
+                  alignItems: 'stretch',
                 }}
                 hoverable
               >
-                <Space direction="vertical" size="large" style={{ width: '100%' }}>
+                <Space direction="vertical" size="large" style={{ width: '100%', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                   {offer.icon}
                   <Title level={3} style={{ color: offer.color, fontWeight: 700, marginBottom: 0 }}>
                     {offer.title}
@@ -202,6 +160,7 @@ const SubscriptionPage: React.FC = () => {
                       fontWeight: 600,
                       fontSize: 17,
                       height: 52,
+                      marginTop: 'auto',
                       boxShadow: offer.popular ? '0 2px 12px 0 rgba(67, 233, 123, 0.10)' : undefined
                     }}
                     onClick={() => handleSubscribe(offer.key)}

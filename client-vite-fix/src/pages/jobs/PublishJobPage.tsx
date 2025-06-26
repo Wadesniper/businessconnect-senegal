@@ -8,13 +8,13 @@ import { JOB_SECTORS, JOB_TYPES, type JobType } from '../../types/job';
 const types: JobType[] = ['CDI', 'CDD', 'Stage', 'Freelance', 'Alternance', 'Temps partiel'];
 
 const initialForm = {
-  title: '',
-  description: '',
-  sector: '',
-  type: '',
-  location: '',
-  company: '',
-  salary_min: '',
+    title: '',
+    description: '',
+    sector: '',
+    type: '',
+    location: '',
+    company: '',
+    salary_min: '',
   contactEmail: '',
   contactPhone: '',
   requirements: '',
@@ -84,7 +84,7 @@ const PublishJobPage: React.FC = () => {
     try {
       // Construction de l'objet à envoyer, nettoyage des champs vides
       const jobPayload: any = {
-        ...form,
+        ...form, 
         type: mapJobType(form.type),
         salary_min: form.salary_min ? Number(form.salary_min) : undefined,
         requirements: form.requirements ? form.requirements.split('\n').map(s => s.trim()).filter(Boolean) : [],

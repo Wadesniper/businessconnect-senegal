@@ -165,12 +165,15 @@ const Pricing: React.FC = () => {
 
           <Row gutter={[32, 32]} style={{ display: 'flex', alignItems: 'stretch' }}>
             {plans.map((plan, index) => (
-              <Col xs={24} md={8} key={index} style={{ display: 'flex' }}>
+              <Col xs={24} md={8} key={index} style={{ display: 'flex', width: '100%' }}>
                 <Card
                   className="pricing-card"
                   style={{
                     height: '100%',
                     minHeight: 520,
+                    width: '100%',
+                    maxWidth: 400,
+                    margin: '0 auto',
                     transform: 'translateY(0)',
                     transition: 'all 0.3s ease',
                     cursor: 'pointer',
@@ -180,6 +183,7 @@ const Pricing: React.FC = () => {
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
+                    alignItems: 'stretch',
                   }}
                   hoverable
                   variant="outlined"
@@ -194,7 +198,7 @@ const Pricing: React.FC = () => {
                       background: plan.color
                     }}
                   />
-                  <Space direction="vertical" size="large" style={{ width: '100%' }}>
+                  <Space direction="vertical" size="large" style={{ width: '100%', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                     <div style={{ textAlign: 'center' }}>
                       <div style={{ 
                         fontSize: '48px',
@@ -226,7 +230,7 @@ const Pricing: React.FC = () => {
                           </Space>
                         </List.Item>
                       )}
-                      style={{ textAlign: 'left' }}
+                      style={{ textAlign: 'left', maxWidth: 260, margin: '0 auto' }}
                     />
 
                     <Button
@@ -235,7 +239,12 @@ const Pricing: React.FC = () => {
                       block
                       style={{
                         background: plan.color,
-                        borderColor: plan.color
+                        borderColor: plan.color,
+                        marginTop: 'auto',
+                        fontWeight: 600,
+                        fontSize: 17,
+                        height: 52,
+                        borderRadius: 25
                       }}
                       onClick={() => handleSubscribe(plan.title)}
                     >

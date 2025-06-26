@@ -12,6 +12,8 @@ import {
   ArrowRightOutlined,
   CrownOutlined,
   SearchOutlined,
+  CheckOutlined,
+  CloseOutlined,
 } from '@ant-design/icons';
 import { FaQuoteLeft } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
@@ -31,6 +33,7 @@ import womanGlasses from '../assets/testimonials/woman-glasses.png';
 import womanHijab from '../assets/testimonials/woman-hijab.png';
 import LazyImage from '../components/LazyImage';
 import { JOB_SECTORS } from '../types/job';
+import { subscriptionOffers } from '../data/subscriptionOffers';
 
 const { Content } = Layout;
 const { Title, Paragraph, Text } = Typography;
@@ -290,42 +293,6 @@ const Home: React.FC = () => {
     };
   });
 
-  const subscriptions = [
-    { 
-      title: 'Étudiant', 
-      price: '2 500 F CFA', 
-      features: [
-        'Accès à toutes les offres',
-        'Création de CV professionnels',
-        'Accès aux formations',
-        'Postuler en illimité',
-        'Publier sur le Marketplace',
-        'Publier des offres d\'emploi'
-      ]
-    },
-    {
-      title: 'Annonceur Marketplace',
-      price: '5 000 F CFA',
-      features: [
-        'Tous les avantages Étudiant',
-        'Visibilité accrue',
-        'Messagerie professionnelle',
-        'Notifications en temps réel'
-      ]
-    },
-    {
-      title: 'Employeur',
-      price: '9 000 F CFA',
-      features: [
-        'Tous les avantages Annonceur',
-        'Accès à la CVthèque',
-        'Tableau de bord de suivi',
-        'Statistiques des offres',
-        'Support prioritaire'
-      ]
-    }
-  ];
-
   const latestJobs = jobs
     .filter(job => job?.id && job.createdAt)
     .sort((a, b) => new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime())
@@ -441,84 +408,34 @@ const Home: React.FC = () => {
            <Title level={2} style={{ textAlign: 'center', marginBottom: 48, color: '#002766', fontWeight: 700 }}>Nos Abonnements</Title>
           </motion.div>
            <Row gutter={[32, 32]} justify="center">
-             <Col xs={24} sm={12} md={8}>
-              <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                whileHover={{ y: -10, transition: { duration: 0.3 } }}
-              >
-                <Card bordered style={{ borderRadius: 16, border: '2px solid #1ec773', minHeight: 420, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                  <div>
-                    <Title level={3} style={{ textAlign: 'center', color: '#222', marginBottom: 0 }}>Étudiant & Candidat</Title>
-                    <div style={{ textAlign: 'center', fontWeight: 700, fontSize: 34, color: '#1ec773', margin: '12px 0 0 0' }}>1 000 F CFA<small style={{ fontSize: 16, color: '#888' }}>/mois</small></div>
-                    <Paragraph style={{ textAlign: 'center', color: '#888', marginBottom: 18 }}>Idéal pour démarrer sa carrière.</Paragraph>
-                    <ul style={{ fontSize: 16, color: '#222', marginBottom: 24, paddingLeft: 0, listStyle: 'none' }}>
-                      <li>✔️ Accès à toutes les offres</li>
-                      <li>✔️ Création de CV professionnels</li>
-                      <li>✔️ Accès aux formations</li>
-                      <li>✔️ Postuler en illimité</li>
-                      <li style={{ color: '#bbb' }}>✖️ Publier sur le Marketplace</li>
-                      <li style={{ color: '#bbb' }}>✖️ Publier des offres d'emploi</li>
-                    </ul>
-                  </div>
-                  <Button type="primary" block style={{ borderRadius: 8, fontWeight: 600, background: '#1ec773', borderColor: '#1ec773' }} onClick={() => navigate('/subscription')}>S'abonner</Button>
-                </Card>
-              </motion.div>
-             </Col>
-             <Col xs={24} sm={12} md={8}>
-              <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                whileHover={{ y: -10, transition: { duration: 0.3 } }}
-              >
-               <Card bordered style={{ borderRadius: 16, border: '2px solid #1890ff', minHeight: 420, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                 <div>
-                    <Title level={3} style={{ textAlign: 'center', color: '#222', marginBottom: 0 }}>Annonceur Marketplace</Title>
-                    <div style={{ textAlign: 'center', fontWeight: 700, fontSize: 34, color: '#1890ff', margin: '12px 0 0 0' }}>5 000 F CFA<small style={{ fontSize: 16, color: '#888' }}>/mois</small></div>
-                    <Paragraph style={{ textAlign: 'center', color: '#888', marginBottom: 18 }}>Pour les vendeurs et freelances.</Paragraph>
-                    <ul style={{ fontSize: 16, color: '#222', marginBottom: 24, paddingLeft: 0, listStyle: 'none' }}>
-                      <li>✔️ Tous les avantages Étudiant</li>
-                      <li>✔️ Publier sur le Marketplace</li>
-                      <li>✔️ Visibilité accrue</li>
-                      <li>✔️ Messagerie professionnelle</li>
-                      <li>✔️ Notifications en temps réel</li>
-                      <li style={{ color: '#bbb' }}>✖️ Publier des offres d'emploi</li>
-                    </ul>
-                 </div>
-                 <Button type="primary" block style={{ borderRadius: 8, fontWeight: 600 }} onClick={() => navigate('/subscription')}>S'abonner</Button>
-               </Card>
-              </motion.div>
-             </Col>
-             <Col xs={24} sm={12} md={8}>
-              <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                whileHover={{ y: -10, transition: { duration: 0.3 } }}
-              >
-               <Card bordered style={{ borderRadius: 16, border: '2px solid #8a2be2', minHeight: 420, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                 <div>
-                    <Title level={3} style={{ textAlign: 'center', color: '#222', marginBottom: 0 }}>Employeur</Title>
-                    <div style={{ textAlign: 'center', fontWeight: 700, fontSize: 34, color: '#8a2be2', margin: '12px 0 0 0' }}>9 000 F CFA<small style={{ fontSize: 16, color: '#888' }}>/mois</small></div>
-                    <Paragraph style={{ textAlign: 'center', color: '#888', marginBottom: 18 }}>Pour les entreprises qui recrutent.</Paragraph>
-                    <ul style={{ fontSize: 16, color: '#222', marginBottom: 24, paddingLeft: 0, listStyle: 'none' }}>
-                      <li>✔️ Tous les avantages Annonceur</li>
-                      <li>✔️ Publier des offres d'emploi</li>
-                      <li>✔️ Accès à la CVthèque</li>
-                      <li>✔️ Tableau de bord de suivi</li>
-                      <li>✔️ Statistiques des offres</li>
-                      <li>✔️ Support prioritaire</li>
-                    </ul>
-                 </div>
-                 <Button type="primary" block style={{ borderRadius: 8, fontWeight: 600, background: '#8a2be2', borderColor: '#8a2be2' }} onClick={() => navigate('/subscription')}>S'abonner</Button>
-               </Card>
-              </motion.div>
-             </Col>
+             {subscriptionOffers.map((offer, idx) => (
+               <Col xs={24} sm={12} md={8} key={offer.key}>
+                <motion.div
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 0.5, delay: 0.1 * idx }}
+                  whileHover={{ y: -10, transition: { duration: 0.3 } }}
+                >
+                  <Card bordered style={{ borderRadius: 16, border: `2px solid ${offer.color}`, minHeight: 420, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                    <div>
+                      <Title level={3} style={{ textAlign: 'center', color: '#222', marginBottom: 0 }}>{offer.title}</Title>
+                      <div style={{ textAlign: 'center', fontWeight: 700, fontSize: 34, color: offer.color, margin: '12px 0 0 0' }}>{offer.price.toLocaleString()} F CFA<small style={{ fontSize: 16, color: '#888' }}>/mois</small></div>
+                      <Paragraph style={{ textAlign: 'center', color: '#888', marginBottom: 18 }}>{idx === 0 ? 'Idéal pour démarrer sa carrière.' : idx === 1 ? 'Pour les vendeurs et freelances.' : 'Pour les entreprises qui recrutent.'}</Paragraph>
+                      <ul style={{ fontSize: 16, color: '#222', marginBottom: 24, paddingLeft: 0, listStyle: 'none' }}>
+                        {offer.features.map((feature, i) => (
+                          <li key={i} style={{ color: feature.included ? undefined : '#bbb', display: 'flex', alignItems: 'center', gap: 8 }}>
+                            {feature.included ? <CheckOutlined style={{ color: offer.color, marginRight: 6 }} /> : <CloseOutlined style={{ color: '#ff4d4f', marginRight: 6 }} />}
+                            <span style={{ textDecoration: feature.included ? undefined : 'line-through' }}>{feature.label}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <Button type="primary" block style={{ borderRadius: 8, fontWeight: 600, background: offer.color, borderColor: offer.color }} onClick={() => navigate('/subscription')}>S'abonner</Button>
+                  </Card>
+                </motion.div>
+               </Col>
+             ))}
            </Row>
          </div>
 
