@@ -163,9 +163,9 @@ const Pricing: React.FC = () => {
             </Paragraph>
           </Space>
 
-          <Row gutter={[32, 32]}>
+          <Row gutter={[32, 32]} style={{ display: 'flex', alignItems: 'stretch' }}>
             {plans.map((plan, index) => (
-              <Col xs={24} md={8} key={index}>
+              <Col xs={24} md={8} key={index} style={{ display: 'flex' }}>
                 <Card
                   className="pricing-card"
                   style={{
@@ -177,6 +177,9 @@ const Pricing: React.FC = () => {
                     overflow: 'hidden',
                     position: 'relative',
                     border: `2.5px solid ${plan.color}`,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
                   }}
                   hoverable
                   variant="outlined"

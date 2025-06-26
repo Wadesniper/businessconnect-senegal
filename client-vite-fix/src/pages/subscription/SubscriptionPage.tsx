@@ -136,15 +136,16 @@ const SubscriptionPage: React.FC = () => {
         <Paragraph style={{ textAlign: 'center', color: '#e6f7ff', fontSize: 18, marginBottom: 40 }}>
           Accédez à toutes les fonctionnalités de BusinessConnect Sénégal selon votre profil. Paiement sécurisé via PayTech.
         </Paragraph>
-        <Row gutter={[32, 32]} justify="center">
+        <Row gutter={[32, 32]} justify="center" style={{ display: 'flex', alignItems: 'stretch' }}>
           {offers.map((offer) => (
-            <Col xs={24} sm={12} md={8} key={offer.key}>
+            <Col xs={24} sm={12} md={8} key={offer.key} style={{ display: 'flex' }}>
               <Card
                 className="subscription-card"
                 variant="outlined"
                 style={{
                   borderRadius: 20,
                   minHeight: 520,
+                  height: '100%',
                   boxShadow: offer.popular
                     ? '0 8px 32px 0 rgba(24, 144, 255, 0.18)'
                     : '0 4px 16px 0 rgba(31, 38, 135, 0.10)',
@@ -156,6 +157,9 @@ const SubscriptionPage: React.FC = () => {
                   overflow: 'hidden',
                   paddingBottom: 24,
                   textAlign: 'center',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
                 }}
                 hoverable
               >
