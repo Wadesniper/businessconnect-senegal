@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import {
   Layout,
   Card,
@@ -51,8 +51,10 @@ const categories = [
 const MarketplacePage: React.FC = () => {
   const navigate = useNavigate();
   const { id: editId } = useParams<{ id: string }>();
+  const location = useLocation();
   const [items, setItems] = useState<MarketplaceItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingPage, setLoadingPage] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
@@ -78,6 +80,12 @@ const MarketplacePage: React.FC = () => {
   const [editingItem, setEditingItem] = useState<MarketplaceItem | null>(null);
   const [editFileList, setEditFileList] = useState<UploadFile[]>([]);
   const [editUploadedUrls, setEditUploadedUrls] = useState<string[]>([]);
+
+  useEffect(() => {
+    setLoadingPage(true);
+    const timer = setTimeout(() => setLoadingPage(false), 300);
+    return () => clearTimeout(timer);
+  }, [location.pathname]);
 
   useEffect(() => {
     fetchItems();
@@ -299,6 +307,15 @@ const MarketplacePage: React.FC = () => {
 
   if (loadingUser) {
     return <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement..." /></div>;
+  }
+
+  if (loadingPage) {
+    return (
+      <div style={{ minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <Spin size="large" />
+        <div style={{ marginTop: 24, fontSize: 18, color: '#1890ff' }}>Chargement du marketplace...</div>
+      </div>
+    );
   }
 
   return (
