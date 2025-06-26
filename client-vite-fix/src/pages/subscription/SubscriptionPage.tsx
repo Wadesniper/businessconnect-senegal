@@ -49,12 +49,12 @@ const offers = [
     color: '#faad14',
     icon: <TeamOutlined style={{ fontSize: 40, color: '#faad14' }} />,
     features: [
-      'Accès CVthèque complète',
-      'Contact direct candidats',
-      'Publication offres illimitées',
-      'Statistiques avancées',
-      'Support dédié 24/7',
-      'Outils de filtrage premium'
+      "Publication d'offres d'emploi",
+      'Gestion des candidatures reçues',
+      'Statistiques de candidatures',
+      'Support dédié',
+      'Outils de filtrage avancés',
+      'Visibilité plateforme'
     ],
     popular: true
   },
@@ -171,9 +171,14 @@ const SubscriptionPage: React.FC = () => {
                     {offer.popular && <Tag color="#43e97b" style={{ marginLeft: 8, fontWeight: 600, fontSize: 13 }}>Populaire</Tag>}
                   </div>
                   <div style={{ margin: '16px 0' }}>
-                    {offer.features.map((feature, idx) => (
-                      <Tag key={idx} color={offer.color} style={{ marginBottom: 8 }}>{feature}</Tag>
-                    ))}
+                    <ul style={{ textAlign: 'left', margin: '0 auto', maxWidth: 260, padding: 0, listStyle: 'none' }}>
+                      {offer.features.map((feature, idx) => (
+                        <li key={idx} style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
+                          <span style={{ display: 'inline-block', width: 22, color: offer.color, fontSize: 18, marginRight: 8 }}>•</span>
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                   <Button
                     type="primary"
