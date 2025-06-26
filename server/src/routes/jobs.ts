@@ -8,9 +8,9 @@ const router = Router();
 
 // Routes publiques
 // router.get('/jobs', (req, res) => jobController.getAllJobs(req, res));
-router.get('/:id', (req: Request, res: Response, next: NextFunction) => {
-  jobController.getJobById(req, res).catch(next); 
-});
+// router.get('/:id', (req: Request, res: Response, next: NextFunction) => {
+//   jobController.getJobById(req, res).catch(next); 
+// });
 // router.get('/categories', (req, res) => jobController.getCategories(req, res));
 // router.get('/search', (req, res) => jobController.searchJobs(req, res));
 
@@ -88,9 +88,9 @@ router.get('/my-jobs', authenticate, (req: Request, res: Response, next: NextFun
 
 // IMPORTANT : La route la plus générique avec un paramètre (:id) doit être à la fin
 // pour ne pas intercepter les routes plus spécifiques comme '/meta/categories' ou '/search/all'.
-router.get('/:id', (req: Request, res: Response, next: NextFunction) => {
-  jobController.getJobById(req, res).catch(next); 
-});
+// router.get('/:id', (req: Request, res: Response, next: NextFunction) => {
+//   jobController.getJobById(req, res).catch(next); 
+// });
 
 // Les autres routes (protégées) peuvent être ajoutées ici si besoin
 // router.use(authMiddleware);
