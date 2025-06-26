@@ -6,6 +6,9 @@ import './Footer.css';
 const Footer: React.FC = () => {
   return (
     <footer className="footer-modern">
+      <div className="footer-logo-top">
+        <img src="/logo192.png" alt="Logo B" className="footer-logo-img" />
+      </div>
       <div className="footer-content">
         <div className="footer-section">
           <h3>Navigation</h3>
@@ -21,9 +24,6 @@ const Footer: React.FC = () => {
           <Link to="/help/FAQ">FAQ</Link>
           <Link to="/contact">Contact</Link>
           <a href="mailto:contact@businessconnectsenegal.com"><MailOutlined /> contact@businessconnectsenegal.com</a>
-        </div>
-        <div className="footer-section footer-logo-section">
-          <img src="/logo192.png" alt="Logo B" className="footer-logo-img" />
         </div>
         <div className="footer-section">
           <h3>Légal</h3>

@@ -99,13 +99,18 @@
 }
 
 /* Logo centré dans la grille du footer */
-.footer-logo-section {
+.footer-logo-top {
+  width: 100%;
   display: flex;
+  justify-content: center;
   align-items: flex-start;
-  justify-content: flex-start;
-  min-width: 160px;
-  min-height: 72px;
+  margin-bottom: 12px;
 }
+
+.footer-logo-section {
+  display: none;
+}
+
 .footer-logo-img {
   width: 72px;
   height: 72px;
