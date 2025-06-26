@@ -13,7 +13,7 @@ import {
 } from '@ant-design/icons';
 import { useAuth } from '../context/AuthContext';
 import { JobService } from '../services/jobService';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import type { JobData } from '../types/job';
 import { paymentService } from '../services/paymentService';
 
@@ -61,10 +61,18 @@ const quickAccessItems = [
 const Dashboard: React.FC = () => {
   const { user, logout, refreshAuth } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [jobs, setJobs] = useState<JobData[]>([]);
   const [myJobs, setMyJobs] = useState<JobData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingPage, setLoadingPage] = useState(true);
+
+  useEffect(() => {
+    setLoadingPage(true);
+    const timer = setTimeout(() => setLoadingPage(false), 300);
+    return () => clearTimeout(timer);
+  }, [location.pathname]);
 
   useEffect(() => {
     const checkPaymentStatus = async () => {
@@ -123,6 +131,15 @@ const Dashboard: React.FC = () => {
       }
     });
   };
+
+  if (loadingPage) {
+    return (
+      <div style={{ minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <Spin size="large" />
+        <div style={{ marginTop: 24, fontSize: 18, color: '#1890ff' }}>Chargement du tableau de bord...</div>
+      </div>
+    );
+  }
 
   if (!user) return null;
 
