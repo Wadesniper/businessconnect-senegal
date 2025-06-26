@@ -12,7 +12,7 @@ const StyledLayout = styled(Layout)`
   background: linear-gradient(135deg, #f6f8fa 0%, #ffffff 100%);
   padding: 40px 4vw 20px 4vw;
   @media (max-width: 600px) {
-    padding: 16px 0 8px 0;
+    padding: 20px 16px 16px 16px;
   }
 `;
 
@@ -25,7 +25,7 @@ const Container = styled.div`
   }
   @media (max-width: 600px) {
     margin: 0 auto;
-    padding: 0 6px;
+    padding: 0 8px;
     max-width: 100vw;
   }
 `;
@@ -37,7 +37,7 @@ const ContactCard = styled.div`
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   margin-top: 24px;
   @media (max-width: 600px) {
-    padding: 16px 4px;
+    padding: 20px 16px;
     border-radius: 12px;
     margin-top: 12px;
   }
@@ -55,7 +55,7 @@ const InfoCard = styled.div`
   flex-direction: column;
   align-items: center;
   @media (max-width: 600px) {
-    padding: 8px 0 4px 0;
+    padding: 12px 8px 8px 8px;
     border-radius: 8px;
     margin-bottom: 6px;
   }
@@ -143,7 +143,15 @@ const ContactPage: React.FC = () => {
           margin: '0 auto',
         }}>
           {/* Colonne gauche : infos et réassurance */}
-          <div style={{ flex: 1, minWidth: 260, maxWidth: 370, marginBottom: isMobile ? 32 : 0 }}>
+          <div style={{ 
+            flex: 1, 
+            minWidth: isMobile ? '100%' : 260, 
+            maxWidth: isMobile ? '100%' : 370, 
+            marginBottom: isMobile ? 32 : 0,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: isMobile ? 'center' : 'flex-start'
+          }}>
             <InfoCard>
               <MailOutlined style={{ fontSize: 22, color: '#faad14', marginBottom: 2 }} />
               <Title level={5} style={{ margin: 0, fontSize: 17 }}>Email</Title>
@@ -172,7 +180,13 @@ const ContactPage: React.FC = () => {
             </InfoCard>
           </div>
           {/* Colonne droite : formulaire premium */}
-          <div style={{ flex: 2, minWidth: 320, maxWidth: 600 }}>
+          <div style={{ 
+            flex: 2, 
+            minWidth: isMobile ? '100%' : 320, 
+            maxWidth: isMobile ? '100%' : 600,
+            display: 'flex',
+            justifyContent: 'center'
+          }}>
             <ContactCard style={{ boxShadow: '0 8px 32px rgba(24, 144, 255, 0.10)', border: '1.5px solid #e6f7ff', marginTop: 0 }}>
               {sent ? (
                 <div style={{ textAlign: 'center', padding: 32 }}>
