@@ -8,7 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useSubscription } from '../../hooks/useSubscription';
 import { hasPremiumAccess } from '../../utils/premiumAccess';
 import type { JobData, JobType } from '../../types/job';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { JobService } from '../../services/jobService';
 import { useDebounce } from '../../hooks/useDebounce';
 
@@ -21,11 +21,13 @@ const JobsPage: React.FC = () => {
   const { hasActiveSubscription } = useSubscription();
   const isPremium = hasPremiumAccess(user, hasActiveSubscription);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [jobs, setJobs] = useState<JobData[]>([]);
   const [totalJobs, setTotalJobs] = useState(0);
   const [sectors, setSectors] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadingPage, setLoadingPage] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Filter states
@@ -60,6 +62,12 @@ const JobsPage: React.FC = () => {
       default: return undefined;
     }
   };
+
+  useEffect(() => {
+    setLoadingPage(true);
+    const timer = setTimeout(() => setLoadingPage(false), 300);
+    return () => clearTimeout(timer);
+  }, [location.pathname]);
 
   useEffect(() => {
     if (currentPage === 1) {
@@ -120,6 +128,15 @@ const JobsPage: React.FC = () => {
 
   const handleLoadMore = () => {
     setCurrentPage(prev => prev + 1);
+  }
+
+  if (loadingPage) {
+    return (
+      <div style={{ minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <Spin size="large" />
+        <div style={{ marginTop: 24, fontSize: 18, color: '#1890ff' }}>Chargement des offres d'emploi...</div>
+      </div>
+    );
   }
 
   if (isLoading && jobs.length === 0) {
