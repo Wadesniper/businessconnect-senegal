@@ -4,7 +4,7 @@ import { SearchOutlined, ArrowRightOutlined, EnvironmentOutlined, BookOutlined, 
 import type { Secteur, FicheMetier, Competence } from './types';
 import { formatNumberToCurrency } from '../../utils/format';
 import { useAuth } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useSubscription } from '../../hooks/useSubscription';
 import { hasPremiumAccess } from '../../utils/premiumAccess';
 
@@ -4858,6 +4858,7 @@ const CareersPage: React.FC = () => {
   const { user } = useAuth();
   const { hasActiveSubscription } = useSubscription();
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMetier, setSelectedMetier] = useState<FicheMetier | null>(null);
   const [forceShow, setForceShow] = useState(false);
@@ -4867,10 +4868,12 @@ const CareersPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
+  // Affiche le loader à chaque navigation vers la page Fiches Métiers (SPA friendly)
   useEffect(() => {
+    setLoadingPage(true);
     const timer = setTimeout(() => setLoadingPage(false), 300);
     return () => clearTimeout(timer);
-  }, []);
+  }, [location.pathname]);
 
   // Scroll automatique vers le contenu quand on change d'onglet (pas au chargement initial)
   useEffect(() => {
@@ -4960,8 +4963,9 @@ const CareersPage: React.FC = () => {
 
   if (loadingPage) {
     return (
-      <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Spin size="large" tip="Chargement des métiers..." />
+      <div style={{ minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <Spin size="large" />
+        <div style={{ marginTop: 24, fontSize: 18, color: '#1890ff' }}>Chargement des fiches métiers...</div>
       </div>
     );
   }
