@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Typography, Row, Col, Button, Empty, List, Modal, Spin } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, DownloadOutlined, ShareAltOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import type { Template } from '../../types/cv';
 import { CV_TEMPLATES } from './components/data/templates';
 import { useAuth } from '../../context/AuthContext';
@@ -25,17 +25,13 @@ const CVGeneratorPage: React.FC = () => {
   const [myCVs, setMyCVs] = useState(exampleCVs);
   const [loadingPage, setLoadingPage] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
+    setLoadingPage(true);
     const timer = setTimeout(() => setLoadingPage(false), 300);
     return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    if (user && user.subscription && typeof user.subscription === 'object' && 'type' in user.subscription && user.subscription.type !== 'etudiant') {
-      navigate('/subscription');
-    }
-  }, [user, navigate]);
+  }, [location.pathname]);
 
   const handleStartCV = () => {
     if (selectedTemplate) {
