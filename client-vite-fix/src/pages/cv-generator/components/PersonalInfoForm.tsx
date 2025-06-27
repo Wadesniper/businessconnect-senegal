@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Input, Button, Upload, Space, Typography } from 'antd';
+import { Form, Input, Button, Upload, Space, Typography, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import type { RcFile } from 'antd/es/upload';
 import type { CVData } from '../../../types/cv';
@@ -20,10 +20,12 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ data, onChange }) =
     setUploadLoading(true);
     if (file.size > 5 * 1024 * 1024) {
       setUploadLoading(false);
+      message.error('La taille de l\'image ne doit pas dépasser 5 Mo');
       return Upload.LIST_IGNORE;
     }
-    if (!['image/jpeg', 'image/png'].includes(file.type)) {
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
       setUploadLoading(false);
+      message.error('Seuls les formats JPG, PNG et WebP sont acceptés');
       return Upload.LIST_IGNORE;
     }
     const reader = new FileReader();
@@ -31,6 +33,9 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ data, onChange }) =
     reader.onload = () => {
       form.setFieldsValue({ photo: reader.result });
       onChange({ ...form.getFieldsValue(), photo: reader.result });
+    };
+    reader.onerror = () => {
+      message.error('Erreur lors du chargement de la photo');
     };
     setUploadLoading(false);
     return false;

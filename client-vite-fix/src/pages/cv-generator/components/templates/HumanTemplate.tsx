@@ -26,7 +26,7 @@ const HumanTemplate: React.FC<HumanTemplateProps> = ({ data, isMiniature = false
   const references = Array.isArray((data as any).references) ? (data as any).references : [];
 
   return (
-    <div style={{ width: 794, height: 1123, background: terracotta, borderRadius: 18, overflow: 'hidden', fontFamily: 'Montserrat, Arial, sans-serif', display: 'flex', flexDirection: 'row', boxShadow: '0 4px 24px #0002' }}>
+    <div style={{ width: 794, minHeight: 1123, background: terracotta, borderRadius: 18, overflow: 'hidden', fontFamily: 'Montserrat, Arial, sans-serif', display: 'flex', flexDirection: 'row', boxShadow: '0 4px 24px #0002' }}>
       {/* Colonne gauche */}
       <div style={{ width: '54%', background: 'transparent', color: blanc, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '48px 0 32px 0', gap: 32 }}>
         {/* Photo + nom + titre + résumé */}

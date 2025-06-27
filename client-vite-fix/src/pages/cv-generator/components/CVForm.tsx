@@ -63,8 +63,8 @@ const CVForm: React.FC<CVFormProps> = ({ data, onChange, isPremium }) => {
       }
 
       // Vérification du type
-      if (!['image/jpeg', 'image/png'].includes(file.type)) {
-        message.error('Seuls les formats JPG et PNG sont acceptés');
+      if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+        message.error('Seuls les formats JPG, PNG et WebP sont acceptés');
         return Upload.LIST_IGNORE;
       }
 
@@ -87,6 +87,9 @@ const CVForm: React.FC<CVFormProps> = ({ data, onChange, isPremium }) => {
       reader.readAsDataURL(file);
       reader.onload = () => {
         form.setFieldValue(['personalInfo', 'photo'], reader.result);
+      };
+      reader.onerror = () => {
+        message.error('Erreur lors du chargement de la photo');
       };
       
       return false;

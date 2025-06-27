@@ -44,7 +44,7 @@ const CommerceTemplate: React.FC<CommerceTemplateProps> = ({ data, isMiniature =
   const timelineCardFontSize = isMiniature ? 9 : 14;
 
   return (
-    <div style={{ width: 794, height: 1123, background: '#f7f7f7', borderRadius: 18, overflow: 'hidden', fontFamily: 'Montserrat, Arial, sans-serif', boxShadow: '0 4px 24px #0002', display: 'flex', flexDirection: 'row' }}>
+    <div style={{ width: 794, minHeight: 1123, background: '#f7f7f7', borderRadius: 18, overflow: 'hidden', fontFamily: 'Montserrat, Arial, sans-serif', boxShadow: '0 4px 24px #0002', display: 'flex', flexDirection: 'row' }}>
       {/* Colonne gauche */}
       <div style={{ width: '35%', background: '#ededed', padding: '36px 18px 24px 18px', display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100%' }}>
         {/* Photo de profil */}

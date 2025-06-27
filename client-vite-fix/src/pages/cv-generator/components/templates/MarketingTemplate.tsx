@@ -43,7 +43,7 @@ const MarketingTemplate: React.FC<MarketingTemplateProps> = ({ data, isMiniature
   const projects = Array.isArray(data.projects) ? data.projects : [];
 
   return (
-    <div style={{ background: mainBlue, color: white, borderRadius: 18, height: 1123, minHeight: 1123, maxHeight: 1123, fontFamily: 'Montserrat, Arial, sans-serif', boxShadow: '0 4px 24px #0002', padding: 0, overflow: 'visible', display: 'flex', flexDirection: 'row', width: 794 }}>
+    <div style={{ background: mainBlue, color: white, borderRadius: 18, minHeight: 1123, fontFamily: 'Montserrat, Arial, sans-serif', boxShadow: '0 4px 24px #0002', padding: 0, overflow: 'visible', display: 'flex', flexDirection: 'row', width: 794 }}>
       {/* Colonne gauche */}
       <div style={{ background: accentBlue, width: 320, padding: 0, display: 'flex', flexDirection: 'column', minHeight: '100%', height: '100%' }}>
         {/* Header horizontal */}

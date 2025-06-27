@@ -89,9 +89,25 @@ const CVPreview = forwardRef<HTMLDivElement, CVPreviewProps>(
           .cv-preview-for-export div,
           .cv-preview-for-export span,
           .cv-preview-for-export li {
-            word-wrap: break-word;
+            word-break: break-word;
             overflow-wrap: break-word;
             white-space: pre-wrap;
+          }
+          .cv-preview-for-export div,
+          .cv-preview-for-export li,
+          .cv-preview-for-export section,
+          .cv-preview-for-export article,
+          .cv-preview-for-export .cv-section,
+          .cv-preview-for-export .cv-block,
+          .cv-preview-for-export .cv-experience,
+          .cv-preview-for-export .cv-education,
+          .cv-preview-for-export .cv-skill,
+          .cv-preview-for-export .cv-certification,
+          .cv-preview-for-export .cv-language,
+          .cv-preview-for-export .cv-project,
+          .cv-preview-for-export .cv-interest {
+            break-inside: avoid;
+            page-break-inside: avoid;
           }
         `}</style>
         
