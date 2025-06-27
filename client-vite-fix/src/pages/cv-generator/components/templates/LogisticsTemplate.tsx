@@ -28,7 +28,7 @@ const LogisticsTemplate: React.FC<LogisticsTemplateProps> = ({ data, isMiniature
   const references = Array.isArray(data.references) ? data.references : [];
 
   return (
-    <div style={{ width: 794, height: 1123, background: blanc, fontFamily: 'Montserrat, Arial, sans-serif', display: 'flex', flexDirection: 'row', borderRadius: 18, overflow: 'hidden', boxShadow: '0 4px 24px #0002' }}>
+    <div style={{ width: 794, minHeight: 1123, background: blanc, fontFamily: 'Montserrat, Arial, sans-serif', display: 'flex', flexDirection: 'row', borderRadius: 18, overflow: 'hidden', boxShadow: '0 4px 24px #0002' }}>
       {/* Colonne gauche */}
       <div style={{ width: '32%', background: bleuFonce, color: blanc, padding: '0 0 0 0', display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100%' }}>
         {/* Photo */}
@@ -37,8 +37,8 @@ const LogisticsTemplate: React.FC<LogisticsTemplateProps> = ({ data, isMiniature
         </div>
         {/* Nom et titre */}
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <div style={{ fontWeight: 700, fontSize: 28, color: blanc, letterSpacing: 1 }}>{personalInfo.firstName} <br />{personalInfo.lastName}</div>
-          <div style={{ fontSize: 16, color: bleuClair, fontWeight: 500, marginTop: 2 }}>{personalInfo.title}</div>
+          <div style={{ fontWeight: 700, fontSize: 28, color: blanc, letterSpacing: 1, wordBreak: 'break-word', overflowWrap: 'break-word' }}>{personalInfo.firstName} <br />{personalInfo.lastName}</div>
+          <div style={{ fontSize: 16, color: bleuClair, fontWeight: 500, marginTop: 2, wordBreak: 'break-word', overflowWrap: 'break-word' }}>{personalInfo.title}</div>
         </div>
         {/* Contact */}
         <div style={{ width: '100%', marginBottom: 24 }}>

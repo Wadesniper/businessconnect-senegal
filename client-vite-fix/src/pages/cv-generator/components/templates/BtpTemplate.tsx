@@ -53,8 +53,8 @@ const BtpTemplate: React.FC<BtpTemplateProps> = ({ data, isMiniature = false }) 
         {/* Header graphique */}
         <div style={{ background: orange, height: 180, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
           <Avatar src={personalInfo.photo || '/images/avatars/man-1.png'} size={100} style={{ border: '4px solid #fff', marginBottom: 12, boxShadow: '0 2px 8px #0001' }} />
-          <div style={{ fontWeight: 900, fontSize: 28, color: blanc, letterSpacing: 1, lineHeight: 1 }}>{personalInfo.firstName?.toUpperCase()} {personalInfo.lastName?.toUpperCase()}</div>
-          <div style={{ fontSize: 16, color: orange, fontWeight: 700, marginTop: 2, textTransform: 'uppercase' }}>{personalInfo.title}</div>
+          <div style={{ fontWeight: 900, fontSize: 28, color: blanc, letterSpacing: 1, lineHeight: 1, wordBreak: 'break-word', overflowWrap: 'break-word' }}>{personalInfo.firstName?.toUpperCase()} {personalInfo.lastName?.toUpperCase()}</div>
+          <div style={{ fontSize: 16, color: orange, fontWeight: 700, marginTop: 2, textTransform: 'uppercase', wordBreak: 'break-word', overflowWrap: 'break-word' }}>{personalInfo.title}</div>
           {/* Ligne graphique */}
           <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: 6, background: blanc, borderTopLeftRadius: 12, borderTopRightRadius: 12 }} />
         </div>

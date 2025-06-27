@@ -34,9 +34,9 @@ const HumanTemplate: React.FC<HumanTemplateProps> = ({ data, isMiniature = false
           <div style={{ width: 140, height: 140, borderRadius: '50%', background: blanc, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 24, boxShadow: '0 2px 8px #0001' }}>
             <img src={personalInfo.photo || '/images/avatars/woman-2.png'} alt="avatar" style={{ width: 128, height: 128, borderRadius: '50%', objectFit: 'cover' }} />
           </div>
-          <div style={{ fontWeight: 900, fontSize: 36, color: blanc, letterSpacing: 1, textTransform: 'capitalize', marginBottom: 4 }}>{personalInfo.firstName} {personalInfo.lastName}</div>
-          <div style={{ fontSize: 18, color: blanc, fontWeight: 500, marginBottom: 18, textTransform: 'capitalize' }}>{personalInfo.title}</div>
-          {summary && <div style={{ fontSize: 15, color: blanc, textAlign: 'center', maxWidth: 320 }}>{summary}</div>}
+          <div style={{ fontWeight: 900, fontSize: 36, color: blanc, letterSpacing: 1, textTransform: 'capitalize', marginBottom: 4, wordBreak: 'break-word', overflowWrap: 'break-word' }}>{personalInfo.firstName} {personalInfo.lastName}</div>
+          <div style={{ fontSize: 18, color: blanc, fontWeight: 500, marginBottom: 18, textTransform: 'capitalize', wordBreak: 'break-word', overflowWrap: 'break-word' }}>{personalInfo.title}</div>
+          {summary && <div style={{ fontSize: 15, color: blanc, textAlign: 'center', maxWidth: 320, wordBreak: 'break-word', overflowWrap: 'break-word' }}>{summary}</div>}
         </div>
         {/* Éducation */}
         {education.length > 0 && (

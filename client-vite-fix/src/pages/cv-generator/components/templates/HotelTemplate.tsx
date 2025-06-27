@@ -52,8 +52,8 @@ const HotelTemplate: React.FC<HotelTemplateProps> = ({ data, isMiniature = false
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', background: blanc, padding: '32px 48px 0 48px', minHeight: 180 }}>
         <Avatar src={personalInfo.photo || '/images/avatars/woman-5.png'} size={120} style={{ border: '4px solid #fff', marginRight: 32, boxShadow: '0 2px 8px #0001' }} />
         <div style={{ flex: 1, textAlign: 'center' }}>
-          <div style={{ fontWeight: 900, fontSize: 32, color: marron, letterSpacing: 1, lineHeight: 1 }}>{personalInfo.firstName?.toUpperCase()} {personalInfo.lastName?.toUpperCase()}</div>
-          <div style={{ fontSize: 20, color: gris, fontWeight: 500, marginTop: 8, letterSpacing: 8 }}>{personalInfo.title?.toUpperCase()}</div>
+          <div style={{ fontWeight: 900, fontSize: 32, color: marron, letterSpacing: 1, lineHeight: 1, wordBreak: 'break-word', overflowWrap: 'break-word' }}>{personalInfo.firstName?.toUpperCase()} {personalInfo.lastName?.toUpperCase()}</div>
+          <div style={{ fontSize: 20, color: gris, fontWeight: 500, marginTop: 8, letterSpacing: 8, wordBreak: 'break-word', overflowWrap: 'break-word' }}>{personalInfo.title?.toUpperCase()}</div>
         </div>
       </div>
       {/* Bloc contacts horizontal */}

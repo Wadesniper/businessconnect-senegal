@@ -49,12 +49,12 @@ const LawTemplate: React.FC<LawTemplateProps> = ({ data, isMiniature = false }) 
   const timelineCardFontSize = isMiniature ? 9 : 14;
 
   return (
-    <div style={{ width: 794, height: 1123, background: blanc, borderRadius: 18, overflow: 'hidden', fontFamily: 'Montserrat, Arial, sans-serif', boxShadow: '0 4px 24px #0002', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ width: 794, minHeight: 1123, background: blanc, borderRadius: 18, overflow: 'hidden', fontFamily: 'Montserrat, Arial, sans-serif', boxShadow: '0 4px 24px #0002', display: 'flex', flexDirection: 'column' }}>
       {/* Header vert foncé */}
       <div style={{ width: '100%', background: vert, color: blanc, display: 'flex', flexDirection: 'row', alignItems: 'center', padding: '32px 48px 24px 48px', justifyContent: 'space-between' }}>
         <div>
-          <div style={{ fontWeight: 900, fontSize: 28, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 4 }}>{personalInfo.firstName} {personalInfo.lastName}</div>
-          <div style={{ fontSize: 16, color: blanc, fontWeight: 500, letterSpacing: 2, textTransform: 'uppercase' }}>{personalInfo.title}</div>
+          <div style={{ fontWeight: 900, fontSize: 28, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 4, wordBreak: 'break-word', overflowWrap: 'break-word' }}>{personalInfo.firstName} {personalInfo.lastName}</div>
+          <div style={{ fontSize: 16, color: blanc, fontWeight: 500, letterSpacing: 2, textTransform: 'uppercase', wordBreak: 'break-word', overflowWrap: 'break-word' }}>{personalInfo.title}</div>
         </div>
         {/* Logo justice à droite */}
         <div style={{ fontSize: 48, color: blanc, opacity: 0.8 }}>

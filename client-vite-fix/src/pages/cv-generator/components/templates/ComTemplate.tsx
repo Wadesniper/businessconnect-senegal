@@ -28,7 +28,7 @@ const ComTemplate: React.FC<ComTemplateProps> = ({ data, isMiniature = false }) 
   const expertise = Array.isArray((data as any).expertise) ? (data as any).expertise : [];
 
   return (
-    <div style={{ width: 794, height: 1123, background: bleuClair, borderRadius: 18, overflow: 'hidden', fontFamily: 'Montserrat, Arial, sans-serif', display: 'flex', flexDirection: 'row', boxShadow: '0 4px 24px #0002', position: 'relative' }}>
+    <div style={{ width: 794, minHeight: 1123, background: bleuClair, borderRadius: 18, overflow: 'hidden', fontFamily: 'Montserrat, Arial, sans-serif', display: 'flex', flexDirection: 'row', boxShadow: '0 4px 24px #0002', position: 'relative' }}>
       {/* Barre verticale de séparation */}
       <div style={{ position: 'absolute', left: '34%', top: 48, bottom: 32, width: 2, background: gris, opacity: 0.25, borderRadius: 1, zIndex: 1 }} />
       {/* Colonne gauche (blanche) */}
@@ -38,8 +38,8 @@ const ComTemplate: React.FC<ComTemplateProps> = ({ data, isMiniature = false }) 
           <div style={{ width: 120, height: 120, borderRadius: '50%', background: bleuClair, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18, boxShadow: '0 2px 8px #0001' }}>
             <img src={personalInfo.photo || '/images/avatars/woman-1.png'} alt="avatar" style={{ width: 108, height: 108, borderRadius: '50%', objectFit: 'cover' }} />
           </div>
-          <div style={{ fontWeight: 900, fontSize: 28, color: bleuFonce, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 2 }}>{personalInfo.firstName} {personalInfo.lastName}</div>
-          <div style={{ fontSize: 16, color: bleuFonce, fontWeight: 500, marginBottom: 10, textTransform: 'capitalize' }}>{personalInfo.title}</div>
+          <div style={{ fontWeight: 900, fontSize: 28, color: bleuFonce, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 2, wordBreak: 'break-word', overflowWrap: 'break-word' }}>{personalInfo.firstName} {personalInfo.lastName}</div>
+          <div style={{ fontSize: 16, color: bleuFonce, fontWeight: 500, marginBottom: 10, textTransform: 'capitalize', wordBreak: 'break-word', overflowWrap: 'break-word' }}>{personalInfo.title}</div>
         </div>
         {/* Contact */}
         <div style={{ width: '80%', marginBottom: 24 }}>

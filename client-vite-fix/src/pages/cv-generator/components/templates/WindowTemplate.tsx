@@ -55,8 +55,8 @@ const WindowTemplate: React.FC<WindowTemplateProps> = ({ data, isMiniature = fal
         </div>
         {/* Flèche souris en haut à droite */}
         <svg width="38" height="38" viewBox="0 0 38 38" style={{ position: 'absolute', right: 18, top: 8 }} fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 4L32 18L20 20L24 34L18 32L14 20L6 4Z" fill={vertFonce} stroke={noir} strokeWidth="2"/></svg>
-        <div style={{ fontWeight: 900, fontSize: 32, color: blanc, letterSpacing: 2, textTransform: 'uppercase', marginTop: 8, textAlign: 'center' }}>{personalInfo.firstName} {personalInfo.lastName}</div>
-        <div style={{ fontSize: 18, color: blanc, fontWeight: 500, textTransform: 'uppercase', letterSpacing: 1, textAlign: 'center' }}>{personalInfo.title}</div>
+        <div style={{ fontWeight: 900, fontSize: 32, color: blanc, letterSpacing: 2, textTransform: 'uppercase', marginTop: 8, textAlign: 'center', wordBreak: 'break-word', overflowWrap: 'break-word' }}>{personalInfo.firstName} {personalInfo.lastName}</div>
+        <div style={{ fontSize: 18, color: blanc, fontWeight: 500, textTransform: 'uppercase', letterSpacing: 1, textAlign: 'center', wordBreak: 'break-word', overflowWrap: 'break-word' }}>{personalInfo.title}</div>
       </div>
       {/* Bloc Profil horizontal avec certifications */}
       <CardWindow title="Profil" style={{ margin: '0 24px 24px 24px' }}>

@@ -29,7 +29,7 @@ const BankTemplate: React.FC<BankTemplateProps> = ({ data, isMiniature = false }
   const expertise = Array.isArray((data as any).expertise) ? (data as any).expertise : [];
 
   return (
-    <div style={{ width: 794, height: 1123, background: blanc, borderRadius: 18, overflow: 'hidden', fontFamily: 'Montserrat, Arial, sans-serif', display: 'flex', flexDirection: 'column', boxShadow: '0 4px 24px #0002' }}>
+    <div style={{ width: 794, minHeight: 1123, background: blanc, borderRadius: 18, overflow: 'hidden', fontFamily: 'Montserrat, Arial, sans-serif', display: 'flex', flexDirection: 'column', boxShadow: '0 4px 24px #0002' }}>
       {/* Header bleu foncé */}
       <div style={{ width: '100%', background: bleuFonce, minHeight: 200, display: 'flex', flexDirection: 'row', alignItems: 'center', padding: 0, position: 'relative' }}>
         <div style={{ width: 140, height: 140, display: 'flex', alignItems: 'center', justifyContent: 'center', marginLeft: 32 }}>

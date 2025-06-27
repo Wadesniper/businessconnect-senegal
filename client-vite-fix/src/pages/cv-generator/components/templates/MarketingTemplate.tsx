@@ -50,8 +50,8 @@ const MarketingTemplate: React.FC<MarketingTemplateProps> = ({ data, isMiniature
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', padding: '32px 18px 16px 18px', borderBottom: `1px solid ${gray}`, minHeight: 120 }}>
           <Avatar src={personalInfo.photo || '/images/avatars/woman-1.png'} size={90} style={{ border: '2px solid #fff', marginRight: 14, boxShadow: '0 2px 8px #0001', flexShrink: 0 }} />
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', minWidth: 0 }}>
-            <div style={{ fontSize: 19, fontWeight: 700, letterSpacing: 1, color: white, lineHeight: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 220 }}>{personalInfo.firstName} {personalInfo.lastName}</div>
-            <div style={{ fontSize: 13, color: lightBlue, fontWeight: 500, marginBottom: 6, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 220 }}>{personalInfo.title}</div>
+            <div style={{ fontSize: 19, fontWeight: 700, letterSpacing: 1, color: white, lineHeight: 1, wordBreak: 'break-word', overflowWrap: 'break-word' }}>{personalInfo.firstName} {personalInfo.lastName}</div>
+            <div style={{ fontSize: 13, color: lightBlue, fontWeight: 500, marginBottom: 6, wordBreak: 'break-word', overflowWrap: 'break-word' }}>{personalInfo.title}</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2, width: '100%', marginTop: 2 }}>
               {personalInfo.email && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
