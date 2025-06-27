@@ -74,7 +74,11 @@ const HealthTemplate: React.FC<HealthTemplateProps> = ({ data, isMiniature = fal
           <div style={{ ...sectionTitle, fontSize: 13, color: roseFonce, marginBottom: 6 }}>FORMATION</div>
           <ul style={{ paddingLeft: 18, margin: 0 }}>
             {education.map((edu, idx) => (
-              <li key={idx} style={{ color: gris, fontSize: 13, marginBottom: 2 }}>{edu.degree} en {edu.field} <br /><span style={{ color: roseFonce }}>{edu.institution}</span></li>
+              <li key={idx} style={{ color: gris, fontSize: 13, marginBottom: 2 }}>
+                {edu.degree} {edu.field && <>en {edu.field} </>}
+                <br /><span style={{ color: roseFonce }}>{edu.institution}</span>
+                {edu.description && <div style={{ fontSize: 12, color: gris, marginTop: 2 }}>{edu.description}</div>}
+              </li>
             ))}
           </ul>
         </div>

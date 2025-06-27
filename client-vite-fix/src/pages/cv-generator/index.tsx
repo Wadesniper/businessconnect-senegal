@@ -194,6 +194,20 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
         <Card style={{ marginTop: 24, position: 'relative', paddingBottom: '80px' }}>
           {selectedTemplate ? (
             <>
+              <div style={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'flex-end',
+                gap: 16,
+                marginBottom: 16,
+                position: 'relative',
+                zIndex: 2,
+              }}>
+                <Button onClick={handlePrev}>Précédent</Button>
+                <Button type="primary" icon={<DownloadOutlined />} onClick={() => handleExport('pdf')} loading={isExporting}>
+                  Exporter en PDF
+                </Button>
+              </div>
               <CVPreview
                 ref={previewRef}
                 data={cvData || emptyCVData}
@@ -201,25 +215,6 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
                 customization={customization}
                 isPremium={isPremium}
               />
-              <div style={{
-                position: 'absolute',
-                bottom: 0,
-                left: 0,
-                right: 0,
-                padding: '16px 24px',
-                background: 'rgba(255, 255, 255, 0.8)',
-                backdropFilter: 'blur(4px)',
-                borderTop: '1px solid #f0f0f0',
-                display: 'flex',
-                justifyContent: 'flex-end',
-                gap: 16,
-                borderRadius: '0 0 8px 8px',
-              }}>
-                <Button onClick={handlePrev}>Précédent</Button>
-                <Button type="primary" icon={<DownloadOutlined />} onClick={() => handleExport('pdf')} loading={isExporting}>
-                  Exporter en PDF
-                </Button>
-              </div>
             </>
           ) : (
             <div style={{ textAlign: 'center', padding: 32 }}>

@@ -56,6 +56,7 @@ const AdminTemplate: React.FC<AdminTemplateProps> = ({ data, isMiniature = false
                 <div style={{ fontWeight: 600, fontSize: 14 }}>{edu.institution}</div>
                 <div style={{ fontSize: 13, color: '#e0e0e0' }}>{edu.degree}{edu.field ? `, ${edu.field}` : ''}</div>
                 <div style={{ fontSize: 12, color: '#b0b0b0' }}>{edu.startDate} - {edu.endDate}</div>
+                {edu.description && <div style={{ fontSize: 13, color: '#e0e0e0', marginTop: 4 }}>{edu.description}</div>}
               </div>
             ))}
           </div>
