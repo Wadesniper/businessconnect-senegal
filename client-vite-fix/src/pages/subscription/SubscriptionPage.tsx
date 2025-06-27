@@ -9,7 +9,6 @@ import { useSubscription } from '../../hooks/useSubscription';
 import type { SubscriptionType } from '../../types/subscription';
 import { message } from 'antd';
 import { subscriptionOffers } from '../../data/subscriptionOffers';
-import type { SubscriptionOffer } from '../../data/subscriptionOffers';
 
 const { Title, Paragraph } = Typography;
 
@@ -105,41 +104,41 @@ const SubscriptionPage: React.FC = () => {
                 className="subscription-card"
                 variant="outlined"
                 style={{
-                  borderRadius: 20,
-                  minHeight: 520,
-                  height: '100%',
+                  borderRadius: 24,
+                  minHeight: 560,
                   width: '100%',
                   maxWidth: 400,
                   margin: '0 auto',
                   boxShadow: offer.popular
                     ? '0 8px 32px 0 rgba(24, 144, 255, 0.18)'
-                    : '0 4px 16px 0 rgba(31, 38, 135, 0.10)',
+                    : '0 4px 24px 0 rgba(31, 38, 135, 0.10)',
                   border: `2.5px solid ${offer.color}`,
                   background: offer.popular
                     ? 'linear-gradient(135deg, #e0ffe9 0%, #e6f7ff 100%)'
-                    : '#fff',
+                    : 'linear-gradient(135deg, #fff 0%, #f7faff 100%)',
                   position: 'relative',
                   overflow: 'hidden',
-                  paddingBottom: 24,
+                  padding: '32px 24px 24px 24px',
                   textAlign: 'center',
                   display: 'flex',
                   flexDirection: 'column',
-                  justifyContent: 'flex-start',
-                  alignItems: 'stretch',
+                  height: '100%',
+                  transition: 'box-shadow 0.25s, transform 0.18s',
                 }}
+                bodyStyle={{ padding: 0, display: 'flex', flexDirection: 'column', height: '100%' }}
                 hoverable
               >
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ marginBottom: 8 }}>{offerIcons[offer.key]}</div>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
+                  <div style={{ marginBottom: 12 }}>{offerIcons[offer.key]}</div>
                   <Title level={3} style={{ color: offer.color, fontWeight: 700, marginBottom: 0 }}>
                     {offer.title}
                   </Title>
-                  <div>
+                  <div style={{ marginBottom: 8 }}>
                     <span style={{ fontSize: 36, fontWeight: 700, color: offer.color }}>{offer.price.toLocaleString()} FCFA</span>
                     <span style={{ fontSize: 18, color: '#888', marginLeft: 4 }}>/mois</span>
                     {offer.popular && <Tag color="#43e97b" style={{ marginLeft: 8, fontWeight: 600, fontSize: 13 }}>Populaire</Tag>}
                   </div>
-                  <div style={{ margin: '16px 0', flexGrow: 1 }}>
+                  <div style={{ margin: '18px 0 0 0', flexGrow: 1 }}>
                     <List
                       dataSource={offer.features}
                       renderItem={(item) => (
@@ -170,7 +169,9 @@ const SubscriptionPage: React.FC = () => {
                       fontWeight: 600,
                       fontSize: 17,
                       height: 52,
-                      boxShadow: offer.popular ? '0 2px 12px 0 rgba(67, 233, 123, 0.10)' : undefined
+                      marginTop: 32,
+                      boxShadow: offer.popular ? '0 2px 12px 0 rgba(67, 233, 123, 0.10)' : '0 2px 12px 0 rgba(24, 144, 255, 0.08)',
+                      transition: 'background 0.2s, transform 0.18s',
                     }}
                     onClick={() => handleSubscribe(offer.key)}
                   >
