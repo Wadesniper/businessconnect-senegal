@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+// import { motion, AnimatePresence } from 'framer-motion'; // SUPPRIMÉ - trop lourd
 import styled from '@emotion/styled';
 import { Typography, Button } from 'antd';
 import { ArrowRightOutlined } from '@ant-design/icons';
@@ -162,11 +162,7 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverServicesClick }) => {
       <GeometricBackground style={{ zIndex: 3, position: 'absolute' }} />
       <ContentWrapper>
         <TextContent>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
+          <AnimatedDiv>
             <TitleStyled>
               La <GreenSpan>plateforme n°1</GreenSpan> où les <GreenSpan>talents</GreenSpan> <span style={{color:'white', fontWeight:700}}>sénégalais</span> rencontrent les <GreenSpan>opportunités</GreenSpan>
             </TitleStyled>
@@ -177,7 +173,7 @@ const Hero: React.FC<HeroProps> = ({ onDiscoverServicesClick }) => {
               Découvrir nos services
               <ArrowRightOutlined />
             </StyledButton>
-          </motion.div>
+          </AnimatedDiv>
         </TextContent>
         <AnimatedMosaic>
           {images.slice(0, 9).map((src, index) => (
@@ -249,6 +245,20 @@ const MosaicImage = styled(LazyImage)`
     transform: scale(1.05);
     z-index: 10;
     position: relative;
+  }
+`;
+
+// Animation CSS native pour remplacer framer-motion
+const AnimatedDiv = styled.div`
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.8s ease-out forwards;
+  
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 `;
 

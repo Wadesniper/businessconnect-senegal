@@ -129,7 +129,8 @@ const UserItems: React.FC = () => {
                     <img
                       src={item.images[0]}
                       alt={item.title}
-                                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      loading="lazy"
                     />
                   </div>
                             ) : (
