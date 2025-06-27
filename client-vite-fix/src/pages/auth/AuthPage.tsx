@@ -34,13 +34,13 @@ const AuthPage: React.FC = () => {
           overflowX: 'hidden',
         }}
       >
-        {/* Trait vertical séparateur desktop */}
+        {/* Trait vertical séparateur desktop, passe derrière le "ou" */}
         {!isMobile && (
           <div style={{
             position: 'absolute',
             left: '50%',
-            top: 48,
-            bottom: 48,
+            top: 32,
+            bottom: 32,
             width: 2,
             background: 'linear-gradient(180deg, #e6f7ff 0%, #c3cfe2 100%)',
             zIndex: 1,
@@ -90,10 +90,10 @@ const AuthPage: React.FC = () => {
                 <RegisterForm noCard noBg hideLoginLink />
               </div>
             </div>
-            {/* Séparateur OU */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', margin: '18px 0' }}>
+            {/* Séparateur OU, en absolute pour masquer le trait */}
+            <div style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', zIndex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 60, height: 60, pointerEvents: 'none' }}>
               <div style={{
-                background: '#f0f5ff',
+                background: '#fff',
                 color: '#1890ff',
                 borderRadius: '50%',
                 width: 44,
@@ -156,10 +156,10 @@ const AuthPage: React.FC = () => {
                 <LoginForm noCard noBg hideRegisterLink />
               </div>
             </div>
-            {/* Séparateur OU */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 60, margin: '56px 0 0 0' }}>
+            {/* Séparateur OU, en absolute pour masquer le trait */}
+            <div style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', zIndex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 60, height: 60, pointerEvents: 'none' }}>
               <div style={{
-                background: '#f0f5ff',
+                background: '#fff',
                 color: '#1890ff',
                 borderRadius: '50%',
                 width: 44,
