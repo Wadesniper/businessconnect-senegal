@@ -44,7 +44,7 @@ const WindowTemplate: React.FC<WindowTemplateProps> = ({ data, isMiniature = fal
   const interests = Array.isArray((data as any).interests) ? (data as any).interests : [];
 
   return (
-    <div style={{ width: 794, minHeight: 1123, background: blanc, fontFamily: 'Montserrat, Arial, sans-serif', borderRadius: 18, boxShadow: shadowStyle, padding: 0, border: borderStyle }}>
+    <div className="cv-template-container" style={{ width: 794, minHeight: 1123, background: blanc, fontFamily: 'Montserrat, Arial, sans-serif', borderRadius: 18, boxShadow: shadowStyle, padding: 0, border: borderStyle }}>
       {/* Header principal effet fenêtre */}
       <div style={{ width: '100%', background: vertFonce, borderRadius: '18px 18px 0 0', borderBottom: borderStyle, boxShadow: '0 6px 0 #222, 0 8px 16px #0001', position: 'relative', minHeight: 80, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: 18 }}>
         {/* Boutons fenêtre + flèche */}

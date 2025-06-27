@@ -28,7 +28,7 @@ const ComTemplate: React.FC<ComTemplateProps> = ({ data, isMiniature = false }) 
   const expertise = Array.isArray((data as any).expertise) ? (data as any).expertise : [];
 
   return (
-    <div style={{ width: 794, minHeight: 1123, background: bleuClair, borderRadius: 18, overflow: 'hidden', fontFamily: 'Montserrat, Arial, sans-serif', display: 'flex', flexDirection: 'row', boxShadow: '0 4px 24px #0002', position: 'relative' }}>
+    <div className="cv-template-container" style={{ width: 794, minHeight: 1123, background: bleuClair, borderRadius: 18, overflow: 'hidden', fontFamily: 'Montserrat, Arial, sans-serif', display: 'flex', flexDirection: 'row', boxShadow: '0 4px 24px #0002', position: 'relative' }}>
       {/* Barre verticale de séparation */}
       <div style={{ position: 'absolute', left: '34%', top: 48, bottom: 32, width: 2, background: gris, opacity: 0.25, borderRadius: 1, zIndex: 1 }} />
       {/* Colonne gauche (blanche) */}

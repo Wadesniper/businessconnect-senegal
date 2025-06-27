@@ -28,7 +28,7 @@ const EducationTemplate: React.FC<EducationTemplateProps> = ({ data, isMiniature
   const languages = Array.isArray(data.languages) ? data.languages : [];
 
   return (
-    <div style={{ position: 'relative', width: 794, minHeight: 1123, background: gris, borderRadius: 18, overflow: 'hidden', fontFamily: 'Montserrat, Arial, sans-serif', boxShadow: '0 4px 24px #0002' }}>
+    <div className="cv-template-container" style={{ position: 'relative', width: 794, minHeight: 1123, background: gris, borderRadius: 18, overflow: 'hidden', fontFamily: 'Montserrat, Arial, sans-serif', boxShadow: '0 4px 24px #0002' }}>
       {/* Bande bleue traversante, arrondie à gauche, derrière la colonne noire */}
       <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: 120, background: bleu, borderTopLeftRadius: 18, zIndex: 1 }} />
       {/* Colonne noire traversante, au-dessus de la bande bleue à gauche */}

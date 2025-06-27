@@ -31,7 +31,7 @@ const ArtTemplate: React.FC<ArtTemplateProps> = ({ data, isMiniature = false }) 
   const references = Array.isArray((data as any).references) ? (data as any).references : [];
 
   return (
-    <div style={{ width: 794, minHeight: 1123, background: gris, borderRadius: 18, overflow: 'hidden', fontFamily: 'Montserrat, Arial, sans-serif', boxShadow: '0 4px 24px #0002', display: 'flex', flexDirection: 'column' }}>
+    <div className="cv-template-container" style={{ width: 794, minHeight: 1123, background: gris, borderRadius: 18, overflow: 'hidden', fontFamily: 'Montserrat, Arial, sans-serif', boxShadow: '0 4px 24px #0002', display: 'flex', flexDirection: 'column' }}>
       {/* Bandeau contacts + photo */}
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', background: bleu, padding: '0 0 0 36px', height: 120 }}>
         <Avatar src={personalInfo.photo || '/images/avatars/woman-4.png'} size={90} style={{ border: '4px solid #fff', marginRight: 32, boxShadow: '0 2px 8px #0001' }} />

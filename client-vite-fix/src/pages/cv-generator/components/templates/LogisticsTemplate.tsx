@@ -28,7 +28,7 @@ const LogisticsTemplate: React.FC<LogisticsTemplateProps> = ({ data, isMiniature
   const references = Array.isArray(data.references) ? data.references : [];
 
   return (
-    <div style={{ width: 794, minHeight: 1123, background: blanc, fontFamily: 'Montserrat, Arial, sans-serif', display: 'flex', flexDirection: 'row', borderRadius: 18, overflow: 'hidden', boxShadow: '0 4px 24px #0002' }}>
+    <div className="cv-template-container" style={{ width: 794, minHeight: 1123, background: blanc, fontFamily: 'Montserrat, Arial, sans-serif', display: 'flex', flexDirection: 'row', borderRadius: 18, overflow: 'hidden', boxShadow: '0 4px 24px #0002' }}>
       {/* Colonne gauche */}
       <div style={{ width: '32%', background: bleuFonce, color: blanc, padding: '0 0 0 0', display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100%' }}>
         {/* Photo */}

@@ -47,7 +47,7 @@ const BtpTemplate: React.FC<BtpTemplateProps> = ({ data, isMiniature = false }) 
   const timelineCardFontSize = isMiniature ? 9 : 14;
 
   return (
-    <div style={{ width: 794, height: 1123, background: noir, borderRadius: 18, overflow: 'hidden', fontFamily: 'Montserrat, Arial, sans-serif', boxShadow: '0 4px 24px #0002', display: 'flex', flexDirection: 'row' }}>
+    <div className="cv-template-container" style={{ width: 794, minHeight: 1123, background: noir, borderRadius: 18, overflow: 'hidden', fontFamily: 'Montserrat, Arial, sans-serif', boxShadow: '0 4px 24px #0002', display: 'flex', flexDirection: 'row' }}>
       {/* Colonne gauche */}
       <div style={{ width: '38%', background: noir, color: blanc, padding: '0 0 0 0', display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
         {/* Header graphique */}

@@ -30,7 +30,7 @@ const AdminTemplate: React.FC<AdminTemplateProps> = ({ data, isMiniature = false
   const references = Array.isArray(data.references) ? data.references : [];
 
   return (
-    <div style={{ width: 794, minHeight: 1123, background: blanc, fontFamily: 'Montserrat, Arial, sans-serif', display: 'flex', flexDirection: 'column' }}>
+    <div className="cv-template-container" style={{ width: 794, minHeight: 1123, background: blanc, fontFamily: 'Montserrat, Arial, sans-serif', display: 'flex', flexDirection: 'column' }}>
       {/* En-tête */}
       <div style={{ display: 'flex', padding: '40px 40px 20px 40px', background: blanc }}>
         <Avatar src={personalInfo.photo || '/images/avatars/woman-3.png'} size={120} style={{ border: '4px solid #fff', marginRight: 32, boxShadow: '0 2px 8px #0001' }} />

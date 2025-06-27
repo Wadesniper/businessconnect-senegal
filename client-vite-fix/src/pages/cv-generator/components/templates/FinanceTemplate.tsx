@@ -29,19 +29,18 @@ const FinanceTemplate: React.FC<FinanceTemplateProps> = ({ data, isMiniature = f
   const baseFontSize = isMiniature ? '8px' : '11px';
 
   return (
-    <div style={{ 
-        width: '100%', 
-        height: '100%', 
+    <div className="cv-template-container" style={{ 
+        width: 794, 
+        minHeight: 1123, 
         background: blanc, 
         fontFamily: 'Montserrat, Arial, sans-serif', 
         display: 'flex', 
         flexDirection: 'row',
-        fontSize: baseFontSize,
-        overflow: 'hidden'
+        fontSize: baseFontSize
     }}>
       {/* Colonne gauche */}
       <div style={{ width: '33%', background: bleu, color: blanc, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2em 0', boxSizing: 'border-box' }}>
-        <Avatar src={personalInfo.photo || '/images/avatars/man-1.png'} size={'8em'} style={{ border: '0.2em solid #fff', marginBottom: '2em' }} />
+        <Avatar src={personalInfo.photo || '/images/avatars/man-1.png'} size={120} style={{ border: '0.2em solid #fff', marginBottom: '2em' }} />
         
         <div style={{ width: '100%', padding: '0 2em', marginBottom: '1.5em' }}>
           <h2 style={{ fontSize: '1.2em', fontWeight: 700, letterSpacing: '0.1em', background: bleu, color: blanc, padding: '0.5em 1em', borderRadius: '0.5em', marginBottom: '0.8em' }}>INFORMATIONS</h2>

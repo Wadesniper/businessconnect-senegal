@@ -9,6 +9,58 @@ html, body, #root, .ant-layout, .ant-layout-content {
   background: #f7faff !important;
 }
 
+/* Styles spécifiques pour l'export PDF - éviter le texte tronqué */
+@media print {
+  * {
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    white-space: normal !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+  
+  /* Forcer le retour à la ligne pour tous les textes */
+  div, p, span, h1, h2, h3, h4, h5, h6 {
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+  }
+  
+  /* Éviter les coupures de section */
+  .cv-section {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+  
+  /* Permettre la pagination */
+  .cv-container {
+    min-height: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+}
+
+/* Styles globaux pour tous les templates CV */
+.cv-template-container {
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+}
+
+.cv-template-container * {
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+}
+
+/* Éviter les coupures de section dans les CV */
+.cv-section {
+  page-break-inside: avoid !important;
+  break-inside: avoid !important;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

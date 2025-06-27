@@ -49,7 +49,7 @@ const LawTemplate: React.FC<LawTemplateProps> = ({ data, isMiniature = false }) 
   const timelineCardFontSize = isMiniature ? 9 : 14;
 
   return (
-    <div style={{ width: 794, minHeight: 1123, background: blanc, borderRadius: 18, overflow: 'hidden', fontFamily: 'Montserrat, Arial, sans-serif', boxShadow: '0 4px 24px #0002', display: 'flex', flexDirection: 'column' }}>
+    <div className="cv-template-container" style={{ width: 794, minHeight: 1123, background: blanc, borderRadius: 18, overflow: 'hidden', fontFamily: 'Montserrat, Arial, sans-serif', boxShadow: '0 4px 24px #0002', display: 'flex', flexDirection: 'column' }}>
       {/* Header vert foncé */}
       <div style={{ width: '100%', background: vert, color: blanc, display: 'flex', flexDirection: 'row', alignItems: 'center', padding: '32px 48px 24px 48px', justifyContent: 'space-between' }}>
         <div>
