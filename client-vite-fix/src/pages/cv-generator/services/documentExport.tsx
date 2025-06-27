@@ -8,6 +8,7 @@ import { saveAs } from 'file-saver';
 import type { CVData, Template, CustomizationOptions } from '../../../types/cv';
 import { formatDate } from '../../../utils/dateUtils';
 import { message } from 'antd';
+import { generateFileName } from './pdfExport';
 
 export type ExportFormat = 'pdf' | 'docx';
 
@@ -276,7 +277,21 @@ export const exportToWord = async (
   }
 };
 
-// Réexport de la fonction exportCV attendue par le reste du projet
-export const exportCV = () => {
-  throw new Error('exportCV is not implemented.');
+export const exportCV = async (
+  element: HTMLElement,
+  data: CVData,
+  template: Template,
+  customization: CustomizationOptions,
+  options: ExportOptions = {}
+) => {
+  const finalFilename = generateFileName(data);
+  const finalOptions = {
+    ...defaultOptions,
+    ...options,
+    filename: finalFilename,
+    template,
+    data,
+    customization
+  };
+  await exportToPDF(element, finalOptions);
 };
