@@ -64,10 +64,12 @@ const JobsPage: React.FC = () => {
   };
 
   useEffect(() => {
-    setLoadingPage(true);
-    const timer = setTimeout(() => setLoadingPage(false), 300);
+    // On garde le loader actif pendant un court instant pour assurer une transition fluide
+    const timer = setTimeout(() => {
+      setLoadingPage(false);
+    }, 100); // Réduit de 300ms à 100ms pour une réponse plus rapide
     return () => clearTimeout(timer);
-  }, [location.pathname]);
+  }, []);
 
   useEffect(() => {
     if (currentPage === 1) {
@@ -132,9 +134,22 @@ const JobsPage: React.FC = () => {
 
   if (loadingPage) {
     return (
-      <div style={{ minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ 
+        minHeight: '100vh', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        background: '#f7faff',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 9999
+      }}>
         <Spin size="large" />
-        <div style={{ marginTop: 24, fontSize: 18, color: '#1890ff' }}>Chargement des offres d'emploi...</div>
+        <div style={{ marginTop: 24, fontSize: 18, color: '#1890ff', fontWeight: 600 }}>Chargement des offres d'emploi...</div>
       </div>
     );
   }

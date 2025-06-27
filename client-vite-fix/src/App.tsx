@@ -1,6 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { ProLayout } from '@ant-design/pro-layout';
+import { Spin } from 'antd';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -63,6 +64,21 @@ class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasErr
   }
 }
 
+// Loader global pour le Suspense
+const GlobalLoader = () => (
+  <div style={{ 
+    minHeight: '100vh', 
+    display: 'flex', 
+    flexDirection: 'column', 
+    alignItems: 'center', 
+    justifyContent: 'center',
+    background: '#f7faff'
+  }}>
+    <Spin size="large" />
+    <div style={{ marginTop: 24, fontSize: 18, color: '#1890ff' }}>Chargement...</div>
+  </div>
+);
+
 const App: React.FC = () => {
   const { hasActiveSubscription } = useSubscription();
   return (
@@ -76,7 +92,7 @@ const App: React.FC = () => {
         contentWidth="Fluid"
         style={{ width: '100vw', maxWidth: '100vw' }}
       >
-        <Suspense fallback={<></>}>
+        <Suspense fallback={<GlobalLoader />}>
           <Routes>
             {/* Pages publiques */}
             <Route path="/" element={<Home />} />

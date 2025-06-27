@@ -4868,12 +4868,14 @@ const CareersPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  // Affiche le loader à chaque navigation vers la page Fiches Métiers (SPA friendly)
+  // Le loader s'affiche immédiatement et se cache quand le contenu est prêt
   useEffect(() => {
-    setLoadingPage(true);
-    const timer = setTimeout(() => setLoadingPage(false), 300);
+    // On garde le loader actif pendant un court instant pour assurer une transition fluide
+    const timer = setTimeout(() => {
+      setLoadingPage(false);
+    }, 100); // Réduit de 300ms à 100ms pour une réponse plus rapide
     return () => clearTimeout(timer);
-  }, [location.pathname]);
+  }, []);
 
   // Scroll automatique vers le contenu quand on change d'onglet (pas au chargement initial)
   useEffect(() => {
@@ -4969,9 +4971,22 @@ const CareersPage: React.FC = () => {
 
   if (loadingPage) {
     return (
-      <div style={{ minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ 
+        minHeight: '100vh', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        background: '#f7faff',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 9999
+      }}>
         <Spin size="large" />
-        <div style={{ marginTop: 24, fontSize: 18, color: '#1890ff' }}>Chargement des fiches métiers...</div>
+        <div style={{ marginTop: 24, fontSize: 18, color: '#1890ff', fontWeight: 600 }}>Chargement des fiches métiers...</div>
       </div>
     );
   }
