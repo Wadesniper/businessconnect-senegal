@@ -101,10 +101,12 @@ const JobCard: React.FC<JobCardProps> = ({ job, isPremium, onEdit, onDelete }) =
   const hasAccess = isPremium || isOwner || isAdmin;
 
   const handleViewDetails = () => {
-    if (hasAccess) {
-        navigate(`/jobs/${id}`);
+    if (!user) {
+      navigate('/auth');
+    } else if (hasAccess) {
+      navigate(`/jobs/${id}`);
     } else {
-        navigate('/subscription');
+      navigate('/subscription');
     }
   };
 

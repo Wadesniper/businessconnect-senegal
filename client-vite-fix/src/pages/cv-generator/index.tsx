@@ -355,7 +355,13 @@ const CVGenerator: React.FC<Partial<CVGeneratorProps>> = (props) => {
                 boxShadow: '0 2px 8px #1890ff22',
                 transition: 'background 0.2s',
               }}
-              onClick={() => navigate('/subscription')}
+              onClick={() => {
+                if (!user) {
+                  navigate('/auth');
+                } else {
+                  navigate('/subscription');
+                }
+              }}
             >
               S'abonner
             </button>

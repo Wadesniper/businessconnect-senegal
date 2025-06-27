@@ -102,7 +102,13 @@ const CVGeneratorPage: React.FC = () => {
               transition: 'background 0.2s',
               minWidth: '120px',
             }}
-            onClick={() => navigate('/subscription')}
+            onClick={() => {
+              if (!user) {
+                navigate('/auth');
+              } else {
+                navigate('/subscription');
+              }
+            }}
           >
             S'abonner
           </button>

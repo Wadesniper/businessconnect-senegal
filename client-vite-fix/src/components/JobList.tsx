@@ -113,7 +113,9 @@ export const JobList: React.FC = () => {
                   type="primary"
                   icon={<EyeOutlined />}
                   onClick={() => {
-                    if (!hasActiveSubscription) {
+                    if (!user) {
+                      navigate('/auth');
+                    } else if (!hasActiveSubscription) {
                       navigate('/subscription');
                     } else {
                       handleViewDetails(job);
@@ -126,7 +128,9 @@ export const JobList: React.FC = () => {
                 <Button
                   icon={<SendOutlined />}
                   onClick={() => {
-                    if (!hasActiveSubscription) {
+                    if (!user) {
+                      navigate('/auth');
+                    } else if (!hasActiveSubscription) {
                       navigate('/subscription');
                     } else {
                       handleApply(job.id);

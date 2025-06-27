@@ -3,6 +3,7 @@ import { Card, Avatar, Typography, Divider, Tag, Space, Button, Slider } from 'a
 import { ZoomInOutlined, ZoomOutOutlined, DownloadOutlined, EyeOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import type { CVData, Template, CustomizationOptions } from '../../../types/cv';
+import { useAuth } from '../../../context/AuthContext';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -37,6 +38,7 @@ interface CVPreviewProps {
 const CVPreview = forwardRef<HTMLDivElement, CVPreviewProps>(
   ({ data, template, customization, isPremium, isMiniature = false }, ref) => {
     const navigate = useNavigate();
+    const { user } = useAuth();
     const TemplateComponent = template.component;
 
     // Données sécurisées pour éviter les erreurs si des champs sont nuls
@@ -128,7 +130,13 @@ const CVPreview = forwardRef<HTMLDivElement, CVPreviewProps>(
               }}>
                 <Title level={3}>Version d'aperçu</Title>
                 <Text>Abonnez-vous pour télécharger votre CV</Text>
-                <Button type="primary" onClick={() => navigate('/subscription')}>S'abonner</Button>
+                <Button type="primary" onClick={() => {
+                  if (!user) {
+                    navigate('/auth');
+                  } else {
+                    navigate('/subscription');
+                  }
+                }}>S'abonner</Button>
               </div>
             )}
           </div>

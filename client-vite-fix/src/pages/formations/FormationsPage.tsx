@@ -40,7 +40,9 @@ const FormationsPage: React.FC = () => {
   );
 
   const handleFormationClick = (url: string) => {
-    if (isPremium) {
+    if (!user) {
+      navigate('/auth');
+    } else if (isPremium) {
       window.open(url, '_blank');
     } else {
       navigate('/subscription');
@@ -113,7 +115,13 @@ const FormationsPage: React.FC = () => {
                 boxShadow: '0 2px 8px #1890ff22',
                 transition: 'background 0.2s',
               }}
-              onClick={() => navigate('/subscription')}
+              onClick={() => {
+                if (!user) {
+                  navigate('/auth');
+                } else {
+                  navigate('/subscription');
+                }
+              }}
             >
               S'abonner
             </button>

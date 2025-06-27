@@ -4932,7 +4932,13 @@ const CareersPage: React.FC = () => {
       Modal.info({
         title: 'Fonctionnalité réservée',
         content: 'Cette fonctionnalité est réservée aux abonnés. Abonnez-vous pour consulter le détail des métiers.',
-        onOk: () => navigate('/subscription')
+        onOk: () => {
+          if (!user) {
+            navigate('/auth');
+          } else {
+            navigate('/subscription');
+          }
+        }
       });
       return;
     }
@@ -5008,7 +5014,13 @@ const CareersPage: React.FC = () => {
               boxShadow: '0 2px 8px #1890ff22',
               transition: 'background 0.2s',
             }}
-            onClick={() => navigate('/subscription')}
+            onClick={() => {
+              if (!user) {
+                navigate('/auth');
+              } else {
+                navigate('/subscription');
+              }
+            }}
           >
             S'abonner
           </button>
@@ -5088,7 +5100,9 @@ const CareersPage: React.FC = () => {
                               height: 44,
                             }}
                             onClick={() => {
-                              if (isPremium) {
+                              if (!user) {
+                                navigate('/auth');
+                              } else if (isPremium) {
                                 showMetierDetail(metier);
                               } else {
                                 navigate('/subscription');
@@ -5180,7 +5194,9 @@ const CareersPage: React.FC = () => {
                               height: 44,
                             }}
                             onClick={() => {
-                              if (isPremium) {
+                              if (!user) {
+                                navigate('/auth');
+                              } else if (isPremium) {
                                 showMetierDetail(metier);
                               } else {
                                 navigate('/subscription');

@@ -28,7 +28,11 @@ const JobApplyPage: React.FC = () => {
 
   useEffect(() => {
     if (!loadingSub && !hasActiveSubscription && user?.role !== 'admin' && user?.role !== 'employeur') {
-      navigate('/subscription');
+      if (!user) {
+        navigate('/auth');
+      } else {
+        navigate('/subscription');
+      }
     }
   }, [hasActiveSubscription, loadingSub, navigate, user]);
 

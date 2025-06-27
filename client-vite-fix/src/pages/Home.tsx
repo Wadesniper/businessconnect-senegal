@@ -431,7 +431,13 @@ const Home: React.FC = () => {
                         ))}
                       </ul>
                     </div>
-                    <Button type="primary" block style={{ borderRadius: 8, fontWeight: 600, background: offer.color, borderColor: offer.color }} onClick={() => navigate('/subscription')}>S'abonner</Button>
+                    <Button type="primary" block style={{ borderRadius: 8, fontWeight: 600, background: offer.color, borderColor: offer.color }} onClick={() => {
+                      if (!user) {
+                        navigate('/auth');
+                      } else {
+                        navigate('/subscription');
+                      }
+                    }}>S'abonner</Button>
                   </Card>
                 </motion.div>
                </Col>
