@@ -124,12 +124,12 @@ const SubscriptionPage: React.FC = () => {
                   textAlign: 'center',
                   display: 'flex',
                   flexDirection: 'column',
-                  justifyContent: 'space-between',
+                  justifyContent: 'flex-start',
                   alignItems: 'stretch',
                 }}
                 hoverable
               >
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                   <div style={{ marginBottom: 8 }}>{offerIcons[offer.key]}</div>
                   <Title level={3} style={{ color: offer.color, fontWeight: 700, marginBottom: 0 }}>
                     {offer.title}
@@ -139,7 +139,7 @@ const SubscriptionPage: React.FC = () => {
                     <span style={{ fontSize: 18, color: '#888', marginLeft: 4 }}>/mois</span>
                     {offer.popular && <Tag color="#43e97b" style={{ marginLeft: 8, fontWeight: 600, fontSize: 13 }}>Populaire</Tag>}
                   </div>
-                  <div style={{ margin: '16px 0' }}>
+                  <div style={{ margin: '16px 0', flexGrow: 1 }}>
                     <List
                       dataSource={offer.features}
                       renderItem={(item) => (
@@ -158,24 +158,25 @@ const SubscriptionPage: React.FC = () => {
                     />
                   </div>
                 </div>
-                <Button
-                  type="primary"
-                  size="large"
-                  style={{
-                    background: offer.color,
-                    border: 'none',
-                    borderRadius: 25,
-                    width: '100%',
-                    fontWeight: 600,
-                    fontSize: 17,
-                    height: 52,
-                    marginTop: 24,
-                    boxShadow: offer.popular ? '0 2px 12px 0 rgba(67, 233, 123, 0.10)' : undefined
-                  }}
-                  onClick={() => handleSubscribe(offer.key)}
-                >
-                  S'abonner
-                </Button>
+                <div style={{ marginTop: 'auto', width: '100%' }}>
+                  <Button
+                    type="primary"
+                    size="large"
+                    style={{
+                      background: offer.color,
+                      border: 'none',
+                      borderRadius: 25,
+                      width: '100%',
+                      fontWeight: 600,
+                      fontSize: 17,
+                      height: 52,
+                      boxShadow: offer.popular ? '0 2px 12px 0 rgba(67, 233, 123, 0.10)' : undefined
+                    }}
+                    onClick={() => handleSubscribe(offer.key)}
+                  >
+                    S'abonner
+                  </Button>
+                </div>
               </Card>
             </Col>
           ))}
