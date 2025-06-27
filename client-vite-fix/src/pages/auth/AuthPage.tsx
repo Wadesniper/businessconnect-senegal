@@ -27,28 +27,15 @@ const AuthPage: React.FC = () => {
           width: '100%', 
           display: 'flex', 
           flexDirection: isMobile ? 'column' : 'row', 
-          gap: isMobile ? 0 : 0, 
+          justifyContent: 'center',
+          alignItems: 'stretch',
+          gap: 0,
           position: 'relative',
           margin: '0 auto',
           boxSizing: 'border-box',
           overflowX: 'hidden',
         }}
       >
-        {/* Trait vertical séparateur desktop, passe derrière le "ou" */}
-        {!isMobile && (
-          <div style={{
-            position: 'absolute',
-            left: '50%',
-            top: 32,
-            bottom: 32,
-            width: 2,
-            background: 'linear-gradient(180deg, #e6f7ff 0%, #c3cfe2 100%)',
-            zIndex: 1,
-            borderRadius: 2,
-            boxShadow: '0 0 8px #e6f7ff44',
-            transform: 'translateX(-50%)',
-          }} />
-        )}
         {isMobile ? (
           <>
             {/* Inscription d'abord */}
@@ -156,9 +143,25 @@ const AuthPage: React.FC = () => {
                 <LoginForm noCard noBg hideRegisterLink />
               </div>
             </div>
-            {/* Séparateur OU, en absolute pour masquer le trait */}
-            <div style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', zIndex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 60, height: 60, pointerEvents: 'none' }}>
+            {/* Wrapper du trait et du 'ou' */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: 60, position: 'relative' }}>
+              {/* Trait vertical centré */}
               <div style={{
+                width: 2,
+                flex: 1,
+                background: 'linear-gradient(180deg, #e6f7ff 0%, #c3cfe2 100%)',
+                borderRadius: 2,
+                boxShadow: '0 0 8px #e6f7ff44',
+                minHeight: 320,
+                zIndex: 1,
+              }} />
+              {/* 'ou' centré */}
+              <div style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                zIndex: 2,
                 background: '#fff',
                 color: '#1890ff',
                 borderRadius: '50%',
@@ -171,6 +174,7 @@ const AuthPage: React.FC = () => {
                 fontSize: 18,
                 boxShadow: '0 2px 12px #1890ff22',
                 border: '2px solid #e6f7ff',
+                pointerEvents: 'none',
               }}>ou</div>
             </div>
             {/* Inscription ensuite (desktop) */}
