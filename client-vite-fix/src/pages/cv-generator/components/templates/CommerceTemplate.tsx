@@ -71,10 +71,7 @@ const CommerceTemplate: React.FC<CommerceTemplateProps> = ({ data, isMiniature =
         <div style={{ width: '100%', marginBottom: 24 }}>
           <div style={{ fontWeight: 700, fontSize: 16, color: '#232323', marginBottom: 8, background: '#fff', padding: '6px 12px', borderRadius: 8, textAlign: 'center' }}>COMPÉTENCES</div>
           {skills.map((skill, idx) => (
-            <div key={idx} style={{ marginBottom: 10 }}>
-              <div style={{ fontSize: 13, color: '#232323', marginBottom: 2 }}>{skill.name}</div>
-              <Progress percent={typeof skill.level === 'number' ? skill.level * 25 : skill.level === 'Débutant' ? 25 : skill.level === 'Intermédiaire' ? 50 : skill.level === 'Avancé' ? 75 : skill.level === 'Expert' ? 100 : 0} showInfo={false} strokeColor={'#232323'} trailColor={'#e0e0e0'} style={{ height: 8 }} />
-            </div>
+            <div key={idx} style={{ fontSize: 13, color: '#232323', marginBottom: 10 }}>{skill.name}</div>
           ))}
         </div>
       </div>

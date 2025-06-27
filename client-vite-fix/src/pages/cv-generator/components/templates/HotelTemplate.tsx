@@ -121,10 +121,7 @@ const HotelTemplate: React.FC<HotelTemplateProps> = ({ data, isMiniature = false
             <div>
               <div style={{ fontWeight: 700, fontSize: 16, color: marron, background: beige, padding: '6px 12px', borderRadius: 8, marginBottom: 8 }}>COMPÉTENCES</div>
               {skills.map((skill, idx) => (
-                <div key={idx} style={{ marginBottom: 10 }}>
-                  <div style={{ fontSize: 13, color: marron, marginBottom: 2 }}>{skill.name}</div>
-                  <Progress percent={typeof skill.level === 'number' ? skill.level * 20 : skill.level === 'Débutant' ? 20 : skill.level === 'Intermédiaire' ? 40 : skill.level === 'Avancé' ? 60 : skill.level === 'Expert' ? 80 : 0} showInfo={false} strokeColor={marron} trailColor={beige} style={{ height: 8 }} />
-                </div>
+                <div key={idx} style={{ fontSize: 13, color: marron, marginBottom: 10 }}>{skill.name}</div>
               ))}
             </div>
           )}

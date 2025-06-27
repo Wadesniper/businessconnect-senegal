@@ -98,7 +98,6 @@ const MarketingTemplate: React.FC<MarketingTemplateProps> = ({ data, isMiniature
           {skills.map((skill, idx) => (
             <div key={idx} style={{ marginBottom: 6 }}>
               <div style={{ ...labelStyle, color: lightBlue, marginBottom: 1, fontSize: 12 }}>{skill.name}</div>
-              <Progress percent={typeof skill.level === 'number' ? skill.level * 25 : skill.level === 'Débutant' ? 25 : skill.level === 'Intermédiaire' ? 50 : skill.level === 'Avancé' ? 75 : skill.level === 'Expert' ? 100 : 0} showInfo={false} strokeColor={white} trailColor={accentBlue} style={{ height: 4 }} />
             </div>
           ))}
         </div>}

@@ -74,16 +74,7 @@ const HumanTemplate: React.FC<HumanTemplateProps> = ({ data, isMiniature = false
           <div style={{ width: '80%', marginBottom: 24 }}>
             <div style={{ fontWeight: 700, fontSize: 18, color: terracotta, background: gris, padding: '6px 18px', borderRadius: 8, marginBottom: 16, letterSpacing: 1 }}>COMPÉTENCES</div>
             {skills.map((skill, idx) => (
-              <div key={idx} style={{ marginBottom: 18 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontWeight: 600, fontSize: 15 }}>
-                  <span>{skill.name}</span>
-                  <span style={{ fontSize: 13, color: grisTexte }}>{typeof skill.level === 'string' ? skill.level : typeof skill.level === 'number' ? `${skill.level * 10}%` : '0%'}</span>
-                </div>
-                {/* Barre de progression */}
-                <div style={{ width: '100%', height: 8, background: gris, borderRadius: 4, marginTop: 6 }}>
-                  <div style={{ height: 8, borderRadius: 4, background: terracotta, width: `${typeof skill.level === 'number' ? skill.level * 10 : skill.level === 'Débutant' ? 30 : skill.level === 'Intermédiaire' ? 50 : skill.level === 'Avancé' ? 70 : skill.level === 'Expert' ? 90 : 0}%` }} />
-                </div>
-              </div>
+              <div key={idx} style={{ marginBottom: 12, fontWeight: 600, fontSize: 15 }}>{skill.name}</div>
             ))}
           </div>
         )}
