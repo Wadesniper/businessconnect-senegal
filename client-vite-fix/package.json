@@ -52,7 +52,6 @@
     "@types/react-icons": "^2.2.7",
     "@vitejs/plugin-react": "^4.4.1",
     "cypress": "^14.3.3",
-    "rollup-plugin-visualizer": "^6.0.3",
     "source-map-explorer": "^2.5.3",
     "terser": "^5.39.1",
     "ts-jest": "^29.1.2",

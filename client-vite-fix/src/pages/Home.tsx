@@ -1,7 +1,7 @@
 // Forçage de build Vercel - commit technique
 import React, { useEffect, useState, useRef } from 'react';
 import { Layout, Typography, Card, Row, Col, Button, Space, Avatar, Carousel, Statistic, Spin } from 'antd';
-// import { motion } from 'framer-motion'; // SUPPRIMÉ - trop lourd
+import { motion } from 'framer-motion';
 import styled from '@emotion/styled';
 import Hero from '../components/Hero';
 import {
@@ -21,7 +21,7 @@ import { JobService } from '../services/jobService';
 import type { JobData } from '../types/job';
 import { marketplaceService } from '../services/marketplaceService';
 import type { MarketplaceItem } from '../services/marketplaceService';
-// import { useSpring, animated } from 'react-spring'; // SUPPRIMÉ - trop lourd
+import { useSpring, animated } from 'react-spring';
 import { useInView } from 'react-intersection-observer';
 import JobCard from './jobs/components/JobCard';
 import { useAuth } from '../context/AuthContext';
@@ -38,91 +38,20 @@ import { subscriptionOffers } from '../data/subscriptionOffers';
 const { Content } = Layout;
 const { Title, Paragraph, Text } = Typography;
 
-// Composant Statistic natif pour remplacer Ant Design Statistic (plus léger)
-const NativeStatistic = styled.div`
-  text-align: center;
-  
-  .ant-statistic-title {
-    font-size: clamp(1rem, 4vw, 1.1rem);
-    color: #555;
-    font-weight: 500;
-    margin-bottom: 8px;
-  }
-  
-  .ant-statistic-content {
-    font-size: clamp(2rem, 5vw, 2.5rem);
-    font-weight: 800;
-    color: #1ec773;
-  }
-`;
-
-// Animation CSS native pour remplacer react-spring
 const AnimatedStatistic = ({ value, suffix = '+', duration = 2000, color, startAnimation }: { value: number; suffix?: string; duration?: number; color?: string; startAnimation: boolean; }) => {
-  const [displayValue, setDisplayValue] = useState(0);
-  
-  useEffect(() => {
-    if (startAnimation) {
-      const startTime = Date.now();
-      const animate = () => {
-        const elapsed = Date.now() - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        const currentValue = Math.floor(value * progress);
-        setDisplayValue(currentValue);
-        
-        if (progress < 1) {
-          requestAnimationFrame(animate);
-        }
-      };
-      animate();
-    }
-  }, [startAnimation, value, duration]);
+  const { number } = useSpring({
+    from: { number: 0 },
+    to: { number: startAnimation ? value : 0 },
+    config: { duration, easing: t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2 },
+    reset: true,
+  });
 
   return (
-    <span style={{ color, fontWeight: 800, fontSize: 'clamp(2rem, 5vw, 2.5rem)' }}>
-      {displayValue}{suffix}
-    </span>
+    <animated.span style={{ color, fontWeight: 800, fontSize: 'clamp(2rem, 5vw, 2.5rem)' }}>
+      {number.to((n: number) => `${Math.floor(n)}${suffix}`)}
+    </animated.span>
   );
 };
-
-// Composants CSS natifs pour remplacer framer-motion
-const FadeInUp = styled.div`
-  opacity: 0;
-  transform: translateY(50px);
-  animation: fadeInUp 0.7s ease-out forwards;
-  
-  @keyframes fadeInUp {
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-`;
-
-const FadeInLeft = styled.div`
-  opacity: 0;
-  transform: translateX(-50px);
-  animation: fadeInLeft 0.7s ease-out forwards;
-  
-  @keyframes fadeInLeft {
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-`;
-
-const FadeInRight = styled.div`
-  opacity: 0;
-  transform: translateX(50px);
-  animation: fadeInRight 0.7s ease-out forwards;
-  
-  @keyframes fadeInRight {
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-`;
 
 const StatsSection = () => {
   const { ref, inView } = useInView({
@@ -152,13 +81,13 @@ const StatsSection = () => {
                   boxShadow: 'none',
                 }}
               >
-              <NativeStatistic>
-                <div className="ant-statistic-title">{stat.label}</div>
-                {stat.textValue ? 
-                    <div className="ant-statistic-content">{stat.textValue}</div> : 
+              <Statistic
+                title={<span style={{fontSize: 'clamp(1rem, 4vw, 1.1rem)', color: '#555', fontWeight: 500}}>{stat.label}</span>}
+                valueRender={() => stat.textValue ? 
+                    <span style={{ color: '#1ec773', fontWeight: 800, fontSize: 'clamp(2rem, 5vw, 2.5rem)' }}>{stat.textValue}</span> : 
                     <AnimatedStatistic value={stat.value!} color="#1ec773" startAnimation={inView} />
                 }
-              </NativeStatistic>
+              />
             </Card>
           </Col>
         ))}
@@ -438,13 +367,20 @@ const Home: React.FC = () => {
         <StatsSection />
         {/* Section Nos Services */}
         <div ref={servicesRef} style={{ padding: '4rem 2rem' }}>
-          <FadeInUp>
+          <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.7 }}>
             <Title level={2} style={{ textAlign: 'center', marginBottom: '3rem' }}>Nos Services Professionnels</Title>
-          </FadeInUp>
+          </motion.div>
           <Row gutter={[24, 24]} justify="center">
             {services.map((service, index) => (
               <Col xs={24} sm={12} md={8} key={index} style={{ display: 'flex' }}>
-                <FadeInUp style={{ width: '100%' }}>
+                <motion.div
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  style={{ width: '100%' }}
+                  whileHover={{ y: -10, transition: { duration: 0.3 } }}
+                >
                  <ServiceCard hoverable onClick={() => navigate(service.link)}>
                    <div>
                       <ServiceIconWrapper color={service.color}>
@@ -460,7 +396,7 @@ const Home: React.FC = () => {
                       Découvrir <ArrowRightOutlined />
                     </Button>
                  </ServiceCard>
-                </FadeInUp>
+                </motion.div>
                </Col>
              ))}
            </Row>
@@ -468,13 +404,19 @@ const Home: React.FC = () => {
 
         {/* Section Nos abonnements */}
          <div style={{ padding: '64px 24px', background: '#f8f9fa' }}>
-          <FadeInUp>
+          <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.7 }}>
            <Title level={2} style={{ textAlign: 'center', marginBottom: 48, color: '#002766', fontWeight: 700 }}>Nos Abonnements</Title>
-          </FadeInUp>
+          </motion.div>
            <Row gutter={[32, 32]} justify="center">
              {subscriptionOffers.map((offer, idx) => (
                <Col xs={24} sm={12} md={8} key={offer.key}>
-                <FadeInUp>
+                <motion.div
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 0.5, delay: 0.1 * idx }}
+                  whileHover={{ y: -10, transition: { duration: 0.3 } }}
+                >
                   <Card bordered style={{ borderRadius: 16, border: `2px solid ${offer.color}`, minHeight: 420, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                     <div>
                       <Title level={3} style={{ textAlign: 'center', color: '#222', marginBottom: 0 }}>{offer.title}</Title>
@@ -491,7 +433,7 @@ const Home: React.FC = () => {
                     </div>
                     <Button type="primary" block style={{ borderRadius: 8, fontWeight: 600, background: offer.color, borderColor: offer.color }} onClick={() => navigate('/subscription')}>S'abonner</Button>
                   </Card>
-                </FadeInUp>
+                </motion.div>
                </Col>
              ))}
            </Row>
@@ -501,16 +443,16 @@ const Home: React.FC = () => {
         <div style={{ padding: '4rem 2rem', background: '#fff' }}>
             <Row justify="center" align="middle" gutter={[32, 32]}>
                 <Col xs={24} md={12} style={{ textAlign: 'center' }}>
-                    <FadeInLeft>
+                    <motion.div initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.5 }} transition={{ duration: 0.7 }}>
                         <LazyImage src="/images/cv-hero.jpg" alt="Créateur de CV" style={{ maxWidth: '100%', borderRadius: '16px', boxShadow: '0 16px 40px rgba(0,0,0,0.1)' }} />
-                    </FadeInLeft>
+                    </motion.div>
                 </Col>
                 <Col xs={24} md={12}>
-                    <FadeInRight>
+                    <motion.div initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.5 }} transition={{ duration: 0.7 }}>
                         <Title level={2}>Créez un CV qui se démarque</Title>
                         <Paragraph>Notre outil intuitif vous permet de créer des CV professionnels et modernes en quelques clics. Choisissez parmi plusieurs modèles, personnalisez-le et téléchargez-le en PDF.</Paragraph>
                         <Button type="primary" size="large" onClick={() => navigate('/cv-generator')} style={{ background: '#1ec773', borderColor: '#1ec773' }}>Créer un CV</Button>
-                    </FadeInRight>
+                    </motion.div>
                 </Col>
             </Row>
         </div>
@@ -536,32 +478,46 @@ const Home: React.FC = () => {
 
         {/* Section Secteurs d'activité */}
         <div style={{ padding: '64px 24px', background: '#f8f9fa' }}>
-          <FadeInUp>
+          <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.7 }}>
             <Title level={2} style={{ textAlign: 'center', marginBottom: 48, color: '#002766', fontWeight: 700 }}>Secteurs d'activité</Title>
-          </FadeInUp>
+          </motion.div>
           <Carousel autoplay autoplaySpeed={4000} dots={false} responsive={[{ breakpoint: 768, settings: { slidesToShow: 1 } }, { breakpoint: 1200, settings: { slidesToShow: 3 } }]} slidesToShow={4} style={{ paddingBottom: '32px' }}>
             {sectors.map((sector, index) => (
-              <FadeInUp key={index} style={{padding: '10px'}}>
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.5, delay: index * 0.05 }}
+                style={{padding: '10px'}}
+              >
                 <div style={{ padding: '0 16px' }}>
                   <SectorCard color={sector.color} onClick={() => navigate('/careers')}>
                     <IconCircle color={sector.color}><span>{sector.icon}</span></IconCircle>
                     <Title level={4}>{sector.name}</Title>
                   </SectorCard>
                 </div>
-              </FadeInUp>
+              </motion.div>
             ))}
           </Carousel>
         </div>
         
         {/* Section Témoignages */}
         <div style={{ padding: '4rem 2rem', backgroundColor: '#fff' }}>
-          <FadeInUp>
+          <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.7 }}>
           <Title level={2} style={{ textAlign: 'center', marginBottom: '3rem' }}>Ils nous font confiance</Title>
-          </FadeInUp>
+          </motion.div>
           <Row gutter={[24, 24]} justify="center">
             {testimonials.map((testimonial, index) => (
               <Col xs={24} sm={12} md={8} lg={6} key={index} style={{ display: 'flex' }}>
-                <FadeInUp style={{ width: '100%', height: '100%' }}>
+                <motion.div
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  whileHover={{ y: -10, transition: { duration: 0.3 } }}
+                  style={{ width: '100%', height: '100%' }}
+                >
                   <Card
                     style={{
                       borderRadius: '20px',
@@ -594,7 +550,7 @@ const Home: React.FC = () => {
                       </Space>
                   </Space>
                 </Card>
-                </FadeInUp>
+                </motion.div>
               </Col>
             ))}
           </Row>

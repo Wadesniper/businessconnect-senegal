@@ -224,7 +224,6 @@ const MarketplaceItemPage: React.FC = () => {
                           <Image
                               src={image}
                               alt={`${item.title} - Image ${index + 1}`}
-                              loading="lazy"
                           />
                           </div>
                       ))}

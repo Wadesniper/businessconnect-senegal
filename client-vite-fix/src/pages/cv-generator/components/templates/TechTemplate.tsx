@@ -41,7 +41,7 @@ const TechTemplate: React.FC<TechTemplateProps> = ({ data, isMiniature = false }
       <div style={{ width: '32%', background: vertFonce, color: blanc, padding: '0 0 0 0', display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100%' }}>
         {/* Photo */}
         <div style={{ width: 140, height: 140, borderRadius: 18, overflow: 'hidden', marginTop: 32, marginBottom: 18, boxShadow: '0 2px 8px #0003' }}>
-          <img src={personalInfo.photo || '/images/avatars/man-4.png'} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+          <img src={personalInfo.photo || '/images/avatars/man-4.png'} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </div>
         {/* Coordonnées */}
         <div style={{ width: '80%', marginBottom: 24 }}>

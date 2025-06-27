@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { GA_ID } from './config/monitoring';
-// import 'antd/dist/reset.css'; // SUPPRIMÉ - trop lourd
+import 'antd/dist/reset.css';
 import { ConfigProvider } from 'antd';
 import frFR from 'antd/locale/fr_FR';
 import { AuthProvider } from './context/AuthContext';

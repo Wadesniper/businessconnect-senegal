@@ -74,7 +74,7 @@ const JobDetailsPage: React.FC = () => {
             boxShadow: 1
           }}>
             <Avatar sx={{ width: 64, height: 64, bgcolor: theme.palette.primary.main, fontSize: 36 }}>
-              {job.companyLogo ? <img src={job.companyLogo} alt="logo" style={{ width: '100%' }} loading="lazy" /> : <BusinessIcon fontSize="large" />}
+              {job.companyLogo ? <img src={job.companyLogo} alt="logo" style={{ width: '100%' }} /> : <BusinessIcon fontSize="large" />}
             </Avatar>
             <Box>
               <Typography variant="h4" fontWeight={700} color="primary.dark">{job.title}</Typography>
