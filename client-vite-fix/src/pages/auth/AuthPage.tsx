@@ -34,6 +34,21 @@ const AuthPage: React.FC = () => {
           overflowX: 'hidden',
         }}
       >
+        {/* Trait vertical séparateur desktop */}
+        {!isMobile && (
+          <div style={{
+            position: 'absolute',
+            left: '50%',
+            top: 48,
+            bottom: 48,
+            width: 2,
+            background: 'linear-gradient(180deg, #e6f7ff 0%, #c3cfe2 100%)',
+            zIndex: 1,
+            borderRadius: 2,
+            boxShadow: '0 0 8px #e6f7ff44',
+            transform: 'translateX(-50%)',
+          }} />
+        )}
         {isMobile ? (
           <>
             {/* Inscription d'abord */}
