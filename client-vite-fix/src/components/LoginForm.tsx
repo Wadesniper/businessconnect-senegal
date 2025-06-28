@@ -16,13 +16,20 @@ interface LoginFormProps {
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink }) => {
-  console.log('[DEBUG] Render LoginForm');
   const [form] = Form.useForm();
   const { login, isAuthenticated, loading } = useAuth();
   const navigate = useNavigate();
   const [triedLogin, setTriedLogin] = useState(false);
   const [phoneError, setPhoneError] = useState('');
   const [forgotPasswordVisible, setForgotPasswordVisible] = useState(false);
+
+  console.log('[DEBUG] Render LoginForm, forgotPasswordVisible =', forgotPasswordVisible);
+  React.useEffect(() => {
+    console.log('[DEBUG] LoginForm MOUNT');
+    return () => {
+      console.log('[DEBUG] LoginForm UNMOUNT');
+    };
+  }, []);
 
   useEffect(() => {
     if (!loading && triedLogin) {
