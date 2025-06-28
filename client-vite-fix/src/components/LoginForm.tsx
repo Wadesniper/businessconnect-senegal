@@ -164,6 +164,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
         visible={forgotPasswordVisible}
         onClose={() => setForgotPasswordVisible(false)}
       />
+      {/* Fallback visuel si le modal ne s'affiche pas */}
+      {forgotPasswordVisible && (
+        <div style={{position:'fixed',top:0,left:0,width:'100vw',height:'100vh',background:'#fff9',zIndex:9999,display:'flex',alignItems:'center',justifyContent:'center',fontSize:24,color:'#1890ff'}}>
+          <div>Mot de passe oublié (modal non affiché)</div>
+        </div>
+      )}
     </div>
   );
 };
