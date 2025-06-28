@@ -1,5 +1,6 @@
 import { logger } from '../utils/logger.js';
 import { config } from '../config.js';
+import twilio from 'twilio';
 
 export class SMSService {
   private apiKey: string;
@@ -47,20 +48,19 @@ export class SMSService {
    */
   private async sendSMS(to: string, message: string): Promise<boolean> {
     try {
-      // TODO: Intégrer un vrai service SMS ici
-      // Exemples de services :
-      // - Twilio: https://www.twilio.com/
-      // - Vonage: https://www.vonage.com/
-      // - MessageBird: https://messagebird.com/
-      // - Service local sénégalais (Orange, Free, etc.)
-      
-      logger.info(`[SMS] Envoi simulé vers ${to}: ${message}`);
-      
-      // Pour le développement, on simule un succès
-      // En production, tu devras remplacer ceci par un vrai appel API
+      const client = twilio(
+        process.env.TWILIO_ACCOUNT_SID!,
+        process.env.TWILIO_AUTH_TOKEN!
+      );
+      await client.messages.create({
+        body: message,
+        from: process.env.TWILIO_PHONE_NUMBER!,
+        to
+      });
+      logger.info(`[SMS] Twilio envoyé vers ${to}`);
       return true;
     } catch (error) {
-      logger.error('Erreur lors de l\'envoi SMS:', error);
+      logger.error('Erreur lors de l\'envoi SMS Twilio:', error);
       return false;
     }
   }
