@@ -47,7 +47,7 @@ const MarketingTemplate: React.FC<MarketingTemplateProps> = ({ data, isMiniature
   return (
     <div className="cv-template-container" style={{ background: primaryColor, color: white, borderRadius: 18, minHeight: 1123, fontFamily: 'Montserrat, Arial, sans-serif', boxShadow: '0 4px 24px #0002', padding: 0, overflow: 'visible', display: 'flex', flexDirection: 'row', width: 794 }}>
       {/* Colonne gauche */}
-      <div style={{ background: accentBlue, width: 320, padding: 0, display: 'flex', flexDirection: 'column', minHeight: '100%', height: '100%' }}>
+      <div style={{ background: accentBlue, width: 320, padding: 0, display: 'flex', flexDirection: 'column' }}>
         {/* Header horizontal */}
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', padding: '32px 18px 16px 18px', borderBottom: `1px solid ${gray}`, minHeight: 120 }}>
           <Avatar src={personalInfo.photo || '/images/avatars/woman-1.png'} size={90} style={{ border: '2px solid #fff', marginRight: 14, boxShadow: '0 2px 8px #0001', flexShrink: 0 }} />
@@ -121,7 +121,7 @@ const MarketingTemplate: React.FC<MarketingTemplateProps> = ({ data, isMiniature
         </div>}
       </div>
       {/* Colonne droite */}
-      <div style={{ flex: 1, background: primaryColor, padding: 36, display: 'flex', flexDirection: 'column', minHeight: '100%', height: '100%', overflow: 'visible' }}>
+      <div style={{ flex: 1, background: primaryColor, padding: 36, display: 'flex', flexDirection: 'column', overflow: 'visible' }}>
         {/* Expérience */}
         {experience.length > 0 && <div style={{ marginBottom: 22 }}>
           <div style={{ ...sectionTitleStyle, color: white, fontSize: 18, marginBottom: 14 }}>EXPÉRIENCE</div>
