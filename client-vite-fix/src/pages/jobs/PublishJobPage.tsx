@@ -92,7 +92,6 @@ const PublishJobPage: React.FC = () => {
         missions: form.missions ? form.missions.split('\n').map(s => s.trim()).filter(Boolean) : [],
         salary_currency: form.salary_currency || 'XOF',
         isActive: true,
-        employerId: user.id,
       };
       // Suppression des champs vides ou inutiles
       Object.keys(jobPayload).forEach(key => {

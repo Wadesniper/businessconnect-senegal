@@ -196,7 +196,6 @@ export const exportToPDF = async (
     }
 
     pdf.save(`${filename}.pdf`);
-    message.success('CV exporté avec succès en PDF');
 
   } catch (error) {
     console.error("Erreur lors de l'export PDF :", error);
@@ -268,7 +267,6 @@ export const exportToWord = async (
 
     const blob = await Packer.toBlob(doc);
     saveAs(blob, 'cv.docx');
-    message.success('CV exporté avec succès en DOCX');
 
   } catch (error) {
     console.error("Erreur lors de l'export DOCX :", error);

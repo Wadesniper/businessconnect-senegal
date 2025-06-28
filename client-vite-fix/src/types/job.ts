@@ -25,12 +25,12 @@ export interface JobData {
   contactEmail?: string;
   contactPhone?: string;
   missions?: string[];
-  employerId?: string;
   isActive?: boolean;
   category?: string;
   keywords?: string[];
   postedById?: string;
   _id?: string;
+  role?: 'admin' | 'recruteur' | 'etudiant' | 'annonceur' | 'employeur';
 }
 
 export interface Job {
@@ -47,6 +47,7 @@ export interface Job {
   createdAt: string;
   createdBy?: string;
   status: 'active' | 'inactive' | 'expired';
+  role?: 'admin' | 'recruteur' | 'etudiant' | 'annonceur' | 'employeur';
 }
 
 export interface JobApplication {

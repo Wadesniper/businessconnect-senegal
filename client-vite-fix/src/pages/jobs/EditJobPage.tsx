@@ -31,7 +31,7 @@ const EditJobPage: React.FC = () => {
         .then(job => {
           if (job) {
             // Vérifier si l'utilisateur est le propriétaire ou un admin
-            if (user?.id === job.employerId || user?.role === 'admin' || user?.role === 'recruteur') {
+            if (user?.id === job.postedById || user?.role === 'admin' || user?.role === 'recruteur') {
               setForm({
                 title: job.title || '',
                 description: job.description || '',
