@@ -6,7 +6,9 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useSubscription } from './hooks/useSubscription';
+import { useErrorHandler } from './hooks/useErrorHandler';
 import ScrollToTop from './components/ScrollToTop';
+import VersionService from './services/versionService';
 // Lazy load des pages principales
 const Home = lazy(() => import('./pages/Home'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
@@ -43,22 +45,101 @@ const MarketplaceModeration = lazy(() => import('./components/admin/MarketplaceM
 const UserItems = lazy(() => import('./components/marketplace/UserItems'));
 const MyJobsPage = lazy(() => import('./pages/jobs/MyJobsPage'));
 
-// ErrorBoundary global
-class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, error: any}> {
+// ErrorBoundary global amélioré
+class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, error: any, isVersionMismatch: boolean}> {
   constructor(props: any) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { hasError: false, error: null, isVersionMismatch: false };
   }
+  
   static getDerivedStateFromError(error: any) {
-    return { hasError: true, error };
+    // Détecter les erreurs liées aux mises à jour
+    const isVersionMismatch = error.message?.includes('ChunkLoadError') || 
+                             error.message?.includes('Loading chunk') ||
+                             error.message?.includes('Unexpected token') ||
+                             error.message?.includes('Cannot read property');
+    
+    return { hasError: true, error, isVersionMismatch };
   }
+  
   componentDidCatch(error: any, errorInfo: any) {
-    // Log l'erreur côté client
     console.error('Erreur capturée par ErrorBoundary:', error, errorInfo);
+    
+    // Si c'est une erreur de version, forcer le rechargement
+    if (this.state.isVersionMismatch) {
+      console.log('Détection d\'une mise à jour - rechargement automatique...');
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    }
   }
+  
+  handleReload = () => {
+    // Vider le cache et recharger
+    if ('caches' in window) {
+      caches.keys().then(names => {
+        names.forEach(name => caches.delete(name));
+      });
+    }
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.reload();
+  };
+  
   render() {
     if (this.state.hasError) {
-      return <div style={{color:'red',padding:40}}><h1>Une erreur est survenue</h1><pre>{String(this.state.error)}</pre></div>;
+      return (
+        <div style={{
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: '#f7faff',
+          padding: 40,
+          textAlign: 'center'
+        }}>
+          <div style={{ fontSize: 48, marginBottom: 20 }}>🔄</div>
+          <h1 style={{ color: '#1890ff', marginBottom: 16 }}>
+            {this.state.isVersionMismatch ? 'Mise à jour en cours...' : 'Une erreur est survenue'}
+          </h1>
+          <p style={{ color: '#666', marginBottom: 24, maxWidth: 500 }}>
+            {this.state.isVersionMismatch 
+              ? 'Une nouvelle version de l\'application est disponible. Rechargement automatique dans quelques secondes...'
+              : 'Une erreur inattendue s\'est produite. Veuillez recharger la page.'
+            }
+          </p>
+          <button 
+            onClick={this.handleReload}
+            style={{
+              background: '#1890ff',
+              color: 'white',
+              border: 'none',
+              padding: '12px 24px',
+              borderRadius: 6,
+              cursor: 'pointer',
+              fontSize: 16
+            }}
+          >
+            Recharger maintenant
+          </button>
+          {!this.state.isVersionMismatch && (
+            <details style={{ marginTop: 20, textAlign: 'left', maxWidth: 500 }}>
+              <summary style={{ cursor: 'pointer', color: '#666' }}>Détails de l'erreur</summary>
+              <pre style={{ 
+                background: '#f5f5f5', 
+                padding: 16, 
+                borderRadius: 4, 
+                overflow: 'auto',
+                fontSize: 12,
+                marginTop: 8
+              }}>
+                {String(this.state.error)}
+              </pre>
+            </details>
+          )}
+        </div>
+      );
     }
     return this.props.children;
   }
@@ -81,6 +162,15 @@ const GlobalLoader = () => (
 
 const App: React.FC = () => {
   const { hasActiveSubscription } = useSubscription();
+  
+  // Initialiser le service de version
+  React.useEffect(() => {
+    VersionService.getInstance();
+  }, []);
+  
+  // Gestionnaire d'erreurs globales
+  useErrorHandler();
+  
   return (
     <ErrorBoundary>
       <ScrollToTop />
