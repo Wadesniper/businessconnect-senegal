@@ -113,6 +113,8 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
   const handleSelectTemplate = (template: Template | null) => {
     setSelectedTemplate(template);
     if (template) {
+      // Réinitialiser la couleur à la couleur par défaut pour chaque nouveau template
+      setCustomization({ ...customization, primaryColor: '#1a237e' });
       setCVData({
         personalInfo: {
           firstName: '',
