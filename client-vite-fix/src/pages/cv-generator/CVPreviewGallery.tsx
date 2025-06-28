@@ -1464,6 +1464,7 @@ const CVPreviewGallery: React.FC = () => {
   return (
     <div style={{ padding: '24px', width: '100%', maxWidth: '100vw', boxSizing: 'border-box' }}>
       <Card
+        className="cv-card-animation"
         style={{
           maxWidth: 1200,
           margin: '0 auto',
@@ -1471,11 +1472,13 @@ const CVPreviewGallery: React.FC = () => {
           borderRadius: 16
         }}
       >
-        <Title level={2} style={{ textAlign: 'center', marginBottom: 24 }}>{template.name}</Title>
-        <div style={{ textAlign: 'center', marginBottom: 24 }}>
+        <Title level={2} className="cv-title-animation" style={{ textAlign: 'center', marginBottom: 24 }}>{template.name}</Title>
+        <div className="cv-title-animation" style={{ textAlign: 'center', marginBottom: 24 }}>
           <Alert message={`Ceci est un aperçu du modèle ${template.name}. Les informations ci-dessous sont des données de démonstration.`} type="info" showIcon />
         </div>
-        <CVPreview data={demoData} customization={defaultCustomization} template={template} isPremium={true} />
+        <div className="cv-preview-animation">
+          <CVPreview data={demoData} customization={defaultCustomization} template={template} isPremium={true} />
+        </div>
       </Card>
     </div>
   );

@@ -74,7 +74,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
       <Card
         key={template.id}
         hoverable
-        className={isSelected ? 'template-card-selected' : ''}
+        className={`cv-card-animation ${isSelected ? 'template-card-selected' : ''}`}
         style={{
           border: isSelected ? '2px solid #1890ff' : '1px solid #e8e8e8',
           display: 'flex',
@@ -142,7 +142,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
 
   return (
     <div style={{ padding: '0 8px', width: '100%', boxSizing: 'border-box' }}>
-      <div style={{ textAlign: 'center', margin: '24px 0' }}>
+      <div className="cv-title-animation" style={{ textAlign: 'center', margin: '24px 0' }}>
         <Typography.Title level={2}>Galerie de modèles de CV</Typography.Title>
         <Typography.Text type="secondary">Explorez tous nos modèles professionnels.</Typography.Text>
       </div>
