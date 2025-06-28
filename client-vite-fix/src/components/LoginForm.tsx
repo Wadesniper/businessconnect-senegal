@@ -164,11 +164,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
 
   return (
     <>
-      {forgotPasswordVisible && (
-        <div style={{position:'fixed',top:0,left:0,width:'100vw',height:'100vh',background:'#fffa',zIndex:999999,display:'flex',alignItems:'center',justifyContent:'center',fontSize:32,color:'#d00',fontWeight:'bold'}}>
-          TEST MODAL
-        </div>
-      )}
       <div className={`login-container ${noBg ? '' : 'with-bg'}`}>
         <Card className="login-card">
           <Title level={2} className="login-title">Connexion</Title>
@@ -178,12 +173,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
           visible={forgotPasswordVisible}
           onClose={() => setForgotPasswordVisible(false)}
         />
-        {/* Fallback visuel si le modal ne s'affiche pas */}
-        {forgotPasswordVisible && (
-          <div style={{position:'fixed',top:0,left:0,width:'100vw',height:'100vh',background:'#fff9',zIndex:9999,display:'flex',alignItems:'center',justifyContent:'center',fontSize:24,color:'#1890ff'}}>
-            <div>Mot de passe oublié (modal non affiché)</div>
-          </div>
-        )}
       </div>
     </>
   );
