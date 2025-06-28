@@ -77,8 +77,15 @@ const AuthPage: React.FC = () => {
                 <RegisterForm noCard noBg hideLoginLink />
               </div>
             </div>
-            {/* Séparateur OU, en absolute pour masquer le trait */}
-            <div style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', zIndex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 60, height: 60, pointerEvents: 'none' }}>
+            {/* Séparateur OU centré avec flexbox */}
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              padding: '16px 0',
+              width: '100%',
+              position: 'relative'
+            }}>
               <div style={{
                 background: '#fff',
                 color: '#1890ff',
@@ -92,6 +99,7 @@ const AuthPage: React.FC = () => {
                 fontSize: 18,
                 boxShadow: '0 2px 12px #1890ff22',
                 border: '2px solid #e6f7ff',
+                zIndex: 2,
               }}>ou</div>
             </div>
             {/* Connexion ensuite */}
