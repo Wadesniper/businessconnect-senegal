@@ -43,6 +43,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
     }
   }, [isAuthenticated, loading, triedLogin, navigate]);
 
+  useEffect(() => {
+    if (forgotPasswordVisible) {
+      console.log('[DEBUG] ForgotPasswordModal rendu, visible = true');
+    }
+  }, [forgotPasswordVisible]);
+
   const onFinish = async (values: { phoneNumber: string; password: string }) => {
     setTriedLogin(true);
     try {
@@ -138,7 +144,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
         <div style={{ textAlign: 'center', marginBottom: 16 }}>
           <a 
             data-testid="forgot-password-btn"
-            onClick={() => { console.log('[DEBUG] Clic bouton Mot de passe oublié'); setForgotPasswordVisible(true); }}
+            onClick={() => { 
+              console.log('[DEBUG] Clic bouton Mot de passe oublié, forgotPasswordVisible passe à true'); 
+              setForgotPasswordVisible(true); 
+            }}
             style={{ 
               cursor: 'pointer', 
               color: '#666', 
