@@ -92,10 +92,10 @@ const JobCard: React.FC<JobCardProps> = ({ job, isPremium, onEdit, onDelete }) =
     companyLogo,
     type,
     sector,
-    employerId,
+    postedById,
   } = job;
   
-  const isOwner = user && employerId === user.id;
+  const isOwner = user && (postedById === user.id);
   const isAdmin = user?.role === 'admin';
   
   const hasAccess = isPremium || isOwner || isAdmin;
