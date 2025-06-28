@@ -131,12 +131,20 @@ class JobController {
 
   async deleteJob(req: Request, res: Response) {
     try {
-      await prisma.job.delete({
-        where: {
-          id: req.params.id,
-          postedById: req.user?.id
-        }
-      });
+      if (req.user?.role === 'admin') {
+        // Admin : peut supprimer n'importe quelle offre
+        await prisma.job.delete({
+          where: { id: req.params.id }
+        });
+      } else {
+        // Recruteur : ne peut supprimer que ses propres offres
+        await prisma.job.delete({
+          where: {
+            id: req.params.id,
+            postedById: req.user?.id
+          }
+        });
+      }
       res.json({ message: 'Offre supprimée avec succès' });
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
