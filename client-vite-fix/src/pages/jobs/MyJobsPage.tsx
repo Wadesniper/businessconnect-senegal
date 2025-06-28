@@ -45,8 +45,8 @@ const MyJobsPage: React.FC = () => {
     });
   };
 
-  if (!user || (user.role !== 'admin' && user.role !== 'employeur')) {
-    return <Content style={{ padding: '24px' }}><Title level={4}>Accès réservé aux employeurs et admins.</Title></Content>;
+  if (!user || (user.role !== 'admin' && user.role !== 'employeur' && user.role !== 'recruteur')) {
+    return <Content style={{ padding: '24px' }}><Title level={4}>Accès réservé aux employeurs, recruteurs et admins.</Title></Content>;
   }
 
   if (isLoading) {

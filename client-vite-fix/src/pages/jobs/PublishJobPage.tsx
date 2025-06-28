@@ -33,8 +33,8 @@ const PublishJobPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  if (!user || (user.role !== 'admin' && user.role !== 'employeur')) {
-    return <Container><Alert severity="error">Accès réservé aux employeurs et admins.</Alert></Container>;
+  if (!user || (user.role !== 'admin' && user.role !== 'employeur' && user.role !== 'recruteur')) {
+    return <Container><Alert severity="error">Accès réservé aux employeurs, recruteurs et admins.</Alert></Container>;
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
