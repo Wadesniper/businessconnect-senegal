@@ -104,7 +104,7 @@ const App: React.FC = () => {
               element={
                 <ProtectedRoute 
                   element={<PublishJobPage />} 
-                  allowedRoles={['admin', 'employeur']} 
+                  allowedRoles={['admin', 'recruteur']} 
                 />
               } 
             />
@@ -113,7 +113,7 @@ const App: React.FC = () => {
               element={
                 <ProtectedRoute 
                   element={<EditJobPage />} 
-                  allowedRoles={['admin', 'employeur']} 
+                  allowedRoles={['admin', 'recruteur']} 
                 />
               } 
             />
@@ -209,7 +209,7 @@ const App: React.FC = () => {
               element={
                 <ProtectedRoute 
                   element={<MyJobsPage />} 
-                  allowedRoles={['admin', 'employeur']} 
+                  allowedRoles={['admin', 'recruteur']} 
                 />
               } 
             />
