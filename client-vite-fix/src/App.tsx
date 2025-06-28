@@ -7,6 +7,7 @@ import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useSubscription } from './hooks/useSubscription';
 import ScrollToTop from './components/ScrollToTop';
+import VersionService from './services/versionService';
 // Lazy load des pages principales
 const Home = lazy(() => import('./pages/Home'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
@@ -81,6 +82,9 @@ const GlobalLoader = () => (
 
 const App: React.FC = () => {
   const { hasActiveSubscription } = useSubscription();
+  React.useEffect(() => {
+    VersionService.start();
+  }, []);
   return (
     <ErrorBoundary>
       <ScrollToTop />

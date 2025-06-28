@@ -55,4 +55,17 @@ if (window && window.localStorage && !window.localStorage.getItem('purge_done'))
   window.localStorage.clear();
   window.localStorage.setItem('purge_done', '1');
   window.location.reload();
-} 
+}
+
+// Gestion automatique des erreurs critiques de chargement (zéro régression)
+window.addEventListener('error', (event) => {
+  if (event?.error && typeof event.error.message === 'string') {
+    if (
+      event.error.message.includes('ChunkLoadError') ||
+      event.error.message.includes('Loading chunk') ||
+      event.error.message.includes('Unexpected token')
+    ) {
+      window.location.reload();
+    }
+  }
+}); 
