@@ -97,7 +97,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({ visible, onCl
           </Text>
         </div>
       }
-      open={visible}
+      visible={visible}
       onCancel={handleClose}
       footer={null}
       width={400}
