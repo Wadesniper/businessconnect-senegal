@@ -9,6 +9,63 @@ html, body, #root, .ant-layout, .ant-layout-content {
   background: #f7faff !important;
 }
 
+/* Animations pour la page CV - effet d'entrée fluide */
+@keyframes slideInFromBottom {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInFromLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Classes d'animation pour les cartes CV - avec délai pour éviter les conflits */
+.cv-card-animation {
+  animation: slideInFromBottom 0.6s ease-out 0.2s forwards;
+  opacity: 0; /* Commence invisible */
+}
+
+.cv-card-animation:nth-child(1) { animation-delay: 0.3s; }
+.cv-card-animation:nth-child(2) { animation-delay: 0.4s; }
+.cv-card-animation:nth-child(3) { animation-delay: 0.5s; }
+.cv-card-animation:nth-child(4) { animation-delay: 0.6s; }
+.cv-card-animation:nth-child(5) { animation-delay: 0.7s; }
+.cv-card-animation:nth-child(6) { animation-delay: 0.8s; }
+
+.cv-preview-animation {
+  animation: fadeInScale 0.8s ease-out 0.3s forwards;
+  opacity: 0; /* Commence invisible */
+}
+
+.cv-title-animation {
+  animation: slideInFromLeft 0.5s ease-out 0.1s forwards;
+  opacity: 0; /* Commence invisible */
+}
+
 /* Styles spécifiques pour l'export PDF - éviter le texte tronqué */
 @media print {
   * {
@@ -24,22 +81,20 @@ html, body, #root, .ant-layout, .ant-layout-content {
     word-break: break-word !important;
     overflow-wrap: break-word !important;
     white-space: normal !important;
-    overflow: visible !important;
-    text-overflow: unset !important;
   }
   
   /* Éviter les coupures de section */
-  .cv-section {
+  .cv-template-container, .cv-template-container * {
     page-break-inside: avoid !important;
     break-inside: avoid !important;
   }
-  
-  /* Permettre la pagination */
-  .cv-container {
-    min-height: auto !important;
-    height: auto !important;
-    overflow: visible !important;
-  }
+}
+
+/* Styles pour les templates CV - retour à la ligne */
+.cv-template-container, .cv-template-container * {
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
 }
 
 /* Styles globaux pour tous les templates CV */
@@ -83,17 +138,6 @@ html, body, #root, .ant-layout, .ant-layout-content {
   }
   100% {
     background-position: 80px 140px, 80px 140px, 120px 210px, 120px 210px, 80px 140px;
-  }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
   }
 }
 

@@ -197,16 +197,47 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
               <div style={{
                 width: '100%',
                 display: 'flex',
-                justifyContent: 'flex-end',
-                gap: 16,
+                flexDirection: 'column',
+                gap: 12,
                 marginBottom: 16,
                 position: 'relative',
                 zIndex: 2,
               }}>
-                <Button onClick={handlePrev}>Précédent</Button>
-                <Button type="primary" icon={<DownloadOutlined />} onClick={() => handleExport('pdf')} loading={isExporting}>
-                  Exporter en PDF
-                </Button>
+                {/* Palette de couleurs */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+                  {["#1890ff", "#52c41a", "#faad14", "#f5222d", "#722ed1", "#13c2c2", "#2f54eb", "#eb2f96"].map(color => (
+                    <button
+                      key={color}
+                      style={{
+                        width: 28,
+                        height: 28,
+                        borderRadius: '50%',
+                        border: '2px solid #fff',
+                        background: color,
+                        cursor: 'pointer',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                        transition: 'transform 0.2s',
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+                      onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                      onClick={() => setCustomization({ ...customization, primaryColor: color })}
+                    />
+                  ))}
+                  <Button 
+                    size="small" 
+                    onClick={() => setCustomization({ ...customization, primaryColor: '#1890ff' })}
+                    style={{ marginLeft: 8 }}
+                  >
+                    Retour à la couleur principale
+                  </Button>
+                </div>
+                {/* Boutons d'action */}
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 16 }}>
+                  <Button onClick={handlePrev}>Précédent</Button>
+                  <Button type="primary" icon={<DownloadOutlined />} onClick={() => handleExport('pdf')} loading={isExporting}>
+                    Exporter en PDF
+                  </Button>
+                </div>
               </div>
               <CVPreview
                 ref={previewRef}
@@ -287,7 +318,7 @@ const CVGenerator: React.FC<Partial<CVGeneratorProps>> = (props) => {
     // On garde le loader actif pendant un court instant pour assurer une transition fluide
     const timer = setTimeout(() => {
       setLoadingPage(false);
-    }, 100); // Réduit de 300ms à 100ms pour une réponse plus rapide
+    }, 300); // Augmenté à 300ms pour laisser le temps aux animations de se préparer
     return () => clearTimeout(timer);
   }, []);
 
