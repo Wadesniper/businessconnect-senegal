@@ -285,3 +285,9 @@ button:focus-visible {
     min-height: 40px;
   }
 }
+
+/* Correctif global pour affichage des modaux (ex: Mot de passe oublié) */
+body, #root, .ant-layout-content, .auth-card, .login-container {
+  overflow: visible !important;
+  z-index: auto !important;
+}
