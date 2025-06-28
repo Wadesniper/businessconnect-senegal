@@ -6,14 +6,15 @@ import type { CVData } from '../../../../types/cv';
 interface AdminTemplateProps {
   data: CVData;
   isMiniature?: boolean;
+  customization?: { primaryColor?: string };
 }
 
-const bleuFonce = '#2D3142';
 const grisClair = '#f5f6fa';
 const blanc = '#fff';
 const bleuClair = '#4F5D75';
 
-const AdminTemplate: React.FC<AdminTemplateProps> = ({ data, isMiniature = false }) => {
+const AdminTemplate: React.FC<AdminTemplateProps> = ({ data, isMiniature = false, customization }) => {
+  const primaryColor = customization?.primaryColor || '#2D3142';
   const personalInfo = {
     ...data.personalInfo,
     linkedin: (data.personalInfo as any).linkedin || '',
@@ -35,7 +36,7 @@ const AdminTemplate: React.FC<AdminTemplateProps> = ({ data, isMiniature = false
       <div style={{ display: 'flex', padding: '40px 40px 20px 40px', background: blanc }}>
         <Avatar src={personalInfo.photo || '/images/avatars/woman-3.png'} size={120} style={{ border: '4px solid #fff', marginRight: 32, boxShadow: '0 2px 8px #0001' }} />
         <div style={{ flex: 1 }}>
-          <div style={{ fontWeight: 700, fontSize: 32, color: bleuFonce, marginBottom: 4, wordBreak: 'break-word', overflowWrap: 'break-word' }}>{personalInfo.firstName?.toUpperCase()} {personalInfo.lastName?.toUpperCase()}</div>
+          <div style={{ fontWeight: 700, fontSize: 32, color: primaryColor, marginBottom: 4, wordBreak: 'break-word', overflowWrap: 'break-word' }}>{personalInfo.firstName?.toUpperCase()} {personalInfo.lastName?.toUpperCase()}</div>
           <div style={{ fontSize: 20, color: bleuClair, marginBottom: 16, wordBreak: 'break-word', overflowWrap: 'break-word' }}>{personalInfo.title}</div>
           <div style={{ display: 'flex', gap: 24, color: bleuClair, fontSize: 14 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><PhoneOutlined /> {personalInfo.phone}</div>
@@ -48,7 +49,7 @@ const AdminTemplate: React.FC<AdminTemplateProps> = ({ data, isMiniature = false
 
       <div style={{ display: 'flex', flex: 1 }}>
         {/* Colonne gauche */}
-        <div style={{ width: '30%', background: bleuFonce, color: blanc, padding: '40px 24px' }}>
+        <div style={{ width: '30%', background: primaryColor, color: blanc, padding: '40px 24px' }}>
           <div style={{ marginBottom: 32 }}>
             <div style={{ fontWeight: 600, fontSize: 18, marginBottom: 16, borderBottom: '2px solid #fff', paddingBottom: 8 }}>FORMATION</div>
             {education.map((edu, idx) => (
@@ -95,16 +96,16 @@ const AdminTemplate: React.FC<AdminTemplateProps> = ({ data, isMiniature = false
         <div style={{ width: '70%', padding: '40px 32px', background: blanc }}>
           {summary && (
             <div style={{ marginBottom: 32 }}>
-              <div style={{ fontWeight: 600, fontSize: 18, color: bleuFonce, marginBottom: 16, borderBottom: `2px solid ${bleuFonce}`, paddingBottom: 8 }}>À PROPOS DE MOI</div>
+              <div style={{ fontWeight: 600, fontSize: 18, color: primaryColor, marginBottom: 16, borderBottom: `2px solid ${primaryColor}`, paddingBottom: 8 }}>À PROPOS DE MOI</div>
               <div style={{ fontSize: 14, color: bleuClair, lineHeight: 1.6 }}>{summary}</div>
             </div>
           )}
 
           <div style={{ marginBottom: 32 }}>
-            <div style={{ fontWeight: 600, fontSize: 18, color: bleuFonce, marginBottom: 16, borderBottom: `2px solid ${bleuFonce}`, paddingBottom: 8 }}>EXPÉRIENCE</div>
+            <div style={{ fontWeight: 600, fontSize: 18, color: primaryColor, marginBottom: 16, borderBottom: `2px solid ${primaryColor}`, paddingBottom: 8 }}>EXPÉRIENCE</div>
             {experience.map((exp, idx) => (
               <div key={idx} style={{ marginBottom: 24 }}>
-                <div style={{ fontWeight: 600, fontSize: 16, color: bleuFonce }}>{exp.title}</div>
+                <div style={{ fontWeight: 600, fontSize: 16, color: primaryColor }}>{exp.title}</div>
                 <div style={{ fontSize: 14, color: bleuClair, fontWeight: 500 }}>{exp.company}{exp.location ? ` | ${exp.location}` : ''}</div>
                 <div style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>{exp.startDate} - {exp.current ? 'Présent' : exp.endDate}</div>
                 <div style={{ fontSize: 14, color: bleuClair, lineHeight: 1.6 }}>{exp.description}</div>
@@ -114,10 +115,10 @@ const AdminTemplate: React.FC<AdminTemplateProps> = ({ data, isMiniature = false
 
           {references && references.length > 0 && (
             <div style={{ marginBottom: 32 }}>
-              <div style={{ fontWeight: 600, fontSize: 18, color: bleuFonce, marginBottom: 16, borderBottom: `2px solid ${bleuFonce}`, paddingBottom: 8 }}>RÉFÉRENCES</div>
+              <div style={{ fontWeight: 600, fontSize: 18, color: primaryColor, marginBottom: 16, borderBottom: `2px solid ${primaryColor}`, paddingBottom: 8 }}>RÉFÉRENCES</div>
               {references.map((ref: any, idx: number) => (
                 <div key={idx} style={{ marginBottom: 16 }}>
-                  <div style={{ fontWeight: 600, fontSize: 14, color: bleuFonce }}>{ref.name}</div>
+                  <div style={{ fontWeight: 600, fontSize: 14, color: primaryColor }}>{ref.name}</div>
                   {ref.position && <div style={{ fontSize: 13, color: bleuClair }}>{ref.position}</div>}
                   {ref.contact && <div style={{ fontSize: 13, color: '#888' }}>{ref.contact}</div>}
                 </div>

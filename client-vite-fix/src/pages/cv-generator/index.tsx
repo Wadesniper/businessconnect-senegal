@@ -205,8 +205,9 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
               }}>
                 {/* Palette de couleurs améliorée */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 8, flexWrap: 'wrap' }}>
-                  <span style={{ fontWeight: 500, color: '#333', fontSize: 15, marginRight: 8 }}>
-                    🎨 Personnalisez la couleur principale du CV :
+                  <span style={{ fontWeight: 500, color: '#333', fontSize: 15, marginRight: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <span style={{ fontSize: '1.7em', lineHeight: 1, marginRight: 4 }}>🎨</span>
+                    Personnalisez la couleur principale du CV :
                   </span>
                   {["#1890ff", "#52c41a", "#faad14", "#f5222d", "#722ed1", "#13c2c2", "#2f54eb", "#eb2f96"].map(color => (
                     <button
@@ -246,7 +247,8 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
                     size="small" 
                     icon={<span style={{display:'inline-block',width:16,height:16,background:'#1890ff',borderRadius:'50%',marginRight:4,verticalAlign:'middle'}}></span>}
                     onClick={() => setCustomization({ ...customization, primaryColor: '#1890ff' })}
-                    style={{ marginLeft: 8, background: '#1890ff', color: '#fff', border: 'none', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}
+                    style={{ marginLeft: 8, background: '#1890ff', color: '#fff', border: 'none', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6, borderRadius: 20, padding: '6px 18px', boxShadow: '0 2px 8px #1890ff22', transition: 'background 0.2s, box-shadow 0.2s', height: 36 }}
+                    className="cv-default-color-btn"
                   >
                     Couleur par défaut
                   </Button>
