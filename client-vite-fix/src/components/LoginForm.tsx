@@ -16,6 +16,7 @@ interface LoginFormProps {
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink }) => {
+  console.log('[DEBUG] Render LoginForm');
   const [form] = Form.useForm();
   const { login, isAuthenticated, loading } = useAuth();
   const navigate = useNavigate();
@@ -129,7 +130,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
 
         <div style={{ textAlign: 'center', marginBottom: 16 }}>
           <a 
-            onClick={() => setForgotPasswordVisible(true)} 
+            data-testid="forgot-password-btn"
+            onClick={() => { console.log('[DEBUG] Clic bouton Mot de passe oublié'); setForgotPasswordVisible(true); }}
             style={{ 
               cursor: 'pointer', 
               color: '#666', 
