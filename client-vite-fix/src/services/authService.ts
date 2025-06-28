@@ -116,8 +116,44 @@ export class AuthService {
     }
   }
 
-  async resetPassword(phoneNumber: string): Promise<void> {
-    await api.post('/api/auth/reset-password', { phoneNumber });
+  async forgotPassword(phoneNumber: string): Promise<void> {
+    const response = await fetch(`${API_URL}/api/auth/forgot-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ phoneNumber }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Erreur lors de l\'envoi du code SMS');
+    }
+
+    const data = await response.json();
+    if (!data.success) {
+      throw new Error(data.message || 'Erreur lors de l\'envoi du code SMS');
+    }
+  }
+
+  async resetPassword(phoneNumber: string, code: string, password: string): Promise<void> {
+    const response = await fetch(`${API_URL}/api/auth/reset-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ phoneNumber, code, password }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Erreur lors de la réinitialisation du mot de passe');
+    }
+
+    const data = await response.json();
+    if (!data.success) {
+      throw new Error(data.message || 'Erreur lors de la réinitialisation du mot de passe');
+    }
   }
 
   async verifyResetToken(token: string): Promise<void> {

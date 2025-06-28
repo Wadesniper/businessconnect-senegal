@@ -3,6 +3,7 @@ import { Form, Input, Button, Card, Typography, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import ForgotPasswordModal from './ForgotPasswordModal';
 import './LoginForm.css';
 
 const { Title } = Typography;
@@ -20,6 +21,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
   const navigate = useNavigate();
   const [triedLogin, setTriedLogin] = useState(false);
   const [phoneError, setPhoneError] = useState('');
+  const [forgotPasswordVisible, setForgotPasswordVisible] = useState(false);
 
   useEffect(() => {
     if (!loading && triedLogin) {
@@ -125,6 +127,20 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
           </Button>
         </Form.Item>
 
+        <div style={{ textAlign: 'center', marginBottom: 16 }}>
+          <a 
+            onClick={() => setForgotPasswordVisible(true)} 
+            style={{ 
+              cursor: 'pointer', 
+              color: '#666', 
+              fontSize: 14,
+              textDecoration: 'underline'
+            }}
+          >
+            Mot de passe oublié ?
+          </a>
+        </div>
+
         {!hideRegisterLink && (
         <div className="register-link">
           Pas encore de compte ? <a onClick={() => navigate('/auth?tab=register')} style={{ cursor: 'pointer', color: '#1890ff' }}>Créer un compte</a>
@@ -143,6 +159,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
         <Title level={2} className="login-title">Connexion</Title>
         {formContent}
       </Card>
+
+      <ForgotPasswordModal
+        visible={forgotPasswordVisible}
+        onClose={() => setForgotPasswordVisible(false)}
+      />
     </div>
   );
 };

@@ -44,6 +44,11 @@ model User {
   verificationToken   String?                     // Optionnel (peut être null)
   resetPasswordToken  String?                     // Optionnel
   resetPasswordExpire DateTime?                   // Optionnel
+  
+  // Champs pour la réinitialisation par SMS
+  smsResetCode        String?                     // Code SMS de réinitialisation
+  smsResetExpire      DateTime?                   // Expiration du code SMS
+  smsResetAttempts    Int         @default(0)     // Nombre de tentatives
 
   // Champs pour les préférences
   preferences_notifications Boolean   @default(true)

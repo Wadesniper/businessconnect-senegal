@@ -7,6 +7,7 @@ import { NotificationService } from '../services/notificationService.js';
 import { logger } from '../utils/logger.js';
 import { validatePhoneNumber } from '../utils/validation.js';
 import prisma from '../config/prisma.js';
+import smsService from '../services/smsService.js';
 
 export class AuthController {
   private notificationService: NotificationService;
@@ -265,75 +266,141 @@ export class AuthController {
 
   forgotPassword = async (req: Request, res: Response, next?: NextFunction) => {
     try {
-      const { email } = req.body;
+      const { phoneNumber } = req.body;
 
+      // Validation du numéro de téléphone
+      if (!phoneNumber) {
+        return res.status(400).json({
+          success: false,
+          message: 'Le numéro de téléphone est requis'
+        });
+      }
+
+      // Validation et normalisation du numéro de téléphone
+      const normalizedPhone = validatePhoneNumber(phoneNumber);
+      if (!normalizedPhone) {
+        return res.status(400).json({
+          success: false,
+          message: "Le numéro doit être au format international. Exemples : +221 7X XXX XX XX (Sénégal), +33 X XX XX XX XX (France), etc."
+        });
+      }
+
+      // Vérifier si l'utilisateur existe
       const user = await prisma.user.findUnique({
-        where: { email: email.toLowerCase() }
+        where: { phoneNumber: normalizedPhone }
       });
 
       if (!user) {
         return res.status(404).json({
           success: false,
-          message: 'Aucun compte associé à cet email'
+          message: 'Aucun compte associé à ce numéro de téléphone'
         });
       }
 
-      // Générer le token de réinitialisation
-      const signOptions: SignOptions = { expiresIn: '7d' };
-      const resetToken = jwt.sign(
-        { id: user.id },
-        config.JWT_SECRET as Secret,
-        signOptions
-      );
+      // Vérifier les tentatives (max 3 par heure)
+      if (user.smsResetAttempts >= 3) {
+        const lastAttempt = user.smsResetExpire;
+        if (lastAttempt && lastAttempt > new Date(Date.now() - 60 * 60 * 1000)) {
+          return res.status(429).json({
+            success: false,
+            message: 'Trop de tentatives. Veuillez réessayer dans 1 heure.'
+          });
+        }
+        // Réinitialiser les tentatives si plus d'1 heure s'est écoulée
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { smsResetAttempts: 0 }
+        });
+      }
 
-      // Sauvegarder le token
+      // Générer et envoyer le code SMS
+      const { code, success } = await smsService.sendResetCode(normalizedPhone);
+
+      if (!success) {
+        return res.status(500).json({
+          success: false,
+          message: 'Erreur lors de l\'envoi du SMS. Veuillez réessayer.'
+        });
+      }
+
+      // Sauvegarder le code et l'expiration (10 minutes)
+      const expireDate = new Date(Date.now() + 10 * 60 * 1000);
       await prisma.user.update({
         where: { id: user.id },
         data: {
-          resetPasswordToken: resetToken,
-          resetPasswordExpire: new Date(Date.now() + 24 * 3600000) // 24 heures
+          smsResetCode: code,
+          smsResetExpire: expireDate,
+          smsResetAttempts: user.smsResetAttempts + 1
         }
       });
 
-      // Envoyer l'email de réinitialisation
-      await this.notificationService.sendPasswordResetEmail(email, resetToken);
-
       res.status(200).json({
         success: true,
-        message: 'Email de réinitialisation envoyé'
+        message: 'Code de réinitialisation envoyé par SMS'
       });
     } catch (error) {
-      logger.error('Erreur lors de l\'envoi de l\'email de réinitialisation:', error);
+      logger.error('Erreur lors de l\'envoi du code SMS:', error);
       res.status(500).json({
         success: false,
-        message: 'Une erreur est survenue lors de l\'envoi de l\'email de réinitialisation'
+        message: 'Une erreur est survenue lors de l\'envoi du code SMS'
       });
     }
   };
 
   resetPassword = async (req: Request, res: Response, next?: NextFunction) => {
     try {
-      const { token } = req.params;
-      const { password } = req.body;
+      const { phoneNumber, code, password } = req.body;
 
-      // Vérifier le token
-      const decodedReset = jwt.verify(token, config.JWT_SECRET as Secret) as { id: string };
-      const user = await prisma.user.findUnique({
-        where: { id: decodedReset.id }
-      });
-
-      if (!user) {
+      // Validation des champs requis
+      if (!phoneNumber || !code || !password) {
         return res.status(400).json({
           success: false,
-          message: 'Token invalide'
+          message: 'Le numéro de téléphone, le code et le nouveau mot de passe sont requis'
         });
       }
 
-      // Vérifier si le token n'a pas expiré
-      if (!user.resetPasswordExpire || user.resetPasswordExpire < new Date()) {
+      // Validation de la longueur du mot de passe
+      if (password.length < 6) {
         return res.status(400).json({
           success: false,
-          message: 'Token expiré'
+          message: 'Le mot de passe doit contenir au moins 6 caractères'
+        });
+      }
+
+      // Validation et normalisation du numéro de téléphone
+      const normalizedPhone = validatePhoneNumber(phoneNumber);
+      if (!normalizedPhone) {
+        return res.status(400).json({
+          success: false,
+          message: "Le numéro doit être au format international"
+        });
+      }
+
+      // Vérifier si l'utilisateur existe
+      const user = await prisma.user.findUnique({
+        where: { phoneNumber: normalizedPhone }
+      });
+
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'Aucun compte associé à ce numéro de téléphone'
+        });
+      }
+
+      // Vérifier le code SMS
+      if (!user.smsResetCode || user.smsResetCode !== code) {
+        return res.status(400).json({
+          success: false,
+          message: 'Code SMS invalide'
+        });
+      }
+
+      // Vérifier si le code n'a pas expiré
+      if (!user.smsResetExpire || user.smsResetExpire < new Date()) {
+        return res.status(400).json({
+          success: false,
+          message: 'Code SMS expiré. Veuillez demander un nouveau code.'
         });
       }
 
@@ -341,13 +408,14 @@ export class AuthController {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
 
-      // Mettre à jour le mot de passe
+      // Mettre à jour le mot de passe et nettoyer les champs SMS
       await prisma.user.update({
         where: { id: user.id },
         data: {
           password: hashedPassword,
-          resetPasswordToken: null,
-          resetPasswordExpire: null
+          smsResetCode: null,
+          smsResetExpire: null,
+          smsResetAttempts: 0
         }
       });
 
@@ -357,9 +425,9 @@ export class AuthController {
       });
     } catch (error) {
       logger.error('Erreur lors de la réinitialisation du mot de passe:', error);
-      res.status(400).json({
+      res.status(500).json({
         success: false,
-        message: 'Token invalide ou expiré'
+        message: 'Une erreur est survenue lors de la réinitialisation du mot de passe'
       });
     }
   };
