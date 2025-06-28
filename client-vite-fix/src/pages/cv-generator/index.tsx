@@ -248,7 +248,7 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
                     onClick={() => setCustomization({ ...customization, primaryColor: '#1890ff' })}
                     style={{ marginLeft: 8, background: '#1890ff', color: '#fff', border: 'none', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}
                   >
-                    Réinitialiser
+                    Couleur par défaut
                   </Button>
                 </div>
                 {/* Boutons d'action */}
