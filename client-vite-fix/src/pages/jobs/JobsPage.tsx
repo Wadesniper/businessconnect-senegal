@@ -180,7 +180,7 @@ const JobsPage: React.FC = () => {
           workLocation={null}
           onWorkLocationChange={() => {}}
           renderAction={
-            (user?.role === 'admin' || user?.role === 'employeur') ? (
+            (user?.role === 'admin' || user?.role === 'employeur' || user?.role === 'recruteur') ? (
               <div style={{ display: 'flex', gap: 12 }}>
                 <Button type="primary" onClick={() => navigate('/jobs/my-jobs')}>
                   Gérer mes offres
