@@ -209,14 +209,40 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
                     <span style={{ fontSize: '1.7em', lineHeight: 1, marginRight: 4 }}>🎨</span>
                     Personnalisez la couleur principale du CV :
                   </span>
-                  {["#1890ff", "#52c41a", "#faad14", "#f5222d", "#722ed1", "#13c2c2", "#2f54eb", "#eb2f96"].map(color => (
+                  
+                  {/* Indicateur de couleur actuelle */}
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: 8, 
+                    padding: '4px 12px', 
+                    background: '#f5f5f5', 
+                    borderRadius: 16, 
+                    border: '1px solid #d9d9d9',
+                    marginRight: 8
+                  }}>
+                    <span style={{ fontSize: 12, color: '#666' }}>Couleur actuelle :</span>
+                    <div style={{
+                      width: 20,
+                      height: 20,
+                      borderRadius: '50%',
+                      background: customization.primaryColor || '#1a237e',
+                      border: '2px solid #fff',
+                      boxShadow: '0 1px 4px rgba(0,0,0,0.2)'
+                    }} />
+                    <span style={{ fontSize: 12, color: '#666', fontFamily: 'monospace' }}>
+                      {customization.primaryColor || '#1a237e'}
+                    </span>
+                  </div>
+                  
+                  {["#1a237e", "#1890ff", "#52c41a", "#faad14", "#f5222d", "#722ed1", "#13c2c2", "#2f54eb", "#eb2f96"].map(color => (
                     <button
                       key={color}
                       style={{
                         width: 32,
                         height: 32,
                         borderRadius: '50%',
-                        border: customization.primaryColor === color ? '3px solid #222' : '2px solid #fff',
+                        border: (customization.primaryColor || '#1a237e') === color ? '3px solid #222' : '2px solid #fff',
                         background: color,
                         cursor: 'pointer',
                         boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
@@ -227,8 +253,14 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
                       }}
                       aria-label={`Choisir la couleur ${color}`}
                       onClick={() => setCustomization({ ...customization, primaryColor: color })}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'scale(1.1)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'scale(1)';
+                      }}
                     >
-                      {customization.primaryColor === color && (
+                      {(customization.primaryColor || '#1a237e') === color && (
                         <span style={{
                           position: 'absolute',
                           top: 7,
@@ -245,9 +277,9 @@ const CVGeneratorContent: React.FC<CVGeneratorProps> = ({ isSubscribed }) => {
                   ))}
                   <Button 
                     size="small" 
-                    icon={<span style={{display:'inline-block',width:16,height:16,background:'#1890ff',borderRadius:'50%',marginRight:4,verticalAlign:'middle'}}></span>}
-                    onClick={() => setCustomization({ ...customization, primaryColor: '#1890ff' })}
-                    style={{ marginLeft: 8, background: '#1890ff', color: '#fff', border: 'none', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6, borderRadius: 20, padding: '6px 18px', boxShadow: '0 2px 8px #1890ff22', transition: 'background 0.2s, box-shadow 0.2s', height: 36 }}
+                    icon={<span style={{display:'inline-block',width:16,height:16,background:'#1a237e',borderRadius:'50%',marginRight:4,verticalAlign:'middle'}}></span>}
+                    onClick={() => setCustomization({ ...customization, primaryColor: '#1a237e' })}
+                    style={{ marginLeft: 8, background: '#1a237e', color: '#fff', border: 'none', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6, borderRadius: 20, padding: '6px 18px', boxShadow: '0 2px 8px #1a237e22', transition: 'background 0.2s, box-shadow 0.2s', height: 36 }}
                     className="cv-default-color-btn"
                   >
                     Couleur par défaut

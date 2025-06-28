@@ -11,9 +11,11 @@ const gris = '#b0b0b0';
 interface BtpTemplateProps {
   data: CVData;
   isMiniature?: boolean;
+  customization?: { primaryColor?: string };
 }
 
-const BtpTemplate: React.FC<BtpTemplateProps> = ({ data, isMiniature = false }) => {
+const BtpTemplate: React.FC<BtpTemplateProps> = ({ data, isMiniature = false, customization }) => {
+  const primaryColor = customization?.primaryColor || orange;
   // Sécurisation des accès aux champs potentiellement absents
   const personalInfo = {
     ...data.personalInfo,
@@ -51,10 +53,10 @@ const BtpTemplate: React.FC<BtpTemplateProps> = ({ data, isMiniature = false }) 
       {/* Colonne gauche */}
       <div style={{ width: '38%', background: noir, color: blanc, padding: '0 0 0 0', display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
         {/* Header graphique */}
-        <div style={{ background: orange, height: 180, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+        <div style={{ background: primaryColor, height: 180, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
           <Avatar src={personalInfo.photo || '/images/avatars/man-1.png'} size={100} style={{ border: '4px solid #fff', marginBottom: 12, boxShadow: '0 2px 8px #0001' }} />
           <div style={{ fontWeight: 900, fontSize: 28, color: blanc, letterSpacing: 1, lineHeight: 1, wordBreak: 'break-word', overflowWrap: 'break-word' }}>{personalInfo.firstName?.toUpperCase()} {personalInfo.lastName?.toUpperCase()}</div>
-          <div style={{ fontSize: 16, color: orange, fontWeight: 700, marginTop: 2, textTransform: 'uppercase', wordBreak: 'break-word', overflowWrap: 'break-word' }}>{personalInfo.title}</div>
+          <div style={{ fontSize: 16, color: primaryColor, fontWeight: 700, marginTop: 2, textTransform: 'uppercase', wordBreak: 'break-word', overflowWrap: 'break-word' }}>{personalInfo.title}</div>
           {/* Ligne graphique */}
           <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: 6, background: blanc, borderTopLeftRadius: 12, borderTopRightRadius: 12 }} />
         </div>
@@ -69,14 +71,14 @@ const BtpTemplate: React.FC<BtpTemplateProps> = ({ data, isMiniature = false }) 
         {/* À propos */}
         {summary && (
           <div style={{ padding: '24px 32px 0 32px' }}>
-            <div style={{ fontWeight: 700, fontSize: 16, color: orange, marginBottom: 8 }}>À PROPOS</div>
+            <div style={{ fontWeight: 700, fontSize: 16, color: primaryColor, marginBottom: 8 }}>À PROPOS</div>
             <div style={{ fontSize: 14, color: blanc }}>{summary}</div>
           </div>
         )}
         {/* Formation */}
         {education.length > 0 && (
           <div style={{ padding: '24px 32px 0 32px' }}>
-            <div style={{ fontWeight: 700, fontSize: 16, color: orange, marginBottom: 8 }}>FORMATION</div>
+            <div style={{ fontWeight: 700, fontSize: 16, color: primaryColor, marginBottom: 8 }}>FORMATION</div>
             {education.map((edu, idx) => (
               <div key={idx} style={{ marginBottom: 10 }}>
                 <div style={{ fontWeight: 600, fontSize: 13 }}>{edu.institution}</div>
@@ -89,11 +91,11 @@ const BtpTemplate: React.FC<BtpTemplateProps> = ({ data, isMiniature = false }) 
         {/* Compétences avec pictos */}
         {skills.length > 0 && (
           <div style={{ padding: '24px 32px 0 32px' }}>
-            <div style={{ fontWeight: 700, fontSize: 16, color: orange, marginBottom: 8 }}>COMPÉTENCES</div>
+            <div style={{ fontWeight: 700, fontSize: 16, color: primaryColor, marginBottom: 8 }}>COMPÉTENCES</div>
             <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 16 }}>
               {skills.map((skill, idx) => (
                 <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: 80 }}>
-                  <div style={{ width: 40, height: 40, background: orange, borderRadius: 12, marginBottom: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', color: blanc, fontSize: 22 }}>
+                  <div style={{ width: 40, height: 40, background: primaryColor, borderRadius: 12, marginBottom: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', color: blanc, fontSize: 22 }}>
                     {idx % 3 === 0 ? <ToolOutlined /> : idx % 3 === 1 ? <ProjectOutlined /> : <BarChartOutlined />}
                   </div>
                   <span style={{ fontSize: 13, color: blanc, textAlign: 'center' }}>{skill.name}</span>
@@ -108,17 +110,17 @@ const BtpTemplate: React.FC<BtpTemplateProps> = ({ data, isMiniature = false }) 
         {/* Expérience */}
         {experience.length > 0 && (
           <div>
-            <div style={{ fontWeight: 700, fontSize: 18, color: orange, marginBottom: 12 }}>EXPÉRIENCE</div>
+            <div style={{ fontWeight: 700, fontSize: 18, color: primaryColor, marginBottom: 12 }}>EXPÉRIENCE</div>
             {experience.map((exp, idx) => (
-              <div key={idx} style={{ background: '#23232308', borderRadius: 10, boxShadow: '0 2px 8px #0001', padding: 18, marginBottom: 18, borderLeft: `6px solid ${orange}` }}>
+              <div key={idx} style={{ background: '#23232308', borderRadius: 10, boxShadow: '0 2px 8px #0001', padding: 18, marginBottom: 18, borderLeft: `6px solid ${primaryColor}` }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div style={{ fontWeight: 700, fontSize: 15, color: noir }}>{exp.title}</div>
-                  <div style={{ fontSize: 13, color: orange, fontWeight: 700 }}>{exp.startDate} - {exp.current ? 'Présent' : exp.endDate}</div>
+                  <div style={{ fontSize: 13, color: primaryColor, fontWeight: 700 }}>{exp.startDate} - {exp.current ? 'Présent' : exp.endDate}</div>
                 </div>
                 <div style={{ fontSize: 13, color: gris, fontWeight: 500 }}>{exp.company}{exp.location ? `, ${exp.location}` : ''}</div>
                 <div style={{ fontSize: 13, color: noir, marginTop: 2 }}>{exp.description}</div>
                 {exp.achievements && exp.achievements.length > 0 && (
-                  <ul style={{ color: orange, fontSize: 12, marginTop: 3, marginBottom: 0, paddingLeft: 16 }}>
+                  <ul style={{ color: primaryColor, fontSize: 12, marginTop: 3, marginBottom: 0, paddingLeft: 16 }}>
                     {exp.achievements.map((ach, i) => <li key={i}>{ach}</li>)}
                   </ul>
                 )}
@@ -129,7 +131,7 @@ const BtpTemplate: React.FC<BtpTemplateProps> = ({ data, isMiniature = false }) 
         {/* Certifications */}
         {certifications && certifications.length > 0 && (
           <div>
-            <div style={{ fontWeight: 700, fontSize: 16, color: orange, marginBottom: 8 }}>CERTIFICATIONS</div>
+            <div style={{ fontWeight: 700, fontSize: 16, color: primaryColor, marginBottom: 8 }}>CERTIFICATIONS</div>
             {certifications.map((cert, idx) => (
               <div key={idx} style={{ marginBottom: 8 }}>
                 <div style={{ fontWeight: 600, fontSize: 13 }}>{typeof cert === 'string' ? cert : cert.name}</div>
@@ -142,10 +144,10 @@ const BtpTemplate: React.FC<BtpTemplateProps> = ({ data, isMiniature = false }) 
         {/* Langues */}
         {languages.length > 0 && (
           <div>
-            <div style={{ fontWeight: 700, fontSize: 16, color: orange, marginBottom: 8 }}>LANGUES</div>
+            <div style={{ fontWeight: 700, fontSize: 16, color: primaryColor, marginBottom: 8 }}>LANGUES</div>
             <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 16 }}>
               {languages.map((lang, idx) => (
-                <div key={idx} style={{ fontSize: 13, color: noir, background: '#f5f5f5', borderRadius: 8, padding: '4px 12px', marginBottom: 6 }}>{lang.name} <span style={{ color: orange, fontWeight: 700 }}>- {lang.level}</span></div>
+                <div key={idx} style={{ fontSize: 13, color: noir, background: '#f5f5f5', borderRadius: 8, padding: '4px 12px', marginBottom: 6 }}>{lang.name} <span style={{ color: primaryColor, fontWeight: 700 }}>- {lang.level}</span></div>
               ))}
             </div>
           </div>
@@ -153,7 +155,7 @@ const BtpTemplate: React.FC<BtpTemplateProps> = ({ data, isMiniature = false }) 
         {/* Références dynamiques */}
         {Array.isArray(data.references) && data.references.length > 0 && (
           <div>
-            <div style={{ fontWeight: 700, fontSize: 16, color: orange, marginBottom: 8 }}>RÉFÉRENCES</div>
+            <div style={{ fontWeight: 700, fontSize: 16, color: primaryColor, marginBottom: 8 }}>RÉFÉRENCES</div>
             {data.references.map((ref: any, idx: number) => (
               <div key={idx} style={{ fontSize: 13, color: noir, marginBottom: 6 }}>
                 <div style={{ fontWeight: 600 }}>{ref.name}</div>

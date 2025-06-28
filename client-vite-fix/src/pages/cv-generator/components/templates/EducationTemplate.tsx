@@ -6,6 +6,7 @@ import type { CVData } from '../../../../types/cv';
 interface EducationTemplateProps {
   data: CVData;
   isMiniature?: boolean;
+  customization?: { primaryColor?: string };
 }
 
 const noir = '#232323';
@@ -13,7 +14,8 @@ const bleu = '#1746a2';
 const gris = '#f5f5f5';
 const blanc = '#fff';
 
-const EducationTemplate: React.FC<EducationTemplateProps> = ({ data, isMiniature = false }) => {
+const EducationTemplate: React.FC<EducationTemplateProps> = ({ data, isMiniature = false, customization }) => {
+  const primaryColor = customization?.primaryColor || bleu;
   const personalInfo = {
     ...data.personalInfo,
     linkedin: (data.personalInfo as any).linkedin || '',
@@ -30,7 +32,7 @@ const EducationTemplate: React.FC<EducationTemplateProps> = ({ data, isMiniature
   return (
     <div className="cv-template-container" style={{ position: 'relative', width: 794, minHeight: 1123, background: gris, borderRadius: 18, overflow: 'hidden', fontFamily: 'Montserrat, Arial, sans-serif', boxShadow: '0 4px 24px #0002' }}>
       {/* Bande bleue traversante, arrondie à gauche, derrière la colonne noire */}
-      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: 120, background: bleu, borderTopLeftRadius: 18, zIndex: 1 }} />
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: 120, background: primaryColor, borderTopLeftRadius: 18, zIndex: 1 }} />
       {/* Colonne noire traversante, au-dessus de la bande bleue à gauche */}
       <div style={{ position: 'absolute', top: 0, left: 0, width: 240, height: '100%', background: noir, color: blanc, zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 18px' }}>
         {/* Photo de profil centrée dans le bandeau noir */}
@@ -67,11 +69,11 @@ const EducationTemplate: React.FC<EducationTemplateProps> = ({ data, isMiniature
       <div style={{ position: 'absolute', top: 120, left: 240, width: 554, height: 'calc(100% - 120px)', background: blanc, padding: '32px 36px 32px 36px', display: 'flex', flexDirection: 'column', zIndex: 1 }}>
         {/* Expérience */}
         <div style={{ marginBottom: 28 }}>
-          <div style={{ fontWeight: 700, fontSize: 18, color: bleu, marginBottom: 10 }}>Expérience</div>
+          <div style={{ fontWeight: 700, fontSize: 18, color: primaryColor, marginBottom: 10 }}>Expérience</div>
           {experience.map((exp, idx) => (
             <div key={idx} style={{ marginBottom: 18 }}>
               <div style={{ fontWeight: 600, fontSize: 15, color: '#232323' }}>{exp.title}</div>
-              <div style={{ fontSize: 13, color: bleu }}>{exp.company} — {exp.location}</div>
+              <div style={{ fontSize: 13, color: primaryColor }}>{exp.company} — {exp.location}</div>
               <div style={{ fontSize: 12, color: '#888', marginBottom: 2 }}>{exp.startDate} - {exp.current ? 'Présent' : exp.endDate}</div>
               <div style={{ fontSize: 12, color: '#232323' }}>{exp.description}</div>
             </div>
@@ -79,11 +81,11 @@ const EducationTemplate: React.FC<EducationTemplateProps> = ({ data, isMiniature
         </div>
         {/* Formation */}
         <div style={{ marginBottom: 28 }}>
-          <div style={{ fontWeight: 700, fontSize: 18, color: bleu, marginBottom: 10 }}>Formation</div>
+          <div style={{ fontWeight: 700, fontSize: 18, color: primaryColor, marginBottom: 10 }}>Formation</div>
           {education.map((edu, idx) => (
             <div key={idx} style={{ marginBottom: 14 }}>
               <div style={{ fontWeight: 600, fontSize: 15, color: '#232323' }}>{edu.degree} en {edu.field}</div>
-              <div style={{ fontSize: 13, color: bleu }}>{edu.institution}</div>
+              <div style={{ fontSize: 13, color: primaryColor }}>{edu.institution}</div>
               <div style={{ fontSize: 12, color: '#888', marginBottom: 2 }}>{edu.startDate} - {edu.endDate}</div>
               <div style={{ fontSize: 12, color: '#232323' }}>{edu.description}</div>
             </div>
@@ -92,7 +94,7 @@ const EducationTemplate: React.FC<EducationTemplateProps> = ({ data, isMiniature
         {/* Certifications */}
         {certifications && certifications.length > 0 && (
           <div style={{ marginBottom: 28 }}>
-            <div style={{ fontWeight: 700, fontSize: 18, color: bleu, marginBottom: 10 }}>Certifications</div>
+            <div style={{ fontWeight: 700, fontSize: 18, color: primaryColor, marginBottom: 10 }}>Certifications</div>
             {certifications.map((cert, idx) => (
               <div key={idx} style={{ fontSize: 13, color: '#232323', marginBottom: 6 }}>
                 {typeof cert === 'string' ? cert : <>{cert.name} ({cert.issuer}, {cert.date})</>}
@@ -103,7 +105,7 @@ const EducationTemplate: React.FC<EducationTemplateProps> = ({ data, isMiniature
         {/* Projets */}
         {Array.isArray(data.projects) && data.projects.length > 0 && (
           <div style={{ marginBottom: 28 }}>
-            <div style={{ fontWeight: 700, fontSize: 18, color: bleu, marginBottom: 10 }}>Projets</div>
+            <div style={{ fontWeight: 700, fontSize: 18, color: primaryColor, marginBottom: 10 }}>Projets</div>
             {data.projects.map((proj, idx) => (
               <div key={idx} style={{ fontSize: 13, color: '#232323', marginBottom: 8 }}>
                 <div style={{ fontWeight: 600 }}>{typeof proj === 'string' ? proj : proj.name}</div>
@@ -118,7 +120,7 @@ const EducationTemplate: React.FC<EducationTemplateProps> = ({ data, isMiniature
         {/* Centres d'intérêt */}
         {Array.isArray(data.interests) && data.interests.length > 0 && (
           <div style={{ marginBottom: 28 }}>
-            <div style={{ fontWeight: 700, fontSize: 18, color: bleu, marginBottom: 10 }}>Centres d'intérêt</div>
+            <div style={{ fontWeight: 700, fontSize: 18, color: primaryColor, marginBottom: 10 }}>Centres d'intérêt</div>
             {data.interests.map((interest, idx) => (
               <div key={idx} style={{ fontSize: 13, color: '#232323', marginBottom: 6 }}>{typeof interest === 'string' ? interest : (interest && typeof interest === 'object' && 'name' in interest ? interest.name : '')}</div>
             ))}

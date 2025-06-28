@@ -6,9 +6,11 @@ import type { CVData } from '../../../../types/cv';
 interface CommerceTemplateProps {
   data: CVData;
   isMiniature?: boolean;
+  customization?: { primaryColor?: string };
 }
 
-const CommerceTemplate: React.FC<CommerceTemplateProps> = ({ data, isMiniature = false }) => {
+const CommerceTemplate: React.FC<CommerceTemplateProps> = ({ data, isMiniature = false, customization }) => {
+  const primaryColor = customization?.primaryColor || '#232323';
   // Sécurisation des accès aux champs potentiellement absents
   const personalInfo = {
     ...data.personalInfo,
@@ -51,7 +53,7 @@ const CommerceTemplate: React.FC<CommerceTemplateProps> = ({ data, isMiniature =
         <Avatar src={personalInfo.photo || '/images/avatars/man-3.png'} size={120} style={{ border: '4px solid #fff', marginBottom: 18, boxShadow: '0 2px 8px #0001' }} />
         {/* Education */}
         <div style={{ width: '100%', marginBottom: 24 }}>
-          <div style={{ fontWeight: 700, fontSize: 16, color: '#232323', marginBottom: 8, background: '#fff', padding: '6px 12px', borderRadius: 8, textAlign: 'center' }}>FORMATION</div>
+          <div style={{ fontWeight: 700, fontSize: 16, color: primaryColor, marginBottom: 8, background: '#fff', padding: '6px 12px', borderRadius: 8, textAlign: 'center' }}>FORMATION</div>
           {education.map((edu, idx) => (
             <div key={idx} style={{ marginBottom: 10 }}>
               <div style={{ fontWeight: 600, fontSize: 13 }}>{edu.institution}</div>
@@ -62,16 +64,16 @@ const CommerceTemplate: React.FC<CommerceTemplateProps> = ({ data, isMiniature =
         </div>
         {/* Langue */}
         <div style={{ width: '100%', marginBottom: 24 }}>
-          <div style={{ fontWeight: 700, fontSize: 16, color: '#232323', marginBottom: 8, background: '#fff', padding: '6px 12px', borderRadius: 8, textAlign: 'center' }}>LANGUES</div>
+          <div style={{ fontWeight: 700, fontSize: 16, color: primaryColor, marginBottom: 8, background: '#fff', padding: '6px 12px', borderRadius: 8, textAlign: 'center' }}>LANGUES</div>
           {languages.map((lang, idx) => (
-            <div key={idx} style={{ fontSize: 13, color: '#232323', marginBottom: 4 }}>{lang.name} <span style={{ color: '#888', fontSize: 12 }}>({lang.level})</span></div>
+            <div key={idx} style={{ fontSize: 13, color: primaryColor, marginBottom: 4 }}>{lang.name} <span style={{ color: '#888', fontSize: 12 }}>({lang.level})</span></div>
           ))}
         </div>
         {/* Skill Summary */}
         <div style={{ width: '100%', marginBottom: 24 }}>
-          <div style={{ fontWeight: 700, fontSize: 16, color: '#232323', marginBottom: 8, background: '#fff', padding: '6px 12px', borderRadius: 8, textAlign: 'center' }}>COMPÉTENCES</div>
+          <div style={{ fontWeight: 700, fontSize: 16, color: primaryColor, marginBottom: 8, background: '#fff', padding: '6px 12px', borderRadius: 8, textAlign: 'center' }}>COMPÉTENCES</div>
           {skills.map((skill, idx) => (
-            <div key={idx} style={{ fontSize: 13, color: '#232323', marginBottom: 10 }}>{skill.name}</div>
+            <div key={idx} style={{ fontSize: 13, color: primaryColor, marginBottom: 10 }}>{skill.name}</div>
           ))}
         </div>
       </div>

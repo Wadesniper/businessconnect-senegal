@@ -3,17 +3,19 @@ import { Row, Col, Tag, Timeline, Card, Avatar, Rate, Progress } from 'antd';
 import { MailOutlined, PhoneOutlined, EnvironmentOutlined, LinkedinOutlined, GlobalOutlined, CoffeeOutlined } from '@ant-design/icons';
 import type { CVData } from '../../../../types/cv';
 
+interface HotelTemplateProps {
+  data: CVData;
+  isMiniature?: boolean;
+  customization?: { primaryColor?: string };
+}
+
 const marron = '#6B4F3A';
 const beige = '#F5F3F0';
 const blanc = '#fff';
 const gris = '#888';
 
-interface HotelTemplateProps {
-  data: CVData;
-  isMiniature?: boolean;
-}
-
-const HotelTemplate: React.FC<HotelTemplateProps> = ({ data, isMiniature = false }) => {
+const HotelTemplate: React.FC<HotelTemplateProps> = ({ data, isMiniature = false, customization }) => {
+  const primaryColor = customization?.primaryColor || marron;
   // Sécurisation des accès aux champs potentiellement absents
   const personalInfo = {
     ...data.personalInfo,
@@ -52,16 +54,16 @@ const HotelTemplate: React.FC<HotelTemplateProps> = ({ data, isMiniature = false
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', background: blanc, padding: '32px 48px 0 48px', minHeight: 180 }}>
         <Avatar src={personalInfo.photo || '/images/avatars/woman-5.png'} size={120} style={{ border: '4px solid #fff', marginRight: 32, boxShadow: '0 2px 8px #0001' }} />
         <div style={{ flex: 1, textAlign: 'center' }}>
-          <div style={{ fontWeight: 900, fontSize: 32, color: marron, letterSpacing: 1, lineHeight: 1, wordBreak: 'break-word', overflowWrap: 'break-word' }}>{personalInfo.firstName?.toUpperCase()} {personalInfo.lastName?.toUpperCase()}</div>
+          <div style={{ fontWeight: 900, fontSize: 32, color: primaryColor, letterSpacing: 1, lineHeight: 1, wordBreak: 'break-word', overflowWrap: 'break-word' }}>{personalInfo.firstName?.toUpperCase()} {personalInfo.lastName?.toUpperCase()}</div>
           <div style={{ fontSize: 20, color: gris, fontWeight: 500, marginTop: 8, letterSpacing: 8, wordBreak: 'break-word', overflowWrap: 'break-word' }}>{personalInfo.title?.toUpperCase()}</div>
         </div>
       </div>
       {/* Bloc contacts horizontal */}
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', background: beige, padding: '12px 0', gap: 32, borderRadius: '0 0 18px 18px', margin: '0 48px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><PhoneOutlined style={{ background: marron, color: blanc, borderRadius: '50%', padding: 6, fontSize: 18 }} /> {personalInfo.phone}</div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><MailOutlined style={{ background: marron, color: blanc, borderRadius: '50%', padding: 6, fontSize: 18 }} /> {personalInfo.email}</div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><EnvironmentOutlined style={{ background: marron, color: blanc, borderRadius: '50%', padding: 6, fontSize: 18 }} /> {personalInfo.address}</div>
-        {personalInfo.portfolio && <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><GlobalOutlined style={{ background: marron, color: blanc, borderRadius: '50%', padding: 6, fontSize: 18 }} /> {personalInfo.portfolio}</div>}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><PhoneOutlined style={{ background: primaryColor, color: blanc, borderRadius: '50%', padding: 6, fontSize: 18 }} /> {personalInfo.phone}</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><MailOutlined style={{ background: primaryColor, color: blanc, borderRadius: '50%', padding: 6, fontSize: 18 }} /> {personalInfo.email}</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><EnvironmentOutlined style={{ background: primaryColor, color: blanc, borderRadius: '50%', padding: 6, fontSize: 18 }} /> {personalInfo.address}</div>
+        {personalInfo.portfolio && <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><GlobalOutlined style={{ background: primaryColor, color: blanc, borderRadius: '50%', padding: 6, fontSize: 18 }} /> {personalInfo.portfolio}</div>}
       </div>
       {/* Deux colonnes */}
       <div style={{ display: 'flex', flexDirection: 'row', flex: 1, background: blanc, padding: '32px 48px', gap: 48 }}>
@@ -70,18 +72,18 @@ const HotelTemplate: React.FC<HotelTemplateProps> = ({ data, isMiniature = false
           {/* À propos */}
           {summary && (
             <div>
-              <div style={{ fontWeight: 700, fontSize: 16, color: marron, background: beige, padding: '6px 12px', borderRadius: 8, marginBottom: 8 }}>À PROPOS</div>
+              <div style={{ fontWeight: 700, fontSize: 16, color: primaryColor, background: beige, padding: '6px 12px', borderRadius: 8, marginBottom: 8 }}>À PROPOS</div>
               <div style={{ fontSize: 14, color: gris }}>{summary}</div>
             </div>
           )}
           {/* Formation */}
           {education.length > 0 && (
             <div>
-              <div style={{ fontWeight: 700, fontSize: 16, color: marron, background: beige, padding: '6px 12px', borderRadius: 8, marginBottom: 8 }}>FORMATION</div>
+              <div style={{ fontWeight: 700, fontSize: 16, color: primaryColor, background: beige, padding: '6px 12px', borderRadius: 8, marginBottom: 8 }}>FORMATION</div>
               {education.map((edu, idx) => (
                 <div key={idx} style={{ marginBottom: 10 }}>
                   <div style={{ fontWeight: 600, fontSize: 13 }}>{edu.institution}</div>
-                  <div style={{ fontSize: 12, color: marron }}>{edu.degree}{edu.field ? `, ${edu.field}` : ''}</div>
+                  <div style={{ fontSize: 12, color: primaryColor }}>{edu.degree}{edu.field ? `, ${edu.field}` : ''}</div>
                   <div style={{ fontSize: 11, color: gris }}>{edu.startDate} - {edu.endDate}</div>
                 </div>
               ))}
@@ -90,11 +92,11 @@ const HotelTemplate: React.FC<HotelTemplateProps> = ({ data, isMiniature = false
           {/* Langues avec barres */}
           {languages.length > 0 && (
             <div>
-              <div style={{ fontWeight: 700, fontSize: 16, color: marron, background: beige, padding: '6px 12px', borderRadius: 8, marginBottom: 8 }}>LANGUES</div>
+              <div style={{ fontWeight: 700, fontSize: 16, color: primaryColor, background: beige, padding: '6px 12px', borderRadius: 8, marginBottom: 8 }}>LANGUES</div>
               {languages.map((lang, idx) => (
                 <div key={idx} style={{ marginBottom: 10 }}>
-                  <div style={{ fontSize: 13, color: marron, marginBottom: 2 }}>{lang.name}</div>
-                  <Progress percent={typeof lang.level === 'number' ? lang.level : lang.level === 'Débutant' ? 20 : lang.level === 'Intermédiaire' ? 50 : lang.level === 'Avancé' ? 75 : lang.level === 'Expert' ? 100 : 0} showInfo={false} strokeColor={marron} trailColor={beige} style={{ height: 8 }} />
+                  <div style={{ fontSize: 13, color: primaryColor, marginBottom: 2 }}>{lang.name}</div>
+                  <Progress percent={typeof lang.level === 'number' ? lang.level : lang.level === 'Débutant' ? 20 : lang.level === 'Intermédiaire' ? 50 : lang.level === 'Avancé' ? 75 : lang.level === 'Expert' ? 100 : 0} showInfo={false} strokeColor={primaryColor} trailColor={beige} style={{ height: 8 }} />
                 </div>
               ))}
             </div>
@@ -105,12 +107,12 @@ const HotelTemplate: React.FC<HotelTemplateProps> = ({ data, isMiniature = false
           {/* Expérience */}
           {experience.length > 0 && (
             <div>
-              <div style={{ fontWeight: 700, fontSize: 16, color: marron, background: beige, padding: '6px 12px', borderRadius: 8, marginBottom: 8 }}>EXPÉRIENCE</div>
+              <div style={{ fontWeight: 700, fontSize: 16, color: primaryColor, background: beige, padding: '6px 12px', borderRadius: 8, marginBottom: 8 }}>EXPÉRIENCE</div>
               {experience.map((exp, idx) => (
                 <div key={idx} style={{ marginBottom: 16, display: 'flex', flexDirection: 'column', gap: 2 }}>
-                  <div style={{ fontWeight: 700, fontSize: 14, color: marron }}>{exp.title}</div>
+                  <div style={{ fontWeight: 700, fontSize: 14, color: primaryColor }}>{exp.title}</div>
                   <div style={{ fontSize: 13, color: gris }}>{exp.company}</div>
-                  <div style={{ fontSize: 12, color: marron }}>{exp.startDate} - {exp.current ? 'Présent' : exp.endDate}</div>
+                  <div style={{ fontSize: 12, color: primaryColor }}>{exp.startDate} - {exp.current ? 'Présent' : exp.endDate}</div>
                   <div style={{ fontSize: 13, color: gris }}>{exp.description}</div>
                 </div>
               ))}
@@ -119,9 +121,9 @@ const HotelTemplate: React.FC<HotelTemplateProps> = ({ data, isMiniature = false
           {/* Compétences avec barres */}
           {skills.length > 0 && (
             <div>
-              <div style={{ fontWeight: 700, fontSize: 16, color: marron, background: beige, padding: '6px 12px', borderRadius: 8, marginBottom: 8 }}>COMPÉTENCES</div>
+              <div style={{ fontWeight: 700, fontSize: 16, color: primaryColor, background: beige, padding: '6px 12px', borderRadius: 8, marginBottom: 8 }}>COMPÉTENCES</div>
               {skills.map((skill, idx) => (
-                <div key={idx} style={{ fontSize: 13, color: marron, marginBottom: 10 }}>{skill.name}</div>
+                <div key={idx} style={{ fontSize: 13, color: primaryColor, marginBottom: 10 }}>{skill.name}</div>
               ))}
             </div>
           )}

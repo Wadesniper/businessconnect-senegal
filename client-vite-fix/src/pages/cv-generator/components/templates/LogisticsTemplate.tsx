@@ -5,6 +5,7 @@ import type { CVData } from '../../../../types/cv';
 interface LogisticsTemplateProps {
   data: CVData;
   isMiniature?: boolean;
+  customization?: { primaryColor?: string };
 }
 
 const bleuFonce = '#2d3a5a';
@@ -13,7 +14,8 @@ const bleuClair = '#eaf1fb';
 const blanc = '#fff';
 const gris = '#f5f6fa';
 
-const LogisticsTemplate: React.FC<LogisticsTemplateProps> = ({ data, isMiniature = false }) => {
+const LogisticsTemplate: React.FC<LogisticsTemplateProps> = ({ data, isMiniature = false, customization }) => {
+  const primaryColor = customization?.primaryColor || bleuFonce;
   const personalInfo = {
     ...data.personalInfo,
     linkedin: (data.personalInfo as any).linkedin || '',
@@ -30,7 +32,7 @@ const LogisticsTemplate: React.FC<LogisticsTemplateProps> = ({ data, isMiniature
   return (
     <div className="cv-template-container" style={{ width: 794, minHeight: 1123, background: blanc, fontFamily: 'Montserrat, Arial, sans-serif', display: 'flex', flexDirection: 'row', borderRadius: 18, overflow: 'hidden', boxShadow: '0 4px 24px #0002' }}>
       {/* Colonne gauche */}
-      <div style={{ width: '32%', background: bleuFonce, color: blanc, padding: '0 0 0 0', display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100%' }}>
+      <div style={{ width: '32%', background: primaryColor, color: blanc, padding: '0 0 0 0', display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100%' }}>
         {/* Photo */}
         <div style={{ width: 110, height: 110, borderRadius: '50%', overflow: 'hidden', border: '5px solid ' + bleu, margin: '40px auto 18px auto', background: blanc, boxShadow: '0 2px 8px #0001' }}>
           <img src={personalInfo.photo || '/images/avatars/man-5.png'} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -93,17 +95,17 @@ const LogisticsTemplate: React.FC<LogisticsTemplateProps> = ({ data, isMiniature
         {/* Expérience professionnelle */}
         {experience.length > 0 && (
           <div style={{ marginBottom: 32 }}>
-            <div style={{ fontWeight: 700, fontSize: 22, color: bleuFonce, marginBottom: 16 }}>Expérience professionnelle</div>
+            <div style={{ fontWeight: 700, fontSize: 22, color: primaryColor, marginBottom: 16 }}>Expérience professionnelle</div>
             {experience.map((exp, idx) => (
               <div key={idx} style={{ background: blanc, borderRadius: 10, boxShadow: '0 2px 8px #0001', padding: 18, marginBottom: 18 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div style={{ fontWeight: 600, fontSize: 16, color: bleuFonce }}>{exp.company}</div>
-                  <div style={{ fontSize: 14, color: bleuFonce }}>{exp.startDate} {exp.endDate ? `- ${exp.endDate}` : ''}</div>
+                  <div style={{ fontWeight: 600, fontSize: 16, color: primaryColor }}>{exp.company}</div>
+                  <div style={{ fontSize: 14, color: primaryColor }}>{exp.startDate} {exp.endDate ? `- ${exp.endDate}` : ''}</div>
                 </div>
                 <div style={{ fontWeight: 500, fontSize: 15, color: '#555', marginBottom: 4 }}>{exp.title}</div>
                 <div style={{ fontSize: 14, color: '#888' }}>{exp.description}</div>
                 {exp.achievements && exp.achievements.length > 0 && (
-                  <ul style={{ margin: '8px 0 0 16px', color: bleuFonce }}>
+                  <ul style={{ margin: '8px 0 0 16px', color: primaryColor }}>
                     {exp.achievements.map((ach: string, i: number) => <li key={i}>{ach}</li>)}
                   </ul>
                 )}
@@ -114,11 +116,11 @@ const LogisticsTemplate: React.FC<LogisticsTemplateProps> = ({ data, isMiniature
         {/* Références */}
         {references.length > 0 && (
           <div style={{ marginBottom: 32 }}>
-            <div style={{ fontWeight: 700, fontSize: 22, color: bleuFonce, marginBottom: 16 }}>Références</div>
+            <div style={{ fontWeight: 700, fontSize: 22, color: primaryColor, marginBottom: 16 }}>Références</div>
             <div style={{ display: 'flex', gap: 32 }}>
               {references.map((ref: any, idx: number) => (
                 <div key={idx} style={{ background: blanc, borderRadius: 10, boxShadow: '0 2px 8px #0001', padding: 18, minWidth: 180 }}>
-                  <div style={{ fontWeight: 600, fontSize: 15, color: bleuFonce }}>{ref.name}</div>
+                  <div style={{ fontWeight: 600, fontSize: 15, color: primaryColor }}>{ref.name}</div>
                   {ref.position && <div style={{ fontSize: 14, color: bleu }}>{ref.position}</div>}
                   {ref.contact && <div style={{ fontSize: 13, color: '#888' }}>{ref.contact}</div>}
                 </div>

@@ -1667,3 +1667,13 @@ Cette approche a résolu de manière définitive les problèmes de validation, d
   - `src/services/api.ts`
 
 ---
+
+# [MAJ 2024-06-13] Correction de l'affichage des icônes et de l'alignement des boutons sur la page abonnement
+
+- Suppression de la propriété 'icon' dans le fichier partagé des offres pour éviter les erreurs de build liées au JSX dans un .ts.
+- Gestion des icônes localement dans SubscriptionPage.tsx via un mapping par clé d'offre.
+- Alignement parfait des boutons S'abonner en bas de chaque carte sur desktop.
+- Aucun impact sur la logique métier, la structure partagée, ni le backend.
+- Build et déploiement frontend garantis sans régression.
+
+---
