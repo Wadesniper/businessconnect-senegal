@@ -33,8 +33,8 @@ const PublishJobPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  if (!user || (user.role !== 'admin' && user.role !== 'employeur' && user.role !== 'recruteur')) {
-    return <Container><Alert severity="error">Accès réservé aux employeurs, recruteurs et admins.</Alert></Container>;
+  if (!user || (user.role !== 'admin' && user.role !== 'recruteur')) {
+    return <Container><Alert severity="error">Accès réservé aux recruteurs et admins.</Alert></Container>;
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -92,6 +92,7 @@ const PublishJobPage: React.FC = () => {
         missions: form.missions ? form.missions.split('\n').map(s => s.trim()).filter(Boolean) : [],
         salary_currency: form.salary_currency || 'XOF',
         isActive: true,
+        employerId: user.id,
       };
       // Suppression des champs vides ou inutiles
       Object.keys(jobPayload).forEach(key => {
