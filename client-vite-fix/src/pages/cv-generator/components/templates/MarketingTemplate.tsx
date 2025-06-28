@@ -6,6 +6,7 @@ import type { CVData } from '../../../../types/cv';
 interface MarketingTemplateProps {
   data: CVData;
   isMiniature?: boolean;
+  customization?: { primaryColor?: string };
 }
 
 const mainBlue = '#0a2940';
@@ -26,7 +27,8 @@ const sectionTitleStyle = {
 const labelStyle = { color: gray, fontWeight: 500, fontSize: 13 };
 const valueStyle = { color: white, fontWeight: 600, fontSize: 15 };
 
-const MarketingTemplate: React.FC<MarketingTemplateProps> = ({ data, isMiniature = false }) => {
+const MarketingTemplate: React.FC<MarketingTemplateProps> = ({ data, isMiniature = false, customization }) => {
+  const primaryColor = customization?.primaryColor || mainBlue;
   const personalInfo = {
     ...data.personalInfo,
     linkedin: (data.personalInfo as any).linkedin || '',
@@ -43,7 +45,7 @@ const MarketingTemplate: React.FC<MarketingTemplateProps> = ({ data, isMiniature
   const projects = Array.isArray(data.projects) ? data.projects : [];
 
   return (
-    <div className="cv-template-container" style={{ background: mainBlue, color: white, borderRadius: 18, minHeight: 1123, fontFamily: 'Montserrat, Arial, sans-serif', boxShadow: '0 4px 24px #0002', padding: 0, overflow: 'visible', display: 'flex', flexDirection: 'row', width: 794 }}>
+    <div className="cv-template-container" style={{ background: primaryColor, color: white, borderRadius: 18, minHeight: 1123, fontFamily: 'Montserrat, Arial, sans-serif', boxShadow: '0 4px 24px #0002', padding: 0, overflow: 'visible', display: 'flex', flexDirection: 'row', width: 794 }}>
       {/* Colonne gauche */}
       <div style={{ background: accentBlue, width: 320, padding: 0, display: 'flex', flexDirection: 'column', minHeight: '100%', height: '100%' }}>
         {/* Header horizontal */}
@@ -119,7 +121,7 @@ const MarketingTemplate: React.FC<MarketingTemplateProps> = ({ data, isMiniature
         </div>}
       </div>
       {/* Colonne droite */}
-      <div style={{ flex: 1, background: mainBlue, padding: 36, display: 'flex', flexDirection: 'column', minHeight: '100%', height: '100%', overflow: 'visible' }}>
+      <div style={{ flex: 1, background: primaryColor, padding: 36, display: 'flex', flexDirection: 'column', minHeight: '100%', height: '100%', overflow: 'visible' }}>
         {/* Expérience */}
         {experience.length > 0 && <div style={{ marginBottom: 22 }}>
           <div style={{ ...sectionTitleStyle, color: white, fontSize: 18, marginBottom: 14 }}>EXPÉRIENCE</div>
