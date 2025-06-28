@@ -109,11 +109,6 @@ const TechTemplate: React.FC<TechTemplateProps> = ({ data, isMiniature = false, 
             <div style={{ fontWeight: 900, fontSize: 32, color: primaryColor, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 4 }}>{personalInfo.firstName} {personalInfo.lastName}</div>
             <div style={{ fontSize: 18, color: primaryColor, fontWeight: 500, textTransform: 'capitalize' }}>{personalInfo.title}</div>
           </div>
-          {/* Pictos tech (exemple) */}
-          <div style={{ display: 'flex', gap: 16 }}>
-            <svg width="38" height="38" fill="none" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#4b6c5c"/><path d="M7 17V7h10v10H7zm2-2h6V9H9v6z" fill="#fff"/></svg>
-            <svg width="38" height="38" fill="none" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#4b6c5c"/><path d="M8 17V7h8v10H8zm2-2h4V9h-4v6z" fill="#fff"/></svg>
-          </div>
         </div>
         {/* À propos */}
         {summary && (
