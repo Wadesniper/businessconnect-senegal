@@ -197,4 +197,26 @@ html, body {
   .navbar {
     min-height: 48px;
   }
+}
+
+.navbar-burger-bell-mobile {
+  display: none;
+  align-items: center;
+  gap: 8px;
+}
+@media (max-width: 800px) {
+  .navbar-burger-bell-mobile {
+    display: flex !important;
+    margin-left: auto;
+  }
+  .navbar-bell-mobile {
+    display: flex;
+    align-items: center;
+    margin-left: 4px;
+  }
+}
+@media (min-width: 801px) {
+  .navbar-burger-bell-mobile {
+    display: none !important;
+  }
 } 

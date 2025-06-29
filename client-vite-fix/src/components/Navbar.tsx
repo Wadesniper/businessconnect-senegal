@@ -42,8 +42,13 @@ const Navbar: React.FC = () => {
           <Link to={link.to} className="navbar-link" key={link.to}>{link.icon} {link.label}</Link>
         ))}
       </div>
-      <div className="navbar-burger">
-        <Button type="text" icon={<MenuOutlined style={{ fontSize: 28 }} />} onClick={() => setDrawerOpen(true)} />
+      <div className="navbar-burger-bell-mobile">
+        <div className="navbar-burger">
+          <Button type="text" icon={<MenuOutlined style={{ fontSize: 28 }} />} onClick={() => setDrawerOpen(true)} />
+        </div>
+        <div className="navbar-bell-mobile">
+          <NotificationBell />
+        </div>
       </div>
       <div className="navbar-end">
         <NotificationBell />
@@ -70,6 +75,7 @@ const Navbar: React.FC = () => {
         bodyStyle={{ padding: 0 }}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 18, padding: 24 }}>
+          <NotificationBell />
           {navLinks.map(link => (
             <Link to={link.to} className="navbar-link" key={link.to} onClick={() => setDrawerOpen(false)}>{link.icon} {link.label}</Link>
           ))}
