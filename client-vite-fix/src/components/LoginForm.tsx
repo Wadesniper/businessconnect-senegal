@@ -49,6 +49,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
     }
   }, [forgotPasswordVisible]);
 
+  useEffect(() => {
+    form.setFieldsValue({ phoneNumber: '+221' });
+  }, [form]);
+
   const onFinish = async (values: { phoneNumber: string; password: string }) => {
     setTriedLogin(true);
     try {
