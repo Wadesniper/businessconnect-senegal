@@ -85,6 +85,16 @@ const App: React.FC = () => {
   const { hasActiveSubscription } = useSubscription();
   React.useEffect(() => {
     VersionService.start();
+    // Ajout : check version à chaque retour sur l'app (mobile/desktop)
+    const checkOnFocus = () => VersionService.check();
+    window.addEventListener('focus', checkOnFocus);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') VersionService.check();
+    });
+    return () => {
+      window.removeEventListener('focus', checkOnFocus);
+      document.removeEventListener('visibilitychange', checkOnFocus);
+    };
   }, []);
   return (
     <ErrorBoundary>
