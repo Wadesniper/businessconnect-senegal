@@ -39,6 +39,7 @@ import EditJobPage from './pages/jobs/EditJobPage';
 const FAQ = lazy(() => import('./pages/help/FAQ'));
 const CareersPage = lazy(() => import('./pages/careers'));
 import AuthPage from './pages/auth/AuthPage';
+import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
 const CVPreviewGallery = lazy(() => import('./pages/cv-generator/CVPreviewGallery'));
 const MarketplaceModeration = lazy(() => import('./components/admin/MarketplaceModeration'));
 const UserItems = lazy(() => import('./components/marketplace/UserItems'));
@@ -153,6 +154,7 @@ const App: React.FC = () => {
 
             {/* Routes d'authentification */}
             <Route path="/auth" element={<AuthPage />} />
+            <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/login" element={<Navigate to="/auth" replace />} />
             <Route path="/register" element={<Navigate to="/auth" replace />} />
 

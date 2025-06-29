@@ -144,10 +144,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
         <div style={{ textAlign: 'center', marginBottom: 16 }}>
           <a 
             data-testid="forgot-password-btn"
-            onClick={() => { 
-              console.log('[DEBUG] Clic bouton Mot de passe oublié, forgotPasswordVisible passe à true'); 
-              setForgotPasswordVisible(true); 
-            }}
+            onClick={() => navigate('/auth/forgot-password')}
             style={{ 
               cursor: 'pointer', 
               color: '#666', 
