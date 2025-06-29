@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -17,6 +17,11 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const [phoneError, setPhoneError] = useState('');
+
+  // Initialiser le champ téléphone avec +221 par défaut
+  useEffect(() => {
+    form.setFieldsValue({ phoneNumber: '+221' });
+  }, [form]);
 
   const onFinish = async (values: {
     firstName: string;
