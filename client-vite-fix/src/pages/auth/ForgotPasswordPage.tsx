@@ -33,7 +33,7 @@ const ForgotPasswordPage: React.FC = () => {
   const handleRequestCode = async (values: { phoneNumber: string }) => {
     setLoading(true);
     try {
-      const cleanedPhone = values.phoneNumber.replace(/[^+]/g, '');
+      const cleanedPhone = values.phoneNumber.replace(/[^0-9+]/g, '');
       await authService.forgotPassword(cleanedPhone);
       setPhoneNumber(cleanedPhone);
       setStep('code');
@@ -85,7 +85,7 @@ const ForgotPasswordPage: React.FC = () => {
                 {
                   validator: (_: any, value: string) => {
                     if (!value) return Promise.reject('Le numéro de téléphone est requis');
-                    const cleaned = value.replace(/[^+]/g, '');
+                    const cleaned = value.replace(/[^0-9+]/g, '');
                     if (!/^\+\d{11,15}$/.test(cleaned)) {
                       return Promise.reject('Le numéro doit être au format international (+XXX XXXXXXXXX)');
                     }
