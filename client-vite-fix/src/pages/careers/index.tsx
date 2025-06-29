@@ -4864,22 +4864,12 @@ const CareersPage: React.FC = () => {
   const [forceShow, setForceShow] = useState(false);
   const isPremium = hasPremiumAccess(user, hasActiveSubscription);
   const [loadingMetier, setLoadingMetier] = useState(false);
-  const [loadingPage, setLoadingPage] = useState(true);
   const [activeTab, setActiveTab] = useState('all');
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  // Le loader s'affiche immédiatement et se cache quand le contenu est prêt
-  useEffect(() => {
-    // On garde le loader actif pendant un court instant pour assurer une transition fluide
-    const timer = setTimeout(() => {
-      setLoadingPage(false);
-    }, 100); // Réduit de 300ms à 100ms pour une réponse plus rapide
-    return () => clearTimeout(timer);
-  }, []);
-
   // Scroll automatique vers le contenu quand on change d'onglet (pas au chargement initial)
   useEffect(() => {
-    if (!loadingPage && !isInitialLoad) {
+    if (!isInitialLoad) {
       const timer = setTimeout(() => {
         const contentElement = document.querySelector('.ant-tabs-content-holder');
         if (contentElement) {
@@ -4891,7 +4881,7 @@ const CareersPage: React.FC = () => {
       }, 100);
       return () => clearTimeout(timer);
     }
-  }, [activeTab, loadingPage, isInitialLoad]);
+  }, [activeTab, isInitialLoad]);
 
   const filteredSecteurs = useMemo(() => {
     if (!searchTerm) return secteurs;
@@ -4968,28 +4958,6 @@ const CareersPage: React.FC = () => {
     setActiveTab(key);
     setIsInitialLoad(false);
   };
-
-  if (loadingPage) {
-    return (
-      <div style={{ 
-        minHeight: '100vh', 
-        display: 'flex', 
-        flexDirection: 'column', 
-        alignItems: 'center', 
-        justifyContent: 'center',
-        background: '#f7faff',
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        zIndex: 9999
-      }}>
-        <Spin size="large" />
-        <div style={{ marginTop: 24, fontSize: 18, color: '#1890ff', fontWeight: 600 }}>Chargement des fiches métiers...</div>
-      </div>
-    );
-  }
 
   return (
     <div style={{ padding: '40px 8px', background: '#f7faff', minHeight: '100vh' }}>
