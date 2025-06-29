@@ -339,10 +339,11 @@ export class AuthController {
         message: 'Code de réinitialisation envoyé par SMS'
       });
     } catch (error) {
+      console.error('[FORGOT PASSWORD ERROR]', error);
       logger.error('Erreur lors de l\'envoi du code SMS:', error);
       res.status(500).json({
         success: false,
-        message: 'Une erreur est survenue lors de l\'envoi du code SMS'
+        message: (error as any)?.message || String(error) || 'Une erreur est survenue lors de l\'envoi du code SMS'
       });
     }
   };
