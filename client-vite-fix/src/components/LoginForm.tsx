@@ -126,6 +126,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ noCard, noBg, hideRegisterLink })
         <Input.Password
           prefix={<LockOutlined />}
           placeholder="Mot de passe"
+          visibilityToggle={{ visible: true }}
         />
         </Form.Item>
 

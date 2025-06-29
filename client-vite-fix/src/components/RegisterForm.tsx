@@ -221,7 +221,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
             { min: 8, message: 'Le mot de passe doit contenir au moins 8 caractères' }
           ]}
         >
-          <Input.Password size="large" placeholder="Votre mot de passe" className="auth-full-width" style={{ borderRadius: 8 }} />
+          <Input.Password size="large" placeholder="Votre mot de passe" className="auth-full-width" style={{ borderRadius: 8 }} visibilityToggle={{ visible: true }} />
         </Form.Item>
         <Form.Item
           name="confirmPassword"
@@ -239,7 +239,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
             }),
           ]}
         >
-          <Input.Password size="large" placeholder="Confirmez votre mot de passe" className="auth-full-width" style={{ borderRadius: 8 }} />
+          <Input.Password size="large" placeholder="Confirmez votre mot de passe" className="auth-full-width" style={{ borderRadius: 8 }} visibilityToggle={{ visible: true }} />
         </Form.Item>
         <Form.Item style={{ marginBottom: 8 }}>
           <Button
@@ -384,7 +384,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
             ]}
             validateTrigger={['onBlur', 'onChange']}
           >
-            <Input.Password size="large" placeholder="Votre mot de passe" className="auth-full-width" style={{ borderRadius: 8 }} />
+            <Input.Password size="large" placeholder="Votre mot de passe" className="auth-full-width" style={{ borderRadius: 8 }} visibilityToggle={{ visible: true }} />
           </Form.Item>
           <Form.Item
             name="confirmPassword"
@@ -403,7 +403,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
             ]}
             validateTrigger={['onBlur', 'onChange']}
           >
-            <Input.Password size="large" placeholder="Confirmez votre mot de passe" className="auth-full-width" style={{ borderRadius: 8 }} />
+            <Input.Password size="large" placeholder="Confirmez votre mot de passe" className="auth-full-width" style={{ borderRadius: 8 }} visibilityToggle={{ visible: true }} />
           </Form.Item>
           <Form.Item style={{ marginBottom: 8 }}>
             <Button
