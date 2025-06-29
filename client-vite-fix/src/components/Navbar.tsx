@@ -36,6 +36,7 @@ const Navbar: React.FC = () => {
       <div className="navbar-brand" onClick={() => navigate('/')}> 
         <AppstoreOutlined style={{ fontSize: 28, color: '#1890ff', marginRight: 8 }} />
         <span style={{ fontWeight: 700, fontSize: 22, color: '#1890ff' }}>BusinessConnect</span><span style={{ color: '#1ec773', fontWeight: 700, fontSize: 22 }}>Sénégal</span>
+        <span className="navbar-bell-mobile-brand"><NotificationBell /></span>
       </div>
       <div className="navbar-menu">
         {navLinks.map(link => (

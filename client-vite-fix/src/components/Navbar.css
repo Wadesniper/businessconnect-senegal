@@ -219,4 +219,24 @@ html, body {
   .navbar-burger-bell-mobile {
     display: none !important;
   }
+}
+
+.navbar-bell-mobile-brand {
+  display: none;
+  margin-left: 10px;
+  align-items: center;
+}
+@media (max-width: 800px) {
+  .navbar-bell-mobile-brand {
+    display: inline-flex !important;
+    vertical-align: middle;
+  }
+  .navbar-burger-bell-mobile {
+    display: none !important;
+  }
+}
+@media (min-width: 801px) {
+  .navbar-bell-mobile-brand {
+    display: none !important;
+  }
 } 
