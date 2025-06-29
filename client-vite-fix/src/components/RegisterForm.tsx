@@ -188,7 +188,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
             }
           ]}
           validateTrigger={['onBlur', 'onChange']}
-          help={phoneError}
+          help={phoneError || ''}
           validateStatus={phoneError ? 'error' : undefined}
         >
           <Input
@@ -204,7 +204,6 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
             onBlur={(e) => validatePhone(e.target.value)}
           />
         </Form.Item>
-        {phoneError && <div style={{ color: 'red', marginBottom: 12 }}>{phoneError}</div>}
         <Form.Item
           name="email"
           label={<span style={{ fontWeight: 500 }}>Email (optionnel)</span>}
@@ -350,7 +349,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
               }
             ]}
             validateTrigger={['onBlur', 'onChange']}
-            help={phoneError}
+            help={phoneError || ''}
             validateStatus={phoneError ? 'error' : undefined}
           >
             <Input
@@ -366,7 +365,6 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ noCard, noBg, hideLoginLink
               onBlur={(e) => validatePhone(e.target.value)}
             />
           </Form.Item>
-          {phoneError && <div style={{ color: 'red', marginBottom: 12 }}>{phoneError}</div>}
           <Form.Item
             name="email"
             label={<span style={{ fontWeight: 500 }}>Email (optionnel)</span>}
