@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { HomeOutlined, FileTextOutlined, BookOutlined, UserOutlined, ShopOutlined, TeamOutlined, QuestionCircleOutlined, MailOutlined, CrownOutlined, LoginOutlined, LogoutOutlined, AppstoreOutlined, MenuOutlined } from '@ant-design/icons';
 import { Drawer, Button } from 'antd';
 import './Navbar.css';
+import NotificationBell from './NotificationBell';
 
 const Navbar: React.FC = () => {
   const { user, logout, isAuthenticated } = useAuth();
@@ -45,6 +46,7 @@ const Navbar: React.FC = () => {
         <Button type="text" icon={<MenuOutlined style={{ fontSize: 28 }} />} onClick={() => setDrawerOpen(true)} />
       </div>
       <div className="navbar-end">
+        <NotificationBell />
         {isAuthenticated && user ? (
           <div className="user-menu">
             <Link to="/dashboard" className="navbar-link"><AppstoreOutlined /> Tableau de bord</Link>
