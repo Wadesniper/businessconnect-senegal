@@ -185,15 +185,16 @@ html, body {
     height: 32px;
   }
   .navbar-brand {
-    font-size: 13px !important;
-    gap: 2px;
+    font-size: 14px !important;
+    gap: 4px;
+    flex-shrink: 0;
   }
   .navbar-brand .anticon {
-    font-size: 20px !important;
+    font-size: 22px !important;
     margin-right: 4px !important;
   }
   .navbar-brand span {
-    font-size: 15px !important;
+    font-size: 16px !important;
   }
   .navbar-end {
     gap: 2px;
@@ -203,9 +204,21 @@ html, body {
   }
   .navbar {
     min-height: 48px;
+    padding: 0 4px;
   }
   .navbar-bell-mobile-brand {
     margin-left: 4px;
+  }
+  .navbar-burger-bell-mobile {
+    gap: 6px;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+  .navbar-bell-mobile {
+    margin-left: 2px;
+  }
+  .navbar-burger {
+    margin-left: 4px !important;
   }
 }
 
@@ -248,5 +261,49 @@ html, body {
 @media (min-width: 801px) {
   .navbar-bell-mobile-brand {
     display: none !important;
+  }
+}
+
+@media (max-width: 500px) {
+  .navbar-brand {
+    font-size: 13px !important;
+    gap: 3px;
+  }
+  .navbar-brand .anticon {
+    font-size: 20px !important;
+  }
+  .navbar-brand span {
+    font-size: 15px !important;
+  }
+  .navbar-burger-bell-mobile {
+    gap: 4px;
+  }
+  .navbar-bell-mobile {
+    margin-left: 1px;
+  }
+  .navbar-burger {
+    margin-left: 2px !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .navbar-brand {
+    font-size: 12px !important;
+    gap: 2px;
+  }
+  .navbar-brand .anticon {
+    font-size: 18px !important;
+  }
+  .navbar-brand span {
+    font-size: 14px !important;
+  }
+  .navbar-burger-bell-mobile {
+    gap: 3px;
+  }
+  .navbar-bell-mobile {
+    margin-left: 0;
+  }
+  .navbar-burger {
+    margin-left: 1px !important;
   }
 } 
