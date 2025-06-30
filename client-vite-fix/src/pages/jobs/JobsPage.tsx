@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Layout, Row, Col, Typography, Spin, Button, Input, Modal, message } from 'antd';
+import { Layout, Row, Col, Typography, Spin, Button, Input, Modal, message, Tag } from 'antd';
 import JobAdviceBanner from './components/JobAdviceBanner';
 import RedirectBanners from './components/RedirectBanners';
 import JobFilters from './components/JobFilters';
@@ -105,6 +105,18 @@ const JobsPage: React.FC = () => {
     return [...jobs].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }, [jobs]);
 
+  // Calcul du nombre de nouvelles offres d'aujourd'hui
+  const todayJobsCount = React.useMemo(() => {
+    const today = new Date();
+    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const todayEnd = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    
+    return sortedJobs.filter(job => {
+      const jobDate = new Date(job.createdAt);
+      return jobDate >= todayStart && jobDate < todayEnd;
+    }).length;
+  }, [sortedJobs]);
+
   const handleEdit = (jobId: string) => navigate(`/jobs/edit/${jobId}`);
   
   const handleDelete = (jobId: string) => {
@@ -180,7 +192,7 @@ const JobsPage: React.FC = () => {
           workLocation={null}
           onWorkLocationChange={() => {}}
           renderAction={
-            (user?.role === 'admin' || user?.role === 'recruteur') ? (
+            (user?.role === 'admin' || user?.role === 'employeur') ? (
               <div style={{ display: 'flex', gap: 12 }}>
                 <Button type="primary" onClick={() => navigate('/jobs/my-jobs')}>
                   Gérer mes offres
@@ -192,6 +204,24 @@ const JobsPage: React.FC = () => {
             ) : null
           }
         />
+        {todayJobsCount > 0 && (
+          <div style={{ 
+            marginTop: 12, 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 8,
+            flexWrap: 'wrap'
+          }}>
+            <Tag color="green" style={{ 
+              fontSize: '14px', 
+              padding: '4px 8px',
+              margin: 0,
+              borderRadius: '6px'
+            }}>
+              🆕 {todayJobsCount} nouvelle{todayJobsCount > 1 ? 's' : ''} offre{todayJobsCount > 1 ? 's' : ''} aujourd'hui
+            </Tag>
+          </div>
+        )}
       </div>
       {error ? (
         <div style={{ textAlign: 'center', padding: '32px 0' }}>
