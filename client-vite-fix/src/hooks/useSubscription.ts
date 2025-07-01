@@ -108,7 +108,7 @@ export const useSubscription = () => {
       }
     };
     checkSubscriptionStatus();
-  }, [isAuthenticated, user, loadingUser]);
+  }, [isAuthenticated, user?.id, user?.role, loadingUser]);
 
   // Ajout d'une méthode pour rafraîchir le statut d'abonnement à la demande
   const refreshSubscription = async () => {

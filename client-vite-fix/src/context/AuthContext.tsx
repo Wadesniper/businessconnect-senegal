@@ -55,7 +55,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     initAuth();
-  }, [initAuth]);
+  }, []); // Exécuter seulement au montage du composant
 
   const login = async (phoneNumber: string, password: string) => {
     try {
