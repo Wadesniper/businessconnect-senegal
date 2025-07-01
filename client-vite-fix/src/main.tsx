@@ -51,10 +51,20 @@ window.matchMedia = window.matchMedia || function() {
 };
 
 // Purge automatique du localStorage au premier chargement pour forcer la reconnexion propre
+// Ne se déclenche qu'une seule fois par session, pas à chaque retour sur le site
 if (window && window.localStorage && !window.localStorage.getItem('purge_done')) {
-  window.localStorage.clear();
-  window.localStorage.setItem('purge_done', '1');
-  window.location.reload();
+  // Vérifier si c'est vraiment le premier chargement de la session
+  const sessionStart = sessionStorage.getItem('session_start');
+  if (!sessionStart) {
+    // Première visite de la session
+    sessionStorage.setItem('session_start', Date.now().toString());
+    window.localStorage.clear();
+    window.localStorage.setItem('purge_done', '1');
+    window.location.reload();
+  } else {
+    // Session déjà commencée, pas de purge
+    window.localStorage.setItem('purge_done', '1');
+  }
 }
 
 // Gestion automatique des erreurs critiques de chargement (zéro régression)
