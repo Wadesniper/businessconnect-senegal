@@ -6,6 +6,7 @@
     "@ant-design/icons": "^6.0.0",
     "@ant-design/plots": "^2.3.3",
     "@ant-design/pro-layout": "^7.22.4",
+    "@capacitor/android": "^7.4.0",
     "@capacitor/cli": "^7.4.0",
     "@capacitor/core": "^7.4.0",
     "@emotion/react": "^11.14.0",
@@ -66,7 +67,19 @@
     "test:e2e": "npx start-server-and-test dev http://localhost:3000 cypress:run --wait-on-timeout 120000",
     "cypress:run": "cypress run",
     "test:e2e:pw": "npx start-server-and-test dev http://localhost:3000 playwright:test",
-    "playwright:test": "playwright test"
+    "playwright:test": "playwright test",
+    "cap:add:android": "npx cap add android",
+    "cap:add:ios": "npx cap add ios",
+    "cap:sync": "npx cap sync",
+    "cap:open:android": "npx cap open android",
+    "cap:open:ios": "npx cap open ios",
+    "cap:build:android": "npm run build && npx cap sync && npx cap open android",
+    "cap:build:ios": "npm run build && npx cap sync && npx cap open ios",
+    "cap:build:apk": "npm run build && npx cap sync && cd android && ./gradlew assembleDebug",
+    "cap:build:release": "npm run build && npx cap sync && cd android && ./gradlew assembleRelease",
+    "cap:open:studio": "npx cap open android",
+    "cap:run:android": "npx cap run android",
+    "cap:preview": "npx cap serve"
   },
   "browserslist": {
     "production": [
