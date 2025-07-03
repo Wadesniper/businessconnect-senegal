@@ -12,10 +12,10 @@ const PaymentReturnPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [paymentStatus, setPaymentStatus] = useState<'success' | 'failed' | 'pending'>('pending');
   const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     const token = searchParams.get('token') || searchParams.get('transaction_id');
-    
     if (!token) {
       setError('Identifiant de transaction manquant.');
       setPaymentStatus('failed');
@@ -23,26 +23,81 @@ const PaymentReturnPage: React.FC = () => {
       return;
     }
 
+    let isMounted = true;
+    let interval: NodeJS.Timeout;
+    let timeout: NodeJS.Timeout;
+    let attempts = 0;
+    const maxAttempts = 8; // 8 x 2s = 16s max
+
     const verifyPayment = async () => {
       try {
         const response = await subscriptionService.verifyPayment({ token });
-
+        if (!isMounted) return;
         if (response.success) {
           await refreshAuth();
           setPaymentStatus('success');
+          setLoading(false);
         } else {
-          setError(response.message || 'La vérification du paiement a échoué.');
-          setPaymentStatus('failed');
+          // Si ce n'est pas la dernière tentative, on attend
+          if (attempts < maxAttempts) {
+            setRetryCount((c) => c + 1);
+          } else {
+            setError(
+              response.message ||
+                "La vérification du paiement a échoué. Si vous avez bien été débité, veuillez vider le cache de votre navigateur ou vous connecter sur un autre appareil pour profiter de votre abonnement. Si le problème persiste, contactez le support à l'adresse contact@businessconnectsenegal.com."
+            );
+            setPaymentStatus('failed');
+            setLoading(false);
+          }
         }
       } catch (err: any) {
-        setError(err.message || 'Une erreur est survenue lors de la vérification du paiement.');
-        setPaymentStatus('failed');
-      } finally {
-        setLoading(false);
+        if (!isMounted) return;
+        if (attempts < maxAttempts) {
+          setRetryCount((c) => c + 1);
+        } else {
+          setError(
+            (err.message || 'Une erreur est survenue lors de la vérification de votre paiement.') +
+              ' Si vous avez bien été débité, veuillez vider le cache de votre navigateur ou vous connecter sur un autre appareil pour profiter de votre abonnement. Si le problème persiste, contactez le support à l\'adresse contact@businessconnectsenegal.com.'
+          );
+          setPaymentStatus('failed');
+          setLoading(false);
+        }
       }
     };
 
+    // Premier check immédiat
     verifyPayment();
+    attempts++;
+
+    // Polling toutes les 2 secondes
+    interval = setInterval(() => {
+      if (paymentStatus === 'success' || paymentStatus === 'failed') {
+        clearInterval(interval);
+        clearTimeout(timeout);
+        return;
+      }
+      attempts++;
+      verifyPayment();
+    }, 2000);
+
+    // Timeout au bout de 16 secondes
+    timeout = setTimeout(() => {
+      clearInterval(interval);
+      if (paymentStatus === 'pending') {
+        setError(
+          "La vérification du paiement a pris trop de temps. Si vous avez bien été débité, veuillez vider le cache de votre navigateur ou vous connecter sur un autre appareil pour profiter de votre abonnement. Si le problème persiste, contactez le support à l'adresse contact@businessconnectsenegal.com."
+        );
+        setPaymentStatus('failed');
+        setLoading(false);
+      }
+    }, 16000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+      clearTimeout(timeout);
+    };
+    // eslint-disable-next-line
   }, [searchParams, refreshAuth]);
 
   if (loading) {
@@ -55,7 +110,7 @@ const PaymentReturnPage: React.FC = () => {
         flexDirection: 'column'
       }}>
         <Spin size="large" indicator={<LoadingOutlined style={{ fontSize: 48 }} />} />
-        <p style={{ marginTop: 20, fontSize: 18 }}>Vérification du paiement en cours...</p>
+        <p style={{ marginTop: 20, fontSize: 18 }}>Vérification du paiement en cours...<br/>Merci de patienter, inutile de rafraîchir la page.</p>
       </div>
     );
   }
