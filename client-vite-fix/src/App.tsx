@@ -60,7 +60,31 @@ class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasErr
   }
   render() {
     if (this.state.hasError) {
-      return <div style={{color:'red',padding:40}}><h1>Une erreur est survenue</h1><pre>{String(this.state.error)}</pre></div>;
+      return (
+        <div style={{color:'red',padding:40}}>
+          <h1>Une erreur est survenue</h1>
+          <pre>{String(this.state.error)}</pre>
+          <button
+            style={{
+              marginTop: 24,
+              padding: '10px 24px',
+              fontSize: 18,
+              background: '#1890ff',
+              color: 'white',
+              border: 'none',
+              borderRadius: 6,
+              cursor: 'pointer'
+            }}
+            onClick={() => window.location.reload()}
+          >
+            Réessayer
+          </button>
+          <div style={{marginTop: 24, fontSize: 16, color: '#333'}}>
+            Si le problème persiste, essayez de vous connecter sur un autre appareil<br/>
+            ou contactez le support à l'adresse <b>contact@businessconnectsenegal.com</b>.
+          </div>
+        </div>
+      );
     }
     return this.props.children;
   }
