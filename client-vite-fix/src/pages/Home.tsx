@@ -34,6 +34,7 @@ import womanHijab from '../assets/testimonials/woman-hijab.png';
 import LazyImage from '../components/LazyImage';
 import { JOB_SECTORS } from '../types/job';
 import { subscriptionOffers } from '../data/subscriptionOffers';
+import GlobalFetchError from '../components/GlobalFetchError';
 
 const { Content } = Layout;
 const { Title, Paragraph, Text } = Typography;
@@ -213,10 +214,12 @@ const Home: React.FC = () => {
   const { user } = useAuth();
   const { hasActiveSubscription } = useSubscription();
   const isPremium = hasPremiumAccess(user, hasActiveSubscription);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchAllData = async () => {
       setIsLoading(true);
+      setFetchError(null);
       try {
         const [jobsResponse, itemsData] = await Promise.all([
           JobService.getJobs(),
@@ -233,7 +236,7 @@ const Home: React.FC = () => {
 
       } catch (error) {
         console.error("Erreur lors de la récupération des données:", error);
-        // En cas d'erreur, on initialise avec des tableaux vides pour éviter un crash
+        setFetchError('Erreur réseau ou serveur.');
         setJobs([]);
         setMarketplaceItems([]);
       } finally {
@@ -359,6 +362,10 @@ const Home: React.FC = () => {
         </div>
     );
   };
+
+  if (fetchError) {
+    return <GlobalFetchError onRetry={() => window.location.reload()} />;
+  }
 
   return (
     <Layout>

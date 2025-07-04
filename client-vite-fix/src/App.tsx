@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { ProLayout } from '@ant-design/pro-layout';
 import { Spin } from 'antd';
@@ -107,8 +107,10 @@ const GlobalLoader = () => (
 
 const App: React.FC = () => {
   const { hasActiveSubscription } = useSubscription();
+  const [updateAvailable, setUpdateAvailable] = useState(false);
+
   React.useEffect(() => {
-    VersionService.start();
+    VersionService.start(() => setUpdateAvailable(true));
     // Ajout : check version à chaque retour sur l'app (mobile/desktop)
     const checkOnFocus = () => VersionService.check();
     window.addEventListener('focus', checkOnFocus);
@@ -120,8 +122,26 @@ const App: React.FC = () => {
       document.removeEventListener('visibilitychange', checkOnFocus);
     };
   }, []);
+
   return (
     <ErrorBoundary>
+      {updateAvailable && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          background: '#1890ff',
+          color: 'white',
+          zIndex: 9999,
+          textAlign: 'center',
+          padding: '12px 0',
+          fontSize: 16,
+          fontWeight: 600
+        }}>
+          Nouvelle version disponible. <button style={{marginLeft: 16, background: 'white', color: '#1890ff', border: 'none', borderRadius: 4, padding: '6px 16px', fontWeight: 700, cursor: 'pointer'}} onClick={() => window.location.reload()}>Recharger</button>
+        </div>
+      )}
       <ScrollToTop />
       <ProLayout
         layout="top"
