@@ -10,6 +10,20 @@ export default defineConfig({
       compress: {
         pure_funcs: ['eval']
       }
-    }
+    },
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          antd: ['antd'],
+          router: ['react-router-dom'],
+          utils: ['@ant-design/pro-layout']
+        }
+      }
+    },
+    chunkSizeWarningLimit: 1000
+  },
+  server: {
+    host: true
   }
 })

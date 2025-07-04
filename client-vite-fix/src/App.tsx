@@ -7,7 +7,6 @@ import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useSubscription } from './hooks/useSubscription';
 import ScrollToTop from './components/ScrollToTop';
-import VersionService from './services/versionService';
 // Lazy load des pages principales
 const Home = lazy(() => import('./pages/Home'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
@@ -59,27 +58,52 @@ class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasErr
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{color:'red',padding:40}}>
-          <h1>Une erreur est survenue</h1>
-          <pre>{String(this.state.error)}</pre>
+        <div style={{
+          color:'red',
+          padding: 40,
+          textAlign: 'center',
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: '#f7faff'
+        }}>
+          <h1 style={{ fontSize: 24, marginBottom: 16 }}>Une erreur est survenue</h1>
+          <div style={{ 
+            fontSize: 14, 
+            color: '#666', 
+            marginBottom: 24,
+            maxWidth: 400,
+            lineHeight: 1.5
+          }}>
+            {String(this.state.error).includes('ChunkLoadError') || 
+             String(this.state.error).includes('Loading chunk') ? 
+              "Problème de chargement détecté. Cela peut arriver sur mobile." :
+              "Une erreur inattendue s'est produite."
+            }
+          </div>
           <button
             style={{
               marginTop: 24,
-              padding: '10px 24px',
-              fontSize: 18,
+              padding: '12px 24px',
+              fontSize: 16,
               background: '#1890ff',
               color: 'white',
               border: 'none',
               borderRadius: 6,
-              cursor: 'pointer'
+              cursor: 'pointer',
+              marginBottom: 16
             }}
             onClick={() => window.location.reload()}
           >
             Réessayer
           </button>
-          <div style={{marginTop: 24, fontSize: 16, color: '#333'}}>
-            Si le problème persiste, essayez de vous connecter sur un autre appareil<br/>
-            ou contactez le support à l'adresse <b>contact@businessconnectsenegal.com</b>.
+          <div style={{marginTop: 16, fontSize: 14, color: '#333', maxWidth: 400}}>
+            Si le problème persiste :<br/>
+            • Essayez de vider le cache de votre navigateur<br/>
+            • Connectez-vous sur un autre appareil<br/>
+            • Contactez le support : <b>contact@businessconnectsenegal.com</b>
           </div>
         </div>
       );
@@ -106,17 +130,17 @@ const GlobalLoader = () => (
 const App: React.FC = () => {
   const { hasActiveSubscription } = useSubscription();
   React.useEffect(() => {
-    VersionService.start();
-    // Ajout : check version à chaque retour sur l'app (mobile/desktop)
-    const checkOnFocus = () => VersionService.check();
-    window.addEventListener('focus', checkOnFocus);
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible') VersionService.check();
-    });
-    return () => {
-      window.removeEventListener('focus', checkOnFocus);
-      document.removeEventListener('visibilitychange', checkOnFocus);
-    };
+    // SUPPRIMER : VersionService qui cause les rechargements automatiques
+    // VersionService.start();
+    // const checkOnFocus = () => VersionService.check();
+    // window.addEventListener('focus', checkOnFocus);
+    // document.addEventListener('visibilitychange', () => {
+    //   if (document.visibilityState === 'visible') VersionService.check();
+    // });
+    // return () => {
+    //   window.removeEventListener('focus', checkOnFocus);
+    //   document.removeEventListener('visibilitychange', checkOnFocus);
+    // };
   }, []);
   return (
     <ErrorBoundary>

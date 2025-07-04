@@ -63,32 +63,39 @@ window.matchMedia = window.matchMedia || function() {
     };
 };
 
-// Purge automatique du localStorage au premier chargement pour forcer la reconnexion propre
-// Ne se déclenche qu'une seule fois par session, pas à chaque retour sur le site
-if (window && window.localStorage && !window.localStorage.getItem('purge_done')) {
-  // Vérifier si c'est vraiment le premier chargement de la session
-  const sessionStart = sessionStorage.getItem('session_start');
-  if (!sessionStart) {
-    // Première visite de la session
-    sessionStorage.setItem('session_start', Date.now().toString());
-    window.localStorage.clear();
-    window.localStorage.setItem('purge_done', '1');
-    window.location.reload();
-  } else {
-    // Session déjà commencée, pas de purge
-    window.localStorage.setItem('purge_done', '1');
-  }
-}
-
 // Gestion automatique des erreurs critiques de chargement (zéro régression)
 window.addEventListener('error', (event) => {
   if (event?.error && typeof event.error.message === 'string') {
     if (
       event.error.message.includes('ChunkLoadError') ||
       event.error.message.includes('Loading chunk') ||
-      event.error.message.includes('Unexpected token')
+      event.error.message.includes('Unexpected token') ||
+      event.error.message.includes('Failed to fetch') ||
+      event.error.message.includes('NetworkError')
     ) {
-      window.location.reload();
+      console.error('Erreur de chargement détectée:', event.error.message);
+      // Attendre un peu avant de recharger pour éviter les boucles
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    }
+  }
+});
+
+// Gestion des erreurs de réseau
+window.addEventListener('unhandledrejection', (event) => {
+  if (event.reason && typeof event.reason.message === 'string') {
+    if (
+      event.reason.message.includes('Failed to fetch') ||
+      event.reason.message.includes('NetworkError') ||
+      event.reason.message.includes('ChunkLoadError')
+    ) {
+      console.error('Erreur réseau détectée:', event.reason.message);
+      event.preventDefault();
+      // Attendre un peu avant de recharger
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     }
   }
 }); 
