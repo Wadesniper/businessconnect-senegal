@@ -36,7 +36,6 @@ import { marketplaceService } from '../../services/marketplaceService';
 import type { MarketplaceItem } from '../../services/marketplaceService';
 import { useAuth } from '../../context/AuthContext';
 import styled from '@emotion/styled';
-import GlobalFetchError from '../../components/GlobalFetchError';
 
 const { Title, Text, Paragraph } = Typography;
 const { Content } = Layout;
@@ -121,7 +120,6 @@ const MarketplaceItemPage: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
   const { user, isAuthenticated } = useAuth();
-  const [fetchError, setFetchError] = useState<string | null>(null);
   
   // Derived state is simpler and less prone to errors
   const isOwner = !!user && item?.userId === user.id;
@@ -130,13 +128,11 @@ const MarketplaceItemPage: React.FC = () => {
   const fetchItem = useCallback(async () => {
     if (!id) return;
     setLoading(true);
-    setFetchError(null);
     try {
       const data = await marketplaceService.getItem(id);
       setItem(data);
     } catch (error) {
-      setFetchError('Erreur réseau ou serveur.');
-      setItem(null);
+      message.error("Erreur lors de la récupération de l'annonce");
     } finally {
       setLoading(false);
     }
@@ -186,10 +182,6 @@ const MarketplaceItemPage: React.FC = () => {
             return 'Prix non spécifié';
     }
   };
-
-  if (fetchError) {
-    return <GlobalFetchError onRetry={fetchItem} />;
-  }
 
   if (loading) {
     return <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement de l'annonce..." /></div>;

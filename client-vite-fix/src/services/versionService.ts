@@ -2,10 +2,9 @@
 class VersionService {
   private static lastModified: string | null = null;
   private static interval: any = null;
-  private static onUpdate: (() => void) | null = null;
 
-  static start(onUpdate?: () => void) {
-    if (onUpdate) this.onUpdate = onUpdate;
+  static start() {
+    // Vérifie toutes les 2 minutes
     this.check();
     this.interval = setInterval(() => this.check(), 2 * 60 * 1000);
   }
@@ -16,7 +15,7 @@ class VersionService {
       const lastMod = res.headers.get('last-modified');
       if (this.lastModified && lastMod && this.lastModified !== lastMod) {
         // Nouvelle version détectée
-        if (this.onUpdate) this.onUpdate();
+        window.location.reload();
       }
       if (lastMod) this.lastModified = lastMod;
     } catch (e) {

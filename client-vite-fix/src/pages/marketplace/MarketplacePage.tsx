@@ -37,7 +37,6 @@ import { useSubscription } from '../../hooks/useSubscription';
 import { useAuth } from '../../context/AuthContext';
 import type { UploadFile, UploadFileStatus } from 'antd/es/upload/interface';
 import LazyImage from '../../components/LazyImage';
-import GlobalFetchError from '../../components/GlobalFetchError';
 
 const categories = [
   'Informatique',
@@ -81,7 +80,6 @@ const MarketplacePage: React.FC = () => {
   const [editingItem, setEditingItem] = useState<MarketplaceItem | null>(null);
   const [editFileList, setEditFileList] = useState<UploadFile[]>([]);
   const [editUploadedUrls, setEditUploadedUrls] = useState<string[]>([]);
-  const [fetchError, setFetchError] = useState<string | null>(null);
 
   useEffect(() => {
     setLoadingPage(true);
@@ -99,16 +97,13 @@ const MarketplacePage: React.FC = () => {
 
   const fetchItems = async () => {
     setLoading(true);
-    setFetchError(null);
     try {
       const data = await marketplaceService.getItems(filters);
       setItems(data);
     } catch (error) {
-      setFetchError('Erreur réseau ou serveur.');
-      setItems([]);
-    } finally {
-      setLoading(false);
+      message.error('Erreur lors de la récupération des annonces');
     }
+    setLoading(false);
   };
 
   const handleEditFromUrl = async (itemId: string) => {
@@ -321,10 +316,6 @@ const MarketplacePage: React.FC = () => {
         <div style={{ marginTop: 24, fontSize: 18, color: '#1890ff' }}>Chargement du marketplace...</div>
       </div>
     );
-  }
-
-  if (fetchError) {
-    return <GlobalFetchError onRetry={fetchItems} />;
   }
 
   return (

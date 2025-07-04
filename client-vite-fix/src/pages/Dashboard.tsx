@@ -16,7 +16,6 @@ import { JobService } from '../services/jobService';
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import type { JobData } from '../types/job';
 import { paymentService } from '../services/paymentService';
-import GlobalFetchError from '../components/GlobalFetchError';
 
 const { Title, Text, Paragraph } = Typography;
 const { confirm } = Modal;
@@ -68,7 +67,6 @@ const Dashboard: React.FC = () => {
   const [myJobs, setMyJobs] = useState<JobData[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingPage, setLoadingPage] = useState(true);
-  const [fetchError, setFetchError] = useState<string | null>(null);
 
   useEffect(() => {
     setLoadingPage(true);
@@ -101,30 +99,20 @@ const Dashboard: React.FC = () => {
     checkPaymentStatus();
   }, []); // Exécuté une seule fois
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setFetchError(null);
-      try {
-        JobService.getJobs().then(response => {
-          setJobs(response.jobs || []);
-        });
+  React.useEffect(() => {
+    JobService.getJobs().then(response => {
+      setJobs(response.jobs || []);
+    });
 
-        if (user?.role === 'employeur') {
-          JobService.getMyJobs().then(jobs => {
-            setMyJobs(jobs || []);
-            setLoading(false);
-          });
-        } else {
-          setLoading(false);
-        }
-      } catch (error) {
-        setFetchError('Erreur réseau ou serveur.');
+    if (user?.role === 'employeur') {
+      JobService.getMyJobs().then(jobs => {
+        setMyJobs(jobs || []);
         setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+      });
+    } else {
+      setLoading(false);
+    }
+  }, [user]);
 
   const handleDelete = (jobId: string) => {
     confirm({
@@ -157,10 +145,6 @@ const Dashboard: React.FC = () => {
 
   if (loading) {
     return <div style={{ minHeight: 320, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin size="large" tip="Chargement du tableau de bord..." /></div>;
-  }
-
-  if (fetchError) {
-    return <GlobalFetchError onRetry={() => window.location.reload()} />;
   }
 
   return (
