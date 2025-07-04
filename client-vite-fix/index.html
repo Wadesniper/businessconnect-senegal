@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#000000" />
     <meta
       name="description"
-      content="BusinessConnect S&#233;n&#233;gal - La plateforme n&#176;1 o&#249; les talents s&#233;n&#233;galais rencontrent les opportunit&#233;s"
+      content="BusinessConnect Sénégal - La plateforme n°1 où les talents sénégalais rencontrent les opportunités"
     />
     <link rel="apple-touch-icon" href="/logo192.png" />
     <link rel="manifest" href="/manifest.json" />
@@ -20,20 +20,20 @@
     <!-- Custom styles -->
     <link rel="stylesheet" href="/styles/custom.css">
     
-    <title>BusinessConnect S&#233;n&#233;gal - La plateforme n&#176;1 des talents</title>
+    <title>BusinessConnect Sénégal - La plateforme n°1 des talents</title>
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://businessconnect-senegal.com/">
-    <meta property="og:title" content="BusinessConnect S&#233;n&#233;gal">
-    <meta property="og:description" content="La plateforme n&#176;1 o&#249; les talents s&#233;n&#233;galais rencontrent les opportunit&#233;s">
+    <meta property="og:title" content="BusinessConnect Sénégal">
+    <meta property="og:description" content="La plateforme n°1 où les talents sénégalais rencontrent les opportunités">
     <meta property="og:image" content="/images/og-image.jpg">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://businessconnect-senegal.com/">
-    <meta property="twitter:title" content="BusinessConnect S&#233;n&#233;gal">
-    <meta property="twitter:description" content="La plateforme n&#176;1 o&#249; les talents s&#233;n&#233;galais rencontrent les opportunit&#233;s">
+    <meta property="twitter:title" content="BusinessConnect Sénégal">
+    <meta property="twitter:description" content="La plateforme n°1 où les talents sénégalais rencontrent les opportunités">
     <meta property="twitter:image" content="/images/og-image.jpg">
 
     <link rel="preload" as="image" href="/src/assets/1-ingenieur.jpg" />
@@ -45,6 +45,36 @@
     <link rel="preload" as="image" href="/src/assets/7-reunion-pro.jpg" />
     <link rel="preload" as="image" href="/src/assets/8-developpeur.jpg" />
     <link rel="preload" as="image" href="/src/assets/9-immeuble.jpg" />
+    
+    <!-- Script pour forcer le rechargement en cas de cache persistant -->
+    <script>
+      // Force le rechargement si on détecte une page blanche persistante
+      (function() {
+        let reloadAttempts = 0;
+        const maxAttempts = 3;
+        
+        function checkForBlankPage() {
+          // Si après 3 secondes, le contenu principal n'est pas chargé, on force un reload
+          setTimeout(() => {
+            const root = document.getElementById('root');
+            if (root && (!root.children.length || root.children.length === 0)) {
+              reloadAttempts++;
+              if (reloadAttempts < maxAttempts) {
+                console.log('Page blanche détectée, rechargement forcé...');
+                window.location.reload(true); // Force reload from server
+              }
+            }
+          }, 3000);
+        }
+        
+        // Vérifier au chargement
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', checkForBlankPage);
+        } else {
+          checkForBlankPage();
+        }
+      })();
+    </script>
   </head>
   <body>
     <noscript>Vous devez activer JavaScript pour utiliser cette application.</noscript>
