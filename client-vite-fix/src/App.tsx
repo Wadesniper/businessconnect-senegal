@@ -19,8 +19,6 @@ const PaymentCancel = lazy(() => import('./pages/payment/PaymentCancel'));
 const PaymentReturnPage = lazy(() => import('./pages/payment/PaymentReturnPage'));
 const MarketplacePage = lazy(() => import('./pages/marketplace/MarketplacePage'));
 const MarketplaceItemPage = lazy(() => import('./pages/marketplace/MarketplaceItemPage'));
-const ForumPage = lazy(() => import('./pages/forum/ForumPage'));
-const DiscussionDetail = lazy(() => import('./pages/forum/DiscussionDetail'));
 const ContactPage = lazy(() => import('./pages/contact'));
 const MentionsLegales = lazy(() => import('./pages/legal/MentionsLegales'));
 const CGV = lazy(() => import('./pages/legal/CGV'));
@@ -172,8 +170,6 @@ const App: React.FC = () => {
                 <ProtectedRoute element={<MarketplaceModeration />} requiresAdmin />
               }
             />
-            <Route path="/forum" element={<ForumPage />} />
-            <Route path="/forum/:id" element={<DiscussionDetail />} />
             <Route path="/formations" element={<FormationsPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/cv-generator" element={<CVGenerator isSubscribed={hasActiveSubscription} />} />
