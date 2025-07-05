@@ -49,23 +49,6 @@ class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasErr
     this.state = { hasError: false, error: null };
   }
   static getDerivedStateFromError(error: any) {
-    // Intercepter les erreurs de modules dynamiques et les gérer silencieusement
-    if (error && typeof error.message === 'string') {
-      if (
-        error.message.includes('dynamically imported module') ||
-        error.message.includes('import()') ||
-        error.message.includes('Module not found') ||
-        error.message.includes('ChunkLoadError') ||
-        error.message.includes('Loading chunk')
-      ) {
-        console.error('Erreur module dynamique interceptée:', error.message);
-        // Ne pas afficher l'erreur à l'utilisateur, juste recharger
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
-        return { hasError: false, error: null }; // Pas d'erreur affichée
-      }
-    }
     return { hasError: true, error };
   }
   componentDidCatch(error: any, errorInfo: any) {
@@ -95,8 +78,7 @@ class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasErr
             lineHeight: 1.5
           }}>
             {String(this.state.error).includes('ChunkLoadError') || 
-             String(this.state.error).includes('Loading chunk') ||
-             String(this.state.error).includes('dynamically imported module') ? 
+             String(this.state.error).includes('Loading chunk') ? 
               "Problème de chargement détecté. Cela peut arriver sur mobile." :
               "Une erreur inattendue s'est produite."
             }

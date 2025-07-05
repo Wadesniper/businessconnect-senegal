@@ -71,14 +71,9 @@ window.addEventListener('error', (event) => {
       event.error.message.includes('Loading chunk') ||
       event.error.message.includes('Unexpected token') ||
       event.error.message.includes('Failed to fetch') ||
-      event.error.message.includes('NetworkError') ||
-      event.error.message.includes('dynamically imported module') ||
-      event.error.message.includes('import()') ||
-      event.error.message.includes('Module not found')
+      event.error.message.includes('NetworkError')
     ) {
       console.error('Erreur de chargement détectée:', event.error.message);
-      // Empêcher l'affichage de l'erreur à l'utilisateur
-      event.preventDefault();
       // Attendre un peu avant de recharger pour éviter les boucles
       setTimeout(() => {
         window.location.reload();
@@ -87,20 +82,15 @@ window.addEventListener('error', (event) => {
   }
 });
 
-// Gestion des erreurs de réseau et imports dynamiques
+// Gestion des erreurs de réseau
 window.addEventListener('unhandledrejection', (event) => {
   if (event.reason && typeof event.reason.message === 'string') {
     if (
       event.reason.message.includes('Failed to fetch') ||
       event.reason.message.includes('NetworkError') ||
-      event.reason.message.includes('ChunkLoadError') ||
-      event.reason.message.includes('dynamically imported module') ||
-      event.reason.message.includes('import()') ||
-      event.reason.message.includes('Module not found') ||
-      event.reason.message.includes('Loading chunk')
+      event.reason.message.includes('ChunkLoadError')
     ) {
-      console.error('Erreur réseau/import détectée:', event.reason.message);
-      // Empêcher l'affichage de l'erreur à l'utilisateur
+      console.error('Erreur réseau détectée:', event.reason.message);
       event.preventDefault();
       // Attendre un peu avant de recharger
       setTimeout(() => {
@@ -108,46 +98,4 @@ window.addEventListener('unhandledrejection', (event) => {
       }, 2000);
     }
   }
-});
-
-// Intercepter les erreurs de React.lazy() spécifiquement
-const originalLazy = React.lazy;
-React.lazy = function(importFunc) {
-  return originalLazy(() => {
-    return importFunc().catch(error => {
-      console.error('Erreur lazy loading:', error);
-      // Retourner un composant de fallback au lieu de faire planter l'app
-      return {
-        default: () => (
-          <div style={{
-            padding: 40,
-            textAlign: 'center',
-            background: '#f7faff',
-            minHeight: '50vh',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            <div style={{ fontSize: 18, color: '#1890ff', marginBottom: 16 }}>
-              Chargement en cours...
-            </div>
-            <button
-              onClick={() => window.location.reload()}
-              style={{
-                padding: '8px 16px',
-                background: '#1890ff',
-                color: 'white',
-                border: 'none',
-                borderRadius: 4,
-                cursor: 'pointer'
-              }}
-            >
-              Réessayer
-            </button>
-          </div>
-        )
-      };
-    });
-  });
-}; 
+}); 
