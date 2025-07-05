@@ -71,9 +71,14 @@ window.addEventListener('error', (event) => {
       event.error.message.includes('Loading chunk') ||
       event.error.message.includes('Unexpected token') ||
       event.error.message.includes('Failed to fetch') ||
-      event.error.message.includes('NetworkError')
+      event.error.message.includes('NetworkError') ||
+      event.error.message.includes('dynamically imported module') ||
+      event.error.message.includes('import()') ||
+      event.error.message.includes('Module not found')
     ) {
       console.error('Erreur de chargement détectée:', event.error.message);
+      // Empêcher l'affichage de l'erreur à l'utilisateur
+      event.preventDefault();
       // Attendre un peu avant de recharger pour éviter les boucles
       setTimeout(() => {
         window.location.reload();
@@ -82,15 +87,20 @@ window.addEventListener('error', (event) => {
   }
 });
 
-// Gestion des erreurs de réseau
+// Gestion des erreurs de réseau et imports dynamiques
 window.addEventListener('unhandledrejection', (event) => {
   if (event.reason && typeof event.reason.message === 'string') {
     if (
       event.reason.message.includes('Failed to fetch') ||
       event.reason.message.includes('NetworkError') ||
-      event.reason.message.includes('ChunkLoadError')
+      event.reason.message.includes('ChunkLoadError') ||
+      event.reason.message.includes('dynamically imported module') ||
+      event.reason.message.includes('import()') ||
+      event.reason.message.includes('Module not found') ||
+      event.reason.message.includes('Loading chunk')
     ) {
-      console.error('Erreur réseau détectée:', event.reason.message);
+      console.error('Erreur réseau/import détectée:', event.reason.message);
+      // Empêcher l'affichage de l'erreur à l'utilisateur
       event.preventDefault();
       // Attendre un peu avant de recharger
       setTimeout(() => {
